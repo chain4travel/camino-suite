@@ -44,10 +44,10 @@ const RenderApp = () => {
 };
 
 export default function Layout() {
-  const { state } = useStore();
-  useEffect(() => {
-    console.log(state);
-  }, []);
+  // const { state } = useStore();
+  // useEffect(() => {
+  //   console.log(state);
+  // }, []);
   return (
     <>
       <BrowserRouter>

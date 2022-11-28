@@ -17,13 +17,13 @@ export const ColorModeContext = React.createContext<{
 }>({});
 
 const getColorModeFromLocalStorage = () => {
-  const localStorageMode = localStorage.getItem("colorMode");
-  if (localStorageMode) return JSON.parse(localStorageMode);
+  // const localStorageMode = localStorage.getItem("colorMode");
+  // if (localStorageMode) return JSON.parse(localStorageMode);
   return "dark";
 };
 
 export const ThemeProvider = (props: { children: React.ReactChild }) => {
-  const [mode, setMode] = useState<PaletteMode>(getColorModeFromLocalStorage()); // light or dark default mode is light
+  const [mode, setMode] = useState<PaletteMode>("dark"); // light or dark default mode is light
 
   const colorMode = useMemo(
     () => ({

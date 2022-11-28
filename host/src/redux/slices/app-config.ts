@@ -33,6 +33,28 @@ const getCustomNetworksFromLocalStorage = () => {
   return [];
 };
 
+export const networks = [
+  {
+    id: "camino-testnet",
+    displayName: "Columbus",
+    protocol: "https",
+    host: "columbus.camino.foundation",
+    magellanAddress: "https://magellan.columbus.camino.foundation",
+    port: 443,
+    predefined: true,
+  },
+  {
+    id: "mainnet",
+    displayName: "Mainnet",
+    protocol: "https",
+    host: "columbus.camino.foundation",
+    magellanAddress: "https://magellan.columbus.camino.foundation",
+    port: 443,
+    predefined: true,
+  },
+  ...(getCustomNetworksFromLocalStorage() as Network[]),
+];
+
 let initialState: initialStateAppConfigType = {
   activeNetwork: getNetworkFromLocalStorage(),
   activeApp: "blockexplorer",

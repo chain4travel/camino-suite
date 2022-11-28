@@ -15,6 +15,7 @@ import { nameOfActiveNetwork } from "../../utils/componentsUtils";
 import SelectedNetwork from "./SelectNetwork";
 import AddNewNetwork from "./AddNewNetwork";
 import { getChains } from "../../api/index";
+import { useStore } from "Explorer/useStore";
 
 export default function NetworkSwitcher() {
   const dispatch = useAppDispatch();
@@ -24,7 +25,7 @@ export default function NetworkSwitcher() {
   const [network, setNetwork] = useState(
     nameOfActiveNetwork(networks, activeNetwork)
   );
-
+  const { changeNetworkExplorer } = useStore();
   useEffect(() => {
     setNetwork(nameOfActiveNetwork(networks, activeNetwork));
     dispatch(getChains());
@@ -41,11 +42,19 @@ export default function NetworkSwitcher() {
     dispatch(changeNetwork("Columbus"));
     dispatch(removeCustomNetwork(id));
   };
-
+  const changeNetworkCamino = (network: string) => {
+    let active = networks.find((item) => item.displayName === network);
+    let activeNetwork = active?.id;
+    changeNetworkExplorer(network);
+  };
   return (
     <Select
       value={network}
-      onChange={(e) => dispatch(changeNetwork(e.target.value))}
+      onChange={(e) => {
+        // console.log(e.target.value);
+        changeNetworkCamino(e.target.value);
+        dispatch(changeNetwork(e.target.value));
+      }}
       renderValue={() => <SelectedNetwork value={network} />}
       sx={{
         maxWidth: "13rem",

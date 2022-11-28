@@ -5,11 +5,9 @@ import ReactDOM from "react-dom";
 // import "react-app-polyfill/stable";
 
 // import * as React from "react";
-// // import * as ReactDOMClient from 'react-dom/client';
 import { Provider } from "react-redux";
 // import ReactDOM from "react-dom";
 
-// // Import root app
 import { App } from "./app/index";
 
 import { HelmetProvider } from "react-helmet-async";
