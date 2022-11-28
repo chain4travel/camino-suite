@@ -72,7 +72,7 @@ export default function MainLayout() {
     <>
       {/* <NavBar /> */}
       <Content />
-      {/* <Footer /> */}
+      <Footer />
     </>
   );
 }
