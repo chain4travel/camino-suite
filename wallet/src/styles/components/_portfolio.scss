@@ -1,0 +1,24 @@
+.add_token_row {
+    display: flex !important;
+    justify-content: center;
+    margin-top: 24px;
+    border: none !important;
+
+    span {
+        color: var(--primary-color-light);
+        align-self: center;
+        margin: 0px 12px;
+    }
+
+    button {
+        border-width: 1px;
+        border-style: solid;
+        border-radius: var(--border-radius-lg);
+        padding: 8px 24px;
+        border-color: var(--primary-btn-border-color);
+        color: var(--primary-btn-border-color);
+        &:hover {
+            opacity: 0.6;
+        }
+    }
+}

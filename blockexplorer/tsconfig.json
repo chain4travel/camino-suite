@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "jsx": "react"
+  },
+  "include": ["src"],
+  "ts-node": {
+    "compilerOptions": {
+      "jsx": "react",
+      "esModuleInterop": true,
+      "module": "commonjs",
+      "moduleResolution": "node",
+      "noEmit": true,
+      "allowSyntheticDefaultImports": true
+    }
+  }
+}

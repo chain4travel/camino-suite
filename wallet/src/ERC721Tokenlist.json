@@ -1,0 +1,12 @@
+{
+    "name": "Camino Wallet ERCNft Tokens",
+    "logoURI": "",
+    "keywords": ["camino", "defi", "ethereum"],
+    "version": {
+        "major": 0,
+        "minor": 0,
+        "patch": 0
+    },
+    "tokens": [],
+    "timestamp": "2022-03-20T00:00:00+00:00"
+}

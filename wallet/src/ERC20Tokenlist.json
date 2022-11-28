@@ -1,0 +1,21 @@
+{
+    "name": "Camino Wallet ERC20 Tokens",
+    "logoURI": "",
+    "keywords": ["camino", "defi", "ethereum"],
+    "version": {
+        "major": 0,
+        "minor": 0,
+        "patch": 0
+    },
+    "tokens": [
+        {
+            "chainId": 0,
+            "address": "",
+            "decimals": 18,
+            "name": "",
+            "symbol": "",
+            "logoURI": ""
+        }
+    ],
+    "timestamp": "2022-03-20T00:00:00+00:00"
+}
