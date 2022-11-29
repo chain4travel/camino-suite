@@ -43,7 +43,7 @@ jobs:
 
       - name: Set bucket names
         id: setBucketNames
-        if: ${{ github.ref == 'refs/heads/main || github.ref == 'refs/heads/dev' }}
+        if: ${{ github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev' }}
         run: |
           if [[ "${{ github.ref_name }}" == "main" ]]; then
               echo "::set-output name=suite_bucket::suite.camino.foundation"
@@ -57,26 +57,26 @@ jobs:
 
       - name: 'gcloud authentication'
         id: 'auth'
-        if: ${{ github.ref == 'refs/heads/main || github.ref == 'refs/heads/dev' }}
+        if: ${{ github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev' }}
         uses: 'google-github-actions/auth@v1'
         with:
             credentials_json: '${{ secrets.GOOGLE_CREDENTIALS }}'
 
       - name: 'Set up Cloud SDK'
-        if: ${{ github.ref == 'refs/heads/main || github.ref == 'refs/heads/dev' }}
+        if: ${{ github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev' }}
         uses: 'google-github-actions/setup-gcloud@v1'
 
       - name: update suite bucket files
-        if: ${{ github.ref == 'refs/heads/main || github.ref == 'refs/heads/dev' }}
+        if: ${{ github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev' }}
         working-directory: ./host
         run: gsutil rsync -R -d dist gs://${{ steps.setBucketNames.outputs.suite_bucket }}
 
       - name: update suite-explorer bucket files
-        if: ${{ github.ref == 'refs/heads/main || github.ref == 'refs/heads/dev' }}
+        if: ${{ github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev' }}
         working-directory: ./explorer
         run: gsutil rsync -R -d dist gs://${{ steps.setBucketNames.outputs.explorer_bucket }}
 
       - name: update suite-wallet bucket files
-        if: ${{ github.ref == 'refs/heads/main || github.ref == 'refs/heads/dev' }}
+        if: ${{ github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev' }}
         working-directory: ./wallet
         run: gsutil rsync -R -d dist gs://${{ steps.setBucketNames.outputs.wallet_bucket }}
