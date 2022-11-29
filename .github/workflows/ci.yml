@@ -29,10 +29,10 @@ jobs:
         working-directory: ./host
         run: yarn build
       - name: install yarn dependencies - explorer
-        working-directory: ./explorer
+        working-directory: ./blockexplorer
         run: yarn install
       - name: build - explorer
-        working-directory: ./explorer
+        working-directory: ./blockexplorer
         run: yarn build
       - name: install yarn dependencies - wallet
         working-directory: ./wallet
@@ -73,7 +73,7 @@ jobs:
 
       - name: update suite-explorer bucket files
         if: ${{ github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev' }}
-        working-directory: ./explorer
+        working-directory: ./blockexplorer
         run: gsutil rsync -R -d dist gs://${{ steps.setBucketNames.outputs.explorer_bucket }}
 
       - name: update suite-wallet bucket files
