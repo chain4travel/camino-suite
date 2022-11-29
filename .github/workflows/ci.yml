@@ -47,13 +47,13 @@ jobs:
         if: ${{ github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev' }}
         run: |
           if [[ "${{ github.ref_name }}" == "main" ]]; then
-              echo "::set-output name=suite_bucket::suite.camino.foundation"
-              echo "::set-output name=wallet_bucket::suite-wallet.camino.foundation"
-              echo "::set-output name=explorer_bucket::suite-explorer.camino.foundation"
+              echo "suite_bucket=suite.camino.foundation" >> $GITHUB_OUTPUT
+              echo "wallet_bucket=suite-wallet.camino.foundation" >> $GITHUB_OUTPUT
+              echo "explorer_bucket=suite-explorer.camino.foundation" >> $GITHUB_OUTPUT
           elif [[ "${{ github.ref_name }}" == "dev" ]]; then
-              echo "::set-output name=suite_bucket::playground.suite.camino.foundation"
-              echo "::set-output name=wallet_bucket::playground.suite-wallet.camino.foundation"
-              echo "::set-output name=explorer_bucket::playground.suite-explorer.camino.foundation"
+              echo "suite_bucket=playground.suite.camino.foundation" >> $GITHUB_OUTPUT
+              echo "wallet_bucket=playground.suite-wallet.camino.foundation" >> $GITHUB_OUTPUT
+              echo "explorer_bucket=playground.suite-explorer.camino.foundation" >> $GITHUB_OUTPUT
           fi
 
       - name: 'gcloud authentication'
