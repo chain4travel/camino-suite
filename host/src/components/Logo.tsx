@@ -20,7 +20,7 @@ export default function Logo() {
   return (
     <Box
       sx={{
-        borderRight: `1px solid ${theme.palette.divider}`,
+        // borderRight: `1px solid ${theme.palette.divider}`,
         minHeight: "100%",
         display: "flex",
         alignItems: "center",

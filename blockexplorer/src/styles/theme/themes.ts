@@ -25,6 +25,7 @@ interface PaletteWithCustomColors extends Palette {
     border: string;
     title: string;
     subValue: string;
+    navBar: string;
     contrastText: string;
   };
   latestList: {
@@ -101,6 +102,7 @@ export const LightThemePalette: Partial<PaletteWithCustomColors> = {
   grey: grey,
   card: {
     background: "#F8FAFC",
+    navBar: "#fff",
     border: "#CBD5E1",
     title: "#0F172A",
     subValue: "#334155",
@@ -175,6 +177,7 @@ export const DarkThemePalette: Partial<PaletteWithCustomColors> = {
   grey: grey,
   card: {
     background: "#0F172A",
+    navBar: "#0F172A",
     border: "#64748B",
     title: "#64748B",
     subValue: "#64748B",

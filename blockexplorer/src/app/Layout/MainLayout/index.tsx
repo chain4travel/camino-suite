@@ -69,8 +69,10 @@ export default function MainLayout() {
   const dispatch = useAppDispatch();
   const themeContext = useContext(ColorModeContext);
   const navigate = useNavigate();
+  const [load, setLoad] = useState(true);
   useEffect(() => {
-    if (activeNetwork === "mainnet-testnet") navigate("/mainnet");
+    if (load) setLoad(false);
+    else if (activeNetwork === "mainnet-testnet") navigate("/mainnet");
     else navigate("/");
     dispatch(getChains());
   }, [activeNetwork]); // eslint-disable-line
@@ -80,7 +82,9 @@ export default function MainLayout() {
   }, [currentTheme]);
   return (
     <>
-      {/* <NavBar /> */}
+      <Box sx={{ width: "100%", backgroundColor: "card.navBar" }}>
+        <NavBar />
+      </Box>
       <Content />
       {/* <Footer /> */}
     </>
