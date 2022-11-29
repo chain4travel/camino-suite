@@ -1,27 +1,16 @@
-import React, { useEffect } from "react";
-import Navbar from "../components/Navbar";
-import {
-  BrowserRouter,
-  Navigate,
-  Outlet,
-  Route,
-  Routes,
-} from "react-router-dom";
+import React from "react";
+
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { useSelector } from "react-redux";
 import ExplorerApp from "./ExplorerApp";
 import Wallet from "./WalletApp";
-
-const MainLayout = () => {
-  return (
-    <div style={{ width: "100vw", height: "100vh" }}>
-      <Navbar />
-      <Outlet />
-    </div>
-  );
-};
+import MainLayout from "./MainLayout";
+import { RootState } from "../redux/store";
 
 const RenderApp = () => {
-  const activeApp = useSelector((state) => state.appConfig.activeApp);
+  const activeApp = useSelector(
+    (state: RootState) => state.appConfig.activeApp
+  );
   if (activeApp === "blockexplorer") return <ExplorerApp />;
   else if (activeApp === "wallet") return <Wallet />;
   return <div>Not Yet Implemented</div>;
