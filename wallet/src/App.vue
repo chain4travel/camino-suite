@@ -1,6 +1,6 @@
 <template>
   <v-app>
-    <v-main>
+    <v-main class="bck">
       <template>
         <!-- <UrlBanner></UrlBanner> -->
 
@@ -144,11 +144,12 @@ p {
   -moz-osx-font-smoothing: grayscale;
   text-align: left;
   color: var(--primary-color);
-  background-color: var(--bg) !important;
   font-family: "Rubik", sans-serif;
   transition-duration: 0.2s;
 }
-
+.bck {
+  background-color: var(--bg);
+}
 #nav {
   height: 80px;
   display: flex;

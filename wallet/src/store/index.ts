@@ -60,6 +60,7 @@ const store = new Vuex.Store({
     wallets: [],
     volatileWallets: [], // will be forgotten when tab is closed
     warnUpdateKeyfile: false, // If true will promt the user the export a new keyfile
+    theme: "dark",
     prices: {
       usd: 0,
     },
@@ -70,6 +71,9 @@ const store = new Vuex.Store({
       if (!wallet) return [];
       let addresses = wallet.getDerivedAddresses();
       return addresses;
+    },
+    theme(state: RootState): string {
+      return state.theme;
     },
   },
   mutations: {
@@ -83,6 +87,9 @@ const store = new Vuex.Store({
         // Update the websocket addresses
         updateFilterAddresses();
       }
+    },
+    updateTheme(state) {
+      state.theme = state.theme === "dark" ? "light" : "dark";
     },
   },
   actions: {

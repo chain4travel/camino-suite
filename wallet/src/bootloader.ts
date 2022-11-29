@@ -34,7 +34,7 @@ export const mount = (el) => {
       }
     },
     data: {
-      theme: "day",
+      theme: "night",
     },
   });
   app.$mount(el);

@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import Navbar from "./components/Navbar";
+import Navbar from "../components/Navbar";
 import {
   BrowserRouter,
   Navigate,
@@ -7,11 +7,9 @@ import {
   Route,
   Routes,
 } from "react-router-dom";
-const Explorer = React.lazy(() => import("Explorer/Explorer"));
-const Wallet = React.lazy(() => import("./WalletApp"));
 import { useSelector } from "react-redux";
-
-import { useStore } from "Explorer/useStore";
+import ExplorerApp from "./ExplorerApp";
+import Wallet from "./WalletApp";
 
 const MainLayout = () => {
   return (
@@ -24,30 +22,12 @@ const MainLayout = () => {
 
 const RenderApp = () => {
   const activeApp = useSelector((state) => state.appConfig.activeApp);
-  if (activeApp === "blockexplorer")
-    return (
-      <div>
-        <React.Suspense fallback={<div>Loading...</div>}>
-          <Explorer />
-        </React.Suspense>
-      </div>
-    );
-  else if (activeApp === "wallet")
-    return (
-      <div>
-        <React.Suspense fallback={<div>Loading...</div>}>
-          <Wallet />
-        </React.Suspense>
-      </div>
-    );
+  if (activeApp === "blockexplorer") return <ExplorerApp />;
+  else if (activeApp === "wallet") return <Wallet />;
   return <div>Not Yet Implemented</div>;
 };
 
 export default function Layout() {
-  // const { state } = useStore();
-  // useEffect(() => {
-  //   console.log(state);
-  // }, []);
   return (
     <>
       <BrowserRouter>
