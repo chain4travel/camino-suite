@@ -4,7 +4,7 @@ const path = require("path");
 const deps = require("./package.json").devDependencies;
 module.exports = {
   output: {
-    publicPath: "http://localhost:3001/",
+    publicPath: "https://playground.suite-explorer.camino.foundation/",
   },
 
   resolve: {
