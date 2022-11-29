@@ -32,16 +32,8 @@ module.exports = {
         },
       },
       {
-        test: /\.svg$/,
-        use: ["vue-svg-loader"],
-      },
-      {
-        test: /\.(png|jpe?g|gif)$/i,
-        use: [
-          {
-            loader: "file-loader",
-          },
-        ],
+        test: /\.(png|jpg|gif|svg|eot|ttf|woff)$/,
+        type: "asset/resource",
       },
       {
         test: /\.(scss|css|sass)$/,
