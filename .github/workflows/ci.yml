@@ -1,0 +1,77 @@
+name: camino-suite ci
+
+on:
+  push:
+    workflow_dispatch:
+    branches:
+      - main
+      - dev
+  pull_request:
+    branches:
+        - main
+        - dev
+
+env:
+  node_version: 16
+
+jobs:
+  BuildAndDeploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          cache: yarn
+          node-version: ${{ env.node_version }}
+      - name: install yarn dependencies - host
+        working-directory: ./host
+        run: yarn install
+      - name: build - host
+        working-directory: ./host
+        run: yarn build
+      - name: install yarn dependencies - explorer
+        working-directory: ./explorer
+        run: yarn install
+      - name: build - explorer
+        working-directory: ./explorer
+        run: yarn build
+      - name: install yarn dependencies - wallet
+        working-directory: ./wallet
+        run: yarn install
+      - name: build - wallet
+        working-directory: ./wallet
+        run: yarn build
+
+      - name: Set bucket names
+        id: setBucketNames
+        run: |
+          if [[ "${{ github.ref_name }}" == "main" ]]; then
+              echo "::set-output name=suite_bucket::suite.camino.foundation"
+              echo "::set-output name=wallet_bucket::suite-wallet.camino.foundation"
+              echo "::set-output name=explorer_bucket::suite-explorer.camino.foundation"
+          elif [[ "${{ github.ref_name }}" == "dev" ]]; then
+              echo "::set-output name=suite_bucket::playground.suite.camino.foundation"
+              echo "::set-output name=wallet_bucket::playground.suite-wallet.camino.foundation"
+              echo "::set-output name=explorer_bucket::playground.suite-explorer.camino.foundation"
+          fi
+
+      - name: 'gcloud authentication'
+        id: 'auth'
+        uses: 'google-github-actions/auth@v1'
+        with:
+            credentials_json: '${{ secrets.GOOGLE_CREDENTIALS }}'
+
+      - name: 'Set up Cloud SDK'
+        uses: 'google-github-actions/setup-gcloud@v1'
+
+      - name: update suite bucket files
+        working-directory: ./host
+        run: gsutil rsync -R -d dist gs://${{ steps.setBucketNames.outputs.suite_bucket }}
+
+      - name: update suite-explorer bucket files
+        working-directory: ./explorer
+        run: gsutil rsync -R -d dist gs://${{ steps.setBucketNames.outputs.explorer_bucket }}
+
+      - name: update suite-wallet bucket files
+        working-directory: ./wallet
+        run: gsutil rsync -R -d dist gs://${{ steps.setBucketNames.outputs.wallet_bucket }}
