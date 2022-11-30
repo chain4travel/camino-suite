@@ -1,12 +1,7 @@
 import * as React from "react";
-import { Link } from "react-router-dom";
-import { Box, Container, AppBar, Toolbar, useTheme } from "@mui/material";
-import Logo from "./Logo";
+import { Box, Container, Toolbar, useTheme } from "@mui/material";
 import SearchInput from "./SearchInput";
-import ThemeSwitcherButton from "./ThemeSwitcherButton";
-import NetworkSelect from "./NetworkSelect";
 import Links from "./Links";
-import Drawer from "./Drawer";
 import useWidth from "app/hooks/useWidth";
 
 export function NavBar() {

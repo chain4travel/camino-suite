@@ -82,11 +82,19 @@ export default function MainLayout() {
   }, [currentTheme]);
   return (
     <>
-      <Box sx={{ width: "100%", backgroundColor: "card.navBar" }}>
+      <Box
+        sx={{
+          width: "100%",
+          backgroundColor: "card.navBar",
+          borderBottom: "1px solid",
+          borderColor: "card.border",
+          marginBottom: "20px",
+        }}
+      >
         <NavBar />
       </Box>
       <Content />
-      {/* <Footer /> */}
+      <Footer />
     </>
   );
 }
