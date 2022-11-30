@@ -1,6 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import Layout from "./Layout";
+import Root from "./layout/index";
 import { HelmetProvider } from "react-helmet-async";
 import ThemeConfig from "./theme";
 import { Provider as ReduxProvider } from "react-redux";
@@ -15,7 +15,7 @@ ReactDOM.render(
     <ExplorerStoreProvider>
       <ReduxProvider store={store}>
         <ThemeConfig>
-          <Layout />
+          <Root />
         </ThemeConfig>
       </ReduxProvider>
     </ExplorerStoreProvider>

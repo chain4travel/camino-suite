@@ -34,7 +34,6 @@ const accounts_module: Module<AccountsState, RootState> = {
   mutations: {
     loadAccounts(state) {
       state.accounts = getLocalStorageAccounts();
-      console.log("test: ", [...state.accounts]);
     },
   },
   actions: {

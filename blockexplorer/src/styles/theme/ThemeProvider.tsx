@@ -13,7 +13,7 @@ const getDesignTokens = (mode: PaletteMode): ThemeOptions => ({
 });
 
 export const ColorModeContext = React.createContext<{
-  toggleColorMode?: () => void;
+  toggleColorMode?: (v: string) => void;
 }>({});
 
 const getColorModeFromLocalStorage = () => {
@@ -28,10 +28,9 @@ export const ThemeProvider = (props: { children: React.ReactChild }) => {
   const colorMode = useMemo(
     () => ({
       // The dark mode switch would invoke this method
-      toggleColorMode: () => {
-        setMode((prevMode: PaletteMode) => {
-          // console.log(prevMode);
-          return prevMode === "light" ? "dark" : "light";
+      toggleColorMode: (s) => {
+        setMode(() => {
+          return s;
         });
       },
     }),

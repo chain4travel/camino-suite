@@ -70,7 +70,6 @@ const appConfigSlice = createSlice({
   initialState,
   reducers: {
     changeNetwork: (state, action) => {
-      console.log(action.payload);
       let active = state.networks.find(
         (item) => item.displayName === action.payload
       );
@@ -89,7 +88,6 @@ const appConfigSlice = createSlice({
       state.chains = [];
     },
     changeTheme: (state, { payload }) => {
-      console.log(payload);
       state.activeTheme = payload;
     },
   },

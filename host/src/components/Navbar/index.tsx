@@ -7,9 +7,14 @@ import ThemeSwitcher from "./ThemeSwitcher";
 
 export default function Navbar() {
   return (
-    <AppBar position="fixed">
+    <AppBar
+      sx={{ width: "100%", display: "flex", alignItems: "center" }}
+      position="fixed"
+    >
       <Toolbar
         sx={{
+          width: "100%",
+          maxWidth: "xl",
           display: "flex",
           height: "auto",
           p: "0",

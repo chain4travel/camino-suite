@@ -106,7 +106,6 @@ const appConfigSlice = createSlice({
       state.chains = [];
     },
     changeActiveApp: (state, { payload }) => {
-      console.log(payload);
       if (payload === "Wallet") state.activeApp = "wallet";
       else if (payload === "Explorer") state.activeApp = "blockexplorer";
       else state.activeApp = "";

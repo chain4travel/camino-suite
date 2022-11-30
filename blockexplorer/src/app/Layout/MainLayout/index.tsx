@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { NavBar } from "app/components/NavBar";
-import { Outlet } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "store/configureStore";
 import { Typography, Box, CircularProgress, Container } from "@mui/material";
 import {
@@ -68,19 +68,31 @@ export default function MainLayout() {
   const activeNetwork = useAppSelector(getActiveNetwork);
   const dispatch = useAppDispatch();
   const themeContext = useContext(ColorModeContext);
-  const [themeDefined, setThemeDefined] = useState(false);
+  const navigate = useNavigate();
+  const [load, setLoad] = useState(true);
   useEffect(() => {
+    if (load) setLoad(false);
+    else if (activeNetwork === "mainnet-testnet") navigate("/mainnet");
+    else navigate("/");
     dispatch(getChains());
   }, [activeNetwork]); // eslint-disable-line
   const currentTheme = useAppSelector(selectedTheme);
   useEffect(() => {
-    if (themeDefined && themeContext.toggleColorMode) {
-      themeContext?.toggleColorMode();
-    } else setThemeDefined(true);
+    themeContext?.toggleColorMode(currentTheme);
   }, [currentTheme]);
   return (
     <>
-      {/* <NavBar /> */}
+      <Box
+        sx={{
+          width: "100%",
+          backgroundColor: "card.navBar",
+          borderBottom: "1px solid",
+          borderColor: "card.border",
+          marginBottom: "20px",
+        }}
+      >
+        <NavBar />
+      </Box>
       <Content />
       <Footer />
     </>

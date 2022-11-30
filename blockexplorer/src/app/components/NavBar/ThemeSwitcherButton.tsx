@@ -4,17 +4,11 @@ import WbSunnyOutlinedIcon from "@mui/icons-material/WbSunnyOutlined";
 import DarkModeOutlinedIcon from "@mui/icons-material/DarkModeOutlined";
 import { useTheme } from "@mui/material";
 import { ColorModeContext } from "../../../styles/theme/ThemeProvider";
-import { useAppSelector } from "../../../store/configureStore";
-import { selectedTheme } from "../../../store/app-config";
 
 export default function ThemeSwitcherButton() {
   const theme = useTheme();
   const themeContext = useContext(ColorModeContext);
   const themeMode = theme.palette.mode === "light" ? true : false;
-  const currentTheme = useAppSelector(selectedTheme);
-  useEffect(() => {
-    console.log(currentTheme);
-  }, []);
   return (
     <Button
       sx={{ p: "0px", minWidth: "36px" }}

@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../hooks/reduxHooks";
 import { toggleTheme } from "../../redux/slices/theme";
 import { Button, Typography, useTheme } from "@mui/material";
@@ -15,12 +15,15 @@ export default function ThemeSwitcher() {
   const currentTheme = useAppSelector(getTheme);
   const { changeTheme } = useStore();
   useEffect(() => {
-    console.log(currentTheme);
-  }, [currentTheme]);
+    document.documentElement.setAttribute("data-theme", "night");
+  }, []);
   return (
     <Button
       variant="text"
       onClick={() => {
+        if (currentTheme === "light")
+          document.documentElement.setAttribute("data-theme", "night");
+        else document.documentElement.setAttribute("data-theme", "day");
         changeTheme(currentTheme === "light" ? "dark" : "light");
         dispatch(toggleTheme());
       }}
