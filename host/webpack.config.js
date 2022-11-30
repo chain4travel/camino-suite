@@ -4,7 +4,7 @@ const ModuleFederationPlugin = require("webpack/lib/container/ModuleFederationPl
 const deps = require("./package.json").dependencies;
 module.exports = {
   output: {
-    publicPath: "http://localhost:3000/",
+    publicPath: "https://playground.suite.camino.foundation/",
   },
 
   resolve: {
@@ -44,8 +44,10 @@ module.exports = {
       name: "host_react",
       filename: "remoteEntry.js",
       remotes: {
-        Explorer: "Explorer@http://localhost:3001/remoteEntry.js",
-        wallet: "wallet@http://localhost:3003/remoteEntry.js",
+        Explorer:
+          "Explorer@https://playground.suite-explorer.camino.foundation/remoteEntry.js",
+        wallet:
+          "wallet@https://playground.suite-wallet.camino.foundation/remoteEntry.js",
       },
       exposes: {},
       shared: {
@@ -62,6 +64,7 @@ module.exports = {
     }),
     new HtmlWebPackPlugin({
       template: "./src/index.html",
+      favicon: "./public/favicon.ico",
     }),
   ],
 };
