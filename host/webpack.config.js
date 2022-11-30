@@ -64,6 +64,7 @@ module.exports = {
     }),
     new HtmlWebPackPlugin({
       template: "./src/index.html",
+      favicon: "./public/favicon.ico",
     }),
   ],
 };
