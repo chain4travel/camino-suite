@@ -6,7 +6,7 @@ const path = require("path");
 const deps = require("./package.json").dependencies;
 module.exports = {
   output: {
-    publicPath: "https://playground.suite-wallet.camino.foundation/",
+    publicPath: "http://localhost:3003/",
   },
 
   devServer: {
@@ -32,8 +32,16 @@ module.exports = {
         },
       },
       {
-        test: /\.(png|jpg|gif|svg|eot|ttf|woff)$/,
-        type: "asset/resource",
+        test: /\.svg$/,
+        use: ["vue-svg-loader"],
+      },
+      {
+        test: /\.(png|jpe?g|gif)$/i,
+        use: [
+          {
+            loader: "file-loader",
+          },
+        ],
       },
       {
         test: /\.(scss|css|sass)$/,

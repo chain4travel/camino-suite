@@ -92,11 +92,11 @@ export default class Home extends Vue {}
 <style scoped lang="scss">
 @use "../styles/main";
 .home {
-  margin-top: 69px;
+  padding-top: 100px;
   display: flex;
   justify-content: center;
   min-height: calc(100vh - 80px);
-  background-image: url("../assets/home_background.svg");
+  background-image: url("../assets/wallet-logo.svg");
   background-size: cover;
   background-position: center;
   align-items: center;
