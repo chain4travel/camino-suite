@@ -10,6 +10,7 @@ import router from "@/router";
 import { web3 } from "@/evm";
 import { setSocketNetwork } from "../../../providers";
 import { setAvalanche } from "@c4tplatform/camino-wallet-sdk";
+
 const network_module: Module<NetworkState, RootState> = {
   namespaced: true,
   state: {
@@ -22,10 +23,6 @@ const network_module: Module<NetworkState, RootState> = {
   mutations: {
     addNetwork(state, net: AvaNetwork) {
       state.networks.push(net);
-    },
-    dispatchedFromCS(state, net: string) {
-      console.log(state, net);
-      console.log("hello from camino suite");
     },
   },
   getters: {

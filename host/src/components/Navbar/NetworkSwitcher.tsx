@@ -26,27 +26,36 @@ export default function NetworkSwitcher() {
   const [network, setNetwork] = useState(
     nameOfActiveNetwork(networks, activeNetwork)
   );
+  const [networkStatus, setNetworkStatus] = useState("");
   const { changeNetworkExplorer } = useStore();
   useEffect(() => {
     setNetwork(nameOfActiveNetwork(networks, activeNetwork));
     dispatch(getChains());
   }, [activeNetwork]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const handleRemoveCustomNetwork = (id: string) => {
-    const customNetworks = JSON.parse(
-      localStorage.getItem("customNetworks") || "[]"
-    );
-    const newCustomNetworks = customNetworks.filter(
-      (network: Network) => network.id !== id
-    );
-    localStorage.setItem("customNetworks", JSON.stringify(newCustomNetworks));
-    dispatch(changeNetwork("Columbus"));
-    dispatch(removeCustomNetwork(id));
-  };
-  const helloWorld = async () => {
+  // const handleRemoveCustomNetwork = (id: string) => {
+  //   const customNetworks = JSON.parse(
+  //     localStorage.getItem("customNetworks") || "[]"
+  //   );
+  //   const newCustomNetworks = customNetworks.filter(
+  //     (network: Network) => network.id !== id
+  //   );
+  //   localStorage.setItem("customNetworks", JSON.stringify(newCustomNetworks));
+  //   dispatch(changeNetwork("Columbus"));
+  //   dispatch(removeCustomNetwork(id));
+  // };
+  useEffect(() => {
+    console.log(networkStatus);
+  }, [networkStatus]);
+  const switchNetwork = async () => {
+    let networks = store.getters["Network/allNetworks"];
+    networks.forEach((element) => {
+      console.log(element.name);
+    });
     try {
+      setNetworkStatus("loading");
+      console.log("connecting");
       let networks = store.getters["Network/allNetworks"];
-      // console.log(networks[1]);
       const res = await store.dispatch("Network/setNetwork", networks[1]);
       console.log(res);
       store.dispatch(
@@ -58,6 +67,7 @@ export default function NetworkSwitcher() {
         },
         { root: true }
       );
+      setNetworkStatus("success");
     } catch (e) {
       store.state.Network.selectedNetwork = null;
       store.state.Network.status = "disconnected";
@@ -70,20 +80,20 @@ export default function NetworkSwitcher() {
         },
         { root: true }
       );
+
+      setNetworkStatus("failed");
     }
   };
   const changeNetworkCamino = (network: string) => {
     // let active = networks.find((item) => item.displayName === network);
     // let activeNetwork = active?.id;
-    helloWorld();
+    switchNetwork();
     changeNetworkExplorer(network);
   };
   return (
     <Select
       value={network}
       onChange={(e) => {
-        // console.log(e.target.value);
-        console.log("network changed");
         changeNetworkCamino(e.target.value);
         dispatch(changeNetwork(e.target.value));
       }}
@@ -119,7 +129,7 @@ export default function NetworkSwitcher() {
                   backgroundColor: "secondary.main",
                 },
               }}
-              onClick={() => handleRemoveCustomNetwork(network.id)}
+              // onClick={() => handleRemoveCustomNetwork(network.id)}
             >
               <Icon path={mdiTrashCanOutline} size={0.7} color="white" />
             </Button>
