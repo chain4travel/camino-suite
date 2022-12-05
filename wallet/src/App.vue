@@ -4,7 +4,7 @@
       <template>
         <!-- <UrlBanner></UrlBanner> -->
 
-        <!-- <navbar v-show="isNavbar"></navbar> -->
+        <navbar v-show="isNavbar"></navbar>
 
         <div class="main_cols" :wallet_view="!isNavbar">
           <UpgradeToAccountModal></UpgradeToAccountModal>
@@ -204,23 +204,3 @@ p {
   }
 }
 </style>
-
-<!-- <template>
-  <div class="container">
-    <Home></Home>
-    <div>Name: vue2-ts-app</div>
-    <div>Framework: vue2</div>
-    <div>Language: TypeScript</div>
-    <div>CSS: Empty CSS</div>
-    <v-btn elevation="2">button</v-btn>
-  </div>
-</template>
-
-<script lang="ts">
-import Home from "./views/Home.vue";
-export default {
-  components: {
-    Home,
-  },
-};
-</script> -->

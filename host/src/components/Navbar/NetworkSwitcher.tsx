@@ -16,6 +16,7 @@ import SelectedNetwork from "./SelectNetwork";
 import AddNewNetwork from "./AddNewNetwork";
 import { getChains } from "../../api/index";
 import { useStore } from "Explorer/useStore";
+import store from "wallet/store";
 
 export default function NetworkSwitcher() {
   const dispatch = useAppDispatch();
@@ -42,9 +43,39 @@ export default function NetworkSwitcher() {
     dispatch(changeNetwork("Columbus"));
     dispatch(removeCustomNetwork(id));
   };
+  const helloWorld = async () => {
+    try {
+      let networks = store.getters["Network/allNetworks"];
+      // console.log(networks[1]);
+      const res = await store.dispatch("Network/setNetwork", networks[1]);
+      console.log(res);
+      store.dispatch(
+        "Notifications/add",
+        {
+          title: "Network Connected",
+          message: "Connected to " + networks[1].name,
+          type: "success",
+        },
+        { root: true }
+      );
+    } catch (e) {
+      store.state.Network.selectedNetwork = null;
+      store.state.Network.status = "disconnected";
+      store.dispatch(
+        "Notifications/add",
+        {
+          title: "Connection Failed",
+          message: `Failed to connect ${networks[1].name}`,
+          type: "error",
+        },
+        { root: true }
+      );
+    }
+  };
   const changeNetworkCamino = (network: string) => {
-    let active = networks.find((item) => item.displayName === network);
-    let activeNetwork = active?.id;
+    // let active = networks.find((item) => item.displayName === network);
+    // let activeNetwork = active?.id;
+    helloWorld();
     changeNetworkExplorer(network);
   };
   return (
@@ -52,6 +83,7 @@ export default function NetworkSwitcher() {
       value={network}
       onChange={(e) => {
         // console.log(e.target.value);
+        console.log("network changed");
         changeNetworkCamino(e.target.value);
         dispatch(changeNetwork(e.target.value));
       }}
