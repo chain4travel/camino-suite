@@ -48,7 +48,7 @@ export const AddressSection = ({ type, timestamp, id, chainType }) => {
               height: '50px',
             }}
           >
-            {location.pathname.split('/')[3][0]}
+            {location.pathname.split('/')[4][0]}
           </Box>
         </Grid>
         <Grid

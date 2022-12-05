@@ -35,10 +35,10 @@
         </filter>
       </defs>
     </svg>
+    <!-- <img class="blur" src="@/assets/ellipse.svg/" alt /> -->
     <div class="home--wrapper">
-      <Ellipse class="blur" />
       <div class="header">
-        <Logo />
+        <img src="@/assets/wallet-logo.svg" alt />
         <div class="header--title">
           {{ $t("home.header") }}
         </div>
@@ -79,12 +79,9 @@
 import "reflect-metadata";
 import { Vue, Component } from "vue-property-decorator";
 import ToS from "@/components/misc/ToS.vue";
-import Logo from "@/assets/wallet-logo.svg";
-import Ellipse from "@/assets/ellipse.svg";
-
 @Component({
   name: "home",
-  components: { ToS, Logo, Ellipse },
+  components: { ToS },
 })
 export default class Home extends Vue {}
 </script>
@@ -92,7 +89,7 @@ export default class Home extends Vue {}
 <style scoped lang="scss">
 @use "../styles/main";
 .home {
-  margin-top: 69px;
+  padding-top: 100px;
   display: flex;
   justify-content: center;
   min-height: calc(100vh - 80px);
@@ -161,13 +158,12 @@ export default class Home extends Vue {}
   width: max-content;
 }
 /* ==========================================
- Nav
- ========================================== */
-
+Nav
+========================================== */
 @include main.mobile-device {
   .home {
     svg {
-      width: 300px;
+      width: 100%;
     }
     .header {
       &--title {

@@ -57,7 +57,7 @@ export const networks = [
 
 let initialState: initialStateAppConfigType = {
   activeNetwork: getNetworkFromLocalStorage(),
-  activeApp: "blockexplorer",
+  activeApp: "explorer",
   networks: [
     {
       id: "camino-testnet",
@@ -107,7 +107,7 @@ const appConfigSlice = createSlice({
     },
     changeActiveApp: (state, { payload }) => {
       if (payload === "Wallet") state.activeApp = "wallet";
-      else if (payload === "Explorer") state.activeApp = "blockexplorer";
+      else if (payload === "Explorer") state.activeApp = "explorer";
       else state.activeApp = "";
     },
   },

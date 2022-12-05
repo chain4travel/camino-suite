@@ -32,7 +32,6 @@ export default function Logo() {
         value={app}
         onChange={(e) => {
           setApp(e.target.value);
-          navigate("/");
           dispatch(changeActiveApp(e.target.value));
         }}
         sx={{
@@ -76,7 +75,12 @@ export default function Logo() {
         )}
       >
         {APPS_CONSTS.map((app, index) => (
-          <MenuItem key={index} value={app.name} divider>
+          <MenuItem
+            key={index}
+            value={app.name}
+            divider
+            onClick={() => navigate(app.url)}
+          >
             <Box sx={{ width: "100%" }}>
               <Box
                 sx={{

@@ -1,27 +1,28 @@
-import { Helmet } from "react-helmet-async";
-import React from "react";
-import { GlobalStyle } from "styles/global-styles";
-import { useTranslation } from "react-i18next";
-import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
+import { Helmet } from 'react-helmet-async';
+import React from 'react';
+import { GlobalStyle } from 'styles/global-styles';
+import { useTranslation } from 'react-i18next';
+import { BrowserRouter, Route, Routes, Navigate } from 'react-router-dom';
 import {
   CChainPage,
   Blocks,
   CTransactions,
   Address,
-} from "./pages/CChainPages";
+} from './pages/CChainPages';
 import {
   XChainPage,
   XAddressDetail,
   XPTransactions,
-} from "./pages/XChainPages";
-import { PChainPage } from "./pages/PChainPages";
-import MainLayout from "./Layout/MainLayout";
-import { CssBaseline } from "@mui/material";
-import { ComingSoonPage } from "./pages/ComingSoon";
-import { TransactionDetails, BlockDetails } from "./pages/CChainPages";
-import XPTransactionDetails from "./pages/XChainPages/Transactions/XPTransactionsDetails";
-import Validators from "./pages/Validators";
-import NotFoundPage from "./pages/PageNotFound";
+} from './pages/XChainPages';
+import { PChainPage } from './pages/PChainPages';
+import MainLayout from './Layout/MainLayout';
+import { CssBaseline } from '@mui/material';
+import { ComingSoonPage } from './pages/ComingSoon';
+import { TransactionDetails, BlockDetails } from './pages/CChainPages';
+import XPTransactionDetails from './pages/XChainPages/Transactions/XPTransactionsDetails';
+import Validators from './pages/Validators';
+import NotFoundPage from './pages/PageNotFound';
+import { BASE_PATH } from '../utils/route-paths';
 
 export function App() {
   const { i18n } = useTranslation();
@@ -37,8 +38,11 @@ export function App() {
         <meta name="description" content="Camino Block Explorer" />
       </Helmet>
       <Routes>
-        <Route path="/" element={<MainLayout />}>
-          <Route path="/" element={<Navigate to="/c-chain" />} />
+        <Route path={`${BASE_PATH}`} element={<MainLayout />}>
+          <Route
+            path={`${BASE_PATH}`}
+            element={<Navigate to={`${BASE_PATH}/c-chain`} />}
+          />
           <Route path="c-chain">
             <Route index element={<CChainPage />} />
             <Route path="blocks">
@@ -67,8 +71,8 @@ export function App() {
             </Route>
             <Route path="address/:id" element={<XAddressDetail />} />
           </Route>
-          <Route path="/mainnet" element={<ComingSoonPage />} />
-          <Route path="/validators" element={<Validators />} />
+          <Route path={`${BASE_PATH}/mainnet`} element={<ComingSoonPage />} />
+          <Route path={`${BASE_PATH}/validators`} element={<Validators />} />
           <Route path="*" element={<NotFoundPage />}></Route>
         </Route>
       </Routes>

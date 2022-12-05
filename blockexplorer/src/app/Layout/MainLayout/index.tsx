@@ -1,29 +1,29 @@
-import React, { useContext, useEffect, useState } from "react";
-import { NavBar } from "app/components/NavBar";
-import { Outlet, useNavigate } from "react-router-dom";
-import { useAppDispatch, useAppSelector } from "store/configureStore";
-import { Typography, Box, CircularProgress, Container } from "@mui/material";
+import React, { useContext, useEffect, useState } from 'react';
+import { NavBar } from 'app/components/NavBar';
+import { Outlet, useNavigate } from 'react-router-dom';
+import { useAppDispatch, useAppSelector } from 'store/configureStore';
+import { Typography, Box, CircularProgress, Container } from '@mui/material';
 import {
   getActiveNetwork,
   selectAllChains,
   selectNetworkStatus,
   changeNetwork,
-} from "store/app-config";
-import { Footer } from "app/components/Footer";
-import { Status } from "types";
-import { getChains } from "api";
-import PageContainer from "app/components/PageContainer";
-import MainButton from "app/components/MainButton";
-import { useTheme } from "@mui/material";
-import { ColorModeContext } from "../../../styles/theme/ThemeProvider";
-import { selectedTheme } from "../../../store/app-config";
+} from 'store/app-config';
+import { Footer } from 'app/components/Footer';
+import { Status } from 'types';
+import { getChains } from 'api';
+import PageContainer from 'app/components/PageContainer';
+import MainButton from 'app/components/MainButton';
+import { useTheme } from '@mui/material';
+import { ColorModeContext } from '../../../styles/theme/ThemeProvider';
+import { selectedTheme } from '../../../store/app-config';
 
 const Content: React.FC = () => {
   const chains = useAppSelector(selectAllChains);
   const status = useAppSelector(selectNetworkStatus);
   const dispatch = useAppDispatch();
   const handleClick = () => {
-    dispatch(changeNetwork("Columbus"));
+    dispatch(changeNetwork('Columbus'));
   };
   if (status === Status.LOADING || status === Status.IDLE)
     return (
@@ -31,7 +31,7 @@ const Content: React.FC = () => {
         <CircularProgress
           color="secondary"
           size={75}
-          style={{ margin: "auto", display: "block" }}
+          style={{ margin: 'auto', display: 'block' }}
         />
       </Container>
     );
@@ -40,19 +40,19 @@ const Content: React.FC = () => {
     <PageContainer pageTitle="Error" metaContent="An error has occurred">
       <Box
         sx={{
-          display: "flex",
+          display: 'flex',
           flex: 1,
-          justifyContent: "center",
-          alignItems: "center",
-          flexDirection: "column",
-          gap: "20px",
+          justifyContent: 'center',
+          alignItems: 'center',
+          flexDirection: 'column',
+          gap: '20px',
         }}
       >
         <Typography
           variant="h4"
           component="span"
           fontWeight="fontWeightBold"
-          sx={{ color: "error.light" }}
+          sx={{ color: 'error.light' }}
         >
           Something went wrong, Please Again!
         </Typography>
@@ -72,8 +72,9 @@ export default function MainLayout() {
   const [load, setLoad] = useState(true);
   useEffect(() => {
     if (load) setLoad(false);
-    else if (activeNetwork === "mainnet-testnet") navigate("/mainnet");
-    else navigate("/");
+    else if (activeNetwork === 'mainnet-testnet')
+      navigate(`${BASE_PATH}/mainnet`);
+    else navigate('/');
     dispatch(getChains());
   }, [activeNetwork]); // eslint-disable-line
   const currentTheme = useAppSelector(selectedTheme);
@@ -84,11 +85,11 @@ export default function MainLayout() {
     <>
       <Box
         sx={{
-          width: "100%",
-          backgroundColor: "card.navBar",
-          borderBottom: "1px solid",
-          borderColor: "card.border",
-          marginBottom: "20px",
+          width: '100%',
+          backgroundColor: 'card.navBar',
+          borderBottom: '1px solid',
+          borderColor: 'card.border',
+          marginBottom: '20px',
         }}
       >
         <NavBar />

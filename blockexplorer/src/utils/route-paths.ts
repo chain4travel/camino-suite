@@ -1,10 +1,12 @@
-export const CCHAIN = '/c-chain';
+export const BASE_PATH = '/explorer';
 
-export const XCHAIN = '/x-chain';
+export const CCHAIN = BASE_PATH + '/c-chain';
 
-export const PCHAIN = '/p-chain';
+export const XCHAIN = BASE_PATH + '/x-chain';
 
-export const MAINNET = '/mainnet';
+export const PCHAIN = BASE_PATH + '/p-chain';
+
+export const MAINNET = BASE_PATH + '/mainnet';
 
 export const CTRANSACTIONS = CCHAIN + '/transactions';
 
@@ -24,7 +26,7 @@ export const PBLOCKS = PCHAIN + '/blocks';
 
 export const PADDRESS = PCHAIN + '/address';
 
-export const VALIDATORS = '/validators';
+export const VALIDATORS = BASE_PATH + '/validators';
 
 export const WALLET = 'https://wallet.camino.foundation/';
 

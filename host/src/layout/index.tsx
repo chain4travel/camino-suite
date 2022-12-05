@@ -1,42 +1,50 @@
-import React from "react";
-
+import React, { Children } from "react";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { useSelector } from "react-redux";
+import { RootState } from "../redux/store";
+import { Box, Toolbar } from "@mui/material";
+import Navbar from "../components/Navbar";
 import ExplorerApp from "./ExplorerApp";
 import Wallet from "./WalletApp";
-// import MainLayout from "./MainLayout";
-import { RootState } from "../redux/store";
-import Navbar from "../components/Navbar";
 
 const RenderApp = () => {
   const activeApp = useSelector(
     (state: RootState) => state.appConfig.activeApp
   );
-  if (activeApp === "blockexplorer") return <ExplorerApp />;
+  if (activeApp === "explorer") return <ExplorerApp />;
   else if (activeApp === "wallet") return <Wallet />;
   return <div>Not Yet Implemented</div>;
 };
 
-const MainLayout = () => {
+const MainLayout = ({ children }) => {
   return (
-    <div>
+    <Box sx={{ display: "flex", flexDirection: "column" }}>
       <Navbar />
-      <RenderApp />
-    </div>
+      {/* <Toolbar /> */}
+      <Box sx={{ flex: 1 }}>
+        {/* <RenderApp /> */}
+        {children}
+      </Box>
+    </Box>
   );
 };
 
 export default function Layout() {
+  const activeApp = useSelector(
+    (state: RootState) => state.appConfig.activeApp
+  );
+
   return (
-    <>
-      <BrowserRouter>
+    <BrowserRouter>
+      <MainLayout>
         <Routes>
-          <Route path="*" element={<MainLayout />}>
-            {/* <Route path="*" element={<Navigate to="/" />} /> */}
-            {/* <Route path="*" element={<RenderApp />}></Route> */}
-          </Route>
+          <Route path="/" element={<Navigate to={`/${activeApp}`} />} />
+          <Route path="/explorer/*" element={<ExplorerApp />} />
+          <Route path="/wallet/*" element={<Wallet />} />
+          {/* <Route path="*" element={<Navigate to="/" />} /> */}
+          {/* <Route path="*" element={<RenderApp />}></Route> */}
         </Routes>
-      </BrowserRouter>
-    </>
+      </MainLayout>
+    </BrowserRouter>
   );
 }

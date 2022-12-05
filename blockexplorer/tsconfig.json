@@ -12,5 +12,9 @@
       "noEmit": true,
       "allowSyntheticDefaultImports": true
     }
+  },
+  "paths": {
+    "@/*": ["./src/*"],
+    "@/utils/*": ["./src/utils/*"]
   }
 }

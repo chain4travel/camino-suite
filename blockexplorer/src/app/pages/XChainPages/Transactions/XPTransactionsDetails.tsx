@@ -23,7 +23,7 @@ export default function XPTransactionDetails() {
     const res = (
       await axios.get(
         `${magellanAddress}${transactionApi}/${
-          location.pathname.split('/')[3]
+          location.pathname.split('/')[4]
         }`,
       )
     ).data;
@@ -87,7 +87,7 @@ export default function XPTransactionDetails() {
             <BackButton backToLink={`/${location.pathname.split('/')[1]}`} />
             <Typography variant="h5" component="h5" fontWeight="fontWeightBold">
               {`${location.pathname
-                .split('/')[1][0]
+                .split('/')[2][0]
                 .toLocaleUpperCase()}-Chain Transaction`}
             </Typography>
           </Grid>
