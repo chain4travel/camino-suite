@@ -12,7 +12,7 @@ const RenderApp = () => {
   const activeApp = useSelector(
     (state: RootState) => state.appConfig.activeApp
   );
-  if (activeApp === "blockexplorer") return <ExplorerApp />;
+  if (activeApp === "blockexplorer") return <Wallet />;
   else if (activeApp === "wallet") return <Wallet />;
   return <div>Not Yet Implemented</div>;
 };
