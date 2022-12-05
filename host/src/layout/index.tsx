@@ -7,12 +7,26 @@ import Wallet from "./WalletApp";
 // import MainLayout from "./MainLayout";
 import { RootState } from "../redux/store";
 import Navbar from "../components/Navbar";
+// import Protected from "./Protected";
 
+// const RenderApp = () => {
+//   const activeApp = useSelector(
+//     (state: RootState) => state.appConfig.activeApp
+//   );
+//   if (activeApp === "blockexplorer")
+//     return (
+//       <Protected>
+//         <ExplorerApp />
+//       </Protected>
+//     );
+//   else if (activeApp === "wallet") return <Wallet />;
+//   return <div>Not Yet Implemented</div>;
+// };
 const RenderApp = () => {
   const activeApp = useSelector(
     (state: RootState) => state.appConfig.activeApp
   );
-  if (activeApp === "blockexplorer") return <Wallet />;
+  if (activeApp === "blockexplorer") return <ExplorerApp />;
   else if (activeApp === "wallet") return <Wallet />;
   return <div>Not Yet Implemented</div>;
 };
