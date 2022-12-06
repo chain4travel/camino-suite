@@ -1,11 +1,12 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Box, Typography, Chip } from "@mui/material";
 import { useAppSelector } from "../../hooks/reduxHooks";
-import { selectNetworkStatus } from "../../redux/slices/app-config";
-
-interface ISelectNetworkProps {
-  value: string | undefined;
-}
+// import { selectNetworkStatus } from "../../redux/slices/app-config";
+import { Status } from "../../@types";
+import {
+  getActiveNetwork,
+  selectNetworkStatus,
+} from "../../redux/slices/network";
 
 const networkStatusColor = (status: string) => {
   switch (status) {
@@ -22,9 +23,9 @@ const networkStatusColor = (status: string) => {
   }
 };
 
-export default function SelectedNetwork({ value }: ISelectNetworkProps) {
+export default function SelectedNetwork() {
   const status = useAppSelector(selectNetworkStatus);
-
+  const activeNetwork = useAppSelector(getActiveNetwork);
   return (
     <Box
       sx={{
@@ -48,7 +49,7 @@ export default function SelectedNetwork({ value }: ISelectNetworkProps) {
           textOverflow: "ellipsis",
         }}
       >
-        {value}
+        {activeNetwork?.name}
       </Typography>
     </Box>
   );
