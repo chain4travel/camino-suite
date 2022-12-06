@@ -4,8 +4,11 @@ import { Toolbar } from "@mui/material";
 import Logo from "../Logo";
 import NetworkSwitcher from "./NetworkSwitcher";
 import ThemeSwitcher from "./ThemeSwitcher";
+import { useAppSelector } from "../../hooks/reduxHooks";
+import { getActiveNetwork } from "../../redux/slices/network";
 
 export default function Navbar() {
+  const activeNetwork = useAppSelector(getActiveNetwork);
   return (
     <AppBar
       sx={{ width: "100%", display: "flex", alignItems: "center" }}
@@ -26,7 +29,7 @@ export default function Navbar() {
         <Logo />
         <Box sx={{ display: "flex", alignItems: "center", gap: ".5rem" }}>
           <ThemeSwitcher />
-          <NetworkSwitcher />
+          {activeNetwork && <NetworkSwitcher />}
         </Box>
       </Toolbar>
     </AppBar>

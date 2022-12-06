@@ -42,7 +42,7 @@ const notifications_module: Module<NotifState, RootState> = {
         title: data.title,
         message: data.message,
         color: color,
-        duration: 100000,
+        duration: 5000,
       };
 
       setTimeout(() => {
@@ -52,7 +52,7 @@ const notifications_module: Module<NotifState, RootState> = {
             store.state.items.splice(i, 1);
           }
         }
-      }, 100000);
+      }, duration);
       store.state.items.push(item);
     },
   },
