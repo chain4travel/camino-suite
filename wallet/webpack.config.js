@@ -7,7 +7,7 @@ const path = require('path')
 const deps = require('./package.json').dependencies
 module.exports = {
     output: {
-        publicPath: 'http://localhost:3003/',
+        publicPath: 'https://playground.suite-wallet.camino.foundation/',
         // where images are stored
         assetModuleFilename: 'public/[hash][ext][query]',
     },

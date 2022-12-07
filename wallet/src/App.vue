@@ -60,7 +60,7 @@ export default {
         }
         if (router.currentRoute.path === '/') router.push('/wallet')
 
-        await this.$store.dispatch('Network/init')
+        // await this.$store.dispatch('Network/init')
         this.$store.dispatch('Assets/initErc20List')
         this.$store.dispatch('Assets/ERCNft/init')
         this.$store.dispatch('updateAvaxPrice')
