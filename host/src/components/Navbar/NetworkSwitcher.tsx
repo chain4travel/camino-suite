@@ -11,6 +11,7 @@ import { getChains } from "../../api/index";
 import { useStore } from "Explorer/useStore";
 import store from "wallet/store";
 import {
+  addNetworks,
   changeActiveNetwork,
   changeNetworkStatus,
   getActiveNetwork,
@@ -28,17 +29,29 @@ export default function NetworkSwitcher() {
     // dispatch(getChains());
   }, [activeNetwork]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // const handleRemoveCustomNetwork = (id: string) => {
-  //   const customNetworks = JSON.parse(
-  //     localStorage.getItem("customNetworks") || "[]"
-  //   );
-  //   const newCustomNetworks = customNetworks.filter(
-  //     (network: Network) => network.id !== id
-  //   );
-  //   localStorage.setItem("customNetworks", JSON.stringify(newCustomNetworks));
-  //   dispatch(changeNetwork("Columbus"));
-  //   dispatch(removeCustomNetwork(id));
-  // };
+  const handleRemoveCustomNetwork = () => {
+    store.dispatch("Network/removeCustomNetwork", activeNetwork);
+    store.dispatch(
+      "Notifications/add",
+      {
+        title: "Network Removed",
+        message: "Removed custom network.",
+      },
+      { root: true }
+    );
+    let networks = store.getters["Network/allNetworks"];
+    dispatch(addNetworks(networks));
+    switchNetwork(networks[0]);
+    // const customNetworks = JSON.parse(
+    //   localStorage.getItem("customNetworks") || "[]"
+    // );
+    // const newCustomNetworks = customNetworks.filter(
+    //   (network: Network) => network.id !== id
+    // );
+    // localStorage.setItem("customNetworks", JSON.stringify(newCustomNetworks));
+    // dispatch(changeNetwork("Columbus"));
+    // dispatch(removeCustomNetwork(id));
+  };
   // useEffect(() => {
   //   console.log(activeNetwork.name);
   // }, [networks]);
@@ -119,7 +132,7 @@ export default function NetworkSwitcher() {
                   backgroundColor: "secondary.main",
                 },
               }}
-              // onClick={() => handleRemoveCustomNetwork(network.id)}
+              onClick={() => handleRemoveCustomNetwork()}
             >
               <Icon path={mdiTrashCanOutline} size={0.7} color="white" />
             </Button>
