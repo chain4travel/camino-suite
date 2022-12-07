@@ -24,7 +24,7 @@
                 <br />
                 <br />
             </form>
-            <router-link to="/access" class="link">{{ $t('access.cancel') }}</router-link>
+            <router-link to="/wallet/access" class="link">{{ $t('access.cancel') }}</router-link>
         </div>
     </div>
 </template>
@@ -54,7 +54,7 @@ export default class Account extends Vue {
 
     created() {
         if (!this.account) {
-            this.$router.replace('/access')
+            this.$router.replace('/wallet/access')
             return
         }
     }

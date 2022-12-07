@@ -29,7 +29,7 @@ const ifNotAuthenticated = (to: Route, from: Route, next: Function) => {
         next()
         return
     }
-    next('/wallet')
+    next('/wallet/home')
 }
 
 const ifAuthenticated = (to: Route, from: Route, next: Function) => {
@@ -37,18 +37,18 @@ const ifAuthenticated = (to: Route, from: Route, next: Function) => {
         next()
         return
     }
-    next('/')
+    next('/wallet')
 }
 
 const routes = [
     {
-        path: '/',
+        path: '/wallet',
         name: 'home',
         component: Home,
         beforeEnter: ifNotAuthenticated,
     },
     {
-        path: '/access',
+        path: '/wallet/access',
         children: [
             {
                 path: '/',
@@ -77,18 +77,18 @@ const routes = [
         beforeEnter: ifNotAuthenticated,
     },
     {
-        path: '/legal',
+        path: '/wallet/legal',
         name: 'legal',
         component: Legal,
     },
     {
-        path: '/create',
+        path: '/wallet/create',
         name: 'create',
         component: Create,
         beforeEnter: ifNotAuthenticated,
     },
     {
-        path: '/wallet',
+        path: '/wallet/home',
         children: [
             {
                 path: '/',

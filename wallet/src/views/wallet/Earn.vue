@@ -112,7 +112,7 @@ export default class Earn extends Vue {
         this.subtitle = this.$t('earn.subtitle2') as string
     }
     transfer() {
-        this.$router.replace('/wallet/cross_chain')
+        this.$router.replace('/wallet/home/cross_chain')
     }
 
     viewRewards() {

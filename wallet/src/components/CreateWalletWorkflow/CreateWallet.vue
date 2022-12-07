@@ -15,7 +15,7 @@
                                 <img v-else src="@/assets/diamond-secondary-night.svg" alt />
                             </div>
                             <h1>{{ $t('create.generate') }}</h1>
-                            <router-link to="/access" class="link">
+                            <router-link to="/wallet/access" class="link">
                                 {{ $t('create.but_have') }}
                             </router-link>
                             <div class="options">
@@ -29,7 +29,9 @@
                             </div>
                             <ToS></ToS>
 
-                            <router-link to="/" class="link">{{ $t('create.cancel') }}</router-link>
+                            <router-link to="/wallet" class="link">
+                                {{ $t('create.cancel') }}
+                            </router-link>
                         </div>
                         <!-- PHASE 2 -->
                         <div v-else class="stage_2">
@@ -122,7 +124,7 @@
                                                     >
                                                         {{ $t('create.success_submit') }}
                                                     </button>
-                                                    <router-link to="/" class="link">
+                                                    <router-link to="/wallet" class="link">
                                                         {{ $t('create.cancel') }}
                                                     </router-link>
                                                     <ToS style="margin: 30px 0 !important"></ToS>

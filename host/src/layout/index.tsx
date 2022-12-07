@@ -1,4 +1,4 @@
-import React, { Children } from "react";
+import React from "react";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { RootState } from "../redux/store";
@@ -20,7 +20,7 @@ const MainLayout = ({ children }) => {
   return (
     <Box sx={{ display: "flex", flexDirection: "column" }}>
       <Navbar />
-      {/* <Toolbar /> */}
+      <Toolbar />
       <Box sx={{ flex: 1 }}>
         {/* <RenderApp /> */}
         {children}

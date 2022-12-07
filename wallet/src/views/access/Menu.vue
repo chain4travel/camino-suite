@@ -1,19 +1,19 @@
 <template>
     <div class="access_card">
         <h1>{{ $t('access.title') }}</h1>
-        <router-link to="/create" class="link">{{ $t('access.create') }}</router-link>
+        <router-link to="/wallet/create" class="link">{{ $t('access.create') }}</router-link>
         <div class="menus">
             <AccountsFound class="accounts_menu"></AccountsFound>
             <div class="options">
-                <router-link to="/access/privatekey" class="menu_option button_primary">
+                <router-link to="/wallet/access/privatekey" class="menu_option button_primary">
                     {{ $t('access.but_private_key') }}
                     <v-icon>mdi-shield-key-outline</v-icon>
                 </router-link>
-                <router-link to="/access/mnemonic" class="menu_option button_primary">
+                <router-link to="/wallet/access/mnemonic" class="menu_option button_primary">
                     {{ $t('access.but_mnemonic') }}
                     <v-icon>mdi-list-box-outline</v-icon>
                 </router-link>
-                <router-link to="/access/keystore" class="menu_option button_primary">
+                <router-link to="/wallet/access/keystore" class="menu_option button_primary">
                     {{ $t('access.but_keystore') }}
                     <v-icon>mdi-file-key-outline</v-icon>
                 </router-link>
@@ -23,7 +23,7 @@
         </div>
 
         <ToS style="margin: 20px !important"></ToS>
-        <router-link to="/" class="link">{{ $t('access.cancel') }}</router-link>
+        <router-link to="/wallet" class="link">{{ $t('access.cancel') }}</router-link>
     </div>
 </template>
 

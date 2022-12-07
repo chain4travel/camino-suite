@@ -38,6 +38,7 @@ import NetworkLoadingBlock from '@/components/misc/NetworkLoadingBlock'
 import UpgradeToAccountModal from '@/components/modals/SaveAccount/UpgradeToAccountModal'
 import LedgerWalletLoading from '@/components/modals/LedgerWalletLoading'
 import UrlBanner from '@/components/misc/UrlBanner'
+import router from '@/router'
 
 export default {
     components: {
@@ -57,6 +58,7 @@ export default {
         if (locale) {
             this.$root.$i18n.locale = locale
         }
+        if (router.currentRoute.path === '/') router.push('/wallet')
 
         await this.$store.dispatch('Network/init')
         this.$store.dispatch('Assets/initErc20List')
@@ -65,7 +67,7 @@ export default {
     },
     computed: {
         isNavbar() {
-            if (this.$route.path.includes('/wallet')) {
+            if (this.$route.path.includes('/wallet/home')) {
                 return false
             }
             return true

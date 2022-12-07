@@ -6,32 +6,44 @@
         </transition> -->
         <div class="top-bar">
             <div class="links">
-                <router-link to="/wallet" class="wallet_link">
+                <router-link to="/wallet/home" class="wallet_link">
                     {{ $t('wallet.sidebar.portfolio') }}
                 </router-link>
-                <router-link to="/wallet/transfer" data-cy="wallet_transfer" class="wallet_link">
+                <router-link
+                    to="/wallet/home/transfer"
+                    data-cy="wallet_transfer"
+                    class="wallet_link"
+                >
                     {{ $t('wallet.sidebar.send') }}
                 </router-link>
                 <router-link
-                    to="/wallet/cross_chain"
+                    to="/wallet/home/cross_chain"
                     data-cy="wallet_export"
                     class="wallet_export wallet_link"
                 >
                     {{ $t('wallet.sidebar.export') }}
                 </router-link>
-                <router-link to="/wallet/earn" data-cy="wallet_earn" class="wallet_link">
+                <router-link to="/wallet/home/earn" data-cy="wallet_earn" class="wallet_link">
                     {{ $t('wallet.sidebar.earn') }}
                 </router-link>
-                <router-link to="/wallet/studio" data-cy="wallet_studio" class="wallet_link">
+                <router-link to="/wallet/home/studio" data-cy="wallet_studio" class="wallet_link">
                     {{ $t('wallet.sidebar.studio') }}
                 </router-link>
-                <router-link to="/wallet/activity" data-cy="wallet_activity" class="wallet_link">
+                <router-link
+                    to="/wallet/home/activity"
+                    data-cy="wallet_activity"
+                    class="wallet_link"
+                >
                     {{ $t('wallet.sidebar.activity') }}
                 </router-link>
-                <router-link to="/wallet/keys" data-cy="wallet_manage" class="wallet_link">
+                <router-link to="/wallet/home/keys" data-cy="wallet_manage" class="wallet_link">
                     {{ $t('wallet.sidebar.manage') }}
                 </router-link>
-                <router-link to="/wallet/advanced" data-cy="wallet_advanced" class="wallet_link">
+                <router-link
+                    to="/wallet/home/advanced"
+                    data-cy="wallet_advanced"
+                    class="wallet_link"
+                >
                     {{ $t('wallet.sidebar.advanced') }}
                 </router-link>
             </div>
@@ -160,6 +172,7 @@ export default class Wallet extends Vue {
     column-gap: 15px;
     background-color: var(--bg);
     grid-template-columns: 1fr 300px;
+    min-width: 100vw;
 }
 
 .top-bar {
@@ -167,6 +180,13 @@ export default class Wallet extends Vue {
     width: 100%;
     height: 60px;
     z-index: 999;
+    display: flex;
+    align-items: center;
+    background-color: var(--bg);
+    .links {
+        display: flex;
+        gap: 14px;
+    }
 }
 
 @media screen and (max-width: 900px) {

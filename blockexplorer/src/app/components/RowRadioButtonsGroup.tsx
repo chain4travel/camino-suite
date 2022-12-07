@@ -63,14 +63,14 @@ export default function RowRadioButtonsGroup({
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (
-      (location.pathname.split('/')[1] === ChainType.C_CHAIN &&
+      (location.pathname.split('/')[2] === ChainType.C_CHAIN &&
         event.target.value !== Timeframe.MONTHS_1 &&
         cGasFeesLoading !== Status.LOADING &&
         cTransactionsLoading !== Status.LOADING) ||
-      (location.pathname.split('/')[1] === ChainType.X_CHAIN &&
+      (location.pathname.split('/')[2] === ChainType.X_CHAIN &&
         xGasFeesLoading !== Status.LOADING &&
         xTransactionsLoading !== Status.LOADING) ||
-      (location.pathname.split('/')[1] === ChainType.P_CHAIN &&
+      (location.pathname.split('/')[2] === ChainType.P_CHAIN &&
         pGasFeesLoading !== Status.LOADING &&
         pTransactionsLoading !== Status.LOADING)
     ) {
@@ -79,22 +79,22 @@ export default function RowRadioButtonsGroup({
   };
 
   useEffect(() => {
-    if (location.pathname.split('/')[1] === ChainType.C_CHAIN) {
+    if (location.pathname.split('/')[2] === ChainType.C_CHAIN) {
       dispatch(loadNumberOfTransactions(timeFrame));
       dispatch(loadTotalGasFess(timeFrame));
     } else {
       dispatch(
         loadNumberOfPXTransactions({
           timeframe: timeFrame,
-          chainId: getChainID(location.pathname.split('/')[1][0]),
-          chainAlias: location.pathname.split('/')[1][0],
+          chainId: getChainID(location.pathname.split('/')[2][0]),
+          chainAlias: location.pathname.split('/')[2][0],
         }),
       );
       dispatch(
         loadTotalPXGasFess({
           timeframe: timeFrame,
-          chainId: getChainID(location.pathname.split('/')[1][0]),
-          chainAlias: location.pathname.split('/')[1][0],
+          chainId: getChainID(location.pathname.split('/')[2][0]),
+          chainAlias: location.pathname.split('/')[2][0],
         }),
       );
     }

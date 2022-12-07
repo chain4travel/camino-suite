@@ -1,7 +1,7 @@
 <template>
     <p>
         By using this application you agree to the
-        <router-link to="/legal">Terms of Use</router-link>
+        <router-link to="/wallet/legal">Terms of Use</router-link>
         .
     </p>
 </template>
