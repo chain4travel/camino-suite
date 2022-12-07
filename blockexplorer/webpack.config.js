@@ -1,22 +1,22 @@
-const HtmlWebPackPlugin = require("html-webpack-plugin");
-const ModuleFederationPlugin = require("webpack/lib/container/ModuleFederationPlugin");
-const path = require("path");
-const deps = require("./package.json").devDependencies;
+const HtmlWebPackPlugin = require('html-webpack-plugin');
+const ModuleFederationPlugin = require('webpack/lib/container/ModuleFederationPlugin');
+const path = require('path');
+const deps = require('./package.json').devDependencies;
 module.exports = {
   output: {
-    publicPath: "https://playground.suite-explorer.camino.foundation/",
+    publicPath: 'http://localhost:3001/',
   },
 
   resolve: {
-    extensions: [".tsx", ".ts", ".jsx", ".js", ".json"],
+    extensions: ['.tsx', '.ts', '.jsx', '.js', '.json'],
     alias: {
-      root: path.resolve(__dirname, "src"),
-      app: path.resolve(__dirname, "src/app"),
-      store: path.resolve(__dirname, "src/store"),
-      api: path.resolve(__dirname, "src/api"),
-      types: path.resolve(__dirname, "src/types"),
-      utils: path.resolve(__dirname, "src/utils"),
-      styles: path.resolve(__dirname, "src/styles"),
+      root: path.resolve(__dirname, 'src'),
+      app: path.resolve(__dirname, 'src/app'),
+      store: path.resolve(__dirname, 'src/store'),
+      api: path.resolve(__dirname, 'src/api'),
+      types: path.resolve(__dirname, 'src/types'),
+      utils: path.resolve(__dirname, 'src/utils'),
+      styles: path.resolve(__dirname, 'src/styles'),
     },
   },
 
@@ -29,38 +29,38 @@ module.exports = {
     rules: [
       {
         test: /\.m?js/,
-        type: "javascript/auto",
+        type: 'javascript/auto',
         resolve: {
           fullySpecified: false,
         },
       },
       {
         test: /\.(css|s[ac]ss)$/i,
-        use: ["style-loader", "css-loader", "postcss-loader"],
+        use: ['style-loader', 'css-loader', 'postcss-loader'],
       },
       {
         test: /\.(ts|tsx|js|jsx)$/,
         exclude: /node_modules/,
         use: {
-          loader: "babel-loader",
+          loader: 'babel-loader',
         },
       },
       {
         test: /\.svg$/i,
         issuer: /\.[jt]sx?$/,
-        use: ["@svgr/webpack", "url-loader"],
+        use: ['@svgr/webpack', 'url-loader'],
       },
     ],
   },
 
   plugins: [
     new ModuleFederationPlugin({
-      name: "Explorer",
-      filename: "remoteEntry.js",
+      name: 'Explorer',
+      filename: 'remoteEntry.js',
       remotes: {},
       exposes: {
-        "./Explorer": "./src/App.tsx",
-        "./useStore": "./src/store/shareStore/index.tsx",
+        './Explorer': './src/App.tsx',
+        './useStore': './src/store/shareStore/index.tsx',
       },
       shared: {
         ...deps,
@@ -68,14 +68,15 @@ module.exports = {
           singleton: true,
           requiredVersion: deps.react,
         },
-        "react-dom": {
+        'react-dom': {
           singleton: true,
-          requiredVersion: deps["react-dom"],
+          requiredVersion: deps['react-dom'],
         },
       },
     }),
     new HtmlWebPackPlugin({
-      template: "./src/index.html",
+      template: './src/index.html',
+      favicon: './public/favicon.ico',
     }),
   ],
 };

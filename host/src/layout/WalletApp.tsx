@@ -16,11 +16,9 @@ const LoadWallet = () => {
 
 const Wallet = () => {
   return (
-    <div style={{ marginTop: "60px" }}>
-      <React.Suspense fallback={<div>Loading...</div>}>
-        <LoadWallet />
-      </React.Suspense>
-    </div>
+    <React.Suspense fallback={<div>Loading...</div>}>
+      <LoadWallet />
+    </React.Suspense>
   );
 };
 

@@ -10,7 +10,7 @@ export default function AppBar(theme: Theme) {
           boxShadow: "none",
           color: theme.palette.text.primary,
           backgroundColor: theme.palette.background.paper,
-          // borderBottom: `1px solid ${theme.palette.divider}`,
+          borderBottom: `1px solid ${theme.palette.divider}`,
         },
       },
     },

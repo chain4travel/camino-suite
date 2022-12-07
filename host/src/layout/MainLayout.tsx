@@ -10,8 +10,9 @@ import {
   changeNetworkStatus,
 } from "../redux/slices/network";
 import { matchNetworkStatus } from "../utils/componentsUtils";
+import { Box, Toolbar } from "@mui/material";
 
-const MainLayout = () => {
+const MainLayout = ({ children }) => {
   const [loadNetworks, setLoadNetworks] = useState(true);
   const dispatch = useAppDispatch();
   const init = async () => {
@@ -29,10 +30,11 @@ const MainLayout = () => {
     init();
   }, []);
   return (
-    <div>
+    <Box sx={{ display: "flex", flexDirection: "column" }}>
       <Navbar />
-      {!loadNetworks && <RenderApp />}
-    </div>
+      <Toolbar />
+      {!loadNetworks && <Box sx={{ flex: 1 }}>{children}</Box>}
+    </Box>
   );
 };
 

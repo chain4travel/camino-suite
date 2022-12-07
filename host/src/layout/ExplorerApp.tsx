@@ -11,11 +11,9 @@ const ExplorerApp = () => {
     changeTheme(currentTheme);
   }, []);
   return (
-    <div style={{ marginTop: "50px" }}>
-      <React.Suspense fallback={<div>Loading...</div>}>
-        <Explorer />
-      </React.Suspense>
-    </div>
+    <React.Suspense fallback={<div>Loading...</div>}>
+      <Explorer />
+    </React.Suspense>
   );
 };
 

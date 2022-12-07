@@ -96,7 +96,7 @@ export default function XPTransactions() {
         >
           <SubPageTitle
             title={`${location.pathname
-              .split('/')[1][0]
+              .split('/')[2][0]
               .toLocaleUpperCase()}-Transactions`}
             backToLink={XCHAIN}
           />

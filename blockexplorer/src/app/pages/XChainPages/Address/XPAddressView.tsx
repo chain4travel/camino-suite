@@ -53,7 +53,7 @@ export default function XPAddressView({ chainType }: { chainType: ChainType }) {
   const [rows, setRows] = React.useState<any[]>([]);
   const location = useLocation();
 
-  const CHAIN_ID = getChainID(location.pathname.split('/')[3][0].toLowerCase());
+  const CHAIN_ID = getChainID(location.pathname.split('/')[4][0].toLowerCase());
   const loadMore = React.useCallback(() => {
     setLoading(true);
     loadItems();
@@ -62,7 +62,7 @@ export default function XPAddressView({ chainType }: { chainType: ChainType }) {
   const loadItems = async () => {
     await new Promise<void>(resolve => {
       loadTransactions({
-        address: location.pathname.split('/')[3],
+        address: location.pathname.split('/')[4],
         offset: rows.length,
         limit: 10,
         chainID: CHAIN_ID,
@@ -100,7 +100,7 @@ export default function XPAddressView({ chainType }: { chainType: ChainType }) {
 
   React.useEffect(() => {
     loadTransactions({
-      address: location.pathname.split('/')[3],
+      address: location.pathname.split('/')[4],
       offset: 0,
       limit: 10,
       chainID: CHAIN_ID,

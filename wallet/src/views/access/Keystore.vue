@@ -28,7 +28,7 @@
                     {{ $t('access.submit') }}
                 </v-btn>
             </form>
-            <router-link to="/access" class="link">{{ $t('access.cancel') }}</router-link>
+            <router-link to="/wallet/access" class="link">{{ $t('access.cancel') }}</router-link>
         </div>
     </div>
 </template>

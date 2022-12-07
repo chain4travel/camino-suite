@@ -19,7 +19,7 @@ const BlockDetails: FC = () => {
   const loading = useAppSelector(getCBlockDetailStatus);
 
   React.useEffect(() => {
-    dispatch(fetchCBlockDetail(parseInt(location.pathname.split('/')[3])));
+    dispatch(fetchCBlockDetail(parseInt(location.pathname.split('/')[4])));
   }, [location, dispatch]);
 
   return (
@@ -54,7 +54,7 @@ const BlockDetails: FC = () => {
             }}
           >
             <SubPageTitle
-              title={`Block ${location.pathname.split('/')[3]}`}
+              title={`Block ${location.pathname.split('/')[4]}`}
               backToLink={CCHAIN}
             />
             <Box

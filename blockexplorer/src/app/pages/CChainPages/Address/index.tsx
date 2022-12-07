@@ -22,10 +22,10 @@ const CAddressDetails: FC = () => {
   const { isDesktop } = useWidth();
   const [value, setValue] = React.useState(0);
   const location = useLocation();
-  const [address, setAddress] = React.useState(location.pathname.split('/')[3]);
+  const [address, setAddress] = React.useState(location.pathname.split('/')[4]);
 
   useEffect(() => {
-    setAddress(location.pathname.split('/')[3]);
+    setAddress(location.pathname.split('/')[4]);
   }, [location]);
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);

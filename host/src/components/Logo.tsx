@@ -6,7 +6,6 @@ import { APPS_CONSTS } from "../constants/apps-consts";
 import useWidth from "../hooks/useWidth";
 import Icon from "@mdi/react";
 import { useDispatch } from "react-redux";
-import { useAppDispatch } from "../hooks/reduxHooks";
 import { changeActiveApp } from "../redux/slices/app-config";
 import { useNavigate } from "react-router-dom";
 
@@ -15,12 +14,15 @@ export default function Logo() {
   const navigate = useNavigate();
   const themeMode = theme.palette.mode === "light" ? true : false;
   const { isDesktop } = useWidth();
-  const [app, setApp] = useState("Explorer");
+  const location = window.location.pathname.split("/")[1];
+  const [app, setApp] = useState(
+    location.charAt(0).toUpperCase() + location.slice(1) || "Explorer"
+  );
   const dispatch = useDispatch();
   return (
     <Box
       sx={{
-        // borderRight: `1px solid ${theme.palette.divider}`,
+        borderRight: `1px solid ${theme.palette.divider}`,
         minHeight: "100%",
         display: "flex",
         alignItems: "center",
@@ -32,7 +34,6 @@ export default function Logo() {
         value={app}
         onChange={(e) => {
           setApp(e.target.value);
-          navigate("/");
           dispatch(changeActiveApp(e.target.value));
         }}
         sx={{
@@ -52,10 +53,10 @@ export default function Logo() {
             <img
               src={
                 !isDesktop
-                  ? "./assets/CaminoLogo.svg"
+                  ? "/assets/CaminoLogo.svg"
                   : themeMode
-                  ? "./assets/LightModeLogo.svg"
-                  : "./assets/DarkModeLogo.svg"
+                  ? "/assets/LightModeLogo.svg"
+                  : "/assets/DarkModeLogo.svg"
               }
               alt="Camino Logo"
               style={
@@ -76,7 +77,12 @@ export default function Logo() {
         )}
       >
         {APPS_CONSTS.map((app, index) => (
-          <MenuItem key={index} value={app.name} divider>
+          <MenuItem
+            key={index}
+            value={app.name}
+            divider
+            onClick={() => navigate(app.url)}
+          >
             <Box sx={{ width: "100%" }}>
               <Box
                 sx={{

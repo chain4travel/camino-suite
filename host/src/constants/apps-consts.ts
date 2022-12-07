@@ -1,8 +1,7 @@
 export const APPS_CONSTS = [
   {
     name: "Explorer",
-    subText:
-      "A wonderful serenity has taken possession.hkjgkh kjhku jkhbkjhb khjbkuhb",
+    subText: "A wonderful serenity has taken possession.",
     url: "/explorer",
   },
   {
@@ -10,14 +9,14 @@ export const APPS_CONSTS = [
     subText: "A wonderful serenity has taken possession.",
     url: "/wallet",
   },
-  {
-    name: "Store",
-    subText: "A wonderful serenity has taken possession.",
-    url: "/store",
-  },
-  {
-    name: "Validator",
-    subText: "A wonderful serenity has taken possession.",
-    url: "/validator",
-  },
+  // {
+  //   name: "Store",
+  //   subText: "A wonderful serenity has taken possession.",
+  //   url: "/store",
+  // },
+  // {
+  //   name: "Validator",
+  //   subText: "A wonderful serenity has taken possession.",
+  //   url: "/validator",
+  // },
 ];
