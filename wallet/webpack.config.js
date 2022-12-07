@@ -8,8 +8,6 @@ const deps = require('./package.json').dependencies
 module.exports = {
     output: {
         publicPath: 'https://playground.suite-wallet.camino.foundation/',
-        // where images are stored
-        assetModuleFilename: 'public/[hash][ext][query]',
     },
 
     devServer: {
@@ -37,10 +35,6 @@ module.exports = {
             {
                 test: /\.(png|jpg|gif|svg|eot|ttf|woff)$/,
                 type: 'asset/resource',
-                include: [
-                    //     // Add the paths to the folders that contain your icons
-                    path.resolve(__dirname, 'src/assets'),
-                ],
             },
             {
                 test: /\.(scss|css|sass)$/,
