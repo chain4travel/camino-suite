@@ -60,6 +60,7 @@ module.exports = {
       exposes: {
         "./store": "./src/store/index.ts",
         "./mountApp": "./src/bootloader.ts",
+        "./AvaNetwork": "./src/js/AvaNetwork.ts",
       },
       shared: {
         ...deps,
