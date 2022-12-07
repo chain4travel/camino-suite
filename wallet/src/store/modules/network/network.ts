@@ -10,6 +10,7 @@ import router from '@/router'
 import { web3 } from '@/evm'
 import { setSocketNetwork } from '../../../providers'
 import { setAvalanche } from '@c4tplatform/camino-wallet-sdk'
+
 const network_module: Module<NetworkState, RootState> = {
     namespaced: true,
     state: {
@@ -43,7 +44,6 @@ const network_module: Module<NetworkState, RootState> = {
             state.networksCustom.push(net)
             dispatch('save')
         },
-
         async removeCustomNetwork({ state, dispatch }, net: AvaNetwork) {
             let index = state.networksCustom.indexOf(net)
             state.networksCustom.splice(index, 1)
@@ -136,7 +136,7 @@ const network_module: Module<NetworkState, RootState> = {
             // If authenticated
             if (rootState.isAuth) {
                 // Go back to wallet page
-                router.replace('/wallet/home')
+                router.replace('/wallet')
                 for (var i = 0; i < rootState.wallets.length; i++) {
                     let w = rootState.wallets[i]
                     w.onnetworkchange()
@@ -207,7 +207,7 @@ const network_module: Module<NetworkState, RootState> = {
             try {
                 let isSet = await dispatch('loadSelectedNetwork')
                 if (!isSet) {
-                    await dispatch('setNetwork', state.networks[0])
+                    await dispatch('setNetwork', state.networks[1])
                 }
                 return true
             } catch (e) {

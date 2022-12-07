@@ -4,58 +4,103 @@ import { useAppDispatch, useAppSelector } from "../../hooks/reduxHooks";
 import { Button, MenuItem, Typography, Select, useTheme } from "@mui/material";
 import { mdiTrashCanOutline } from "@mdi/js";
 import Icon from "@mdi/react";
-import {
-  changeNetwork,
-  getActiveNetwork,
-  getNetworks,
-  removeCustomNetwork,
-} from "../../redux/slices/app-config";
-import { Network } from "../../@types/store";
 import { nameOfActiveNetwork } from "../../utils/componentsUtils";
 import SelectedNetwork from "./SelectNetwork";
 import AddNewNetwork from "./AddNewNetwork";
 import { getChains } from "../../api/index";
 import { useStore } from "Explorer/useStore";
+import store from "wallet/store";
+import {
+  addNetworks,
+  changeActiveNetwork,
+  changeNetworkStatus,
+  getActiveNetwork,
+  getNetworks,
+} from "../../redux/slices/network";
+import { Status } from "../../@types";
 
 export default function NetworkSwitcher() {
   const dispatch = useAppDispatch();
   const networks = useAppSelector(getNetworks);
   const activeNetwork = useAppSelector(getActiveNetwork);
   const theme = useTheme();
-  const [network, setNetwork] = useState(
-    nameOfActiveNetwork(networks, activeNetwork)
-  );
-  const { changeNetworkExplorer } = useStore();
+  // const { changeNetworkExplorer } = useStore();
   useEffect(() => {
-    setNetwork(nameOfActiveNetwork(networks, activeNetwork));
-    dispatch(getChains());
+    // dispatch(getChains());
   }, [activeNetwork]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const handleRemoveCustomNetwork = (id: string) => {
-    const customNetworks = JSON.parse(
-      localStorage.getItem("customNetworks") || "[]"
+  const handleRemoveCustomNetwork = () => {
+    store.dispatch("Network/removeCustomNetwork", activeNetwork);
+    store.dispatch(
+      "Notifications/add",
+      {
+        title: "Network Removed",
+        message: "Removed custom network.",
+      },
+      { root: true }
     );
-    const newCustomNetworks = customNetworks.filter(
-      (network: Network) => network.id !== id
-    );
-    localStorage.setItem("customNetworks", JSON.stringify(newCustomNetworks));
-    dispatch(changeNetwork("Columbus"));
-    dispatch(removeCustomNetwork(id));
+    let networks = store.getters["Network/allNetworks"];
+    dispatch(addNetworks(networks));
+    switchNetwork(networks[0]);
+    // const customNetworks = JSON.parse(
+    //   localStorage.getItem("customNetworks") || "[]"
+    // );
+    // const newCustomNetworks = customNetworks.filter(
+    //   (network: Network) => network.id !== id
+    // );
+    // localStorage.setItem("customNetworks", JSON.stringify(newCustomNetworks));
+    // dispatch(changeNetwork("Columbus"));
+    // dispatch(removeCustomNetwork(id));
   };
-  const changeNetworkCamino = (network: string) => {
-    let active = networks.find((item) => item.displayName === network);
-    let activeNetwork = active?.id;
-    changeNetworkExplorer(network);
+  // useEffect(() => {
+  //   console.log(activeNetwork.name);
+  // }, [networks]);
+  // useEffect(() => {
+  //   console.log(activeNetwork?.name);
+  // }, [activeNetwork]);
+
+  const switchNetwork = async (network) => {
+    try {
+      dispatch(changeNetworkStatus(Status.LOADING));
+      await store.dispatch("Network/setNetwork", network);
+      store.dispatch(
+        "Notifications/add",
+        {
+          title: "Network Connected",
+          message: "Connected to " + networks.name,
+          type: "success",
+        },
+        { root: true }
+      );
+      dispatch(changeNetworkStatus(Status.SUCCEEDED));
+    } catch (e) {
+      store.state.Network.selectedNetwork = null;
+      store.state.Network.status = "disconnected";
+      store.dispatch(
+        "Notifications/add",
+        {
+          title: "Connection Failed",
+          message: `Failed to connect ${network.name}`,
+          type: "error",
+        },
+        { root: true }
+      );
+      dispatch(changeNetworkStatus(Status.FAILED));
+    } finally {
+      dispatch(changeActiveNetwork(network));
+    }
+  };
+  const handleChangeNetwork = (selected: string) => {
+    let selectedNetwork = networks.find((net) => net.name === selected);
+    switchNetwork(selectedNetwork);
   };
   return (
     <Select
-      value={network}
+      value={activeNetwork.name}
       onChange={(e) => {
-        // console.log(e.target.value);
-        changeNetworkCamino(e.target.value);
-        dispatch(changeNetwork(e.target.value));
+        handleChangeNetwork(e.target.value);
       }}
-      renderValue={() => <SelectedNetwork value={network} />}
+      renderValue={() => <SelectedNetwork />}
       sx={{
         maxWidth: "13rem",
         ".MuiOutlinedInput-notchedOutline": { border: "none" },
@@ -65,14 +110,14 @@ export default function NetworkSwitcher() {
       {networks?.map((network) => (
         <MenuItem
           key={network.id}
-          value={network.displayName}
+          value={network.name}
           divider
           sx={{ gap: ".6rem", justifyContent: "space-between" }}
         >
           <Typography variant="subtitle1" component="span" noWrap>
-            {network.displayName}
+            {network.name}
           </Typography>
-          {!network.predefined && (
+          {!network.readonly && (
             <Button
               sx={{
                 width: "30px",
@@ -87,7 +132,7 @@ export default function NetworkSwitcher() {
                   backgroundColor: "secondary.main",
                 },
               }}
-              onClick={() => handleRemoveCustomNetwork(network.id)}
+              onClick={() => handleRemoveCustomNetwork()}
             >
               <Icon path={mdiTrashCanOutline} size={0.7} color="white" />
             </Button>
