@@ -1,14 +1,33 @@
-import React from "react";
-import { AppBar, Box } from "@mui/material";
+import React, { useState, useEffect } from "react";
+import { AppBar, Box, Typography } from "@mui/material";
 import { Toolbar } from "@mui/material";
 import Logo from "../Logo";
 import NetworkSwitcher from "./NetworkSwitcher";
 import ThemeSwitcher from "./ThemeSwitcher";
 import { useAppSelector } from "../../hooks/reduxHooks";
 import { getActiveNetwork } from "../../redux/slices/network";
+import store from "wallet/store";
+import { mdiLogout } from "@mdi/js";
+import Icon from "@mdi/react";
 
 export default function Navbar() {
   const activeNetwork = useAppSelector(getActiveNetwork);
+  const [auth, setAuth] = useState(false);
+  const logout = async () => {
+    await store.dispatch("logout");
+    await store.dispatch("Notifications/add", {
+      title: "Logout",
+      message: "You have successfully logged out of your wallet.",
+    });
+    setAuth(false);
+  };
+
+  useEffect(() => {
+    setInterval(() => {
+      if (store.state.isAuth) setAuth(true);
+    }, 1000);
+  }, []);
+
   return (
     <AppBar
       sx={{ width: "100%", display: "flex", alignItems: "center" }}
@@ -30,6 +49,17 @@ export default function Navbar() {
         <Box sx={{ display: "flex", alignItems: "center", gap: ".5rem" }}>
           <ThemeSwitcher />
           {activeNetwork && <NetworkSwitcher />}
+          {auth && (
+            <Box
+              onClick={logout}
+              sx={{ display: "flex", alignItems: "center", gap: "5px" }}
+            >
+              <Icon path={mdiLogout} size={0.7} />
+              <Typography variant="subtitle1" component="span">
+                logout
+              </Typography>
+            </Box>
+          )}
         </Box>
       </Toolbar>
     </AppBar>
