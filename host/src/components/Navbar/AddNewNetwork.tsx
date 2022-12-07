@@ -3,11 +3,7 @@ import { useState } from "react";
 import { Network } from "../../@types/store";
 import { useAppDispatch, useAppSelector } from "../../hooks/reduxHooks";
 import useWidth from "../../hooks/useWidth";
-import {
-  changeNetwork,
-  getNetworks,
-  addCustomNetwork,
-} from "../../redux/slices/app-config";
+import { getNetworks } from "../../redux/slices/app-config";
 import {
   Box,
   Button,
@@ -17,7 +13,10 @@ import {
   TextField,
   Modal,
 } from "@mui/material";
-import { getChains } from "../../api";
+import axios from "axios";
+import { AvaNetwork } from "wallet/AvaNetwork";
+import store from "wallet/store";
+import { addNetworks } from "../../redux/slices/network";
 
 export default function AddNewNetwork() {
   const [open, setOpen] = useState(false);
@@ -59,22 +58,77 @@ export default function AddNewNetwork() {
   const networks = useAppSelector(getNetworks);
   const [error, setError] = useState("");
 
-  const handleSubmit = () => {
-    NewNetwork.id = NewNetwork.displayName.replace(/\s/g, "-").toLowerCase();
-    if (handleDuplicateNetworkId(NewNetwork, networks)) {
-      setError("Network Name already exists");
+  const tryConnection = async (
+    url,
+    credential = false
+  ): Promise<number | null> => {
+    try {
+      console.log(url);
+      let resp = await axios.post(
+        url + "/ext/info",
+        {
+          jsonrpc: "2.0",
+          id: 1,
+          method: "info.getNetworkID",
+        },
+        {
+          withCredentials: credential,
+        }
+      );
+      return parseInt(resp.data.result.networkID);
+    } catch (err) {
+      return null;
+    }
+  };
+
+  const handleSubmit = async () => {
+    // if (
+    //   NewNetwork.protocol !== "http://" &&
+    //   NewNetwork.protocol !== "https://"
+    // ) {
+    //   setError("URLs require the appropriate HTTP/HTTPS prefix.");
+    //   return;
+    // }
+    // NewNetwork.id = NewNetwork.displayName.replace(/\s/g, "-").toLowerCase();
+    // if (handleDuplicateNetworkId(NewNetwork, networks)) {
+    //   setError("Network Name already exists");
+    //   return;
+    // }
+    // if (NewNetwork.magellanAddress.length === 0)
+    //   NewNetwork.magellanAddress = `${NewNetwork.protocol}//${NewNetwork.host}:${NewNetwork.port}`;
+    // if (isNaN(NewNetwork.port)) {
+    //   setError("Invalid port.");
+    //   return;
+    // }
+
+    let url = `${NewNetwork.protocol}://${NewNetwork.host}:${NewNetwork.port}`;
+    let credNum = await tryConnection(url, true);
+    let noCredNum = await tryConnection(url);
+    let validNetId = credNum || noCredNum;
+    if (!validNetId) {
+      setError("Camino Network Not Found");
       return;
     }
+
     setError("");
-    if (NewNetwork.magellanAddress.length === 0)
-      NewNetwork.magellanAddress = `${NewNetwork.protocol}//${NewNetwork.host}:${NewNetwork.port}`;
-    const ll = localStorage.getItem("customNetworks") as string;
-    const customNetworks = ll ? JSON.parse(ll) : [];
-    customNetworks.push(NewNetwork);
-    localStorage.setItem("customNetworks", JSON.stringify(customNetworks));
-    dispatch(addCustomNetwork(NewNetwork));
-    dispatch(changeNetwork(NewNetwork.displayName));
-    dispatch(getChains());
+
+    let net = new AvaNetwork(
+      NewNetwork.displayName,
+      url,
+      validNetId,
+      NewNetwork.magellanAddress,
+      ""
+    );
+    store.dispatch("Network/addCustomNetwork", net);
+    let networks = store.getters["Network/allNetworks"];
+    dispatch(addNetworks(networks));
+    // const ll = localStorage.getItem("customNetworks") as string;
+    // const customNetworks = ll ? JSON.parse(ll) : [];
+    // customNetworks.push(NewNetwork);
+    // localStorage.setItem("customNetworks", JSON.stringify(customNetworks));
+    // dispatch(addCustomNetwork(NewNetwork));
+    // dispatch(changeNetwork(NewNetwork.displayName));
+    // dispatch(getChains());
     setOpen(false);
   };
 

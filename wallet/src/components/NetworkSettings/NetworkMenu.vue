@@ -13,7 +13,7 @@
       ></span>
       <p v-if="activeNetwork">{{ activeNetwork.name }}</p>
       <p v-else>Disconnected</p>
-      <!--            <template v-if="status === 'disconnected' || status === 'connecting'">-->
+      <!-- <template v-if="status === 'disconnected' || status === 'connecting'">-->
       <!--                <img v-if="$root.theme === 'day'" src="@/assets/network_off.png" />-->
       <!--                <img v-else src="@/assets/network_off_night.svg" />-->
       <!--            </template>-->
@@ -27,7 +27,7 @@
       <!--            <button v-else-if="status === 'connecting'">-->
       <!--                {{ $t('network.status1') }}-->
       <!--            </button>-->
-      <!--            <button v-else>{{ $t('network.status2') }}</button>-->
+      <!--            <button v-else>{{ $t('network.status2') }}</button> -->
     </div>
     <transition name="fade">
       <div
@@ -67,15 +67,15 @@
 
         <transition name="fade" mode="out-in">
           <ListPage v-if="page === 'list'" @edit="onedit"></ListPage>
-          <!-- <CustomPage
+          <CustomPage
             v-if="page === 'custom'"
             @add="addCustomNetwork"
-          ></CustomPage> -->
-          <!-- <EditPage
+          ></CustomPage>
+          <EditPage
             v-if="page === 'edit'"
             :net="editNetwork"
             @success="networkUpdated"
-          ></EditPage> -->
+          ></EditPage>
         </transition>
       </div>
     </transition>
@@ -239,7 +239,7 @@ export default class NetworkMenu extends Vue {
   position: fixed;
   z-index: 1;
   left: 0;
-  top: 0;
+  top: 100px;
   width: 100%;
   height: 100%;
   background-color: rgba(0, 0, 0, 0.6);
