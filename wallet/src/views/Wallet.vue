@@ -66,9 +66,9 @@
                     </keep-alive>
                 </transition>
             </div>
-            <!-- <transition name="fade" mode="out-in">
+            <transition name="fade" mode="out-in">
                 <main-panel />
-            </transition> -->
+            </transition>
         </div>
     </div>
 </template>
@@ -171,7 +171,7 @@ export default class Wallet extends Vue {
     display: grid;
     column-gap: 15px;
     background-color: var(--bg);
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr 300px;
     min-width: 100vw;
 }
 
