@@ -23,7 +23,7 @@ const TransactionsList: FC<TransactionsListProps> = ({
       variant="outlined"
       square
       sx={{
-        backgroundColor: 'primary.dark',
+        backgroundColor: 'card.background',
         borderWidth: '1px',
         borderColor: 'primary.light',
         borderStyle: 'solid',

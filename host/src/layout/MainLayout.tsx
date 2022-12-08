@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import Navbar from "../components/Navbar";
 import store from "wallet/store";
 import { Status } from "../@types";
-import RenderApp from "./RenderApp";
 import { useAppDispatch } from "../hooks/reduxHooks";
 import {
   addNetworks,
@@ -10,10 +9,11 @@ import {
   changeNetworkStatus,
 } from "../redux/slices/network";
 import { matchNetworkStatus } from "../utils/componentsUtils";
-import { Box, Toolbar } from "@mui/material";
+import { Box, Toolbar, useTheme } from "@mui/material";
 
 const MainLayout = ({ children }) => {
   const [loadNetworks, setLoadNetworks] = useState(true);
+  const theme = useTheme();
   const dispatch = useAppDispatch();
   const init = async () => {
     dispatch(changeNetworkStatus(Status.LOADING));
@@ -32,7 +32,12 @@ const MainLayout = ({ children }) => {
   return (
     <Box sx={{ display: "flex", flexDirection: "column" }}>
       <Navbar />
-      <Toolbar />
+      <Toolbar
+        sx={{
+          minHeight: "65px !important",
+          [theme.breakpoints.up("md")]: { minHeight: "69px !important" },
+        }}
+      />
       {!loadNetworks && <Box sx={{ flex: 1 }}>{children}</Box>}
     </Box>
   );

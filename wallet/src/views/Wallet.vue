@@ -5,47 +5,53 @@
             <sidebar class="panel sidenav"></sidebar>
         </transition> -->
         <div class="top-bar">
-            <div class="links">
-                <router-link to="/wallet/home" class="wallet_link">
-                    {{ $t('wallet.sidebar.portfolio') }}
-                </router-link>
-                <router-link
-                    to="/wallet/home/transfer"
-                    data-cy="wallet_transfer"
-                    class="wallet_link"
-                >
-                    {{ $t('wallet.sidebar.send') }}
-                </router-link>
-                <router-link
-                    to="/wallet/home/cross_chain"
-                    data-cy="wallet_export"
-                    class="wallet_export wallet_link"
-                >
-                    {{ $t('wallet.sidebar.export') }}
-                </router-link>
-                <router-link to="/wallet/home/earn" data-cy="wallet_earn" class="wallet_link">
-                    {{ $t('wallet.sidebar.earn') }}
-                </router-link>
-                <router-link to="/wallet/home/studio" data-cy="wallet_studio" class="wallet_link">
-                    {{ $t('wallet.sidebar.studio') }}
-                </router-link>
-                <router-link
-                    to="/wallet/home/activity"
-                    data-cy="wallet_activity"
-                    class="wallet_link"
-                >
-                    {{ $t('wallet.sidebar.activity') }}
-                </router-link>
-                <router-link to="/wallet/home/keys" data-cy="wallet_manage" class="wallet_link">
-                    {{ $t('wallet.sidebar.manage') }}
-                </router-link>
-                <router-link
-                    to="/wallet/home/advanced"
-                    data-cy="wallet_advanced"
-                    class="wallet_link"
-                >
-                    {{ $t('wallet.sidebar.advanced') }}
-                </router-link>
+            <div class="container">
+                <div class="links">
+                    <router-link to="/wallet/home" class="wallet_link">
+                        {{ $t('wallet.sidebar.portfolio') }}
+                    </router-link>
+                    <router-link
+                        to="/wallet/home/transfer"
+                        data-cy="wallet_transfer"
+                        class="wallet_link"
+                    >
+                        {{ $t('wallet.sidebar.send') }}
+                    </router-link>
+                    <router-link
+                        to="/wallet/home/cross_chain"
+                        data-cy="wallet_export"
+                        class="wallet_export wallet_link"
+                    >
+                        {{ $t('wallet.sidebar.export') }}
+                    </router-link>
+                    <router-link to="/wallet/home/earn" data-cy="wallet_earn" class="wallet_link">
+                        {{ $t('wallet.sidebar.earn') }}
+                    </router-link>
+                    <router-link
+                        to="/wallet/home/studio"
+                        data-cy="wallet_studio"
+                        class="wallet_link"
+                    >
+                        {{ $t('wallet.sidebar.studio') }}
+                    </router-link>
+                    <router-link
+                        to="/wallet/home/activity"
+                        data-cy="wallet_activity"
+                        class="wallet_link"
+                    >
+                        {{ $t('wallet.sidebar.activity') }}
+                    </router-link>
+                    <router-link to="/wallet/home/keys" data-cy="wallet_manage" class="wallet_link">
+                        {{ $t('wallet.sidebar.manage') }}
+                    </router-link>
+                    <router-link
+                        to="/wallet/home/advanced"
+                        data-cy="wallet_advanced"
+                        class="wallet_link"
+                    >
+                        {{ $t('wallet.sidebar.advanced') }}
+                    </router-link>
+                </div>
             </div>
         </div>
         <div class="container content">
@@ -172,7 +178,6 @@ export default class Wallet extends Vue {
     column-gap: 15px;
     background-color: var(--bg);
     grid-template-columns: 1fr 300px;
-    min-width: 100vw;
 }
 
 .top-bar {
@@ -183,9 +188,30 @@ export default class Wallet extends Vue {
     display: flex;
     align-items: center;
     background-color: var(--bg);
+    border-bottom: 1px solid rgba(145, 158, 171, 0.24);
     .links {
         display: flex;
+        flex-direction: row;
+        padding: 0px 10px;
         gap: 14px;
+        a {
+            opacity: 0.6;
+            color: var(--sidebar-links);
+            text-decoration: none;
+            border-radius: var(--border-radius-lg);
+            font-weight: 700;
+        }
+
+        .wallet_link {
+            display: flex;
+            align-items: center;
+            padding: 6px 8px;
+            white-space: nowrap;
+        }
+        a.router-link-exact-active {
+            color: var(--primary-color) !important;
+            opacity: 1;
+        }
     }
 }
 

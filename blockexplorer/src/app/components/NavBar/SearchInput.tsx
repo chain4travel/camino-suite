@@ -176,7 +176,7 @@ export default function SearchInput() {
   return (
     <>
       {!isDesktop ? (
-        <div>
+        <>
           <SearchIcon
             onClick={handleOpen}
             sx={{ color: 'primary.contrastText' }}
@@ -194,7 +194,7 @@ export default function SearchInput() {
                 top: '50%',
                 left: '50%',
                 transform: 'translate(-50%, -50%)',
-                bgcolor: 'primary.dark',
+                bgcolor: 'card.background',
                 boxShadow: 24,
                 width: '500px',
                 maxWidth: '70%',
@@ -220,7 +220,7 @@ export default function SearchInput() {
               <OutlinedSearchInput />
             </Box>
           </Modal>
-        </div>
+        </>
       ) : (
         <Box
           sx={{

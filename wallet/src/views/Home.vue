@@ -83,7 +83,6 @@ export default class Home extends Vue {}
 <style scoped lang="scss">
 @use "../styles/main";
 .home {
-    padding-top: 100px;
     display: flex;
     justify-content: center;
     min-height: calc(100vh - 80px);

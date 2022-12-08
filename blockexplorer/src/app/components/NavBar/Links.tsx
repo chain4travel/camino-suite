@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from "react";
-import Tabs from "@mui/material/Tabs";
-import Tab from "@mui/material/Tab";
-import Box from "@mui/material/Box";
-import { useLocation, useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from 'react';
+import Tabs from '@mui/material/Tabs';
+import Tab from '@mui/material/Tab';
+import Box from '@mui/material/Box';
+import { useLocation, useNavigate } from 'react-router-dom';
 import {
   CCHAIN,
   XCHAIN,
@@ -10,13 +10,13 @@ import {
   WALLET,
   DOCS,
   MAINNET,
-} from "utils/route-paths";
-import { ChainType } from "utils/types/chain-type";
+} from 'utils/route-paths';
+import { ChainType } from 'utils/types/chain-type';
 
 function a11yProps(index: number) {
   return {
     id: `simple-tab-${index}`,
-    "aria-controls": `simple-tabpanel-${index}`,
+    'aria-controls': `simple-tabpanel-${index}`,
   };
 }
 const activeTab = (path: string): number => {
@@ -34,7 +34,7 @@ const activeTab = (path: string): number => {
 export default function Links() {
   const location = useLocation();
   const [value, setValue] = useState(
-    activeTab(location.pathname.split("/")[1])
+    activeTab(location.pathname.split('/')[1]),
   );
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     if (location.pathname !== MAINNET) {
@@ -57,26 +57,26 @@ export default function Links() {
   return (
     <Box
       sx={{
-        display: "flex",
-        cursor: "pointer",
-        width: "100%",
-        height: "48px",
-        padding: "0 8px",
-        backgroundColor: "card.navBar",
+        display: 'flex',
+        cursor: 'pointer',
+        width: '100%',
+        height: '48px',
+        backgroundColor: 'card.navBar',
       }}
     >
       <Tabs
-        variant="fullWidth"
+        // variant="fullWidth"
         value={value}
         onChange={handleChange}
         textColor="secondary"
-        indicatorColor="secondary"
+        // remove the underline
+        sx={{ maxWidth: '90%', '& .MuiTabs-indicator': { display: 'none' } }}
+        scrollButtons="auto"
+        variant="scrollable"
       >
         <Tab className="tab" disableRipple label="C-Chain" {...a11yProps(0)} />
         <Tab className="tab" disableRipple label="X-Chain" {...a11yProps(1)} />
         <Tab className="tab" disableRipple label="P-Chain" {...a11yProps(2)} />
-        <Tab className="tab" disableRipple label="Docs" {...a11yProps(3)} />
-        <Tab className="tab" disableRipple label="Wallet" {...a11yProps(4)} />
       </Tabs>
     </Box>
   );

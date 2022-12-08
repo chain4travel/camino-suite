@@ -83,15 +83,7 @@ export default function MainLayout() {
   }, [currentTheme]);
   return (
     <>
-      <Box
-        sx={{
-          width: '100%',
-          backgroundColor: 'card.navBar',
-          borderBottom: '1px solid',
-          borderColor: 'card.border',
-          marginBottom: '20px',
-        }}
-      >
+      <Box sx={{ marginBottom: '20px' }}>
         <NavBar />
       </Box>
       <Content />

@@ -45,7 +45,7 @@ const CAddressDetails: FC = () => {
       <Paper
         square
         variant="outlined"
-        sx={{ backgroundColor: 'primary.dark', boxShadow: 'none' }}
+        sx={{ backgroundColor: 'card.background', boxShadow: 'none' }}
       >
         <TabsHeader
           tabValue={value}

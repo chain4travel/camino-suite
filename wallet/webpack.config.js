@@ -74,7 +74,7 @@ module.exports = {
             },
         }),
         new HtmlWebPackPlugin({
-            template: './src/index.html',
+            template: path.resolve(__dirname, 'public/index.html'),
             favicon: './public/favicon.ico',
         }),
     ],

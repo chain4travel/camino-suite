@@ -17,7 +17,7 @@ const BlockList: FC<BlockListProps> = ({ title, items, to }) => {
       variant="outlined"
       square
       sx={{
-        backgroundColor: 'primary.dark',
+        backgroundColor: 'card.background',
         borderWidth: '1px',
         borderColor: 'primary.light',
         borderStyle: 'solid',

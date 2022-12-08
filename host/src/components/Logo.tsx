@@ -15,10 +15,15 @@ export default function Logo() {
   const themeMode = theme.palette.mode === "light" ? true : false;
   const { isDesktop } = useWidth();
   const location = window.location.pathname.split("/")[1];
+  const dispatch = useDispatch();
   const [app, setApp] = useState(
     location.charAt(0).toUpperCase() + location.slice(1) || "Explorer"
   );
-  const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (!APPS_CONSTS.find((a) => a.name === app)) setApp("Explorer");
+  }, [app]);
+
   return (
     <Box
       sx={{

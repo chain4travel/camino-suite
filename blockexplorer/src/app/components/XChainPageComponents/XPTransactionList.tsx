@@ -18,7 +18,7 @@ export default function XPTransactionList({
         justifyContent: 'space-between',
         width: '100%',
         minHeight: '600px',
-        backgroundColor: 'primary.dark',
+        backgroundColor: 'card.background',
         p: '1rem 1.5rem 1rem 1.5rem',
       }}
     >
