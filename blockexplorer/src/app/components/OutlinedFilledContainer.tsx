@@ -12,7 +12,7 @@ export default function OutlinedFilledContainer({
   return (
     <Box
       sx={{
-        backgroundColor: 'primary.dark',
+        backgroundColor: 'card.background',
         border: theme.palette.mode === 'dark' ? 'solid 1px' : '0px',
         borderColor: 'borders.main',
         borderRadius: '7px',

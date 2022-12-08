@@ -75,7 +75,7 @@ const Transactions: FC = () => {
         sx={{
           minHeight: '850px',
           width: 1,
-          backgroundColor: 'primary.dark',
+          backgroundColor: 'card.background',
           borderRadius: '12px',
           borderWidth: '1px',
           borderColor: 'primary.light',

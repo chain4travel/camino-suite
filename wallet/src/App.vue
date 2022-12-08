@@ -114,6 +114,7 @@ export default {
     #router_view {
         position: relative;
         min-height: calc(100vh - 80px);
+        display: flex;
     }
 }
 
@@ -136,6 +137,10 @@ body {
 
 p {
     margin: 0px !important;
+}
+
+.v-application--wrap {
+    min-height: 100% !important;
 }
 
 #app {

@@ -87,7 +87,11 @@ export default function XAddressDetail() {
         mixedStyle
       />
       <AddressOverviewCard balance={balance} />
-      <Paper square variant="outlined" sx={{ backgroundColor: 'primary.dark' }}>
+      <Paper
+        square
+        variant="outlined"
+        sx={{ backgroundColor: 'card.background' }}
+      >
         <TabsHeader
           tabValue={value}
           changeAction={handleChange}
@@ -122,7 +126,7 @@ const Panels = ({
 
 export const AddressOverviewCard = ({ balance }: { balance: number }) => {
   return (
-    <Paper variant="outlined" sx={{ backgroundColor: 'primary.dark' }}>
+    <Paper variant="outlined" sx={{ backgroundColor: 'card.background' }}>
       <Box p={2}>
         <Grid container spacing={2}>
           <Grid item xs md={6}>

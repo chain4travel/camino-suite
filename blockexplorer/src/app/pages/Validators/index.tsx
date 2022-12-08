@@ -35,7 +35,7 @@ const Validators: FC = () => {
         sx={{
           minHeight: '544px',
           width: 1,
-          backgroundColor: 'primary.dark',
+          backgroundColor: 'card.background',
           borderRadius: '12px',
           borderWidth: '1px',
           borderColor: 'primary.light',
