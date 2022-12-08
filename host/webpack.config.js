@@ -1,6 +1,7 @@
 const HtmlWebPackPlugin = require("html-webpack-plugin");
 const ModuleFederationPlugin = require("webpack/lib/container/ModuleFederationPlugin");
-
+const path = require("path");
+const CopyWebpackPlugin = require("copy-webpack-plugin");
 const deps = require("./package.json").dependencies;
 module.exports = {
   output: {
@@ -63,8 +64,24 @@ module.exports = {
       },
     }),
     new HtmlWebPackPlugin({
-      template: "./src/index.html",
+      template: path.resolve(__dirname, "public/index.html"),
       favicon: "./public/favicon.ico",
+    }),
+    new CopyWebpackPlugin({
+      patterns: [
+        {
+          from: path.resolve(__dirname, "public/assets"),
+          to: path.resolve(__dirname, "dist/assets"),
+        },
+        {
+          from: "../wallet/public/img",
+          to: path.resolve(__dirname, "dist/img"),
+        },
+        {
+          from: "../wallet/public/gif",
+          to: path.resolve(__dirname, "dist/gif"),
+        },
+      ],
     }),
   ],
 };
