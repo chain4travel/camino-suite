@@ -5,7 +5,7 @@ const CopyWebpackPlugin = require("copy-webpack-plugin");
 const deps = require("./package.json").dependencies;
 module.exports = {
   output: {
-    publicPath: "https://playground.suite.camino.foundation/",
+    publicPath: "http://localhost:3000/",
   },
 
   resolve: {
@@ -46,9 +46,9 @@ module.exports = {
       filename: "remoteEntry.js",
       remotes: {
         Explorer:
-          "Explorer@https://playground.suite-explorer.camino.foundation/remoteEntry.js",
+          "Explorer@http://localhost:3001/remoteEntry.js",
         wallet:
-          "wallet@https://playground.suite-wallet.camino.foundation/remoteEntry.js",
+          "wallet@http://localhost:3003/remoteEntry.js",
       },
       exposes: {},
       shared: {

@@ -11,6 +11,7 @@ import { ThemeProvider } from "./styles/theme/ThemeProvider";
 
 import { QueryClient, QueryClientProvider } from "react-query";
 import { ExplorerStoreProvider } from "./store/shareStore";
+import * as ReactDOM from 'react-dom';
 
 export const store = configureAppStore();
 export const queryClient = new QueryClient();
@@ -20,7 +21,8 @@ export function StoreProvider({ children }) {
 }
 
 const Root = () => (
-  <ExplorerStoreProvider>
+  <>
+   <ExplorerStoreProvider>
     <ThemeProvider>
       <HelmetProvider>
         <React.StrictMode>
@@ -31,6 +33,9 @@ const Root = () => (
       </HelmetProvider>
     </ThemeProvider>
   </ExplorerStoreProvider>
+  </>
+ 
 );
+
 export default Root;
-// ReactDOM.render(<Root />, document.getElementById("app"));
+//ReactDOM.render(<Root />, document.getElementById("app"));

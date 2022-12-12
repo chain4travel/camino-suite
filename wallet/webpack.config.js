@@ -7,7 +7,8 @@ const path = require('path')
 const deps = require('./package.json').dependencies
 module.exports = {
     output: {
-        publicPath: 'https://playground.suite-wallet.camino.foundation/',
+        //publicPath: 'https://playground.suite-wallet.camino.foundation/',
+        publicPath: 'http://localhost:3003/',
     },
 
     devServer: {
