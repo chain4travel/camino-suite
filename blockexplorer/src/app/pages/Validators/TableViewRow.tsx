@@ -3,6 +3,7 @@ import { TableRow, TableCell, Chip } from '@mui/material';
 import { Field } from 'app/components/DetailsField';
 import { ValidatorType } from 'types/store';
 import moment from 'utils/helpers/moment';
+import Tooltip from '@mui/material/Tooltip';
 
 export const TableViewRow = ({ validator }: { validator: ValidatorType }) => {
   return (
@@ -29,10 +30,18 @@ export const TableViewRow = ({ validator }: { validator: ValidatorType }) => {
         <Field type="string" value={validator.nodeID} />
       </TableCell>
       <TableCell align="center">
-        {moment(validator.startTime).format('MMM D, YYYY')}
+        <Tooltip title={"Days since validator start:"+ moment(validator.startTime).fromNow().replace(" ago","")}>
+          <span style={{cursor:'pointer'}}>
+            {moment(validator.startTime).format('MMM D, YYYY')}
+          </span>
+        </Tooltip>
       </TableCell>
       <TableCell align="center">
-        {moment(validator.endTime).format('MMM D, YYYY')}
+      <Tooltip title={"Days until validator stops:"+ moment(validator.endTime).fromNow().replace("in ","")}>
+          <span style={{cursor:'pointer'}}>
+            {moment(validator.endTime).format('MMM D, YYYY')}
+          </span>
+        </Tooltip>
       </TableCell>
       <TableCell align="center">
         <Field type="string" value={validator.uptime} />

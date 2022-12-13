@@ -145,25 +145,52 @@ const Validators: FC = () => {
                         <Tab
                           className="tab"
                           disableRipple
-                          label="Map Statistics"
+                          label="List"
                           {...a11yProps(0)}
                         />
                         <Tab
                           className="tab"
                           disableRipple
-                          label="Node Statistics"
+                          label="Map"
                           {...a11yProps(1)}
                         />
+                        
                         <Tab
                           className="tab"
                           disableRipple
-                          label="Country Statistics"
+                          label="Countries"
                           {...a11yProps(2)}
                         />
                       </Tabs>
                     </div>
 
                     {activeTab == 0 ? (
+                      <>
+                        <TableContainer sx={{ minHeight: '400px' }}>
+                          {isWidescreen || isDesktop ? (
+                            <TableView columns={columns}>
+                              {validators?.map(validator => (
+                                <TableViewRow
+                                  key={validator.nodeID}
+                                  validator={validator}
+                                />
+                              ))}
+                            </TableView>
+                          ) : (
+                            <Grid item container alignItems="center">
+                              {validators.map(validator => (
+                                <GridViewItem
+                                  key={validator.nodeID}
+                                  validator={validator}
+                                />
+                              ))}
+                            </Grid>
+                          )}
+                        </TableContainer>
+                      </>
+                    ) : null}
+
+                    {activeTab == 1 ? (
                       <>
                         <ComposableMap
                           style={{
@@ -229,33 +256,7 @@ const Validators: FC = () => {
                         </ComposableMap>
                       </>
                     ) : null}
-
-                    {activeTab == 1 ? (
-                      <>
-                        <TableContainer sx={{ minHeight: '400px' }}>
-                          {isWidescreen || isDesktop ? (
-                            <TableView columns={columns}>
-                              {validators?.map(validator => (
-                                <TableViewRow
-                                  key={validator.nodeID}
-                                  validator={validator}
-                                />
-                              ))}
-                            </TableView>
-                          ) : (
-                            <Grid item container alignItems="center">
-                              {validators.map(validator => (
-                                <GridViewItem
-                                  key={validator.nodeID}
-                                  validator={validator}
-                                />
-                              ))}
-                            </Grid>
-                          )}
-                        </TableContainer>
-                      </>
-                    ) : null}
-
+                    
                     {activeTab == 2 ? (
                       <div className="noto-flags">
                         {theme.palette.mode == 'light' ? (
