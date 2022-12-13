@@ -36,7 +36,7 @@ const StadisticsV2 = ({ nodesPerCountry, darkMode }) => {
           let index = obj.pos;
           return `<span style="color:${
             darkMode == true ? 'white' : 'black'
-          }"><img width="20" height="20" style="width: '1%'" src="${getUrlFlag(
+          }"><img width="15" height="15" style="position: relative; top: 2px" src="${getUrlFlag(
             index,
           )}" /> ${obj.value}</span>`;
         },

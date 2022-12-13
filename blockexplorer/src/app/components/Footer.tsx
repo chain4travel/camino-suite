@@ -63,7 +63,7 @@ export function Footer() {
                 {theme.palette.mode === 'light' ? (
                   <DarkLogo style={{ height: '40px', width: 'auto' }} />
                 ) : (
-                  <LightLogo style={{ height: '40px', width: 'auto' }} />
+                  <LightLogo style={{ height: '50px', width: 'auto' }} />
                 )}
               </Grid>
               <Grid item>
@@ -180,6 +180,14 @@ export function Footer() {
                   </ul>
                 </Grid>
               ))}
+              <Grid
+                item
+                container
+                spacing={{ xs: 2, md: 1, lg: 2 }}
+                justifyContent={!isTablet ? 'left' : 'center'}
+              >
+                <Grid item xs={12} sm="auto"></Grid>
+              </Grid>
             </Grid>
           </Grid>
         </Container>
