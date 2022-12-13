@@ -59,6 +59,8 @@ const Validators: FC = () => {
   const [zoomValue, setZoomValue] = useState(1.5);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
+  const [sizeCircle, setSizeCircle] = useState(10);
+  const [sizeStroke, setSizeStroke] = useState(7);
 
   useEffectOnce(() => {
     dispatch(loadValidators());
@@ -170,7 +172,26 @@ const Validators: FC = () => {
                           }}
                           projection={'geoMercator'}
                         >
-                          <ZoomableGroup center={[0, 40]} zoom={zoomValue}>
+                          <ZoomableGroup center={[0, 40]} zoom={zoomValue} onMove={(e: any) => {
+                            console.log("eValue", e);
+                            if(e.zoom <= 3)
+                            {
+                              setSizeCircle(10);
+                              setSizeStroke(7);
+                            }
+
+                            if(e.zoom > 3 && e.zoom < 6)
+                            {
+                              setSizeCircle(6);
+                              setSizeStroke(4);
+                            }
+
+                            if(e.zoom > 6)
+                            {
+                              setSizeCircle(3);
+                              setSizeStroke(1.5);
+                            }
+                          }} >
                             <Geographies
                               geography={features}
                               pointerEvents={'none'}
@@ -197,7 +218,8 @@ const Validators: FC = () => {
                                     city={city}
                                     lng={lng}
                                     lat={lat}
-                                    rValue={10}
+                                    rValue={sizeCircle}
+                                    sValue={sizeStroke}
                                     nodeIdentity={nodeIdentity}
                                   />
                                 );
