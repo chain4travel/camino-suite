@@ -25,6 +25,7 @@ export const GridViewItem = ({ validator }: { validator: ValidatorType }) => {
         </Typography>
         <Chip
           label={validator.status}
+          style={{ width: 100, maxWidth: 100 }}
           sx={{
             borderRadius: '7px',
             color: 'grey.900',
@@ -50,12 +51,6 @@ export const GridViewItem = ({ validator }: { validator: ValidatorType }) => {
           EndTime
         </Typography>
         {moment(validator.endTime).format('MMM D, YYYY')}
-      </Grid>
-      <Grid item xs={12} md zeroMinWidth order={{ xs: 3, md: 2 }}>
-        <Typography variant="subtitle2" color="latestList.timestamp">
-          Duration
-        </Typography>
-        {moment(validator.endTime).fromNow()}
       </Grid>
       <Grid item xs={12} md zeroMinWidth order={{ xs: 3, md: 2 }}>
         <Typography variant="subtitle2" color="latestList.timestamp">

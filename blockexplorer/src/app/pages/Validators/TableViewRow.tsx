@@ -13,6 +13,7 @@ export const TableViewRow = ({ validator }: { validator: ValidatorType }) => {
       >
         <Chip
           label={validator.status}
+          style={{ width: 100, maxWidth: 100 }}
           sx={{
             borderRadius: '7px',
             color: 'grey.900',
@@ -32,9 +33,6 @@ export const TableViewRow = ({ validator }: { validator: ValidatorType }) => {
       </TableCell>
       <TableCell align="center">
         {moment(validator.endTime).format('MMM D, YYYY')}
-      </TableCell>
-      <TableCell align="center">
-        {moment(validator.startTime).fromNow()}
       </TableCell>
       <TableCell align="center">
         <Field type="string" value={validator.uptime} />
