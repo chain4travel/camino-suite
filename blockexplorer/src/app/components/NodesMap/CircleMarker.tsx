@@ -18,8 +18,7 @@ const CircleMarker = ({
   nodes
 }: any) => {
 
-  {
-    /*
+
     let cityNodes = [
     "NodeID-GyakeRf3JZURRPYakhrrxRG8fft3st2qC",
     "NodeID-GyakeRf3JZURRPYakhrrxRG8fft3st2qC",
@@ -33,10 +32,8 @@ const CircleMarker = ({
     "NodeID-GyakeRf3JZURRPYakhrrxRG8fft3st2qC",
     "NodeID-GyakeRf3JZURRPYakhrrxRG8fft3st2qC",
     "NodeID-GyakeRf3JZURRPYakhrrxRG8fft3st2qC"];
-    */
-  }
 
-  let cityNodes = nodes;
+  //let cityNodes = nodes;
 
   const [changeColor, setChangeColor] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
@@ -109,23 +106,26 @@ const CircleMarker = ({
               <b>City:</b>
               {city}
             </li>
-            <br />
+            {/*<br />*/}
             <li>
               <b>Nodes:</b>
-              <br />
 
-              {cityNodes.length >= 5 ? <>{showMoreValidators == true ? <>{cityNodes.map((value) => <>
+              {cityNodes.length >= 5 ? <>{showMoreValidators == true ? <> <br />{cityNodes.map((value) => <>
                 {value}
-                <br />
+                <br/>
               </>)}
-              
-              <a href="javascript:void(0)" onClick={() => {setShowMoreValidators(false)}}>Show Less</a>
+              <br />
+             <a href="javascript:void(0)" onClick={() => {setShowMoreValidators(false)}}>Hide Validators</a>
+
               </> : <>
-                {cityNodes.map((value, index) => <>
+                {/*cityNodes.map((value, index) => <>
                   {index <= 5 ? <>{value}
                     <br /></> : null}
-                </>)}
-                <a href="javascript:void(0)" onClick={() => { setShowMoreValidators(true) }}>Show More</a>
+                </>)*/}
+
+                <a href="javascript:void(0)" onClick={() => { setShowMoreValidators(true) }}>{cityNodes.length } more validators</a>
+                
+
               </>}</> : <>
                 {cityNodes.map((value) => <>
                   {value}
