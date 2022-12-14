@@ -6,7 +6,6 @@ import Popover from '@mui/material/Popover';
 import Typography from '@mui/material/Typography';
 import { selectAllValidators } from 'store/validatorsSlice';
 import { useAppDispatch, useAppSelector } from 'store/configureStore';
-import moment from 'moment';
 
 const CircleMarker = ({
   country,
@@ -14,50 +13,18 @@ const CircleMarker = ({
   lat,
   rValue,
   city,
-  nodeIdentity,
-  sValue
+  sValue,
+  nodes
 }: any) => {
 
   const [changeColor, setChangeColor] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
 
   const validators = useAppSelector(selectAllValidators);
-  console.log("validatorsNode", validators);
-
-  const handleClick = (event: any) => {
-    setAnchorEl(event.currentTarget);
-  };
 
   const handleClose = () => {
     setAnchorEl(null);
   };
-
-  const getValidatorData = (nodeIdentity: string, startTime: boolean) => {
-    try
-    {
-      let nodeData = validators.find((vali) => vali.nodeID == nodeIdentity);
-
-      if(nodeData != undefined && nodeData != null)
-      {
-        if(startTime == false)
-        {
-          return moment(nodeData.endTime).format("DD/MM/YYYY");
-        }
-        else
-        {
-          return moment(nodeData.startTime).format("DD/MM/YYYY");
-        }
-      }
-      else
-      {
-        return "";
-      }
-    }
-    catch(e)
-    {
-      return "";
-    }
-  }
 
   const open = Boolean(anchorEl);
   const id = open ? 'simple-popover' : undefined;
@@ -77,7 +44,6 @@ const CircleMarker = ({
             cursor="pointer"
             onMouseOver={(e) => {
               setChangeColor(true);
-              //setAnchorEl(e.currentTarget);
             }}
             onMouseOut={() => {
               setChangeColor(false);
@@ -97,6 +63,8 @@ const CircleMarker = ({
           vertical: 'bottom',
           horizontal: 'left',
         }}
+        disableAutoFocus={true}
+        disableEnforceFocus={true}
       >
         <Typography sx={{ p: 2 }}>
           <div>
@@ -108,20 +76,15 @@ const CircleMarker = ({
               <b>City:</b>
               {city}
             </li>
+            <br />
             <li>
-              <b>Node Identity:</b>
-              {nodeIdentity}
+              <b>Nodes:</b>
+              <br />
+              {nodes.map((value) => <>
+                {value}
+                <br />
+              </>)}
             </li>
-            {open ? <>
-              <li>
-              <b>Start Time:</b>
-              {getValidatorData(nodeIdentity, true)}
-            </li>
-            <li>
-              <b>End Time:</b>
-              {getValidatorData(nodeIdentity, false)}
-            </li>
-            </> : null}
           </div>
         </Typography>
       </Popover>

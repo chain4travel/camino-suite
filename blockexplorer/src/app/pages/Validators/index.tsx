@@ -20,7 +20,7 @@ import BackButton from 'app/components/BackButton';
 import TableView from 'app/components/Table/TableView';
 import useWidth from 'app/hooks/useWidth';
 import LocationNode from 'types/locationNode';
-import NodesPerCountry from 'types/nodesPerCountry';
+import { NodesPerCountry, NodesPerCity } from 'types/nodesLocation';
 import Utils from 'app/components/NodesMap/Utils';
 import {
   ComposableMap,
@@ -55,6 +55,7 @@ const Validators: FC = () => {
   const [activeTab, setActiveTab] = useState(0);
   const [data, setData] = useState<LocationNode[]>([]);
   const [nodesPerCountry, setNodesPerCountry] = useState<NodesPerCountry[]>([]);
+  const [nodesPerCity, setNodesPerCity] = useState<NodesPerCity[]>([]);
   //const [maxValue, setMaxValue] = useState(0);
   const [zoomValue, setZoomValue] = useState(1.5);
   const [loading, setLoading] = useState(false);
@@ -72,7 +73,9 @@ const Validators: FC = () => {
       .then((dataNodes: LocationNode[]) => {
         setData(dataNodes);
         let sumNodesPerCountry = Utils.sumNodesPerCountry(dataNodes);
+        let sumNodesPerCity = Utils.sumNodesPerCity(dataNodes);
         setNodesPerCountry(sumNodesPerCountry);
+        setNodesPerCity(sumNodesPerCity);
         setLoading(false);
       })
       .catch(error => {
@@ -154,7 +157,7 @@ const Validators: FC = () => {
                           label="Map"
                           {...a11yProps(1)}
                         />
-                        
+
                         <Tab
                           className="tab"
                           disableRipple
@@ -200,21 +203,17 @@ const Validators: FC = () => {
                           projection={'geoMercator'}
                         >
                           <ZoomableGroup center={[0, 40]} zoom={zoomValue} onMove={(e: any) => {
-                            console.log("eValue", e);
-                            if(e.zoom <= 3)
-                            {
+                            if (e.zoom <= 3) {
                               setSizeCircle(10);
                               setSizeStroke(7);
                             }
 
-                            if(e.zoom > 3 && e.zoom < 6)
-                            {
+                            if (e.zoom > 3 && e.zoom < 6) {
                               setSizeCircle(6);
                               setSizeStroke(4);
                             }
 
-                            if(e.zoom > 6)
-                            {
+                            if (e.zoom > 6) {
                               setSizeCircle(3);
                               setSizeStroke(1.5);
                             }
@@ -233,9 +232,9 @@ const Validators: FC = () => {
                                 ))
                               }
                             </Geographies>
-                            {data.map(
+                            {nodesPerCity.map(
                               (
-                                { lng, lat, nodeIdentity, country, city },
+                                { lng, lat, nodes, country, city },
                                 index,
                               ) => {
                                 return (
@@ -247,7 +246,7 @@ const Validators: FC = () => {
                                     lat={lat}
                                     rValue={sizeCircle}
                                     sValue={sizeStroke}
-                                    nodeIdentity={nodeIdentity}
+                                    nodes={nodes}
                                   />
                                 );
                               },
@@ -256,7 +255,7 @@ const Validators: FC = () => {
                         </ComposableMap>
                       </>
                     ) : null}
-                    
+
                     {activeTab == 2 ? (
                       <div className="noto-flags">
                         {theme.palette.mode == 'light' ? (

@@ -1,6 +1,6 @@
 import axios from 'axios';
 import LocationNode from '../../../types/locationNode';
-import NodesPerCountry from 'types/nodesPerCountry';
+import { NodesPerCountry, NodesPerCity } from 'types/nodesLocation';
 import sortBy from 'lodash/sortBy';
 import { store } from "../../../App.tsx";
 
@@ -151,6 +151,30 @@ class Utils {
 
     return sortBy(dataCountry, o => -o.nodes.length);
   }
+
+  public static sumNodesPerCity(info: LocationNode[]): NodesPerCity[] {
+    let dataCity: NodesPerCity[] = [];
+    for (let i = 0; i < info.length; i++) {
+      if (dataCity.some((dat: any) => dat.city == info[i].city && dat.alpha2 == dat.alpha2)) {
+        let locationNode: LocationNode = info[i];
+        let indexdataCity = dataCity.findIndex((dat: any) => dat.city == info[i].city && dat.alpha2 == dat.alpha2);
+        dataCity[indexdataCity].nodes.push(locationNode.nodeIdentity);
+      } else {
+        let nodePerCountry: NodesPerCity = {
+          alpha2: info[i].alpha2,
+          country: info[i].country,
+          nodes: [info[i].nodeIdentity],
+          city: info[i].city,
+          lng: info[i].lng,
+          lat: info[i].lat
+        };
+        dataCity.push(nodePerCountry);
+      }
+    }
+    return sortBy(dataCity, o => -o.nodes.length);
+  }
+
+
 }
 
 export default Utils;
