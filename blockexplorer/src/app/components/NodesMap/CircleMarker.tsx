@@ -109,29 +109,12 @@ const CircleMarker = ({
             {/*<br />*/}
             <li>
               <b>Nodes:</b>
-
-              {cityNodes.length >= 5 ? <>{showMoreValidators == true ? <> <br />{cityNodes.map((value) => <>
-                {value}
-                <br/>
-              </>)}
               <br />
-             <a href="javascript:void(0)" onClick={() => {setShowMoreValidators(false)}}>Hide Validators</a>
-
-              </> : <>
-                {/*cityNodes.map((value, index) => <>
-                  {index <= 5 ? <>{value}
+              {cityNodes.map((value, index) => <>
+                  {index < 3 ? <>{value}
                     <br /></> : null}
-                </>)*/}
-
-                <a href="javascript:void(0)" onClick={() => { setShowMoreValidators(true) }}>{cityNodes.length } more validators</a>
-                
-
-              </>}</> : <>
-                {cityNodes.map((value) => <>
-                  {value}
-                  <br />
                 </>)}
-              </>}
+                {cityNodes.length > 3 ? <>{cityNodes.length - 3 } more validators</> : null}
             </li>
           </div>
         </Typography>
