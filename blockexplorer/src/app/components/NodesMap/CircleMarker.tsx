@@ -48,12 +48,23 @@ const CircleMarker = ({
     setAnchorEl(null);
   };
 
+  const getValidatorsTooltipMessage = () => {
+    if(cityNodes.length > 1)
+    {
+      return " (" + cityNodes.length + " validators)";
+    }
+    else
+    {
+      return " (" + cityNodes.length + " validator)";
+    }
+  }
+
   const open = Boolean(anchorEl);
   const id = open ? 'simple-popover' : undefined;
 
   return (
     <Fragment>
-      <Tooltip title={country + ' - ' + city} style={{ pointerEvents: 'auto' }}>
+      <Tooltip title={country + ' - ' + city + getValidatorsTooltipMessage()} style={{ pointerEvents: 'auto' }}>
         <Marker coordinates={[lng, lat]} aria-describedby={id}>
           <circle
             className="animated flash"
