@@ -6,6 +6,7 @@ import Popover from '@mui/material/Popover';
 import Typography from '@mui/material/Typography';
 import { selectAllValidators } from 'store/validatorsSlice';
 import { useAppDispatch, useAppSelector } from 'store/configureStore';
+import { Button } from '@mui/material';
 
 const CircleMarker = ({
   country,
@@ -17,8 +18,29 @@ const CircleMarker = ({
   nodes
 }: any) => {
 
+  {
+    /*
+    let cityNodes = [
+    "NodeID-GyakeRf3JZURRPYakhrrxRG8fft3st2qC",
+    "NodeID-GyakeRf3JZURRPYakhrrxRG8fft3st2qC",
+    "NodeID-GyakeRf3JZURRPYakhrrxRG8fft3st2qC",
+    "NodeID-GyakeRf3JZURRPYakhrrxRG8fft3st2qC",
+    "NodeID-GyakeRf3JZURRPYakhrrxRG8fft3st2qC",
+    "NodeID-GyakeRf3JZURRPYakhrrxRG8fft3st2qC",
+    "NodeID-GyakeRf3JZURRPYakhrrxRG8fft3st2qC",
+    "NodeID-GyakeRf3JZURRPYakhrrxRG8fft3st2qC",
+    "NodeID-GyakeRf3JZURRPYakhrrxRG8fft3st2qC",
+    "NodeID-GyakeRf3JZURRPYakhrrxRG8fft3st2qC",
+    "NodeID-GyakeRf3JZURRPYakhrrxRG8fft3st2qC",
+    "NodeID-GyakeRf3JZURRPYakhrrxRG8fft3st2qC"];
+    */
+  }
+
+  let cityNodes = nodes;
+
   const [changeColor, setChangeColor] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
+  const [showMoreValidators, setShowMoreValidators] = useState(false);
 
   const validators = useAppSelector(selectAllValidators);
 
@@ -80,10 +102,25 @@ const CircleMarker = ({
             <li>
               <b>Nodes:</b>
               <br />
-              {nodes.map((value) => <>
+
+              {cityNodes.length >= 5 ? <>{showMoreValidators == true ? <>{cityNodes.map((value) => <>
                 {value}
                 <br />
               </>)}
+              
+              <a href="javascript:void(0)" onClick={() => {setShowMoreValidators(false)}}>Show Less</a>
+              </> : <>
+                {cityNodes.map((value, index) => <>
+                  {index <= 5 ? <>{value}
+                    <br /></> : null}
+                </>)}
+                <a href="javascript:void(0)" onClick={() => { setShowMoreValidators(true) }}>Show More</a>
+              </>}</> : <>
+                {cityNodes.map((value) => <>
+                  {value}
+                  <br />
+                </>)}
+              </>}
             </li>
           </div>
         </Typography>
