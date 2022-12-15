@@ -47,8 +47,8 @@
             <div class="buttons-wrapper">
                 <div>
                     <router-link
-                        data-cy="access"
                         to="/wallet/access"
+                        data-cy="access"
                         class="ava_button button_primary submit_but"
                     >
                         {{ $t('home.access.submit') }}
@@ -71,7 +71,7 @@
 
 <script lang="ts">
 import 'reflect-metadata'
-import { Vue, Component } from 'vue-property-decorator'
+import { Vue, Component, Prop } from 'vue-property-decorator'
 import ToS from '@/components/misc/ToS.vue'
 @Component({
     name: 'home',

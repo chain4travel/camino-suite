@@ -63,6 +63,8 @@ module.exports = {
                 './store': './src/store/index.ts',
                 './mountApp': './src/bootloader.ts',
                 './AvaNetwork': './src/js/AvaNetwork.ts',
+                './moutHomePage': './src/moutHomePage.ts',
+                './mountAccessComponents': './src/views/access/mountAccessComponents.ts',
             },
             shared: {
                 ...deps,

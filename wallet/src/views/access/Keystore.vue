@@ -28,12 +28,12 @@
                     {{ $t('access.submit') }}
                 </v-btn>
             </form>
-            <router-link to="/wallet/access" class="link">{{ $t('access.cancel') }}</router-link>
+            <div @click="cancel" class="link">{{ $t('access.cancel') }}</div>
         </div>
     </div>
 </template>
 <script lang="ts">
-import { Vue, Component } from 'vue-property-decorator'
+import { Vue, Component, Prop } from 'vue-property-decorator'
 
 import FileInput from '../../components/misc/FileInput.vue'
 // import RememberKey from "../../components/misc/RememberKey.vue";
@@ -47,6 +47,7 @@ import { AllKeyFileTypes } from '@/js/IKeystore'
     },
 })
 export default class Keystore extends Vue {
+    @Prop() cancel: any
     pass: string = ''
     file: File | null = null
     fileText: string | null = null

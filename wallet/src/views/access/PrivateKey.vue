@@ -24,15 +24,16 @@
                     {{ $t('access.submit') }}
                 </v-btn>
             </form>
-            <router-link to="/wallet/access" class="link">Cancel</router-link>
+            <div @click="cancel" class="link">Cancel</div>
         </div>
     </div>
 </template>
 <script lang="ts">
-import { Vue, Component } from 'vue-property-decorator'
+import { Vue, Component, Prop } from 'vue-property-decorator'
 
 @Component
 export default class PrivateKey extends Vue {
+    @Prop() cancel: any
     privatekey: string = ''
     isLoading: boolean = false
     error: string = ''

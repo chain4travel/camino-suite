@@ -13,7 +13,7 @@ Vue.use(VueMeta)
 Vue.use(BootstrapVue)
 Vue.component('datetime', Datetime)
 
-export const mount = (el) => {
+export const mount = (el: string) => {
     const app = new Vue({
         router,
         store,
