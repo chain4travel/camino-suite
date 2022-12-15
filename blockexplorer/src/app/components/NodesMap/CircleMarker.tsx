@@ -18,7 +18,7 @@ const CircleMarker = ({
   nodes
 }: any) => {
 
-
+  {/*
     let cityNodes = [
     "NodeID-GyakeRf3JZURRPYakhrrxRG8fft3st2qC",
     "NodeID-GyakeRf3JZURRPYakhrrxRG8fft3st2qC",
@@ -31,9 +31,9 @@ const CircleMarker = ({
     "NodeID-GyakeRf3JZURRPYakhrrxRG8fft3st2qC",
     "NodeID-GyakeRf3JZURRPYakhrrxRG8fft3st2qC",
     "NodeID-GyakeRf3JZURRPYakhrrxRG8fft3st2qC",
-    "NodeID-GyakeRf3JZURRPYakhrrxRG8fft3st2qC"];
+    "NodeID-GyakeRf3JZURRPYakhrrxRG8fft3st2qC"];*/}
 
-  //let cityNodes = nodes;
+  let cityNodes = nodes;
 
   const [changeColor, setChangeColor] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
