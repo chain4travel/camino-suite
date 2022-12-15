@@ -24,7 +24,7 @@
                     {{ $t('access.submit') }}
                 </v-btn>
             </form>
-            <div @click="cancel" class="link">Cancel</div>
+            <div @click="navigate('/access')" class="link">Cancel</div>
         </div>
     </div>
 </template>
@@ -33,7 +33,8 @@ import { Vue, Component, Prop } from 'vue-property-decorator'
 
 @Component
 export default class PrivateKey extends Vue {
-    @Prop() cancel: any
+    @Prop() navigate: any
+    @Prop() setLogged: any
     privatekey: string = ''
     isLoading: boolean = false
     error: string = ''
@@ -46,6 +47,7 @@ export default class PrivateKey extends Vue {
 
         try {
             await this.$store.dispatch('accessWalletSingleton', key)
+            this.setLogged(this.$store.state)
             this.onsuccess()
         } catch (e) {
             this.onerror('Invalid Private Key.')

@@ -22,7 +22,7 @@ export default function Layout() {
           <Route path="/wallet/*" element={<Wallet />} />
           <Route path="/login" element={<Login />} />
           <Route path="/access" element={<AccessLayout />}>
-            <Route index path="menu" element={<Menu />} />
+            <Route index element={<Menu />} />
             <Route
               path="keystore"
               element={<MountAccessComponent type="Keystore" />}

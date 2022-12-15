@@ -28,7 +28,7 @@
                     {{ $t('access.submit') }}
                 </v-btn>
             </form>
-            <div @click="cancel" class="link">{{ $t('access.cancel') }}</div>
+            <div @click="navigate('/access')" class="link">{{ $t('access.cancel') }}</div>
         </div>
     </div>
 </template>
@@ -47,7 +47,7 @@ import { AllKeyFileTypes } from '@/js/IKeystore'
     },
 })
 export default class Keystore extends Vue {
-    @Prop() cancel: any
+    @Prop() navigate: any
     pass: string = ''
     file: File | null = null
     fileText: string | null = null

@@ -13,17 +13,15 @@ Vue.use(VueMeta)
 Vue.use(BootstrapVue)
 Vue.component('datetime', Datetime)
 
-export const mountHome = (el: string) => {
+export const mountHome = (el: string, props: any) => {
     const app = new Vue({
         router,
         store,
         vuetify,
         i18n,
-        data: {
-            message: 'Hello',
-        },
+        data: {},
         render: (createElement) => {
-            const context = {}
+            const context = { props: props }
             return createElement(Home, context)
         },
     })

@@ -17,7 +17,7 @@
                 >
                     {{ $t('access.submit') }}
                 </v-btn>
-                <div @click="cancel" to="/wallet/access" class="link">
+                <div @click="navigate('/access')" to="/wallet/access" class="link">
                     {{ $t('access.cancel') }}
                 </div>
             </div>
@@ -41,7 +41,7 @@ import * as bip39 from 'bip39'
     },
 })
 export default class Mnemonic extends Vue {
-    @Prop() cancel: any
+    @Prop() navigate: any
     phrase: string = ''
     isLoading: boolean = false
     err: string = ''

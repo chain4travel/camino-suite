@@ -135,14 +135,16 @@ const store = new Vuex.Store({
 
             await dispatch('activateWallet', wallet)
 
-            dispatch('onAccess')
+            let storeCopy = await dispatch('onAccess')
+            return storeCopy
         },
 
         async accessWalletSingleton({ state, dispatch }, key: string) {
             let wallet = await dispatch('addWalletSingleton', key)
             await dispatch('activateWallet', wallet)
 
-            dispatch('onAccess')
+            let storeCopy = await dispatch('onAccess')
+            return storeCopy
         },
 
         async onAccess(store) {
@@ -150,10 +152,10 @@ const store = new Vuex.Store({
 
             store.dispatch('Assets/updateAvaAsset')
             store.dispatch('Platform/update')
-            router.push('/wallet/home')
             store.dispatch('Assets/updateUTXOs')
             store.dispatch('Accounts/updateKycStatus')
             store.dispatch('Launch/initialize')
+            return store
         },
 
         // TODO: Parts can be shared with the logout function below

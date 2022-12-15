@@ -20,10 +20,7 @@ export const mount = (el: string) => {
         vuetify,
         i18n,
         render: (h) => h(App),
-        created: () => {
-            store.commit('Accounts/loadAccounts')
-            if (store.getters['Accounts/hasAccounts'] > 0) router.replace('/wallet/access')
-        },
+        created: () => {},
         mounted() {
             // Reveal app version
             console.log(`App Version: ${process.env.VUE_APP_VERSION}`)

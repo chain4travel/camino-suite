@@ -46,13 +46,13 @@
             </div>
             <div class="buttons-wrapper">
                 <div>
-                    <router-link
-                        to="/wallet/access"
+                    <div
+                        @click="click('/access')"
                         data-cy="access"
                         class="ava_button button_primary submit_but"
                     >
                         {{ $t('home.access.submit') }}
-                    </router-link>
+                    </div>
                 </div>
                 <div>
                     <router-link
@@ -77,7 +77,12 @@ import ToS from '@/components/misc/ToS.vue'
     name: 'home',
     components: { ToS },
 })
-export default class Home extends Vue {}
+export default class Home extends Vue {
+    @Prop() navigate: any
+    click(string: string) {
+        this.navigate(string)
+    }
+}
 </script>
 
 <style scoped lang="scss">

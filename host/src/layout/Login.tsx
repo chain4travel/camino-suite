@@ -1,10 +1,11 @@
 import React, { useEffect, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import { mountHome } from "wallet/moutHomePage";
 
-const LoadLogin = () => {
+const LoadLogin = ({ props }) => {
   const ref = useRef(null);
   useEffect(() => {
-    mountHome(ref.current);
+    mountHome(ref.current, props);
   }, []);
 
   return (
@@ -15,9 +16,11 @@ const LoadLogin = () => {
 };
 
 export default function Login() {
+  const navigate = useNavigate();
+
   return (
     <React.Suspense fallback={<div>Loading...</div>}>
-      <LoadLogin />
+      <LoadLogin props={{ navigate: () => navigate("/access") }} />
     </React.Suspense>
   );
 }

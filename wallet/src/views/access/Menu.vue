@@ -23,7 +23,7 @@
         </div>
 
         <ToS style="margin: 20px !important"></ToS>
-        <router-link to="/wallet" class="link">{{ $t('access.cancel') }}</router-link>
+        <div @click="click('/login')" class="link">{{ $t('access.cancel') }}</div>
     </div>
 </template>
 
