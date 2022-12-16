@@ -53,7 +53,7 @@ export default {
         Notifications,
     },
     async created() {
-        router.push('/wallet/home')
+        router.push('/wallet')
         this.$store.dispatch('Assets/initErc20List')
         this.$store.dispatch('Assets/ERCNft/init')
         this.$store.dispatch('updateAvaxPrice')
