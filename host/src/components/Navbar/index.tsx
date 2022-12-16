@@ -14,6 +14,7 @@ import { useNavigate } from "react-router-dom";
 export default function Navbar() {
   const activeNetwork = useAppSelector(getActiveNetwork);
   const [auth, setAuth] = useState(false);
+  const navigate = useNavigate();
   const logout = async () => {
     await store.dispatch("logout");
     await store.dispatch("Notifications/add", {
@@ -21,8 +22,8 @@ export default function Navbar() {
       message: "You have successfully logged out of your wallet.",
     });
     setAuth(false);
+    navigate("/login");
   };
-  const navigate = useNavigate();
   useEffect(() => {
     setInterval(() => {
       if (store.state.isAuth) setAuth(true);

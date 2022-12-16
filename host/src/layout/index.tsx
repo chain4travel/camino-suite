@@ -9,6 +9,7 @@ import Login from "./Login";
 import Menu from "./Menu";
 import AccessLayout from "../views/access";
 import MountAccessComponent from "../views/access/MountAccessComponent";
+import Protected from "./Protected";
 
 export default function Layout() {
   const activeApp = useSelector(getActiveApp);
@@ -19,7 +20,14 @@ export default function Layout() {
         <Routes>
           <Route path="/" element={<Navigate to={`/${activeApp}`} />} />
           <Route path="/explorer/*" element={<ExplorerApp />} />
-          <Route path="/wallet/*" element={<Wallet />} />
+          <Route
+            path="/wallet/*"
+            element={
+              <Protected>
+                <Wallet />
+              </Protected>
+            }
+          />
           <Route path="/login" element={<Login />} />
           <Route path="/access" element={<AccessLayout />}>
             <Route index element={<Menu />} />
