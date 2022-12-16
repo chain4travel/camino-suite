@@ -41,41 +41,41 @@ const ifAuthenticated = (to: Route, from: Route, next: Function) => {
 }
 
 const routes = [
-    {
-        path: '/wallet',
-        name: 'home',
-        component: Home,
-        beforeEnter: ifNotAuthenticated,
-    },
-    {
-        path: '/wallet/access',
-        children: [
-            {
-                path: '/',
-                name: 'access',
-                component: Menu,
-            },
-            {
-                path: 'keystore',
-                component: Keystore,
-            },
-            {
-                path: 'privatekey',
-                component: PrivateKey,
-            },
-            {
-                path: 'mnemonic',
-                component: Mnemonic,
-            },
-            {
-                path: 'account/:index',
-                component: Account,
-                name: 'Account',
-            },
-        ],
-        component: Access,
-        beforeEnter: ifNotAuthenticated,
-    },
+    // {
+    //     path: '/wallet',
+    //     name: 'home',
+    //     component: Home,
+    //     beforeEnter: ifNotAuthenticated,
+    // },
+    // {
+    //     path: '/wallet/access',
+    //     children: [
+    //         {
+    //             path: '/',
+    //             name: 'access',
+    //             component: Menu,
+    //         },
+    //         {
+    //             path: 'keystore',
+    //             component: Keystore,
+    //         },
+    //         {
+    //             path: 'privatekey',
+    //             component: PrivateKey,
+    //         },
+    //         {
+    //             path: 'mnemonic',
+    //             component: Mnemonic,
+    //         },
+    //         {
+    //             path: 'account/:index',
+    //             component: Account,
+    //             name: 'Account',
+    //         },
+    //     ],
+    //     component: Access,
+    //     beforeEnter: ifNotAuthenticated,
+    // },
     {
         path: '/wallet/legal',
         name: 'legal',

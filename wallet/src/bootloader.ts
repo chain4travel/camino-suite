@@ -23,7 +23,6 @@ export const mount = (el: string) => {
         created: () => {},
         mounted() {
             // Reveal app version
-            console.log(`App Version: ${process.env.VUE_APP_VERSION}`)
             // Hide loader once vue is initialized
             let loader = document.getElementById('app_loading')
             if (loader) {

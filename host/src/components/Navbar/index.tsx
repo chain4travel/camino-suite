@@ -7,8 +7,9 @@ import ThemeSwitcher from "./ThemeSwitcher";
 import { useAppSelector } from "../../hooks/reduxHooks";
 import { getActiveNetwork } from "../../redux/slices/network";
 import store from "wallet/store";
-import { mdiLogout } from "@mdi/js";
+import { mdiLogout, mdiWalletOutline } from "@mdi/js";
 import Icon from "@mdi/react";
+import { useNavigate } from "react-router-dom";
 
 export default function Navbar() {
   const activeNetwork = useAppSelector(getActiveNetwork);
@@ -21,7 +22,7 @@ export default function Navbar() {
     });
     setAuth(false);
   };
-
+  const navigate = useNavigate();
   useEffect(() => {
     setInterval(() => {
       if (store.state.isAuth) setAuth(true);
@@ -49,7 +50,7 @@ export default function Navbar() {
         <Box sx={{ display: "flex", alignItems: "center", gap: ".5rem" }}>
           <ThemeSwitcher />
           {activeNetwork && <NetworkSwitcher />}
-          {auth && (
+          {auth ? (
             <Box
               onClick={logout}
               sx={{ display: "flex", alignItems: "center", gap: "5px" }}
@@ -57,6 +58,18 @@ export default function Navbar() {
               <Icon path={mdiLogout} size={0.7} />
               <Typography variant="subtitle1" component="span">
                 logout
+              </Typography>
+            </Box>
+          ) : (
+            <Box
+              onClick={() => {
+                navigate("/login");
+              }}
+              sx={{ display: "flex", alignItems: "center", gap: "5px" }}
+            >
+              <Icon path={mdiWalletOutline} size={0.7} />
+              <Typography variant="subtitle1" component="span">
+                Wallet
               </Typography>
             </Box>
           )}
