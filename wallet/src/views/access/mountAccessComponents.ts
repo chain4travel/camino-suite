@@ -51,5 +51,3 @@ export const mountAccessComponents = (el: string, type: string, props: any) => {
     })
     app.$mount(el)
 }
-
-// mount("#app");
