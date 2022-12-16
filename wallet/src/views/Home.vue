@@ -46,13 +46,13 @@
             </div>
             <div class="buttons-wrapper">
                 <div>
-                    <router-link
+                    <div
+                        @click="click('/access')"
                         data-cy="access"
-                        to="/wallet/access"
                         class="ava_button button_primary submit_but"
                     >
                         {{ $t('home.access.submit') }}
-                    </router-link>
+                    </div>
                 </div>
                 <div>
                     <router-link
@@ -71,13 +71,18 @@
 
 <script lang="ts">
 import 'reflect-metadata'
-import { Vue, Component } from 'vue-property-decorator'
+import { Vue, Component, Prop } from 'vue-property-decorator'
 import ToS from '@/components/misc/ToS.vue'
 @Component({
     name: 'home',
     components: { ToS },
 })
-export default class Home extends Vue {}
+export default class Home extends Vue {
+    @Prop() navigate: any
+    click(string: string) {
+        this.navigate(string)
+    }
+}
 </script>
 
 <style scoped lang="scss">

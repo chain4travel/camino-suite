@@ -53,14 +53,7 @@ export default {
         Notifications,
     },
     async created() {
-        // Init language preference
-        let locale = localStorage.getItem('lang')
-        if (locale) {
-            this.$root.$i18n.locale = locale
-        }
-        if (router.currentRoute.path === '/') router.push('/wallet')
-
-        // await this.$store.dispatch('Network/init')
+        router.push('/wallet/home')
         this.$store.dispatch('Assets/initErc20List')
         this.$store.dispatch('Assets/ERCNft/init')
         this.$store.dispatch('updateAvaxPrice')

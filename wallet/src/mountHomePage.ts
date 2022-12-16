@@ -2,7 +2,7 @@ import Vue from 'vue'
 import store from './store'
 import VueMeta from 'vue-meta'
 import router from './router'
-import App from './App.vue'
+import Home from './views/Home.vue'
 import { Datetime } from 'vue-datetime'
 import 'vue-datetime/dist/vue-datetime.css'
 import i18n from './plugins/i18n'
@@ -13,24 +13,16 @@ Vue.use(VueMeta)
 Vue.use(BootstrapVue)
 Vue.component('datetime', Datetime)
 
-export const mount = (el: string) => {
+export const mountHome = (el: string, props: any) => {
     const app = new Vue({
         router,
         store,
         vuetify,
         i18n,
-        render: (h) => h(App),
-        created: () => {},
-        mounted() {
-            // Reveal app version
-            // Hide loader once vue is initialized
-            let loader = document.getElementById('app_loading')
-            if (loader) {
-                loader.style.display = 'none'
-            }
-        },
-        data: {
-            theme: 'night',
+        data: {},
+        render: (createElement) => {
+            const context = { props: props }
+            return createElement(Home, context)
         },
     })
     app.$mount(el)
