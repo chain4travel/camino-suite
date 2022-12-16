@@ -45,7 +45,7 @@ const routes = [
         beforeEnter: ifNotAuthenticated,
     },
     {
-        path: '/wallet',
+        path: '/wallet/home',
         children: [
             {
                 path: '/',
