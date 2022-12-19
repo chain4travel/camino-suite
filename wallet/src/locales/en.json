@@ -58,7 +58,7 @@
         "submit": "Access Wallet",
         "mnemonic": {
             "title": "Enter your MNEMONIC phrase\n",
-            "subtitle": "Hit ‘SPACE’ after every successful word entry.",
+            "subtitle": "Your key phrase consists of 24 words separated by an empty space",
             "cancel": "Cancel",
             "error": "Invalid key phrase. Your phrase must be 24 words separated by a single space."
         },
