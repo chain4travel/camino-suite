@@ -15,9 +15,9 @@
                                 <img v-else src="@/assets/diamond-secondary-night.svg" alt />
                             </div>
                             <h1>{{ $t('create.generate') }}</h1>
-                            <router-link to="/wallet/access" class="link">
+                            <div @click="navigate('/access')" class="link">
                                 {{ $t('create.but_have') }}
-                            </router-link>
+                            </div>
                             <div class="options">
                                 <button
                                     class="ava_button but_generate button_secondary"
@@ -29,9 +29,9 @@
                             </div>
                             <ToS></ToS>
 
-                            <router-link to="/wallet" class="link">
+                            <div @click="navigate('/login')" class="link">
                                 {{ $t('create.cancel') }}
-                            </router-link>
+                            </div>
                         </div>
                         <!-- PHASE 2 -->
                         <div v-else class="stage_2">
@@ -124,9 +124,9 @@
                                                     >
                                                         {{ $t('create.success_submit') }}
                                                     </button>
-                                                    <router-link to="/wallet" class="link">
+                                                    <div @click="navigate('/login')" class="link">
                                                         {{ $t('create.cancel') }}
-                                                    </router-link>
+                                                    </div>
                                                     <ToS style="margin: 30px 0 !important"></ToS>
                                                 </div>
                                             </transition>
@@ -144,7 +144,7 @@
 </template>
 <script lang="ts">
 import 'reflect-metadata'
-import { Vue, Component } from 'vue-property-decorator'
+import { Vue, Component, Prop } from 'vue-property-decorator'
 import Spinner from '@/components/misc/Spinner.vue'
 import * as bip39 from 'bip39'
 
@@ -163,6 +163,8 @@ import MnemonicPhrase from '@/js/wallets/MnemonicPhrase'
 })
 export default class CreateWallet extends Vue {
     // TODO: We do not need to create keyPair, only mnemonic is sufficient
+    @Prop() navigate: any
+    @Prop() setLogged: any
     isLoad: boolean = false
     keyPhrase: MnemonicPhrase | null = null
     isSecured: boolean = false
@@ -205,11 +207,8 @@ export default class CreateWallet extends Vue {
 
         this.isLoad = true
 
-        let parent = this
-
-        setTimeout(async () => {
-            await parent.$store.dispatch('accessWallet', this.keyPhrase!.getValue())
-        }, 500)
+        await this.$store.dispatch('accessWallet', this.keyPhrase!.getValue())
+        this.setLogged(this.$store.state)
     }
 }
 </script>

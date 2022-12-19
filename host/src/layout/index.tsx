@@ -6,6 +6,7 @@ import ExplorerApp from "./ExplorerApp";
 import Wallet from "./WalletApp";
 import { getActiveApp } from "../redux/slices/app-config";
 import Login from "./Login";
+import Create from "./Create";
 import Menu from "./Menu";
 import AccessLayout from "../views/access";
 import MountAccessComponent from "../views/access/MountAccessComponent";
@@ -29,6 +30,7 @@ export default function Layout() {
             }
           />
           <Route path="/login" element={<Login />} />
+          <Route path="/create" element={<Create />} />
           <Route path="/access" element={<AccessLayout />}>
             <Route index element={<Menu />} />
             <Route

@@ -42,6 +42,7 @@ import * as bip39 from 'bip39'
 })
 export default class Mnemonic extends Vue {
     @Prop() navigate: any
+    @Prop() setLogged: any
     phrase: string = ''
     isLoading: boolean = false
     err: string = ''
@@ -95,10 +96,11 @@ export default class Mnemonic extends Vue {
             this.isLoading = false
             return
         }
-
+        // let parent = this
         setTimeout(async () => {
             try {
                 await this.$store.dispatch('accessWallet', phrase)
+                this.setLogged(this.$store.state)
                 this.isLoading = false
             } catch (e) {
                 this.isLoading = false

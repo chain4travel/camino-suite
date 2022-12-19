@@ -20,7 +20,7 @@ export default function Login() {
 
   return (
     <React.Suspense fallback={<div>Loading...</div>}>
-      <LoadLogin props={{ navigate: () => navigate("/access") }} />
+      <LoadLogin props={{ navigate: (location) => navigate(location) }} />
     </React.Suspense>
   );
 }

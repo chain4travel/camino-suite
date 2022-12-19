@@ -55,13 +55,13 @@
                     </div>
                 </div>
                 <div>
-                    <router-link
+                    <div
                         data-cy="create"
-                        to="/wallet/create"
+                        @click="click('/create')"
                         class="ava_button button_secondary submit_but"
                     >
                         {{ $t('home.create.submit') }}
-                    </router-link>
+                    </div>
                 </div>
             </div>
             <ToS class="tos" style="align-self: center; margin: 30px !important"></ToS>
