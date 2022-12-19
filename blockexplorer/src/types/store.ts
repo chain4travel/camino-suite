@@ -2,6 +2,8 @@ import { Status } from 'types';
 import { BlockDetail, BlockTableData } from './block';
 import { MagellanTransaction } from './magellan-types';
 import { CTransaction, TranscationDetails, XPTransaction } from './transaction';
+import LocationNode from './locationNode';
+import { NodesPerCountry, NodesPerCity } from './nodesLocation';
 
 export interface Chain {
   chainID: string;
@@ -94,4 +96,11 @@ export interface initialXPchainStateType {
   assets?: assets[];
   XChainOverview: ChainOverviewType;
   PChainOverview: ChainOverviewType;
+}
+
+export interface initialLocationNodes {
+  locationsNodeLoading: Status,
+  locationNodes: LocationNode[],
+  nodesPerCountry: NodesPerCountry[],
+  nodesPerCity: NodesPerCity[]
 }

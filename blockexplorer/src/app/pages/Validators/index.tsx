@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState, Fragment } from 'react';
+import React, { FC, useState, Fragment } from 'react';
 import {
   Grid,
   Paper,
@@ -9,6 +9,7 @@ import {
 } from '@mui/material';
 import { useAppDispatch, useAppSelector } from 'store/configureStore';
 import { selectAllValidators } from 'store/validatorsSlice';
+import { getLocationsNodes,getSumNodesPerCountry, getSumNodesPerCity } from 'store/locationNodes';
 import { useEffectOnce } from 'app/hooks/useEffectOnce';
 import { loadValidators } from 'store/validatorsSlice/utils';
 import { TableViewRow } from './TableViewRow';
@@ -19,9 +20,6 @@ import PageContainer from 'app/components/PageContainer';
 import BackButton from 'app/components/BackButton';
 import TableView from 'app/components/Table/TableView';
 import useWidth from 'app/hooks/useWidth';
-import LocationNode from 'types/locationNode';
-import { NodesPerCountry, NodesPerCity } from 'types/nodesLocation';
-import Utils from 'app/components/NodesMap/Utils';
 import {
   ComposableMap,
   Geographies,
@@ -30,13 +28,14 @@ import {
 } from 'react-simple-maps';
 import features from 'app/components/NodesMap/features.json';
 import CircleMarker from 'app/components/NodesMap/CircleMarker';
-import Stadistics from 'app/components/NodesMap/Stadistics';
+//import Stadistics from 'app/components/NodesMap/Stadistics';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Typography from '@mui/material/Typography';
 import CircularProgress from '@mui/material/CircularProgress';
 import '../../components/NodesMap/NotoFont.css';
 import StadisticsV2 from 'app/components/NodesMap/StadisticsV2';
+import { loadLocationNodes } from 'store/locationNodes/utils';
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -47,15 +46,17 @@ interface TabPanelProps {
 const Validators: FC = () => {
   const theme = useTheme();
   const { isDesktop, isWidescreen } = useWidth();
+
   const validators = useAppSelector(selectAllValidators);
+  const data = useAppSelector(getLocationsNodes);
+  const nodesPerCountry = useAppSelector(getSumNodesPerCountry);
+  const nodesPerCity = useAppSelector(getSumNodesPerCity);
+
 
   const dispatch = useAppDispatch();
 
   //Map And Stadistics
   const [activeTab, setActiveTab] = useState(0);
-  const [data, setData] = useState<LocationNode[]>([]);
-  const [nodesPerCountry, setNodesPerCountry] = useState<NodesPerCountry[]>([]);
-  const [nodesPerCity, setNodesPerCity] = useState<NodesPerCity[]>([]);
   //const [maxValue, setMaxValue] = useState(0);
   const [zoomValue, setZoomValue] = useState(1.5);
   const [loading, setLoading] = useState(false);
@@ -65,24 +66,8 @@ const Validators: FC = () => {
 
   useEffectOnce(() => {
     dispatch(loadValidators());
+    dispatch(loadLocationNodes());
   });
-
-  useEffect(() => {
-    setLoading(true);
-    Utils.getNodeData()
-      .then((dataNodes: LocationNode[]) => {
-        setData(dataNodes);
-        let sumNodesPerCountry = Utils.sumNodesPerCountry(dataNodes);
-        let sumNodesPerCity = Utils.sumNodesPerCity(dataNodes);
-        setNodesPerCountry(sumNodesPerCountry);
-        setNodesPerCity(sumNodesPerCity);
-        setLoading(false);
-      })
-      .catch(error => {
-        setLoading(false);
-        setError(true);
-      });
-  }, []);
 
   const handleChangeTab = (event: React.SyntheticEvent, newValue: number) => {
     setActiveTab(newValue);

@@ -4,8 +4,6 @@ import { Marker } from 'react-simple-maps';
 import './CircleMarker.css';
 import Popover from '@mui/material/Popover';
 import Typography from '@mui/material/Typography';
-import { selectAllValidators } from 'store/validatorsSlice';
-import { useAppDispatch, useAppSelector } from 'store/configureStore';
 import { Button } from '@mui/material';
 
 const CircleMarker = ({
@@ -38,8 +36,6 @@ const CircleMarker = ({
   const [changeColor, setChangeColor] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
   const [showMoreValidators, setShowMoreValidators] = useState(false);
-
-  const validators = useAppSelector(selectAllValidators);
 
   const handleClose = () => {
     setAnchorEl(null);
