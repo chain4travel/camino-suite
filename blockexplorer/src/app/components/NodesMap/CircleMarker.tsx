@@ -2,8 +2,13 @@ import React, { Fragment, useEffect, useState } from 'react';
 import Tooltip from '@mui/material/Tooltip';
 import { Marker } from 'react-simple-maps';
 import './styles/CircleMarker.css';
-import Popover from '@mui/material/Popover';
+//import Popover from '@mui/material/Popover';
 import Typography from '@mui/material/Typography';
+import Popper, { PopperPlacementType } from '@mui/material/Popper';
+import Fade from '@mui/material/Fade';
+import Paper from '@mui/material/Paper';
+import PopupState, { bindToggle, bindPopper } from 'material-ui-popup-state';
+
 
 const CircleMarker = ({
   country,
@@ -18,85 +23,66 @@ const CircleMarker = ({
   let cityNodes = nodes;
 
   const [changeColor, setChangeColor] = useState(false);
-  const [anchorEl, setAnchorEl] = useState(null);
+  const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
+  const [open, setOpen] = useState(false);
+  const [placement, setPlacement] = useState<PopperPlacementType>();
 
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
-
-  const getValidatorsTooltipMessage = () => {
-    if(cityNodes.length > 1)
-    {
-      return " (" + cityNodes.length + " validators)";
-    }
-    else
-    {
-      return " (" + cityNodes.length + " validator)";
-    }
-  }
-
-  const open = Boolean(anchorEl);
   const id = open ? 'simple-popover' : undefined;
 
   return (
     <Fragment>
-      <Tooltip title={country + ' - ' + city + getValidatorsTooltipMessage()} style={{ pointerEvents: 'auto' }}>
-        <Marker coordinates={[lng, lat]} aria-describedby={id}>
-          <circle
-            className="animated flash"
-            fill={changeColor == true ? '#000000' : '#4782da'}
-            stroke="#fff"
-            fillOpacity="1"
-            strokeWidth={sValue / 2}
-            r={rValue / 2}
-            strokeOpacity="0.4"
-            cursor="pointer"
-            onMouseOver={(e) => {
-              setChangeColor(true);
-            }}
-            onMouseOut={() => {
-              setChangeColor(false);
-            }}
-            onClick={(e: any) => {
-              setAnchorEl(e.currentTarget);
-            }}
-          />
-        </Marker>
-      </Tooltip>
-      <Popover
-        id={id}
-        open={open}
-        anchorEl={anchorEl}
-        onClose={handleClose}
-        anchorOrigin={{
-          vertical: 'bottom',
-          horizontal: 'left',
-        }}
-        disableAutoFocus={true}
-        disableEnforceFocus={true}
-      >
-        <Typography sx={{ p: 2 }}>
-          <div>
-            <li>
-              <b>Country:</b>
-              {country}
-            </li>
-            <li>
-              <b>City:</b>
-              {city}
-            </li>
-            <li>
-              <b>Nodes:</b>
-              <br />
-              {cityNodes.map((value, index) => <>
-                  {index < 3 ? <>{value}
-                    <br /></> : null}
-                </>)}
-                {cityNodes.length > 3 ? <>{cityNodes.length - 3 } more validators</> : null}
-            </li>
-          </div>
-        </Typography>
-      </Popover>
+      <Marker coordinates={[lng, lat]} aria-describedby={id}>
+        <circle
+          className="animated flash"
+          fill={changeColor == true ? '#000000' : '#4782da'}
+          stroke="#fff"
+          fillOpacity="1"
+          strokeWidth={sValue / 2}
+          r={rValue / 2}
+          strokeOpacity="0.4"
+          cursor="pointer"
+          onMouseOver={(e: any) => {
+            setAnchorEl(e.currentTarget);
+            setOpen(true);
+            setChangeColor(true);
+          }}
+          onMouseOut={(e) => {
+            setAnchorEl(null);
+            setOpen(false);
+            setChangeColor(false);
+          }}
+        />
+      </Marker>
+
+      <Popper open={open} anchorEl={anchorEl} placement={placement} transition>
+        {({ TransitionProps }) => (
+          <Fade {...TransitionProps} timeout={350}>
+            <Paper>
+              <Typography sx={{ p: 2 }}>
+                <div>
+                  <li>
+                    <b>Country:</b>
+                    {country}
+                  </li>
+                  <li>
+                    <b>City:</b>
+                    {city}
+                  </li>
+                  <li>
+                    <b>Nodes:</b>
+                    <br />
+                    {cityNodes.map((value, index) => <>
+                      {index < 3 ? <>{value}
+                        <br /></> : null}
+                    </>)}
+                    {cityNodes.length > 3 ? <>{cityNodes.length - 3} more validators</> : null}
+                  </li>
+                </div>
+              </Typography>
+            </Paper>
+          </Fade>
+        )}
+      </Popper>
     </Fragment>
   );
 };
