@@ -1,10 +1,9 @@
 import React, { Fragment, useEffect, useState } from 'react';
 import Tooltip from '@mui/material/Tooltip';
 import { Marker } from 'react-simple-maps';
-import './CircleMarker.css';
+import './styles/CircleMarker.css';
 import Popover from '@mui/material/Popover';
 import Typography from '@mui/material/Typography';
-import { Button } from '@mui/material';
 
 const CircleMarker = ({
   country,
@@ -16,26 +15,10 @@ const CircleMarker = ({
   nodes
 }: any) => {
 
-  {/*
-    let cityNodes = [
-    "NodeID-GyakeRf3JZURRPYakhrrxRG8fft3st2qC",
-    "NodeID-GyakeRf3JZURRPYakhrrxRG8fft3st2qC",
-    "NodeID-GyakeRf3JZURRPYakhrrxRG8fft3st2qC",
-    "NodeID-GyakeRf3JZURRPYakhrrxRG8fft3st2qC",
-    "NodeID-GyakeRf3JZURRPYakhrrxRG8fft3st2qC",
-    "NodeID-GyakeRf3JZURRPYakhrrxRG8fft3st2qC",
-    "NodeID-GyakeRf3JZURRPYakhrrxRG8fft3st2qC",
-    "NodeID-GyakeRf3JZURRPYakhrrxRG8fft3st2qC",
-    "NodeID-GyakeRf3JZURRPYakhrrxRG8fft3st2qC",
-    "NodeID-GyakeRf3JZURRPYakhrrxRG8fft3st2qC",
-    "NodeID-GyakeRf3JZURRPYakhrrxRG8fft3st2qC",
-    "NodeID-GyakeRf3JZURRPYakhrrxRG8fft3st2qC"];*/}
-
   let cityNodes = nodes;
 
   const [changeColor, setChangeColor] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
-  const [showMoreValidators, setShowMoreValidators] = useState(false);
 
   const handleClose = () => {
     setAnchorEl(null);
@@ -102,7 +85,6 @@ const CircleMarker = ({
               <b>City:</b>
               {city}
             </li>
-            {/*<br />*/}
             <li>
               <b>Nodes:</b>
               <br />

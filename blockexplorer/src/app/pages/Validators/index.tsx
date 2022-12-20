@@ -26,22 +26,15 @@ import {
   Geography,
   ZoomableGroup,
 } from 'react-simple-maps';
-import features from 'app/components/NodesMap/features.json';
+import features from 'app/components/NodesMap/json/features.json';
 import CircleMarker from 'app/components/NodesMap/CircleMarker';
-//import Stadistics from 'app/components/NodesMap/Stadistics';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Typography from '@mui/material/Typography';
 import CircularProgress from '@mui/material/CircularProgress';
-import '../../components/NodesMap/NotoFont.css';
-import StadisticsV2 from 'app/components/NodesMap/StadisticsV2';
+import '../../components/NodesMap/styles/NotoFont.css';
+import Stadistics from 'app/components/NodesMap/Stadistics';
 import { loadLocationNodes } from 'store/locationNodes/utils';
-
-interface TabPanelProps {
-  children?: React.ReactNode;
-  index: number;
-  value: number;
-}
 
 const Validators: FC = () => {
   const theme = useTheme();
@@ -50,10 +43,8 @@ const Validators: FC = () => {
   const validators = useAppSelector(selectAllValidators);
   const data = useAppSelector(getLocationsNodes);
 
-  console.log("dataNodes", data);
   const nodesPerCountry = useAppSelector(getSumNodesPerCountry);
   const nodesPerCity = useAppSelector(getSumNodesPerCity);
-
 
   const dispatch = useAppDispatch();
 
@@ -246,12 +237,12 @@ const Validators: FC = () => {
                     {activeTab == 2 ? (
                       <div className="noto-flags">
                         {theme.palette.mode == 'light' ? (
-                          <StadisticsV2
+                          <Stadistics
                             nodesPerCountry={nodesPerCountry}
                             darkMode={false}
                           />
                         ) : (
-                          <StadisticsV2
+                          <Stadistics
                             nodesPerCountry={nodesPerCountry}
                             darkMode={true}
                           />

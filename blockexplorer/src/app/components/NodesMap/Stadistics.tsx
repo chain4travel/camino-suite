@@ -1,122 +1,79 @@
-import React, { Fragment, useEffect, useState } from 'react';
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend,
-} from 'chart.js';
-import { Bar } from 'react-chartjs-2';
-import flags from './flags.json';
-import sortBy from 'lodash/sortBy';
-import Twemoji from 'react-twemoji';
+import React from 'react';
+import Highcharts from 'highcharts';
+import HighchartsReact from 'highcharts-react-official';
+import flags from './json/flags.json';
 
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend,
-);
-
-const Stadistics = ({ nodesPerCountry }: any) => {
-  const [isMoible, setIsMobile] = useState(false);
-  const [loadingRezise, setLoadingRezise] = useState(true);
+const StadisticsV2 = ({ nodesPerCountry, darkMode }) => {
+  const getUrlFlag = index => {
+    let objFlag = nodesPerCountry[index];
+    let code = flags.find(flag => flag.code == objFlag.alpha2);
+    let url = `/assets/flags/${code?.code.toLowerCase()}.svg`;
+    return url;
+  };
 
   const options = {
-    indexAxis: 'y' as const,
-    color: '#64748B',
-    responsive: true,
-    plugins: {
-      legend: {
-        display: false,
-      },
-      tooltip: {
-        displayColors: false,
-      },
+    chart: {
+      type: 'bar',
+      backgroundColor: 'rgba(0,0,0,0)',
     },
-    scales: {
-      y: {
-        ticks: {
-          color: '#64748B',
-          fontFamily: 'NotoColorEmojiLimited',
-          callback: function (value: any, index: any, ticks: any) {
-            return (
-              getStringFlag(nodesPerCountry[index].alpha2) +
-              ' ' +
-              nodesPerCountry[index].country
-            );
-          },
-          padding: 30,
+    title: {
+      text: '',
+      display: 'none',
+    },
+    yAxis: {
+      lineColor: 'transparent',
+      gridLineColor: '#666666',
+      title: '',
+    },
+    xAxis: {
+      lineColor: 'transparent',
+      gridLineColor: '#666666',
+      categories: nodesPerCountry.map(value => value.country),
+      labels: {
+        useHTML: true,
+        formatter: function (obj) {
+          let index = obj.pos;
+          return `<span style="color:${
+            darkMode == true ? 'white' : 'black'
+          }"><img width="15" height="15" style="position: relative; top: 2px" src="${getUrlFlag(
+            index,
+          )}" /> ${obj.value}</span>`;
         },
       },
-      x: {
-        ticks: { color: '#64748B' },
+    },
+
+    legend: {
+      itemStyle: {
+        color: darkMode ? 'white' : 'black',
+      },
+    },
+    series: [
+      {
+        borderColor: 'transparent',
+        name: 'Nodes',
+        color: '#41547C',
+        data: nodesPerCountry.map(value => value.nodes.length),
+        lineColor: 'transparent', // make the line invisible
+      },
+    ],
+    credits: {
+      enabled: false,
+    },
+    tooltip: {
+      useHTML: true,
+      formatter: function (obj) {
+        let objData: any = this;
+        return '<b>' + objData.x + ':</b>' + objData.y;
       },
     },
   };
 
-  const getStringFlag = (countryCode: string) => {
-    try {
-      let flagUnicode = flags.find(
-        fl => fl.code.toString() == countryCode.toString(),
-      );
-      return flagUnicode?.emoji;
-    } catch (e) {
-      console.log(e);
-    }
-  };
-
-  const labels = nodesPerCountry.map((item: any) => item.country);
-
-  const data = {
-    labels,
-    datasets: [
-      {
-        label: 'Nodes',
-        data: nodesPerCountry.map((item: any) => item.nodes.length),
-        backgroundColor: '#41547C',
-        borderColor: 'white',
-      },
-    ],
-  };
-
-  function updateWindowDimensions() {
-    setLoadingRezise(true);
-    setTimeout(() => {
-      if (window.innerWidth < 720) {
-        setIsMobile(true);
-        ChartJS.defaults.datasets.bar.barThickness = 10;
-      } else {
-        setIsMobile(false);
-        ChartJS.defaults.datasets.bar.barThickness = 35;
-      }
-      setLoadingRezise(false);
-    }, 1);
-  }
-
-  useEffect(() => {
-    window.addEventListener('resize', () => {
-      updateWindowDimensions();
-    });
-  });
-
-  useEffect(() => {
-    updateWindowDimensions();
-  }, []);
-
   return (
-    <Fragment>
-      <Twemoji options={{ className: 'twemoji' }}>
-        {loadingRezise == false ? (
-          <Bar className="twemoji" options={options} data={data} />
-        ) : null}
-      </Twemoji>
-    </Fragment>
+    <div>
+      <br />
+      <HighchartsReact type="" highcharts={Highcharts} options={options} />
+    </div>
   );
 };
 
-export default Stadistics;
+export default StadisticsV2;
