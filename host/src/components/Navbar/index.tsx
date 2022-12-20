@@ -54,7 +54,12 @@ export default function Navbar() {
           {auth ? (
             <Box
               onClick={logout}
-              sx={{ display: "flex", alignItems: "center", gap: "5px" }}
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                gap: "5px",
+                cursor: "pointer",
+              }}
             >
               <Icon path={mdiLogout} size={0.7} />
               <Typography variant="subtitle1" component="span">
@@ -66,7 +71,12 @@ export default function Navbar() {
               onClick={() => {
                 navigate("/login");
               }}
-              sx={{ display: "flex", alignItems: "center", gap: "5px" }}
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                gap: "5px",
+                cursor: "pointer",
+              }}
             >
               <Icon path={mdiWalletOutline} size={0.7} />
               <Typography variant="subtitle1" component="span">

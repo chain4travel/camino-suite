@@ -16,7 +16,6 @@
                     hide-details
                 ></v-text-field>
                 <p class="err">{{ error }}</p>
-                <!--                <remember-key class="remember" v-model="rememberPass" v-if="file" @is-valid="isRememberValid"></remember-key>-->
                 <v-btn
                     class="ava_button button_primary"
                     @click="access"
@@ -36,7 +35,6 @@
 import { Vue, Component, Prop } from 'vue-property-decorator'
 
 import FileInput from '../../components/misc/FileInput.vue'
-// import RememberKey from "../../components/misc/RememberKey.vue";
 import { ImportKeyfileInput } from '@/store/types'
 import { AllKeyFileTypes } from '@/js/IKeystore'
 
@@ -48,11 +46,10 @@ import { AllKeyFileTypes } from '@/js/IKeystore'
 })
 export default class Keystore extends Vue {
     @Prop() navigate: any
+    @Prop() setLogged: any
     pass: string = ''
     file: File | null = null
     fileText: string | null = null
-    // rememberPass: string|null = null;
-    // rememberValid: boolean = true;
     isLoading: boolean = false
     error: string = ''
 
@@ -68,9 +65,6 @@ export default class Keystore extends Vue {
         reader.readAsText(val)
     }
 
-    // isRememberValid(val: boolean){
-    //     this.rememberValid = val;
-    // }
     access() {
         if (!this.canSubmit || this.isLoading) return
 
@@ -85,10 +79,6 @@ export default class Keystore extends Vue {
             return
         }
 
-        // console.log(this.fileText);
-        // return;
-
-        // let rememberPass = this.rememberPass;
         let data: ImportKeyfileInput = {
             password: this.pass,
             data: fileData,
@@ -101,10 +91,7 @@ export default class Keystore extends Vue {
                 .dispatch('importKeyfile', data)
                 .then((res) => {
                     parent.isLoading = false
-
-                    // if(rememberPass){
-                    //     parent.$store.dispatch('rememberWallets', rememberPass)
-                    // }
+                    this.setLogged(this.$store.state)
                 })
                 .catch((err) => {
                     console.log(err)
@@ -140,12 +127,9 @@ export default class Keystore extends Vue {
     margin-bottom: 22px;
 }
 .access_card {
-    /*max-width: 80vw;*/
     background-color: var(--bg-light);
     padding: main.$container-padding;
     width: 100%;
-    /*max-width: 240px;*/
-    /*max-width: 1000px;*/
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -169,7 +153,6 @@ h1 {
     font-size: 13px;
     border: none !important;
     background-color: var(--bg) !important;
-    /*min-width: 200px*/
 }
 
 a {
