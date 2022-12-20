@@ -3,6 +3,8 @@ import LocationNode from '../../../types/locationNode';
 import { NodesPerCountry, NodesPerCity } from 'types/nodesLocation';
 import sortBy from 'lodash/sortBy';
 import { store } from "../../../App.tsx";
+import { baseEndpoint } from 'utils/magellan-api-utils';
+import { getBaseUrl } from 'api/utils';
 
 class Utils {
   rpc: string;
@@ -110,9 +112,11 @@ class Utils {
         ip_provider: "ip-api",
       });
 
+      let url = Utils.getURLMagelland();
+
       var request = {
         method: 'post',
-        url: "http://127.0.0.1:5000/infoIP",
+        url: Utils.getURLMagelland(),
         headers: {
           'Content-Type': 'application/json',
         },
@@ -174,6 +178,12 @@ class Utils {
     return sortBy(dataCity, o => -o.nodes.length);
   }
 
+  private static getURLMagelland() 
+  {
+    //let urlBase = `${getBaseUrl()}${baseEndpoint}`;
+    let urlBase = `http://127.0.0.1:5000/infoIP`;
+    return urlBase;
+  }
 
 }
 

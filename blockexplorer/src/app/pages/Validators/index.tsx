@@ -49,6 +49,8 @@ const Validators: FC = () => {
 
   const validators = useAppSelector(selectAllValidators);
   const data = useAppSelector(getLocationsNodes);
+
+  console.log("dataNodes", data);
   const nodesPerCountry = useAppSelector(getSumNodesPerCountry);
   const nodesPerCity = useAppSelector(getSumNodesPerCity);
 

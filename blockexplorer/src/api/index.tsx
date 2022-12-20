@@ -67,6 +67,7 @@ export async function loadTransactionAggregates(
   return (await axios.get(url)).data;
 }
 
+
 export async function loadTransactionFeesAggregates(
   chainAlias: string,
   startTime: string,
