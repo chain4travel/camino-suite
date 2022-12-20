@@ -41,7 +41,9 @@ export const getLocationsNodes = (state: RootState) => state.locationNodes.locat
 
 export const getSumNodesPerCountry = (state: RootState) => state.locationNodes.sumNodesPerCountry;
 
-export const getSumNodesPerCity = (state: RootState) => state.locationNodes.sumNodesPerCity
+export const getSumNodesPerCity = (state: RootState) => state.locationNodes.sumNodesPerCity;
+
+export const getLoadingStatus = (state: RootState) => state.locationNodes.locationsNodeLoading;
 
 export const { locationsNodeReducer } = locationsNodeSlice.actions;
 

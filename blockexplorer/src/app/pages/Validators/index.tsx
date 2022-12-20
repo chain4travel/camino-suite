@@ -9,7 +9,7 @@ import {
 } from '@mui/material';
 import { useAppDispatch, useAppSelector } from 'store/configureStore';
 import { selectAllValidators } from 'store/validatorsSlice';
-import { getLocationsNodes,getSumNodesPerCountry, getSumNodesPerCity } from 'store/locationNodes';
+import { getLocationsNodes,getSumNodesPerCountry, getSumNodesPerCity, getLoadingStatus } from 'store/locationNodes';
 import { useEffectOnce } from 'app/hooks/useEffectOnce';
 import { loadValidators } from 'store/validatorsSlice/utils';
 import { TableViewRow } from './TableViewRow';
@@ -35,6 +35,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 import '../../components/NodesMap/styles/NotoFont.css';
 import Stadistics from 'app/components/NodesMap/Stadistics';
 import { loadLocationNodes } from 'store/locationNodes/utils';
+import { Status } from "types";
 
 const Validators: FC = () => {
   const theme = useTheme();
@@ -48,11 +49,14 @@ const Validators: FC = () => {
 
   const dispatch = useAppDispatch();
 
+  const loadingStatus = useAppSelector(getLoadingStatus);
+
+  const loading = loadingStatus == "loading" ? true : false;
+
   //Map And Stadistics
   const [activeTab, setActiveTab] = useState(0);
   //const [maxValue, setMaxValue] = useState(0);
   const [zoomValue, setZoomValue] = useState(1.5);
-  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
   const [sizeCircle, setSizeCircle] = useState(10);
   const [sizeStroke, setSizeStroke] = useState(7);
