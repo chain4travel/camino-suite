@@ -10,6 +10,7 @@ import {
   WALLET,
   DOCS,
   MAINNET,
+  STATISTICS
 } from 'utils/route-paths';
 import { ChainType } from 'utils/types/chain-type';
 
@@ -27,6 +28,8 @@ const activeTab = (path: string): number => {
       return 1;
     case ChainType.P_CHAIN:
       return 2;
+    case "statistics":
+      return 5;
   }
   return 0;
 };
@@ -43,6 +46,7 @@ export default function Links() {
       else if (newValue === 0) navigate(CCHAIN);
       else if (newValue === 1) navigate(XCHAIN);
       else if (newValue === 2) navigate(PCHAIN);
+      else if (newValue === 5) navigate(STATISTICS)
       if (newValue !== 3 && newValue !== 4) setValue(newValue);
     }
   };
@@ -51,6 +55,7 @@ export default function Links() {
     else if (location.pathname === CCHAIN) setValue(0);
     else if (location.pathname === XCHAIN) setValue(1);
     else if (location.pathname === PCHAIN) setValue(2);
+    else if (location.pathname === STATISTICS) setValue(5);
   }, [location]);
 
   let navigate = useNavigate();
@@ -77,6 +82,7 @@ export default function Links() {
         <Tab className="tab" disableRipple label="C-Chain" {...a11yProps(0)} />
         <Tab className="tab" disableRipple label="X-Chain" {...a11yProps(1)} />
         <Tab className="tab" disableRipple label="P-Chain" {...a11yProps(2)} />
+        <Tab className="tab" value={5} disableRipple label="Statistics" {...a11yProps(5)} />
       </Tabs>
     </Box>
   );

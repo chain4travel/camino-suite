@@ -22,6 +22,7 @@ import { TransactionDetails, BlockDetails } from './pages/CChainPages';
 import XPTransactionDetails from './pages/XChainPages/Transactions/XPTransactionsDetails';
 import Validators from './pages/Validators';
 import NotFoundPage from './pages/PageNotFound';
+import Statistics from './pages/Statistics';
 import { BASE_PATH } from '../utils/route-paths';
 
 export function App() {
@@ -71,6 +72,7 @@ export function App() {
             </Route>
             <Route path="address/:id" element={<XAddressDetail />} />
           </Route>
+          <Route path={`${BASE_PATH}/statistics`} element={<Statistics />} />
           <Route path={`${BASE_PATH}/mainnet`} element={<ComingSoonPage />} />
           <Route path={`${BASE_PATH}/validators`} element={<Validators />} />
           <Route path="*" element={<NotFoundPage />}></Route>
