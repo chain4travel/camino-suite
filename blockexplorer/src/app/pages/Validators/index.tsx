@@ -8,8 +8,7 @@ import {
   useTheme,
 } from '@mui/material';
 import { useAppDispatch, useAppSelector } from 'store/configureStore';
-import { selectAllValidators } from 'store/validatorsSlice';
-import { getLocationsNodes,getSumNodesPerCountry, getSumNodesPerCity, getLoadingStatus } from 'store/locationNodes';
+import { selectAllValidators, getLocationsNodes,getSumNodesPerCountry, getSumNodesPerCity, getValidatorsStatus } from 'store/validatorsSlice';
 import { useEffectOnce } from 'app/hooks/useEffectOnce';
 import { loadValidators } from 'store/validatorsSlice/utils';
 import { TableViewRow } from './TableViewRow';
@@ -34,7 +33,6 @@ import Typography from '@mui/material/Typography';
 import CircularProgress from '@mui/material/CircularProgress';
 import '../../components/NodesMap/styles/NotoFont.css';
 import Stadistics from 'app/components/NodesMap/Stadistics';
-import { loadLocationNodes } from 'store/locationNodes/utils';
 import { Status } from "types";
 
 const Validators: FC = () => {
@@ -49,7 +47,7 @@ const Validators: FC = () => {
 
   const dispatch = useAppDispatch();
 
-  const loadingStatus = useAppSelector(getLoadingStatus);
+  const loadingStatus = useAppSelector(getValidatorsStatus);
 
   const loading = loadingStatus == "loading" ? true : false;
 
@@ -63,7 +61,6 @@ const Validators: FC = () => {
 
   useEffectOnce(() => {
     dispatch(loadValidators());
-    dispatch(loadLocationNodes());
   });
 
   const handleChangeTab = (event: React.SyntheticEvent, newValue: number) => {

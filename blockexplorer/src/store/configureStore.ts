@@ -10,7 +10,6 @@ import appConfigReducer from "./app-config";
 import { store } from "index";
 import { TypedUseSelectorHook, useSelector, useDispatch } from "react-redux";
 import validatorsSlice from "./validatorsSlice";
-import locationNodesSlice from "./locationNodes";
 import { Provider } from "react-redux";
 
 export function configureAppStore() {
@@ -21,8 +20,7 @@ export function configureAppStore() {
       cchain: blocksReducer,
       xchain: xchainReducer,
       validators: validatorsSlice,
-      appConfig: appConfigReducer,
-      locationNodes: locationNodesSlice
+      appConfig: appConfigReducer
     },
     middleware: (getDefaultMiddleware) =>
       getDefaultMiddleware({

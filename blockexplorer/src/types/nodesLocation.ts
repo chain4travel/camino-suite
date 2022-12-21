@@ -6,5 +6,7 @@ export type NodesPerCountry = {
 };
 
 export type NodesPerCity = NodesPerCountry & {
-  city: string   
+  city: string,
+  lng?: number;
+  lat?: number;
 }

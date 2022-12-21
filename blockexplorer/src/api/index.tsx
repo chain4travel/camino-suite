@@ -13,6 +13,7 @@ import { CTransaction } from 'types/transaction';
 import { createTransaction } from 'utils/magellan';
 import { baseEndpoint } from 'utils/magellan-api-utils';
 import { getBaseUrl, getChainID, mapToTableData } from './utils';
+import { store } from "../App";
 
 export const getBlocksPage = async (startingBlock: number) => {
   const response = await axios.get(
@@ -178,3 +179,55 @@ export const fetchBlocksTransactionsCChain =
     }
     return r;
   };
+
+//Old Function in Validators Slice
+export async function loadValidatorsInRPC() {
+  let networks = store.getState().appConfig;
+  let activeNetwork = networks.networks.find(
+    (element) => element.id === networks.activeNetwork
+  );
+  const response = await axios.post(
+    `${activeNetwork?.protocol}://${activeNetwork?.host}:${activeNetwork?.port}/ext/bc/P`,
+    {
+      jsonrpc: "2.0",
+      method: "platform.getCurrentValidators",
+      params: {
+        subnetID: null,
+        nodeIDs: [],
+      },
+      id: 1,
+    }
+  );
+  return response.data.result.validators;
+}
+
+export async function loadValidatorsInMagelland() {
+  return new Promise((resolve, reject) => {
+    const urlValidators = "https://63a3220e9704d18da086d8da.mockapi.io/v2/validatorInfo";
+    let networks = store.getState().appConfig;
+    let activeNetwork = networks.networks.find(
+      element => element.id === networks.activeNetwork,
+    );
+
+    var data = JSON.stringify({
+      rpc: `${activeNetwork?.protocol}://${activeNetwork?.host}:${activeNetwork?.port}`,
+      ip_provider: "ip-api",
+    });
+
+    var request = {
+      method: 'post',
+      url: urlValidators,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      data: data,
+    };
+
+    axios(request).then(function (response: any) {
+      resolve(response.data);
+    }).catch(function (error) {
+      reject([]);
+      console.log(error);
+    });
+  });
+}

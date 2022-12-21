@@ -67,6 +67,9 @@ export interface initialValidatorsStateType {
   numberOfValidators: number;
   validatorsLoading: Status;
   validators: ValidatorType[];
+  locationNodes: LocationNode[],
+  nodesPerCountry: NodesPerCountry[],
+  nodesPerCity: NodesPerCity[]
 }
 
 export interface ValidatorType {
@@ -96,11 +99,4 @@ export interface initialXPchainStateType {
   assets?: assets[];
   XChainOverview: ChainOverviewType;
   PChainOverview: ChainOverviewType;
-}
-
-export interface initialLocationNodes {
-  locationsNodeLoading: Status,
-  locationNodes: LocationNode[],
-  nodesPerCountry: NodesPerCountry[],
-  nodesPerCity: NodesPerCity[]
 }
