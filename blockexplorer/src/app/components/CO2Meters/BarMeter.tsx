@@ -3,10 +3,9 @@ import Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
 
 const BarMeter = ({ nodesPerCountry }) => {
-
     let darkMode = true;
 
-    const options = {
+   const options = {
         chart: {
             type: 'column',
             backgroundColor: 'rgba(0,0,0,0)',
@@ -90,7 +89,8 @@ const BarMeter = ({ nodesPerCountry }) => {
                 ]
             }
         ]
-    }
+    } 
+    
 
     return (
         <div>

@@ -1,17 +1,18 @@
-import React, { FC, useState, Fragment } from 'react';
+import React, { FC, useState, Fragment, useEffect } from 'react';
 import SubPageTitle from 'app/components/SubPageTitle';
 import PageContainer from 'app/components/PageContainer';
 import {
   Paper
 } from '@mui/material';
-import { useEffectOnce } from 'app/hooks/useEffectOnce';
+// import { useEffectOnce } from 'app/hooks/useEffectOnce';
 import { useAppDispatch, useAppSelector } from 'store/configureStore';
 import {
   getCarbonIntensityFactor,
   getCarbonHolding,
   getCarbonHybrid,
   getCarbonNetwork,
-  getCarbonTransaction
+  getCarbonTransaction,
+  getCarbonNetworkStatus
 } from 'store/statisticsSlice';
 import {
   loadCarbonIntensityFactorNetwork,
@@ -20,31 +21,16 @@ import {
   loadNetwork,
   loadTransaction
 } from 'store/statisticsSlice/utils';
+import { Status } from '../../../types';
+import Box from '@mui/material/Box';
+import Grid from '@mui/material/Grid';
+
+import BarMeter from '../../components/CO2Meters/BarMeter';
 import CO2Meters from '../../components/CO2Meters';
+import { typeMeter } from './typeMeter';
 
 const Statistics: FC = () => {
 
-  const dispatch = useAppDispatch();
-
-  useEffectOnce(() => {
-    dispatch(loadCarbonIntensityFactorNetwork());
-    dispatch(loadHolding());
-    dispatch(loadHybrid());
-    dispatch(loadNetwork());
-    dispatch(loadTransaction());
-  });
-
-  const carbonIntensityFactorDetails = useAppSelector(getCarbonIntensityFactor);
-  const holdingDetails = useAppSelector(getCarbonHolding);
-  const hybridDetails = useAppSelector(getCarbonHybrid);
-  const networkDetails = useAppSelector(getCarbonNetwork);
-  const transactionDetails = useAppSelector(getCarbonTransaction);
-
-  console.log("carbonIntensityFactorDetails", carbonIntensityFactorDetails);
-  console.log("holdingDetails", holdingDetails);
-  console.log("hybridDetails", hybridDetails);
-  console.log("networkDetails", networkDetails);
-  console.log("transactionDetails", transactionDetails);
 
   return (
     <PageContainer pageTitle="Validators" metaContent="validators">
@@ -70,13 +56,8 @@ const Statistics: FC = () => {
 
         <Fragment>
           <div style={{ position: 'relative' }}>
-            <CO2Meters
-              carbonIntensityFactorDetails={carbonIntensityFactorDetails}
-              holdingDetails={holdingDetails}
-              hybridDetails={hybridDetails}
-              networkDetails={networkDetails}
-              transactionDetails={transactionDetails}
-            />
+            <CO2Meters typeMeter={typeMeter.DAILY_EMISSIONS_PER_NETWORK} darkMode={true} utilSlice={() => loadNetwork()} sliceGeter={getCarbonNetwork} />
+            
           </div>
         </Fragment>
 

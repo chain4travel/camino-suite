@@ -102,6 +102,8 @@ export const getCarbonNetwork = (state: RootState) => state.co2statistics.networ
 
 export const getCarbonTransaction = (state: RootState) => state.co2statistics.transaction;
 
+export const getCarbonNetworkStatus = (state: RootState) => state.co2statistics.networkStatus;
+
 export const {
   co2StadisticsReducer
 } = locationsNodeSlice.actions;
