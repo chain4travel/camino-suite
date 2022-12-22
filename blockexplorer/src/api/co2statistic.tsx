@@ -4,7 +4,7 @@ import axios from 'axios';
 
 let urlCO2Api = "http://localhost:5001/";
 let blockchainName = "caminocolumbus";
-let daysDiff = -3;
+let daysDiff = -1;
 
 export const fetchCarbonIntensityFactor = () => {
     return new Promise((resolve, reject) => {

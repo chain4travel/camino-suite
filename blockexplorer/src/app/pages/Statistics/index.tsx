@@ -6,20 +6,22 @@ import {
 } from '@mui/material';
 import { useEffectOnce } from 'app/hooks/useEffectOnce';
 import { useAppDispatch, useAppSelector } from 'store/configureStore';
-import { 
+import {
   getCarbonIntensityFactor,
   getCarbonHolding,
   getCarbonHybrid,
   getCarbonNetwork,
-  getCarbonTransaction 
+  getCarbonTransaction
 } from 'store/statisticsSlice';
-import { 
+import {
   loadCarbonIntensityFactorNetwork,
   loadHolding,
   loadHybrid,
   loadNetwork,
   loadTransaction
 } from 'store/statisticsSlice/utils';
+
+import CO2Meters from '../../components/CO2Meters';
 
 const Statistics: FC = () => {
 
@@ -39,11 +41,11 @@ const Statistics: FC = () => {
   const networkDetails = useAppSelector(getCarbonNetwork);
   const transactionDetails = useAppSelector(getCarbonTransaction);
 
-  console.log("carbonIntensityFactorDetails",carbonIntensityFactorDetails);
-  console.log("holdingDetails",holdingDetails);
-  console.log("hybridDetails",hybridDetails);
-  console.log("networkDetails",networkDetails);
-  console.log("transactionDetails",transactionDetails);
+  console.log("carbonIntensityFactorDetails", carbonIntensityFactorDetails);
+  console.log("holdingDetails", holdingDetails);
+  console.log("hybridDetails", hybridDetails);
+  console.log("networkDetails", networkDetails);
+  console.log("transactionDetails", transactionDetails);
 
   return (
     <PageContainer pageTitle="Validators" metaContent="validators">
@@ -69,7 +71,13 @@ const Statistics: FC = () => {
 
         <Fragment>
           <div style={{ position: 'relative' }}>
-
+            <CO2Meters
+              carbonIntensityFactorDetails={carbonIntensityFactorDetails}
+              holdingDetails={holdingDetails}
+              hybridDetails={hybridDetails}
+              networkDetails={networkDetails}
+              transactionDetails={transactionDetails}
+            />
           </div>
         </Fragment>
 
