@@ -20,7 +20,6 @@ import {
   loadNetwork,
   loadTransaction
 } from 'store/statisticsSlice/utils';
-
 import CO2Meters from '../../components/CO2Meters';
 
 const Statistics: FC = () => {
