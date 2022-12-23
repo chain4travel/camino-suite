@@ -1,32 +1,31 @@
-import React, {useEffect} from 'react';
-import Box from '@mui/material/Box';
-import Paper from '@mui/material/Paper';
-import Grid from '@mui/material/Grid';
+import React, { useEffect, Fragment } from 'react';
 import { useAppDispatch, useAppSelector } from 'store/configureStore';
+import testData from './testData.json';
+import testData2 from './testData2.json';
+import { typeMeter as typesMeter } from '../../pages/Statistics/typeMeter';
 
-import BarMeter from '../../components/CO2Meters/BarMeter';
-
+import BarMeter from './BarMeter';
+import TimeSeriesMeter from './TimeSeriesMeter';
 
 const CO2Meters = ({
-    utilSlice, typeMeter, darkMode, sliceGeter
+  utilSlice, typeMeter, darkMode, sliceGeter
 }) => {
-    const dispatch = useAppDispatch();
-    useEffect(() => {
-        dispatch(utilSlice());
-      }, []);
 
-      const data = useAppSelector(sliceGeter)
-      console.log(data)
+  const dispatch = useAppDispatch();
+  useEffect(() => {
+    dispatch(utilSlice());
+  }, []);
 
-    return (
-      <Box sx={{ flexGrow: 1 }}>
-        <Grid container spacing={2}>
-            <Grid item md={12} xs={12}>
-                <BarMeter />
-            </Grid>
-        </Grid>
-      </Box>
-    );
+  //const data = useAppSelector(sliceGeter);
+  const data = testData;
+  const data2 = testData2;
+
+  return (
+    <Fragment>
+      {typeMeter == typesMeter.BAR && <BarMeter darkMode={darkMode} dataSeries={data} />}
+      {typeMeter == typesMeter.TIME_SERIES && <TimeSeriesMeter darkMode={darkMode} dataSeries={data2} />}
+    </Fragment>
+  );
 }
 
 export default CO2Meters;

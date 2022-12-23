@@ -1,3 +1,4 @@
 export const typeMeter = {
-    DAILY_EMISSIONS_PER_NETWORK: 'DAILY_EMISSIONS_PER_NETWORK'
+    BAR: 'BAR',
+    TIME_SERIES: 'TIME_SERIES'
 }

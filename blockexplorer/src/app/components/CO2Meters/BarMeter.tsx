@@ -2,8 +2,7 @@ import React from 'react';
 import Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
 
-const BarMeter = ({ nodesPerCountry }) => {
-    let darkMode = true;
+const BarMeter = ({ dataSeries, darkMode }) => {
 
    const options = {
         chart: {
@@ -14,7 +13,7 @@ const BarMeter = ({ nodesPerCountry }) => {
             align: 'left',
             text: 'Daily Emissions',
             style: {
-                color: 'white'
+                color: darkMode ? 'white' : 'black'
             }
         },
         /*
@@ -37,7 +36,7 @@ const BarMeter = ({ nodesPerCountry }) => {
             title: {
                 text: 'CO2',
                 style: {
-                    color: 'white'
+                    color: darkMode ? 'white' : 'black'
                 }
             },
             labels: {
@@ -64,29 +63,13 @@ const BarMeter = ({ nodesPerCountry }) => {
                 name: "Browsers",
                 //colorByPoint: true,
                 color: '#41547C',
-                data: [
-                    {
-                        name: "Chrome",
-                        y: 12,
-                        drilldown: "Chrome"
-                    },
-                    {
-                        name: "Safari",
-                        y: 19.84,
-                        drilldown: "Safari"
-                    },
-                    {
-                        name: "Opera",
-                        y: 19.84,
-                        drilldown: "Safari"
-                    },
-
-                    {
-                        name: "Mozilla",
-                        y: 19.84,
-                        drilldown: "Safari"
+                data: dataSeries.map((dat) => {
+                    return {
+                        name: dat.chain,
+                        y: dat.value,
+                        drilldown: dat.chain
                     }
-                ]
+                })
             }
         ]
     } 

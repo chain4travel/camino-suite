@@ -2,9 +2,9 @@ import React, { FC, useState, Fragment, useEffect } from 'react';
 import SubPageTitle from 'app/components/SubPageTitle';
 import PageContainer from 'app/components/PageContainer';
 import {
-  Paper
+  Paper,
+  useTheme
 } from '@mui/material';
-// import { useEffectOnce } from 'app/hooks/useEffectOnce';
 import { useAppDispatch, useAppSelector } from 'store/configureStore';
 import {
   getCarbonIntensityFactor,
@@ -24,13 +24,13 @@ import {
 import { Status } from '../../../types';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
-
 import BarMeter from '../../components/CO2Meters/BarMeter';
 import CO2Meters from '../../components/CO2Meters';
 import { typeMeter } from './typeMeter';
 
 const Statistics: FC = () => {
 
+  const theme = useTheme();
 
   return (
     <PageContainer pageTitle="Validators" metaContent="validators">
@@ -55,10 +55,47 @@ const Statistics: FC = () => {
         />
 
         <Fragment>
-          <div style={{ position: 'relative' }}>
-            <CO2Meters typeMeter={typeMeter.DAILY_EMISSIONS_PER_NETWORK} darkMode={true} utilSlice={() => loadNetwork()} sliceGeter={getCarbonNetwork} />
-            
-          </div>
+          <Box sx={{ flexGrow: 1 }}>
+            <Grid container spacing={2}>
+
+              {/*Daily Emissions */}
+              <Grid item md={6} xs={12}>
+                {theme.palette.mode == 'light' ? (
+                  <CO2Meters
+                    typeMeter={typeMeter.BAR}
+                    darkMode={false}
+                    utilSlice={() => loadNetwork()}
+                    sliceGeter={getCarbonNetwork}
+                  />
+                ) : (
+                  <CO2Meters
+                    typeMeter={typeMeter.BAR}
+                    darkMode={true}
+                    utilSlice={() => loadNetwork()}
+                    sliceGeter={getCarbonNetwork} />
+                )}
+              </Grid>
+
+              {/* Network Emissions */}
+              <Grid item md={6} xs={12}>
+                {theme.palette.mode == 'light' ? (
+                  <CO2Meters
+                    typeMeter={typeMeter.TIME_SERIES}
+                    darkMode={false}
+                    utilSlice={() => loadNetwork()}
+                    sliceGeter={getCarbonNetwork}
+                  />
+                ) : (
+                  <CO2Meters
+                    typeMeter={typeMeter.TIME_SERIES}
+                    darkMode={true}
+                    utilSlice={() => loadNetwork()}
+                    sliceGeter={getCarbonNetwork} />
+                )}
+                
+              </Grid>
+            </Grid>
+          </Box>
         </Fragment>
 
       </Paper>
