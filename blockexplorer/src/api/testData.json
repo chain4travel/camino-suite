@@ -1,4 +1,6 @@
-    [
+{
+    "name": "Daily Emissions",
+    "data": [
         {
             "chain": "camino-columbus",
             "time": "2022-12-21",
@@ -25,3 +27,4 @@
             "value": 313.61
         }
     ]
+}

@@ -1,27 +1,24 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { RootState } from "store/configureStore";
 import { Status } from "types";
-import { initialCO2Statistics } from "types/store";
+import { initialCO2Statistics } from "../../types/store";
 import {
-  loadCarbonIntensityFactorNetwork,
-  loadHolding,
-  loadHybrid,
-  loadNetwork,
-  loadTransaction
+  loadDailyEmissions,
+  loadNetworkEmissions
 } from "./utils";
+import MeterCO2Data from '../../types/meterCO2data';
+
+let initialStateData : MeterCO2Data = {
+  name: "",
+  data: []
+};
 
 let initialState: initialCO2Statistics = {
-  intensityFactor: [],
-  holding: [],
-  hybrid: [],
-  network: [],
-  transaction: [],
-  intensityFactorStatus: Status.IDLE,
-  holdingStatus: Status.IDLE,
-  hybridStatus: Status.IDLE,
-  networkStatus: Status.IDLE,
-  transactionStatus: Status.IDLE
-};
+  dailyEmissions: initialStateData,
+  dailyEmissionsStatus: Status.IDLE,
+  networkEmissions: initialStateData,
+  networkEmissionsStatus: Status.IDLE
+}; 
 
 const locationsNodeSlice = createSlice({
   name: "co2statistics",
@@ -30,79 +27,42 @@ const locationsNodeSlice = createSlice({
     co2StadisticsReducer: () => initialState,
   },
   extraReducers(builder) {
-    //Intensity Factor
-    builder.addCase(loadCarbonIntensityFactorNetwork.pending, (state) => {
-      state.intensityFactorStatus = Status.LOADING;
+    
+    //Daily Emissions
+    builder.addCase(loadDailyEmissions.pending, (state) => {
+      state.dailyEmissionsStatus = Status.LOADING;
     });
-    builder.addCase(loadCarbonIntensityFactorNetwork.fulfilled, (state, { payload }) => {
-      state.intensityFactor = payload;
-      state.intensityFactorStatus = Status.SUCCEEDED;
+    builder.addCase(loadDailyEmissions.fulfilled, (state, { payload }) => {
+      let data : any = payload;
+      state.dailyEmissions = data;
+      state.dailyEmissionsStatus = Status.SUCCEEDED;
     });
-    builder.addCase(loadCarbonIntensityFactorNetwork.rejected, (state) => {
-      state.intensityFactorStatus = Status.FAILED;
-    });
-
-    //Holding
-    builder.addCase(loadHolding.pending, (state) => {
-      state.holdingStatus = Status.LOADING;
-    });
-    builder.addCase(loadHolding.fulfilled, (state, { payload }) => {
-      state.holding = payload;
-      state.holdingStatus = Status.SUCCEEDED;
-    });
-    builder.addCase(loadHolding.rejected, (state) => {
-      state.holdingStatus = Status.FAILED;
+    builder.addCase(loadDailyEmissions.rejected, (state) => {
+      state.dailyEmissionsStatus = Status.FAILED;
     });
 
-    //Hybrid
-    builder.addCase(loadHybrid.pending, (state) => {
-      state.hybridStatus = Status.LOADING;
+    //Daily Emissions
+    builder.addCase(loadNetworkEmissions.pending, (state) => {
+      state.networkEmissionsStatus = Status.LOADING;
     });
-    builder.addCase(loadHybrid.fulfilled, (state, { payload }) => {
-      state.hybrid = payload;
-      state.hybridStatus = Status.SUCCEEDED;
+    builder.addCase(loadNetworkEmissions.fulfilled, (state, { payload }) => {
+      let data : any = payload;
+      state.networkEmissions = data;
+      state.networkEmissionsStatus = Status.SUCCEEDED;
     });
-    builder.addCase(loadHybrid.rejected, (state) => {
-      state.hybridStatus = Status.FAILED;
-    });
-
-    //Network
-    builder.addCase(loadNetwork.pending, (state) => {
-      state.networkStatus = Status.LOADING;
-    });
-    builder.addCase(loadNetwork.fulfilled, (state, { payload }) => {
-      state.network = payload;
-      state.networkStatus = Status.SUCCEEDED;
-    });
-    builder.addCase(loadNetwork.rejected, (state) => {
-      state.networkStatus = Status.FAILED;
+    builder.addCase(loadNetworkEmissions.rejected, (state) => {
+      state.networkEmissionsStatus = Status.FAILED;
     });
 
-    //Transactions
-    builder.addCase(loadTransaction.pending, (state) => {
-      state.transactionStatus = Status.LOADING;
-    });
-    builder.addCase(loadTransaction.fulfilled, (state, { payload }) => {
-      state.transaction = payload;
-      state.transactionStatus = Status.SUCCEEDED;
-    });
-    builder.addCase(loadTransaction.rejected, (state) => {
-      state.transactionStatus = Status.FAILED;
-    });
   },
 });
 
-export const getCarbonIntensityFactor = (state: RootState) => state.co2statistics.intensityFactor;
+export const getDailyEmissions = (state: RootState) => state.co2statistics.dailyEmissions;
+export const getDailyEmissionsStatus = (state: RootState) => state.co2statistics.dailyEmissionsStatus;
 
-export const getCarbonHolding = (state: RootState) => state.co2statistics.holding;
+export const getNetworkEmissions = (state: RootState) => state.co2statistics.networkEmissions;
+export const getNetworkEmissionsStatus = (state: RootState) => state.co2statistics.networkEmissionsStatus;
 
-export const getCarbonHybrid = (state: RootState) => state.co2statistics.hybrid;
-
-export const getCarbonNetwork = (state: RootState) => state.co2statistics.network;
-
-export const getCarbonTransaction = (state: RootState) => state.co2statistics.transaction;
-
-export const getCarbonNetworkStatus = (state: RootState) => state.co2statistics.networkStatus;
 
 export const {
   co2StadisticsReducer

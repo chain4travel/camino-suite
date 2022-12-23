@@ -4,7 +4,7 @@ import HighchartsReact from 'highcharts-react-official';
 import testData2 from './testData2.json';
 import moment from 'moment';
 
-const TimeSeriesMeter = ({ dataSeries, darkMode }) => {
+const TimeSeriesMeter = ({ dataSeries, darkMode, titleText }) => {
 
     const options = {
         chart: {
@@ -12,7 +12,7 @@ const TimeSeriesMeter = ({ dataSeries, darkMode }) => {
             backgroundColor: 'rgba(0,0,0,0)'
         },
         title: {
-            text: 'Network Emissions',
+            text: titleText,
             style: {
                 color: darkMode ? 'white' : 'black'
             }

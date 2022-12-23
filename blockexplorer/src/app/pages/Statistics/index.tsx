@@ -7,24 +7,17 @@ import {
 } from '@mui/material';
 import { useAppDispatch, useAppSelector } from 'store/configureStore';
 import {
-  getCarbonIntensityFactor,
-  getCarbonHolding,
-  getCarbonHybrid,
-  getCarbonNetwork,
-  getCarbonTransaction,
-  getCarbonNetworkStatus
+  getDailyEmissions,
+  getDailyEmissionsStatus,
+  getNetworkEmissions,
+  getNetworkEmissionsStatus
 } from 'store/statisticsSlice';
 import {
-  loadCarbonIntensityFactorNetwork,
-  loadHolding,
-  loadHybrid,
-  loadNetwork,
-  loadTransaction
+  loadDailyEmissions,
+  loadNetworkEmissions
 } from 'store/statisticsSlice/utils';
-import { Status } from '../../../types';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
-import BarMeter from '../../components/CO2Meters/BarMeter';
 import CO2Meters from '../../components/CO2Meters';
 import { typeMeter } from './typeMeter';
 
@@ -64,36 +57,43 @@ const Statistics: FC = () => {
                   <CO2Meters
                     typeMeter={typeMeter.BAR}
                     darkMode={false}
-                    utilSlice={() => loadNetwork()}
-                    sliceGeter={getCarbonNetwork}
+                    utilSlice={() => loadDailyEmissions()}
+                    sliceGetter={getDailyEmissions}
+                    sliceGetterLoader={getDailyEmissionsStatus}
                   />
                 ) : (
                   <CO2Meters
                     typeMeter={typeMeter.BAR}
                     darkMode={true}
-                    utilSlice={() => loadNetwork()}
-                    sliceGeter={getCarbonNetwork} />
+                    utilSlice={() => loadDailyEmissions()}
+                    sliceGetter={getDailyEmissions} 
+                    sliceGetterLoader={getDailyEmissionsStatus}
+                    />
                 )}
               </Grid>
 
               {/* Network Emissions */}
+              
               <Grid item md={6} xs={12}>
                 {theme.palette.mode == 'light' ? (
                   <CO2Meters
                     typeMeter={typeMeter.TIME_SERIES}
                     darkMode={false}
-                    utilSlice={() => loadNetwork()}
-                    sliceGeter={getCarbonNetwork}
+                    utilSlice={() => loadNetworkEmissions()}
+                    sliceGetter={getNetworkEmissions}
+                    sliceGetterLoader={getNetworkEmissionsStatus}
                   />
                 ) : (
                   <CO2Meters
                     typeMeter={typeMeter.TIME_SERIES}
                     darkMode={true}
-                    utilSlice={() => loadNetwork()}
-                    sliceGeter={getCarbonNetwork} />
+                    utilSlice={() => loadNetworkEmissions()}
+                    sliceGetter={getNetworkEmissions} 
+                    sliceGetterLoader={getNetworkEmissionsStatus}
+                    />
                 )}
-                
               </Grid>
+
             </Grid>
           </Box>
         </Fragment>

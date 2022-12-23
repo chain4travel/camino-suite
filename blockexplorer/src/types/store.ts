@@ -4,7 +4,7 @@ import { MagellanTransaction } from './magellan-types';
 import { CTransaction, TranscationDetails, XPTransaction } from './transaction';
 import LocationNode from './locationNode';
 import { NodesPerCountry, NodesPerCity } from './nodesLocation';
-import CO2Statistic from './co2statistic';
+import MeterCO2Data from './meterCO2data';
 
 export interface Chain {
   chainID: string;
@@ -103,14 +103,8 @@ export interface initialXPchainStateType {
 }
 
 export interface initialCO2Statistics {
-  intensityFactor: CO2Statistic[],
-  holding: CO2Statistic[],
-  hybrid: CO2Statistic[],
-  network: CO2Statistic[],
-  transaction: CO2Statistic[],
-  intensityFactorStatus: Status,
-  holdingStatus: Status,
-  hybridStatus: Status,
-  networkStatus: Status,
-  transactionStatus: Status
+  dailyEmissions: MeterCO2Data,
+  dailyEmissionsStatus: Status,
+  networkEmissions : MeterCO2Data,
+  networkEmissionsStatus: Status
 }

@@ -2,7 +2,7 @@ import React from 'react';
 import Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
 
-const BarMeter = ({ dataSeries, darkMode }) => {
+const BarMeter = ({ dataSeries, darkMode, titleText }) => {
 
    const options = {
         chart: {
@@ -11,7 +11,7 @@ const BarMeter = ({ dataSeries, darkMode }) => {
         },
         title: {
             align: 'left',
-            text: 'Daily Emissions',
+            text: titleText,
             style: {
                 color: darkMode ? 'white' : 'black'
             }
