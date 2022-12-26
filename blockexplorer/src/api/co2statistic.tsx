@@ -1,75 +1,63 @@
-
-import moment from 'moment';
 import axios from 'axios';
-import testData from './testData.json';
-import testData2 from './testData2.json';
 
-let urlCO2Api = "http://localhost:5001/";
-let blockchainName = "caminocolumbus";
-let daysDiff = -1;
+let defaultData = {
+    Name: "",
+    Value: []
+}
 
 export const fetchDailyEmissions = () => {
     return new Promise((resolve, reject) => {
-
-        resolve(testData);
-
-        /*
-        let dateToday = moment(new Date()).format("YYYY-MM-DD");
-        let dateYesterday = moment(new Date()).add(daysDiff, 'days').format("YYYY-MM-DD");
-
-        var data = JSON.stringify({
-            "chain": blockchainName,
-            "from": dateYesterday,
-            "to": dateToday
-        });
-
+        var data = JSON.stringify({});
         var config = {
             method: 'post',
-            url: `${urlCO2Api}carbon-intensity-factor`,
+            url: `https://63a5dd8af8f3f6d4ab01d763.mockapi.io/v2/dailyEmissions`,
             headers: {
                 'Content-Type': 'application/json'
             },
             data: data
         };
-
         axios(config).then(function (response) {
             resolve(response.data);
         }).catch(function (error) {
-            resolve([]);
+            resolve(defaultData);
         });
-        */
     });
 }
 
 export const fetchNetworkEmissions = () => {
     return new Promise((resolve, reject) => {
-
-        resolve(testData2);
-
-        /*
-        let dateToday = moment(new Date()).format("YYYY-MM-DD");
-        let dateYesterday = moment(new Date()).add(daysDiff, 'days').format("YYYY-MM-DD");
-
-        var data = JSON.stringify({
-            "chain": blockchainName,
-            "from": dateYesterday,
-            "to": dateToday
-        });
-
+        var data = JSON.stringify({});
         var config = {
             method: 'post',
-            url: `${urlCO2Api}carbon-intensity-factor`,
+            url: `https://63a5dd8af8f3f6d4ab01d763.mockapi.io/v2/networkEmissions`,
             headers: {
                 'Content-Type': 'application/json'
             },
             data: data
         };
-
         axios(config).then(function (response) {
             resolve(response.data);
         }).catch(function (error) {
-            resolve([]);
+            resolve(defaultData);
         });
-        */
+    });
+}
+
+export const fetchTransactionsEmissions = () => {
+    return new Promise((resolve, reject) => {
+        var data = JSON.stringify({});
+        var config = {
+            method: 'post',
+            url: `https://63a5dd8af8f3f6d4ab01d763.mockapi.io/v2/transactionEmissions`,
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            data: data
+        };
+        axios(config).then(function (response) {
+            resolve(response.data);
+        }).catch(function (error) {
+            resolve(defaultData);
+        });
     });
 }

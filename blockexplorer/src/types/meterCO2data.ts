@@ -5,8 +5,8 @@ export interface DetailsCO2 {
 }
 
 export interface MeterCO2Data {
-    name: string, //Example: Network Emissions Camino or Daily Emisions
-    data: DetailsCO2[]
+    Name: string, //Example: Network Emissions Camino or Daily Emisions
+    Value: DetailsCO2[]
 }
 
 export default MeterCO2Data;

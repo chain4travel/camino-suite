@@ -17,14 +17,16 @@ const CO2Meters = ({
   }, []);
 
   const meterCO2 : MeterCO2Data = useAppSelector(sliceGetter);
+
+  console.log("meterCO2", meterCO2);
   const loader = useAppSelector(sliceGetterLoader);
 
   return (
     <Fragment>
       {loader == Status.LOADING ? <>
       </> : <>
-        {typeMeter == typesMeter.BAR && <BarMeter darkMode={darkMode} dataSeries={meterCO2.data} titleText={meterCO2.name} />}
-        {typeMeter == typesMeter.TIME_SERIES && <TimeSeriesMeter darkMode={darkMode} dataSeries={meterCO2.data} titleText={meterCO2.name} />}
+        {typeMeter == typesMeter.BAR && <BarMeter darkMode={darkMode} dataSeries={meterCO2.Value} titleText={meterCO2.Name} />}
+        {typeMeter == typesMeter.TIME_SERIES && <TimeSeriesMeter darkMode={darkMode} dataSeries={meterCO2.Value} titleText={meterCO2.Name} />}
       </>}
     </Fragment>
   );

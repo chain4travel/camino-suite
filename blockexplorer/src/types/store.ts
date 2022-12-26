@@ -106,5 +106,9 @@ export interface initialCO2Statistics {
   dailyEmissions: MeterCO2Data,
   dailyEmissionsStatus: Status,
   networkEmissions : MeterCO2Data,
-  networkEmissionsStatus: Status
+  networkEmissionsStatus: Status,
+  transactionsEmissions: MeterCO2Data,
+  transactionsEmissionsStatus : Status,
+  carbonIntensityFactor : any,
+  carbonIntensityFactorStatus: Status
 }

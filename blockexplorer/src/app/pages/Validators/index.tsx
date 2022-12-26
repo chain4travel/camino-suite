@@ -8,7 +8,7 @@ import {
   useTheme,
 } from '@mui/material';
 import { useAppDispatch, useAppSelector } from 'store/configureStore';
-import { selectAllValidators, getLocationsNodes,getSumNodesPerCountry, getSumNodesPerCity, getValidatorsStatus } from 'store/validatorsSlice';
+import { selectAllValidators, getLocationsNodes, getSumNodesPerCountry, getSumNodesPerCity, getValidatorsStatus } from 'store/validatorsSlice';
 import { useEffectOnce } from 'app/hooks/useEffectOnce';
 import { loadValidators } from 'store/validatorsSlice/utils';
 import { TableViewRow } from './TableViewRow';
@@ -114,143 +114,140 @@ const Validators: FC = () => {
                   </>
                 ) : null}
 
-                {data.length > 0 ? (
+
+                <div>
+                  <Tabs
+                    variant="fullWidth"
+                    value={activeTab}
+                    onChange={handleChangeTab}
+                    textColor="secondary"
+                    indicatorColor="secondary"
+                  >
+                    <Tab
+                      className="tab"
+                      disableRipple
+                      label="List"
+                      {...a11yProps(0)}
+                    />
+                    <Tab
+                      className="tab"
+                      disableRipple
+                      label="Map"
+                      {...a11yProps(1)}
+                    />
+
+                    <Tab
+                      className="tab"
+                      disableRipple
+                      label="Countries"
+                      {...a11yProps(2)}
+                    />
+                  </Tabs>
+                </div>
+
+                {activeTab == 0 ? (
                   <>
-                    <div>
-                      <Tabs
-                        variant="fullWidth"
-                        value={activeTab}
-                        onChange={handleChangeTab}
-                        textColor="secondary"
-                        indicatorColor="secondary"
-                      >
-                        <Tab
-                          className="tab"
-                          disableRipple
-                          label="List"
-                          {...a11yProps(0)}
-                        />
-                        <Tab
-                          className="tab"
-                          disableRipple
-                          label="Map"
-                          {...a11yProps(1)}
-                        />
-
-                        <Tab
-                          className="tab"
-                          disableRipple
-                          label="Countries"
-                          {...a11yProps(2)}
-                        />
-                      </Tabs>
-                    </div>
-
-                    {activeTab == 0 ? (
-                      <>
-                        <TableContainer sx={{ minHeight: '400px' }}>
-                          {isWidescreen || isDesktop ? (
-                            <TableView columns={columns}>
-                              {validators?.map(validator => (
-                                <TableViewRow
-                                  key={validator.nodeID}
-                                  validator={validator}
-                                />
-                              ))}
-                            </TableView>
-                          ) : (
-                            <Grid item container alignItems="center">
-                              {validators.map(validator => (
-                                <GridViewItem
-                                  key={validator.nodeID}
-                                  validator={validator}
-                                />
-                              ))}
-                            </Grid>
-                          )}
-                        </TableContainer>
-                      </>
-                    ) : null}
-
-                    {activeTab == 1 ? (
-                      <>
-                        <ComposableMap
-                          style={{
-                            height: isWidescreen || isDesktop ? 700 : 'auto',
-                            width: '100%',
-                          }}
-                          projection={'geoMercator'}
-                        >
-                          <ZoomableGroup center={[0, 40]} zoom={zoomValue} onMove={(e: any) => {
-                            if (e.zoom <= 3) {
-                              setSizeCircle(10);
-                              setSizeStroke(7);
-                            }
-
-                            if (e.zoom > 3 && e.zoom < 6) {
-                              setSizeCircle(6);
-                              setSizeStroke(4);
-                            }
-
-                            if (e.zoom > 6) {
-                              setSizeCircle(3);
-                              setSizeStroke(1.5);
-                            }
-                          }} >
-                            <Geographies
-                              geography={features}
-                              pointerEvents={'none'}
-                            >
-                              {({ geographies }) =>
-                                geographies.map(geo => (
-                                  <Geography
-                                    key={geo.rsmKey}
-                                    geography={geo}
-                                    fill="#41547C"
-                                  />
-                                ))
-                              }
-                            </Geographies>
-                            {nodesPerCity.map(
-                              (
-                                { lng, lat, nodes, country, city },
-                                index,
-                              ) => {
-                                return (
-                                  <CircleMarker
-                                    key={index}
-                                    country={country}
-                                    city={city}
-                                    lng={lng}
-                                    lat={lat}
-                                    rValue={sizeCircle}
-                                    sValue={sizeStroke}
-                                    nodes={nodes}
-                                  />
-                                );
-                              },
-                            )}
-                          </ZoomableGroup>
-                        </ComposableMap>
-                      </>
-                    ) : null}
-
-                    {activeTab == 2 ? (
-                      <div className="noto-flags">
-                        {theme.palette.mode == 'light' ? (
-                          <Stadistics
-                            nodesPerCountry={nodesPerCountry}
-                            darkMode={false}
-                          />
-                        ) : (
-                          <Stadistics
-                            nodesPerCountry={nodesPerCountry}
-                            darkMode={true}
-                          />
-                        )}
-                      </div>
-                    ) : null}
+                    <TableContainer sx={{ minHeight: '400px' }}>
+                      {isWidescreen || isDesktop ? (
+                        <TableView columns={columns}>
+                          {validators?.map(validator => (
+                            <TableViewRow
+                              key={validator.nodeID}
+                              validator={validator}
+                            />
+                          ))}
+                        </TableView>
+                      ) : (
+                        <Grid item container alignItems="center">
+                          {validators.map(validator => (
+                            <GridViewItem
+                              key={validator.nodeID}
+                              validator={validator}
+                            />
+                          ))}
+                        </Grid>
+                      )}
+                    </TableContainer>
                   </>
+                ) : null}
+
+                {activeTab == 1 ? (
+                  <>
+                    <ComposableMap
+                      style={{
+                        height: isWidescreen || isDesktop ? 700 : 'auto',
+                        width: '100%',
+                      }}
+                      projection={'geoMercator'}
+                    >
+                      <ZoomableGroup center={[0, 40]} zoom={zoomValue} onMove={(e: any) => {
+                        if (e.zoom <= 3) {
+                          setSizeCircle(10);
+                          setSizeStroke(7);
+                        }
+
+                        if (e.zoom > 3 && e.zoom < 6) {
+                          setSizeCircle(6);
+                          setSizeStroke(4);
+                        }
+
+                        if (e.zoom > 6) {
+                          setSizeCircle(3);
+                          setSizeStroke(1.5);
+                        }
+                      }} >
+                        <Geographies
+                          geography={features}
+                          pointerEvents={'none'}
+                        >
+                          {({ geographies }) =>
+                            geographies.map(geo => (
+                              <Geography
+                                key={geo.rsmKey}
+                                geography={geo}
+                                fill="#41547C"
+                              />
+                            ))
+                          }
+                        </Geographies>
+                        {nodesPerCity.map(
+                          (
+                            { lng, lat, nodes, country, city },
+                            index,
+                          ) => {
+                            return (
+                              <CircleMarker
+                                key={index}
+                                country={country}
+                                city={city}
+                                lng={lng}
+                                lat={lat}
+                                rValue={sizeCircle}
+                                sValue={sizeStroke}
+                                nodes={nodes}
+                              />
+                            );
+                          },
+                        )}
+                      </ZoomableGroup>
+                    </ComposableMap>
+                  </>
+                ) : null}
+
+                {activeTab == 2 ? (
+                  <div className="noto-flags">
+                    {theme.palette.mode == 'light' ? (
+                      <Stadistics
+                        nodesPerCountry={nodesPerCountry}
+                        darkMode={false}
+                      />
+                    ) : (
+                      <Stadistics
+                        nodesPerCountry={nodesPerCountry}
+                        darkMode={true}
+                      />
+                    )}
+                  </div>
                 ) : null}
               </>
             ) : (

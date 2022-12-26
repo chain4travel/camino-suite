@@ -10,11 +10,14 @@ import {
   getDailyEmissions,
   getDailyEmissionsStatus,
   getNetworkEmissions,
-  getNetworkEmissionsStatus
+  getNetworkEmissionsStatus,
+  getTransactionsEmissions,
+  getTransactionsEmissionsStatus
 } from 'store/statisticsSlice';
 import {
   loadDailyEmissions,
-  loadNetworkEmissions
+  loadNetworkEmissions,
+  loadTransactionsEmissions
 } from 'store/statisticsSlice/utils';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
@@ -50,8 +53,6 @@ const Statistics: FC = () => {
         <Fragment>
           <Box sx={{ flexGrow: 1 }}>
             <Grid container spacing={2}>
-
-              {/*Daily Emissions */}
               <Grid item md={6} xs={12}>
                 {theme.palette.mode == 'light' ? (
                   <CO2Meters
@@ -71,8 +72,6 @@ const Statistics: FC = () => {
                     />
                 )}
               </Grid>
-
-              {/* Network Emissions */}
               
               <Grid item md={6} xs={12}>
                 {theme.palette.mode == 'light' ? (
@@ -90,6 +89,26 @@ const Statistics: FC = () => {
                     utilSlice={() => loadNetworkEmissions()}
                     sliceGetter={getNetworkEmissions} 
                     sliceGetterLoader={getNetworkEmissionsStatus}
+                    />
+                )}
+              </Grid>
+
+              <Grid item md={6} xs={12}>
+                {theme.palette.mode == 'light' ? (
+                  <CO2Meters
+                    typeMeter={typeMeter.TIME_SERIES}
+                    darkMode={false}
+                    utilSlice={() => loadTransactionsEmissions()}
+                    sliceGetter={getTransactionsEmissions}
+                    sliceGetterLoader={getTransactionsEmissionsStatus}
+                  />
+                ) : (
+                  <CO2Meters
+                    typeMeter={typeMeter.TIME_SERIES}
+                    darkMode={true}
+                    utilSlice={() => loadTransactionsEmissions()}
+                    sliceGetter={getTransactionsEmissions} 
+                    sliceGetterLoader={getTransactionsEmissionsStatus}
                     />
                 )}
               </Grid>
