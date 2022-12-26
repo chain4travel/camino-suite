@@ -203,7 +203,7 @@ export async function loadValidatorsInRPC() {
 
 export async function loadValidatorsInMagelland() {
   return new Promise((resolve, reject) => {
-    const urlValidators = "https://63a3220e9704d18da086d8dsadasda.mockapi.io/v2/validatorInfo";
+    const urlValidators = "https://63a3220e9704d18da086d8da.mockapi.io/v2/validatorsInfo";
     let networks = store.getState().appConfig;
     let activeNetwork = networks.networks.find(
       element => element.id === networks.activeNetwork,
@@ -224,7 +224,7 @@ export async function loadValidatorsInMagelland() {
     };
 
     axios(request).then(function (response: any) {
-      resolve(response.data);
+      resolve(response.data.value);
     }).catch(function (error) {
       reject([]);
       console.log(error);

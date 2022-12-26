@@ -36,19 +36,19 @@ function mapToTableData(item): ValidatorType {
 function mapToTableDataMagelland(item): ValidatorType {
   let uptime = Math.round(item.Uptime * 100) + "%";
   return {
-    status: item.Connected ? "Connected" : "Disconnected",
-    nodeID: item.NodeID,
-    startTime: moment(item.StartTime).toDate(),
-    endTime: moment(item.EndTime).toDate(),
-    txID: item.TxID,
+    status: item.connected ? "Connected" : "Disconnected",
+    nodeID: item.nodeID,
+    startTime: moment(item.startTime).toDate(),
+    endTime: moment(item.endTime).toDate(),
+    txID: item.txID,
     uptime: uptime,
-    lng: item.Lng,
-    lat: item.Lat,
-    country: item.Country,
-    city: item.City,
-    alpha2: item.CountryISO,
+    lng: item.lng,
+    lat: item.lat,
+    country: item.country,
+    city: item.city,
+    alpha2: item.countryISO,
     ip: item.IP,
-    nodeIdentity: item.NodeID
+    nodeIdentity: item.nodeID
   };
 }
 
@@ -108,7 +108,7 @@ const validatorsSlice = createSlice({
     builder.addCase(loadValidators.fulfilled, (state, { payload }) => {
       let responsePayload : any = payload;
       state.numberOfValidators = responsePayload.length;
-      state.numberOfActiveValidators = responsePayload.filter((v: any) => v.Connected).length;
+      state.numberOfActiveValidators = responsePayload.filter((v: any) => v.connected).length;
       state.percentageOfActiveValidators = parseInt(((state.numberOfActiveValidators / state.numberOfValidators) *100).toFixed(0));
       state.validators = responsePayload.map(mapToTableDataMagelland);
       state.locationNodes = state.validators.filter((v: any) => v.status == "Connected" && v.lng != 0 && v.lat != 0);

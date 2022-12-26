@@ -23,6 +23,7 @@ import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import CO2Meters from '../../components/CO2Meters';
 import { typeMeter } from './typeMeter';
+import CountriesBarMeter from '../../components/CO2Meters/CountriesBarMeter';
 
 const Statistics: FC = () => {
 
@@ -111,6 +112,10 @@ const Statistics: FC = () => {
                     sliceGetterLoader={getTransactionsEmissionsStatus}
                     />
                 )}
+              </Grid>
+
+              <Grid item md={6} xs={12}>
+                <CountriesBarMeter darkMode={true} titleText="Carbon Intensity Factor" />
               </Grid>
 
             </Grid>

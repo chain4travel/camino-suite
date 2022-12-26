@@ -1,9 +1,18 @@
 import React from 'react';
 import Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
+import dataTest from './testFlags.json';
+import flags from '../NodesMap/json/flags.json';
 
-const BarMeter = ({ dataSeries, darkMode, titleText }) => {
+const CountriesBarMeter = ({ darkMode, titleText }) => {
 
+    const getUrlFlag = index => {
+        let objFlag = dataTest.Value[index];
+        let code = objFlag.country;
+        let url = `/assets/flags/${code.toLowerCase()}.svg`;
+        return url;
+      };
+    
    const options = {
         chart: {
             type: 'column',
@@ -28,8 +37,12 @@ const BarMeter = ({ dataSeries, darkMode, titleText }) => {
                 useHTML: true,
                 formatter: function (obj) {
                     let index = obj.pos;
-                    return `<span style="color:${darkMode == true ? 'white' : 'black'}">${obj.value}</span>`;
-                },
+                    return `<div style="text-align: center;color:${
+                      darkMode == true ? 'white' : 'black'
+                    }"><img width="15" height="15" style="position: relative; top: 2px" src="${getUrlFlag(
+                      index,
+                    )}" /> <br/> ${obj.value}</div>`;
+                  },
             }
         },
         yAxis: {
@@ -63,11 +76,11 @@ const BarMeter = ({ dataSeries, darkMode, titleText }) => {
                 name: "",
                 //colorByPoint: true,
                 color: '#41547C',
-                data: dataSeries.map((dat) => {
+                data: dataTest.Value.map((dat) => {
                     return {
-                        name: dat.chain,
+                        name: dat.countryName,
                         y: dat.value,
-                        drilldown: dat.chain
+                        drilldown: dat.countryName
                     }
                 })
             }
@@ -83,4 +96,4 @@ const BarMeter = ({ dataSeries, darkMode, titleText }) => {
     );
 };
 
-export default BarMeter;
+export default CountriesBarMeter;

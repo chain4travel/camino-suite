@@ -1,0 +1,54 @@
+{
+    "Name": "Carbon Intensity Factor",
+    "Value": [
+        {
+            "chain": "camino-columbus",
+            "time": "2022-12-26",
+            "value": 62.11613093734977,
+            "country": "CO",
+            "countryName" :"Colombia"
+        },
+        {
+            "chain": "camino-columbus",
+            "time": "2022-12-26",
+            "value": 134.58495036425785,
+            "country": "AR",
+            "countryName" : "Argentina"
+        },
+        {
+            "chain": "camino-columbus",
+            "time": "2022-12-26",
+            "value": 74.1631320156665,
+            "country": "BE",
+            "countryName" : "Belgium"
+        },
+        {
+            "chain": "camino-columbus",
+            "time": "2022-12-26",
+            "value": 82.92265019712737,
+            "country": "DE",
+            "countryName": "Germany"
+        },
+        {
+            "chain": "camino-columbus",
+            "time": "2022-12-26",
+            "value": 52.29616615219531,
+            "country": "DK",
+            "countryName": "Denmark"
+        },
+        {
+            "chain": "camino-columbus",
+            "time": "2022-12-26",
+            "value": 80.17052348490768,
+            "country": "EE",
+            "countryName": "Estonia"
+        },
+        {
+            "chain": "camino-columbus",
+            "time": "2022-12-26",
+            "value": 49.9618351377565,
+            "country": "GB",
+            "countryName": "United Kingdom"
+        }
+    ]
+}

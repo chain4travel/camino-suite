@@ -1,7 +1,6 @@
 import React from 'react';
 import Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
-import testData2 from './testData2.json';
 import moment from 'moment';
 
 const TimeSeriesMeter = ({ dataSeries, darkMode, titleText }) => {
@@ -19,7 +18,7 @@ const TimeSeriesMeter = ({ dataSeries, darkMode, titleText }) => {
         },
         yAxis: {
             title: {
-                text: 'CO2 Consumption',
+                text: 'CO2',
                 style: {
                     color: darkMode ? 'white' : 'black'
                 }
