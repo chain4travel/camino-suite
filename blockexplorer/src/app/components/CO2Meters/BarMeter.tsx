@@ -60,6 +60,8 @@ const BarMeter = ({ dataSeries, darkMode, titleText }) => {
         },
         series: [
             {
+
+                borderColor: 'transparent',
                 name: "",
                 //colorByPoint: true,
                 color: '#41547C',

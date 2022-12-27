@@ -29,6 +29,8 @@ const Statistics: FC = () => {
 
   const theme = useTheme();
 
+  const test = "";
+
   return (
     <PageContainer pageTitle="Validators" metaContent="validators">
       <Paper
@@ -112,10 +114,6 @@ const Statistics: FC = () => {
                     sliceGetterLoader={getTransactionsEmissionsStatus}
                     />
                 )}
-              </Grid>
-
-              <Grid item md={6} xs={12}>
-                <CountriesBarMeter darkMode={true} titleText="Carbon Intensity Factor" />
               </Grid>
 
             </Grid>

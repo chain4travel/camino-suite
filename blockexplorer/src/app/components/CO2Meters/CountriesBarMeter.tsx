@@ -73,6 +73,7 @@ const CountriesBarMeter = ({ darkMode, titleText }) => {
         },
         series: [
             {
+                borderColor: 'transparent',
                 name: "",
                 //colorByPoint: true,
                 color: '#41547C',

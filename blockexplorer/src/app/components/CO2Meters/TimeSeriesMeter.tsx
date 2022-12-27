@@ -49,6 +49,8 @@ const TimeSeriesMeter = ({ dataSeries, darkMode, titleText }) => {
         },
         plotOptions: {
             area: {
+
+                color: '#41547C',
                 fillColor: {
                     linearGradient: {
                         x1: 0,
@@ -57,7 +59,7 @@ const TimeSeriesMeter = ({ dataSeries, darkMode, titleText }) => {
                         y2: 1
                     },
                     stops: [
-                        [0, Highcharts.getOptions().colors[0]],
+                        [0, '#41547C'],
                         [1, Highcharts.color(Highcharts.getOptions().colors[0]).setOpacity(0).get('rgba')]
                     ]
                 },
