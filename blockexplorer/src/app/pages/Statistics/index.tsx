@@ -64,6 +64,7 @@ const Statistics: FC = () => {
                     utilSlice={() => loadDailyEmissions()}
                     sliceGetter={getDailyEmissions}
                     sliceGetterLoader={getDailyEmissionsStatus}
+                    levelColor={1}
                   />
                 ) : (
                   <CO2Meters
@@ -72,6 +73,7 @@ const Statistics: FC = () => {
                     utilSlice={() => loadDailyEmissions()}
                     sliceGetter={getDailyEmissions} 
                     sliceGetterLoader={getDailyEmissionsStatus}
+                    levelColor={1}
                     />
                 )}
               </Grid>
@@ -84,6 +86,7 @@ const Statistics: FC = () => {
                     utilSlice={() => loadNetworkEmissions()}
                     sliceGetter={getNetworkEmissions}
                     sliceGetterLoader={getNetworkEmissionsStatus}
+                    levelColor={2}
                   />
                 ) : (
                   <CO2Meters
@@ -92,6 +95,7 @@ const Statistics: FC = () => {
                     utilSlice={() => loadNetworkEmissions()}
                     sliceGetter={getNetworkEmissions} 
                     sliceGetterLoader={getNetworkEmissionsStatus}
+                    levelColor={2}
                     />
                 )}
               </Grid>
@@ -104,6 +108,7 @@ const Statistics: FC = () => {
                     utilSlice={() => loadTransactionsEmissions()}
                     sliceGetter={getTransactionsEmissions}
                     sliceGetterLoader={getTransactionsEmissionsStatus}
+                    levelColor={3}
                   />
                 ) : (
                   <CO2Meters
@@ -112,8 +117,13 @@ const Statistics: FC = () => {
                     utilSlice={() => loadTransactionsEmissions()}
                     sliceGetter={getTransactionsEmissions} 
                     sliceGetterLoader={getTransactionsEmissionsStatus}
+                    levelColor={3}
                     />
                 )}
+              </Grid>
+
+              <Grid item md={6} xs={12}>
+                <CountriesBarMeter darkMode={true} titleText={"Carbon Intensity Factor"} levelColor={4} />
               </Grid>
 
             </Grid>

@@ -49,6 +49,27 @@
             "value": 49.9618351377565,
             "country": "GB",
             "countryName": "United Kingdom"
+        },
+        {
+            "chain": "camino-columbus",
+            "time": "2022-12-26",
+            "value": 900.96342112,
+            "country": "PL",
+            "countryName": "Poland"
+        },
+        {
+            "chain": "camino-columbus",
+            "time": "2022-12-26",
+            "value": 12.96342112,
+            "country": "PE",
+            "countryName": "Peru"
+        },
+        {
+            "chain": "camino-columbus",
+            "time": "2022-12-26",
+            "value": 2.96342112,
+            "country": "CG",
+            "countryName": "Congo - Brazzaville"
         }
     ]
 }

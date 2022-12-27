@@ -1,8 +1,22 @@
 import React from 'react';
 import Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
+import sortBy from 'lodash/sortBy';
 
 const BarMeter = ({ dataSeries, darkMode, titleText }) => {
+
+    const sortByAndLoadBar = (data) => {
+        let sortedData = sortBy(data, o => -o.value);
+        let dataChart = sortedData.map((dat, index) => {
+            return {
+                name: dat.chain,
+                y: dat.value,
+                drilldown: dat.chain,
+                color: `hsl(221, 48%, ${(index + 1) * (80/sortedData.length)}%)`
+            }
+        });
+        return dataChart;
+    }
 
    const options = {
         chart: {
@@ -60,18 +74,9 @@ const BarMeter = ({ dataSeries, darkMode, titleText }) => {
         },
         series: [
             {
-
                 borderColor: 'transparent',
                 name: "",
-                //colorByPoint: true,
-                color: '#41547C',
-                data: dataSeries.map((dat) => {
-                    return {
-                        name: dat.chain,
-                        y: dat.value,
-                        drilldown: dat.chain
-                    }
-                })
+                data: sortByAndLoadBar(dataSeries)
             }
         ]
     } 

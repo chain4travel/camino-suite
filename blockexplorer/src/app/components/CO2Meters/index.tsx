@@ -10,7 +10,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 import Box from '@mui/material/Box';
 
 const CO2Meters = ({
-  utilSlice, typeMeter, darkMode, sliceGetter, sliceGetterLoader
+  utilSlice, typeMeter, darkMode, sliceGetter, sliceGetterLoader, levelColor
 }) => {
 
   const dispatch = useAppDispatch();
