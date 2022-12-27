@@ -10,7 +10,7 @@ const BarMeter = ({ dataSeries, darkMode, titleText }) => {
             backgroundColor: 'rgba(0,0,0,0)',
         },
         title: {
-            align: 'left',
+            align: 'center',
             text: titleText,
             style: {
                 color: darkMode ? 'white' : 'black'
