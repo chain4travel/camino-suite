@@ -24,12 +24,14 @@ import Grid from '@mui/material/Grid';
 import CO2Meters from '../../components/CO2Meters';
 import { typeMeter } from './typeMeter';
 import CountriesBarMeter from '../../components/CO2Meters/CountriesBarMeter';
+import Charts from '../../components/Charts';
 
 const Statistics: FC = () => {
 
   const theme = useTheme();
 
   const test = "";
+  const dark = theme.palette.mode === 'light' ? false : true
 
   return (
     <PageContainer pageTitle="Validators" metaContent="validators">
@@ -57,73 +59,43 @@ const Statistics: FC = () => {
           <Box sx={{ flexGrow: 1 }}>
             <Grid container spacing={2}>
               <Grid item md={6} xs={12}>
-                {theme.palette.mode == 'light' ? (
                   <CO2Meters
                     typeMeter={typeMeter.BAR}
-                    darkMode={false}
+                    darkMode={dark}
                     utilSlice={() => loadDailyEmissions()}
                     sliceGetter={getDailyEmissions}
                     sliceGetterLoader={getDailyEmissionsStatus}
                     levelColor={1}
                   />
-                ) : (
-                  <CO2Meters
-                    typeMeter={typeMeter.BAR}
-                    darkMode={true}
-                    utilSlice={() => loadDailyEmissions()}
-                    sliceGetter={getDailyEmissions} 
-                    sliceGetterLoader={getDailyEmissionsStatus}
-                    levelColor={1}
-                    />
-                )}
               </Grid>
               
               <Grid item md={6} xs={12}>
-                {theme.palette.mode == 'light' ? (
                   <CO2Meters
                     typeMeter={typeMeter.TIME_SERIES}
-                    darkMode={false}
+                    darkMode={dark}
                     utilSlice={() => loadNetworkEmissions()}
                     sliceGetter={getNetworkEmissions}
                     sliceGetterLoader={getNetworkEmissionsStatus}
                     levelColor={2}
                   />
-                ) : (
-                  <CO2Meters
-                    typeMeter={typeMeter.TIME_SERIES}
-                    darkMode={true}
-                    utilSlice={() => loadNetworkEmissions()}
-                    sliceGetter={getNetworkEmissions} 
-                    sliceGetterLoader={getNetworkEmissionsStatus}
-                    levelColor={2}
-                    />
-                )}
               </Grid>
 
               <Grid item md={6} xs={12}>
-                {theme.palette.mode == 'light' ? (
                   <CO2Meters
                     typeMeter={typeMeter.TIME_SERIES}
-                    darkMode={false}
+                    darkMode={dark}
                     utilSlice={() => loadTransactionsEmissions()}
                     sliceGetter={getTransactionsEmissions}
                     sliceGetterLoader={getTransactionsEmissionsStatus}
                     levelColor={3}
                   />
-                ) : (
-                  <CO2Meters
-                    typeMeter={typeMeter.TIME_SERIES}
-                    darkMode={true}
-                    utilSlice={() => loadTransactionsEmissions()}
-                    sliceGetter={getTransactionsEmissions} 
-                    sliceGetterLoader={getTransactionsEmissionsStatus}
-                    levelColor={3}
-                    />
-                )}
               </Grid>
 
               <Grid item md={6} xs={12}>
-                <CountriesBarMeter darkMode={true} titleText={"Carbon Intensity Factor"} levelColor={4} />
+                <CountriesBarMeter darkMode={dark} titleText={"Carbon Intensity Factor"} levelColor={4} />
+              </Grid>
+              <Grid item md={6} xs={12}>
+                <Charts darkMode={dark } titleText={"Transactions"} />
               </Grid>
 
             </Grid>
