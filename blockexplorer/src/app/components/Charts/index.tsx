@@ -54,7 +54,7 @@ const Charts = ({
               backgroundColor: "primary.main",
               borderRadius: "7px",
               padding: "1.5rem",
-              minWidth: isDesktop ? '1300px' : '0px'
+              minWidth: isDesktop ? '1300px' : '350px'
             }}
           >
             <Fragment>
