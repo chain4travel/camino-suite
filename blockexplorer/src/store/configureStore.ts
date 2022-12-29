@@ -11,6 +11,7 @@ import { store } from "index";
 import { TypedUseSelectorHook, useSelector, useDispatch } from "react-redux";
 import validatorsSlice from "./validatorsSlice";
 import statisticsSlice from "./statisticsSlice";
+import transactionsSlice from "./transactionsSlice";
 import { Provider } from "react-redux";
 
 export function configureAppStore() {
@@ -22,7 +23,8 @@ export function configureAppStore() {
       xchain: xchainReducer,
       validators: validatorsSlice,
       appConfig: appConfigReducer,
-      co2statistics: statisticsSlice
+      co2statistics: statisticsSlice,
+      transactionsStatistics : transactionsSlice
     },
     middleware: (getDefaultMiddleware) =>
       getDefaultMiddleware({

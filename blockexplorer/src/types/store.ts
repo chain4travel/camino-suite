@@ -1,7 +1,7 @@
 import { Status } from 'types';
 import { BlockDetail, BlockTableData } from './block';
 import { MagellanTransaction } from './magellan-types';
-import { CTransaction, TranscationDetails, XPTransaction } from './transaction';
+import { CTransaction, TranscationDetails, XPTransaction, DailyTransactions } from './transaction';
 import LocationNode from './locationNode';
 import { NodesPerCountry, NodesPerCity } from './nodesLocation';
 import MeterCO2Data from './meterCO2data';
@@ -111,4 +111,9 @@ export interface initialCO2Statistics {
   transactionsEmissionsStatus : Status,
   carbonIntensityFactor : any,
   carbonIntensityFactorStatus: Status
+}
+
+export interface initicalTransactionsStatistics {
+  dailyTransactionsStatistics: DailyTransactions,
+  dailyTransactionsStatisticsLoading: Status
 }

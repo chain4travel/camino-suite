@@ -1,0 +1,143 @@
+{
+    "HighestNumber": 1294,
+    "HighestDate": "2022-12-17",
+    "LowerNumber": 535,
+    "LowerDate": "2022-12-01",
+    "TxInfo": [
+        {
+            "Date": "2022-12-15",
+            "TotalTransactions": 2096.8,
+            "AvgBlockTime": 31.2,
+            "AvgBlockSize": 183.9,
+            "TotalBlockCount": 95.9,
+            "TotalUnclesCount": 157.6,
+            "NewAddressSeen": "2291.1"
+        },
+        {
+            "Date": "2022-12-16",
+            "TotalTransactions": 3579.3,
+            "AvgBlockTime": 146,
+            "AvgBlockSize": 145,
+            "TotalBlockCount": 192.2,
+            "TotalUnclesCount": 68.6,
+            "NewAddressSeen": "2753.3"
+        },
+        {
+            "Date": "2022-12-17",
+            "TotalTransactions": 3069.1,
+            "AvgBlockTime": 190,
+            "AvgBlockSize": 102,
+            "TotalBlockCount": 21.7,
+            "TotalUnclesCount": 162.7,
+            "NewAddressSeen": "334.3"
+        },
+        {
+            "Date": "2022-12-18",
+            "TotalTransactions": 3373.3,
+            "AvgBlockTime": 144.7,
+            "AvgBlockSize": 35.8,
+            "TotalBlockCount": 173.9,
+            "TotalUnclesCount": 11.4,
+            "NewAddressSeen": "2552.1"
+        },
+        {
+            "Date": "2022-12-19",
+            "TotalTransactions": 2473.2,
+            "AvgBlockTime": 100.3,
+            "AvgBlockSize": 156.6,
+            "TotalBlockCount": 190.9,
+            "TotalUnclesCount": 92,
+            "NewAddressSeen": "2138"
+        },
+        {
+            "Date": "2022-12-20",
+            "TotalTransactions": 3091.3,
+            "AvgBlockTime": 146.6,
+            "AvgBlockSize": 196.8,
+            "TotalBlockCount": 56.3,
+            "TotalUnclesCount": 108.2,
+            "NewAddressSeen": "3344.5"
+        },
+        {
+            "Date": "2022-12-21",
+            "TotalTransactions": 1524.7,
+            "AvgBlockTime": 143.7,
+            "AvgBlockSize": 15.5,
+            "TotalBlockCount": 154.4,
+            "TotalUnclesCount": 22.2,
+            "NewAddressSeen": "1236.2"
+        },
+        {
+            "Date": "2022-12-22",
+            "TotalTransactions": 3490.5,
+            "AvgBlockTime": 123.1,
+            "AvgBlockSize": 192.6,
+            "TotalBlockCount": 96.5,
+            "TotalUnclesCount": 20.3,
+            "NewAddressSeen": "2404.9"
+        },
+        {
+            "Date": "2022-12-23",
+            "TotalTransactions": 2917,
+            "AvgBlockTime": 51.1,
+            "AvgBlockSize": 121,
+            "TotalBlockCount": 111.6,
+            "TotalUnclesCount": 31.1,
+            "NewAddressSeen": "2604.1"
+        },
+        {
+            "Date": "2022-12-24",
+            "TotalTransactions": 3390.5,
+            "AvgBlockTime": 166.8,
+            "AvgBlockSize": 115,
+            "TotalBlockCount": 92.1,
+            "TotalUnclesCount": 63.1,
+            "NewAddressSeen": "2941.8"
+        },
+        {
+            "Date": "2022-12-25",
+            "TotalTransactions": 936.9,
+            "AvgBlockTime": 103.2,
+            "AvgBlockSize": 199.1,
+            "TotalBlockCount": 48.2,
+            "TotalUnclesCount": 19.2,
+            "NewAddressSeen": "1015.9"
+        },
+        {
+            "Date": "2022-12-26",
+            "TotalTransactions": 643.3,
+            "AvgBlockTime": 43.4,
+            "AvgBlockSize": 82.6,
+            "TotalBlockCount": 109.4,
+            "TotalUnclesCount": 11.4,
+            "NewAddressSeen": "3329.9"
+        },
+        {
+            "Date": "2022-12-27",
+            "TotalTransactions": 2448.9,
+            "AvgBlockTime": 91.6,
+            "AvgBlockSize": 145.4,
+            "TotalBlockCount": 101.2,
+            "TotalUnclesCount": 103.7,
+            "NewAddressSeen": "634.9"
+        },
+        {
+            "Date": "2022-12-28",
+            "TotalTransactions": 3800.1,
+            "AvgBlockTime": 190.4,
+            "AvgBlockSize": 86.5,
+            "TotalBlockCount": 65.2,
+            "TotalUnclesCount": 23.2,
+            "NewAddressSeen": "816.2"
+        },
+        {
+            "Date": "2022-12-29",
+            "TotalTransactions": 1150.8,
+            "AvgBlockTime": 149.1,
+            "AvgBlockSize": 19.2,
+            "TotalBlockCount": 96.7,
+            "TotalUnclesCount": 11.2,
+            "NewAddressSeen": "1751.4"
+        }
+    ]
+}
