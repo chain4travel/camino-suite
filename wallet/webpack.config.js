@@ -66,6 +66,7 @@ module.exports = {
                 './moutHomePage': './src/mountHomePage.ts',
                 './mountCreate': './src/views/createMount.ts',
                 './mountAccessComponents': './src/views/access/mountAccessComponents.ts',
+                './mountLegal': './src/views/mountLegal.ts',
             },
             shared: {
                 ...deps,

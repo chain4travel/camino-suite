@@ -64,7 +64,11 @@
                     </div>
                 </div>
             </div>
-            <ToS class="tos" style="align-self: center; margin: 30px !important"></ToS>
+            <ToS
+                class="tos"
+                :navigate="navigate"
+                style="align-self: center; margin: 30px !important"
+            ></ToS>
         </div>
     </div>
 </template>

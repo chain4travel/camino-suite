@@ -1,7 +1,7 @@
 <template>
     <div class="access_card">
         <h1>{{ $t('access.title') }}</h1>
-        <router-link to="/wallet/create" class="link">{{ $t('access.create') }}</router-link>
+        <div @click="click('/create')" class="link">{{ $t('access.create') }}</div>
         <div class="menus">
             <AccountsFound class="accounts_menu"></AccountsFound>
             <div class="options">
@@ -18,11 +18,10 @@
                     <v-icon>mdi-file-key-outline</v-icon>
                 </div>
                 <LedgerButton class="menu_option button_primary" disabled></LedgerButton>
-                <!--            <TorusGoogle class="option button_primary" text="Google"></TorusGoogle>-->
             </div>
         </div>
 
-        <ToS style="margin: 20px !important"></ToS>
+        <ToS :navigate="navigate" style="margin: 20px !important"></ToS>
         <div @click="click('/login')" class="link">{{ $t('access.cancel') }}</div>
     </div>
 </template>
