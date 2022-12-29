@@ -5,7 +5,7 @@ import HighchartsReact from 'highcharts-react-official';
 const LinearMeter = ({ darkMode, titleText }) => {
 
     const data = {
-        Name: "Transactions",
+        Name: "Transactions per day",
         Value: {
             HighestData: [
                 {name: 'first event', data: 23432, date: "2022-12-28"},

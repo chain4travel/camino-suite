@@ -58,44 +58,42 @@ const Statistics: FC = () => {
         <Fragment>
           <Box sx={{ flexGrow: 1 }}>
             <Grid container spacing={2}>
+
               <Grid item md={6} xs={12}>
-                  <CO2Meters
-                    typeMeter={typeMeter.BAR}
-                    darkMode={dark}
-                    utilSlice={() => loadDailyEmissions()}
-                    sliceGetter={getDailyEmissions}
-                    sliceGetterLoader={getDailyEmissionsStatus}
-                    levelColor={1}
-                  />
-              </Grid>
-              
-              <Grid item md={6} xs={12}>
-                  <CO2Meters
-                    typeMeter={typeMeter.TIME_SERIES}
-                    darkMode={dark}
-                    utilSlice={() => loadNetworkEmissions()}
-                    sliceGetter={getNetworkEmissions}
-                    sliceGetterLoader={getNetworkEmissionsStatus}
-                    levelColor={2}
-                  />
+                <CO2Meters
+                  typeMeter={typeMeter.BAR}
+                  darkMode={dark}
+                  utilSlice={() => loadDailyEmissions()}
+                  sliceGetter={getDailyEmissions}
+                  sliceGetterLoader={getDailyEmissionsStatus}
+                />
               </Grid>
 
               <Grid item md={6} xs={12}>
-                  <CO2Meters
-                    typeMeter={typeMeter.TIME_SERIES}
-                    darkMode={dark}
-                    utilSlice={() => loadTransactionsEmissions()}
-                    sliceGetter={getTransactionsEmissions}
-                    sliceGetterLoader={getTransactionsEmissionsStatus}
-                    levelColor={3}
-                  />
+                <CO2Meters
+                  typeMeter={typeMeter.TIME_SERIES}
+                  darkMode={dark}
+                  utilSlice={() => loadNetworkEmissions()}
+                  sliceGetter={getNetworkEmissions}
+                  sliceGetterLoader={getNetworkEmissionsStatus}
+                />
+              </Grid>
+
+              <Grid item md={6} xs={12}>
+                <CO2Meters
+                  typeMeter={typeMeter.TIME_SERIES}
+                  darkMode={dark}
+                  utilSlice={() => loadTransactionsEmissions()}
+                  sliceGetter={getTransactionsEmissions}
+                  sliceGetterLoader={getTransactionsEmissionsStatus}
+                />
               </Grid>
 
               <Grid item md={6} xs={12}>
                 <CountriesBarMeter darkMode={dark} titleText={"Carbon Intensity Factor"} levelColor={4} />
               </Grid>
               <Grid item md={6} xs={12}>
-                <Charts darkMode={dark } titleText={"Transactions"} />
+                <Charts darkMode={dark} titleText={"Transactions"} />
               </Grid>
 
             </Grid>
