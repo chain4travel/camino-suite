@@ -90,6 +90,40 @@ const LinearMeter = ({ darkMode, titleText }) => {
         }
     },
 
+    tooltip: {
+        formatter: function (tooltip) {
+            let dataTolltip = {
+                dateTime: 'Friday, June 14, 2019',
+                totalTransactions: 825.364,
+                avgDifficulty: "2,000 TH",
+                estHashRate: "159,829 GH",
+                avgBlockTime: "13,17",
+                avgBlockSize: "28,17",
+                totalBlockCount: "6,410",
+                totalUnclesCount: "478",
+                newAdressSen: "86,074",
+            }
+          const header = `<span>
+          ${dataTolltip.dateTime}
+          <br/>
+          [<label style="color: blue">Total Transactions:</label> <b>${dataTolltip.totalTransactions}</b>]
+          <br/>
+          <br/>
+
+
+          -<b>Avg Difficulty:</b>${dataTolltip.avgDifficulty} <br/>
+          -<b>Est Hash Rate:</b>${dataTolltip.estHashRate} <br/>
+          -<b>Avg Block Time:</b>${dataTolltip.avgBlockTime} <br/>
+          -<b>Avg Block Size:</b>${dataTolltip.avgBlockSize} <br/>
+          -<b>Total Block Count:</b>${dataTolltip.totalBlockCount} <br/>
+          -<b>Total Uncles Count:</b>${dataTolltip.totalUnclesCount} <br/>
+          -<b>New Adress Seen:</b>${dataTolltip.newAdressSen}
+          
+          </span><br/>`
+          return header;
+        }
+      },
+
 
     series: [
         {
