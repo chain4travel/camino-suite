@@ -13,6 +13,7 @@ import { CTransaction } from 'types/transaction';
 import { createTransaction } from 'utils/magellan';
 import { baseEndpoint } from 'utils/magellan-api-utils';
 import { getBaseUrl, getChainID, mapToTableData } from './utils';
+import { store } from "../App";
 
 export const getBlocksPage = async (startingBlock: number) => {
   const response = await axios.get(
@@ -177,3 +178,35 @@ export const fetchBlocksTransactionsCChain =
     }
     return r;
   };
+
+
+  export async function loadValidatorsInfo() {
+    return new Promise((resolve, reject) => {
+      const urlValidators = "https://63a3220e9704d18da086d8da.mockapi.io/v2/validatorsInfo";
+      let networks = store.getState().appConfig;
+      let activeNetwork = networks.networks.find(
+        element => element.id === networks.activeNetwork,
+      );
+  
+      var data = JSON.stringify({
+        rpc: `${activeNetwork?.protocol}://${activeNetwork?.host}:${activeNetwork?.port}`,
+        ip_provider: "ip-api",
+      });
+  
+      var request = {
+        method: 'post',
+        url: urlValidators,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        data: data,
+      };
+  
+      axios(request).then(function (response: any) {
+        resolve(response.data.value);
+      }).catch(function (error) {
+        reject([]);
+        console.log(error);
+      });
+    });
+  }

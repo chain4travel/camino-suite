@@ -4,7 +4,8 @@ const path = require('path');
 const deps = require('./package.json').devDependencies;
 module.exports = {
   output: {
-    publicPath: 'https://playground.suite-explorer.camino.foundation/',
+    //publicPath: 'https://playground.suite-explorer.camino.foundation/',
+    publicPath: 'http://localhost:3001/',
   },
 
   resolve: {
@@ -50,6 +51,10 @@ module.exports = {
         issuer: /\.[jt]sx?$/,
         use: ['@svgr/webpack', 'url-loader'],
       },
+      {
+        test: /\.json$/,
+        loader: 'json-loader'
+      }
     ],
   },
 
