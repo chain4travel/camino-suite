@@ -5,8 +5,7 @@ import { NodeValidator } from "types/node-types";
 import { initialValidatorsStateType, ValidatorType } from "types/store";
 import { loadValidators } from "./utils";
 import moment from 'moment';
-import { NodesPerCountry, NodesPerCity } from '../../types/nodesLocation';
-import LocationNode from '../../types/locationNode';
+import { LocationNode, NodesPerCountry, NodesPerCity } from '../../types/locationNode';
 import sortBy from 'lodash/sortBy';
 
 let initialState: initialValidatorsStateType = {
@@ -106,10 +105,10 @@ const validatorsSlice = createSlice({
       state.validatorsLoading = Status.LOADING;
     });
     builder.addCase(loadValidators.fulfilled, (state, { payload }) => {
-      let responsePayload : any = payload;
+      let responsePayload: any = payload;
       state.numberOfValidators = responsePayload.length;
       state.numberOfActiveValidators = responsePayload.filter((v: any) => v.connected).length;
-      state.percentageOfActiveValidators = parseInt(((state.numberOfActiveValidators / state.numberOfValidators) *100).toFixed(0));
+      state.percentageOfActiveValidators = parseInt(((state.numberOfActiveValidators / state.numberOfValidators) * 100).toFixed(0));
       state.validators = responsePayload.map(mapToTableDataMagelland);
       state.locationNodes = state.validators.filter((v: any) => v.status == "Connected" && v.lng != 0 && v.lat != 0);
       state.nodesPerCountry = sumNodesPerCountry(state.locationNodes);
