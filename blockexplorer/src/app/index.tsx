@@ -23,6 +23,7 @@ import XPTransactionDetails from './pages/XChainPages/Transactions/XPTransaction
 import Validators from './pages/Validators';
 import NotFoundPage from './pages/PageNotFound';
 import { BASE_PATH } from '../utils/route-paths';
+import Statistics from './pages/Statistics';
 
 export function App() {
   const { i18n } = useTranslation();
@@ -73,6 +74,7 @@ export function App() {
           </Route>
           <Route path={`${BASE_PATH}/mainnet`} element={<ComingSoonPage />} />
           <Route path={`${BASE_PATH}/validators`} element={<Validators />} />
+          <Route path={`${BASE_PATH}/statistics`} element={<Statistics />} />
           <Route path="*" element={<NotFoundPage />}></Route>
         </Route>
       </Routes>

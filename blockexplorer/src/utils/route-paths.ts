@@ -28,6 +28,8 @@ export const PADDRESS = PCHAIN + '/address';
 
 export const VALIDATORS = BASE_PATH + '/validators';
 
+export const STATISTICS = BASE_PATH + '/statistics';
+
 export const WALLET = 'https://wallet.camino.foundation/';
 
 export const DOCS = 'https://docs.camino.foundation/';
