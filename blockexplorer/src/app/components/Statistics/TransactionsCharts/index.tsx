@@ -1,5 +1,5 @@
 import React, { Fragment, useEffect, useState } from 'react';
-// import { useAppDispatch, useAppSelector } from 'store/configureStore';
+import { useAppDispatch, useAppSelector } from 'store/configureStore';
 import { Status } from 'types';
 import CircularProgress from '@mui/material/CircularProgress';
 import LinearMeter from './LinearMeter';
@@ -15,29 +15,27 @@ import useWidth from 'app/hooks/useWidth';
 import 'react-datepicker/dist/react-datepicker.css';
 import DateRange from './DateRange';
 
-const Charts = ({ darkMode, titleText }) => {
+const TransactionsCharts = ({ darkMode, titleText, utilSlice, sliceGetter, sliceGetterLoader }) => {
   const { isDesktop } = useWidth();
 
   const [openModal, setOpenModal] = useState(false);
   const [startDate, setStartDate] = useState<any>();
   const [endDate, setEndDate] = useState<any>();
-  console.log('start date:', startDate);
 
   useEffect(() => {
     setStartDate(new Date('2022/12/29'));
     setEndDate(new Date('2022/12/29'));
   }, []);
-  //   const dispatch = useAppDispatch();
 
-  //   useEffect(() => {
-  //     dispatch(utilSlice());
-  //   }, []);
+  const dispatch = useAppDispatch();
 
-  //   const dataStatistics: any = useAppSelector(sliceGetter);
+  useEffect(() => {
+    dispatch(utilSlice());
+  }, []);
 
-  //   const loader = useAppSelector(sliceGetterLoader);
+  const dataStatistics: any = useAppSelector(sliceGetter);
 
-  const loader = Status.IDLE;
+  const loader = useAppSelector(sliceGetterLoader);
 
   return (
     <Fragment>
@@ -102,7 +100,7 @@ const Charts = ({ darkMode, titleText }) => {
                     minDate={startDate}
                   />
                 </> */}
-                <LinearMeter darkMode={darkMode} titleText={titleText} />
+          {dataStatistics != undefined && dataStatistics != null ? <LinearMeter darkMode={darkMode} titleText={titleText} dataChart={dataStatistics} /> : null}
               </Fragment>
             </Box>
           </Modal>
@@ -117,11 +115,13 @@ const Charts = ({ darkMode, titleText }) => {
             </IconButton>
           </div>
 
-          <LinearMeter darkMode={darkMode} titleText={titleText} />
+          {dataStatistics != undefined && dataStatistics != null ? <LinearMeter darkMode={darkMode} titleText={titleText} dataChart={dataStatistics} /> : null}
+
+          
         </>
       )}
     </Fragment>
   );
 };
 
-export default Charts;
+export default TransactionsCharts;

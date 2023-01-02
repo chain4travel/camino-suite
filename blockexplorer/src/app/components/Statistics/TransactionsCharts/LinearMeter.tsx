@@ -2,30 +2,23 @@ import React from 'react';
 import Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
 
-const LinearMeter = ({ darkMode, titleText }) => {
+const LinearMeter = ({ darkMode, titleText, dataChart }) => {
+
+  console.log("dataChart", dataChart);
+
   const data = {
     Name: 'Transactions per day',
-    Value: {
-      HighestData: [
-        { name: 'first event', data: 23432, date: '2022-12-28' },
-        { name: 'second event', data: 25432, date: '2022-12-29' },
-        { name: 'third event', data: 28432, date: '2022-12-30' },
-        { name: 'fourth event', data: 13432, date: '2022-12-31' },
-      ],
-      LowestData: [
-        { name: 'first event', data: 12432, date: '2022-12-28' },
-        { name: 'second event', data: 15432, date: '2022-12-29' },
-        { name: 'third event', data: 18432, date: '2022-12-30' },
-        { name: 'fourth event', data: 7432, date: '2022-12-31' },
-      ],
-    },
+    Value: dataChart.TxInfo,
   };
 
   const mapSeries = serie => {
     return serie.map((value, index) => {
-      return { y: value.data, name: value.name };
+      return { y: value.TotalTransactions, name: value.Date };
     });
   };
+
+
+
   const options = {
     title: {
       text: titleText,
@@ -59,7 +52,7 @@ const LinearMeter = ({ darkMode, titleText }) => {
       accessibility: {
         rangeDescription: 'Range',
       },
-      categories: data.Value.HighestData.map((value, index) => value.date),
+      categories: data.Value.map((value, index) => value.Date),
 
       labels: {
         useHTML: true,
@@ -102,8 +95,12 @@ const LinearMeter = ({ darkMode, titleText }) => {
         };
       },
       formatter: function (tooltip) {
+
+        console.log("tooltipData", tooltip);
+
+
         let dataTolltip = {
-          dateTime: 'Friday, June 14, 2019',
+          dateTime: 'Friday, June 14, 2019',//PENDING TIME, example Friday, June 14, 2019
           totalTransactions: 825.364,
           avgDifficulty: '2,000 TH',
           estHashRate: '159,829 GH',
@@ -137,13 +134,8 @@ const LinearMeter = ({ darkMode, titleText }) => {
     series: [
       {
         name: 'Highest number of Transactions',
-        data: mapSeries(data.Value.HighestData),
+        data: mapSeries(data.Value),
         color: 'hsl(221, 48%, 75%)',
-      },
-      {
-        name: 'Lowest number of Transactions',
-        data: mapSeries(data.Value.LowestData),
-        color: 'hsl(221, 48%, 50%)',
       },
     ],
 

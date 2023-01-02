@@ -23,7 +23,7 @@ export const loadTransactionsEmissions = createAsyncThunk("co2statistics/transac
     return response;
 });
 
-export const loadDailyTransactionsStatistics = createAsyncThunk("transactionsStatistics/dailyTransactionsStatistics", async () => {
+export const loadDailyTransactionsStatistics = createAsyncThunk("transactionsStatistics/transactionsPerDay", async () => {
     let data = transactionsData;  
     return data;
 });

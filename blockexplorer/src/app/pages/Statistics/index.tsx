@@ -12,12 +12,15 @@ import {
   getNetworkEmissions,
   getNetworkEmissionsStatus,
   getTransactionsEmissions,
-  getTransactionsEmissionsStatus
+  getTransactionsEmissionsStatus,
+  getTransactionsPerDay,
+  getTransactionsPerDayStatus
 } from 'store/statisticsSlice';
 import {
   loadDailyEmissions,
   loadNetworkEmissions,
-  loadTransactionsEmissions
+  loadTransactionsEmissions,
+  loadDailyTransactionsStatistics
 } from 'store/statisticsSlice/utils';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
@@ -89,7 +92,13 @@ const Statistics: FC = () => {
               </Grid>
 
               <Grid item md={6} xs={12}>
-                <TransactionsCharts darkMode={dark} titleText={"Transactions"} />
+                <TransactionsCharts 
+                darkMode={dark} 
+                titleText={"Transactions"} 
+                utilSlice={() => loadDailyTransactionsStatistics()}
+                sliceGetter={getTransactionsPerDay}
+                sliceGetterLoader={getTransactionsPerDayStatus}
+                />
               </Grid>
 
             </Grid>

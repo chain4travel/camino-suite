@@ -24,7 +24,7 @@ let initialState: initialStatisticsType = {
   transactionsEmissionsStatus: Status.IDLE,
   carbonIntensityFactor: {},
   carbonIntensityFactorStatus: Status.IDLE,
-  transactionsPerDay: {},
+  transactionsPerDay: null,
   transactionsPerDayLoading: Status.IDLE
 };
 
@@ -99,6 +99,8 @@ export const getNetworkEmissionsStatus = (state: RootState) => state.statistics.
 export const getTransactionsEmissions = (state: RootState) => state.statistics.transactionsEmissions;
 export const getTransactionsEmissionsStatus = (state: RootState) => state.statistics.transactionsEmissionsStatus;
 
+export const getTransactionsPerDay = (state: RootState) => state.statistics.transactionsPerDay;
+export const getTransactionsPerDayStatus = (state: RootState) => state.statistics.transactionsPerDayLoading;
 
 export const {
   statisticsReducer
