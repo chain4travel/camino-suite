@@ -2,7 +2,6 @@ import React from 'react';
 import Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
 import dataTest from './testFlags.json';
-import flags from '../NodesMap/json/flags.json';
 import sortBy from 'lodash/sortBy';
 
 const CountriesBarMeter = ({ darkMode, titleText, levelColor }) => {
