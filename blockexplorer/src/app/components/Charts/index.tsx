@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from 'react';
+import React, { Fragment, useEffect, useState } from 'react';
 // import { useAppDispatch, useAppSelector } from 'store/configureStore';
 import { Status } from 'types';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -12,16 +12,21 @@ import {
 import Modal from '@mui/material/Modal';
 import Box from '@mui/material/Box';
 import useWidth from 'app/hooks/useWidth';
-import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
+import DateRange from './DateRange';
 
 const Charts = ({ darkMode, titleText }) => {
   const { isDesktop } = useWidth();
 
   const [openModal, setOpenModal] = useState(false);
-  const [startDate, setStartDate] = useState(new Date('2022/12/29'));
-  const [endDate, setEndDate] = useState(new Date('2022/12/29'));
+  const [startDate, setStartDate] = useState();
+  const [endDate, setEndDate] = useState();
+  console.log('start date:', startDate);
 
+  useEffect(() => {
+    setStartDate(new Date('2022/12/29'));
+    setEndDate(new Date('2022/12/29'));
+  }, []);
   //   const dispatch = useAppDispatch();
 
   //   useEffect(() => {
@@ -74,7 +79,13 @@ const Charts = ({ darkMode, titleText }) => {
                     <FontAwesomeIcon icon={faXmark} />
                   </IconButton>
                 </div>
-                <>
+                <DateRange
+                  initialStartDate={startDate}
+                  InitianEndDate={endDate}
+                  setEndDate={setEndDate}
+                  setStartDate={setStartDate}
+                />
+                {/* <>
                   <DatePicker
                     selected={startDate}
                     onChange={date => setStartDate(date)}
@@ -90,7 +101,7 @@ const Charts = ({ darkMode, titleText }) => {
                     endDate={endDate}
                     minDate={startDate}
                   />
-                </>
+                </> */}
                 <LinearMeter darkMode={darkMode} titleText={titleText} />
               </Fragment>
             </Box>
