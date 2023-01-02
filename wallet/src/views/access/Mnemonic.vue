@@ -188,6 +188,7 @@ textarea {
 .button_container {
     display: flex;
     flex-direction: column;
+    align-items: center;
 }
 
 @include main.mobile_device {
