@@ -2,6 +2,7 @@ import { Status } from 'types';
 import { BlockDetail, BlockTableData } from './block';
 import { MagellanTransaction } from './magellan-types';
 import { CTransaction, TranscationDetails, XPTransaction } from './transaction';
+import MeterCO2Data from './meterCO2data';
 
 export interface Chain {
   chainID: string;
@@ -94,4 +95,15 @@ export interface initialXPchainStateType {
   assets?: assets[];
   XChainOverview: ChainOverviewType;
   PChainOverview: ChainOverviewType;
+}
+
+export interface initialStatisticsType {
+  dailyEmissions: MeterCO2Data,
+  dailyEmissionsStatus: Status,
+  networkEmissions : MeterCO2Data,
+  networkEmissionsStatus: Status,
+  transactionsEmissions: MeterCO2Data,
+  transactionsEmissionsStatus : Status,
+  carbonIntensityFactor : any,
+  carbonIntensityFactorStatus: Status
 }

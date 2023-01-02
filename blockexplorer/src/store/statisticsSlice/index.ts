@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { RootState } from "store/configureStore";
 import { Status } from "types";
-import { initialCO2Statistics } from "../../types/store";
+import { initialStatisticsType } from "../../types/store";
 import {
   loadDailyEmissions,
   loadNetworkEmissions,
@@ -14,7 +14,7 @@ let initialStateData : MeterCO2Data = {
   Value: []
 };
 
-let initialState: initialCO2Statistics = {
+let initialState: initialStatisticsType = {
   dailyEmissions: initialStateData,
   dailyEmissionsStatus: Status.IDLE,
   networkEmissions: initialStateData,
