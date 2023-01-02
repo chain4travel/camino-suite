@@ -5,11 +5,12 @@ import { initialStatisticsType } from "../../types/store";
 import {
   loadDailyEmissions,
   loadNetworkEmissions,
-  loadTransactionsEmissions
+  loadTransactionsEmissions,
+  loadDailyTransactionsStatistics
 } from "./utils";
 import MeterCO2Data from '../../types/meterCO2data';
 
-let initialStateData : MeterCO2Data = {
+let initialStateData: MeterCO2Data = {
   Name: "",
   Value: []
 };
@@ -22,8 +23,10 @@ let initialState: initialStatisticsType = {
   transactionsEmissions: initialStateData,
   transactionsEmissionsStatus: Status.IDLE,
   carbonIntensityFactor: {},
-  carbonIntensityFactorStatus: Status.IDLE
-}; 
+  carbonIntensityFactorStatus: Status.IDLE,
+  transactionsPerDay: {},
+  transactionsPerDayLoading: Status.IDLE
+};
 
 const statisticsSlice = createSlice({
   name: "statistics",
@@ -32,13 +35,13 @@ const statisticsSlice = createSlice({
     statisticsReducer: () => initialState,
   },
   extraReducers(builder) {
-    
+
     //Daily Emissions
     builder.addCase(loadDailyEmissions.pending, (state) => {
       state.dailyEmissionsStatus = Status.LOADING;
     });
     builder.addCase(loadDailyEmissions.fulfilled, (state, { payload }) => {
-      let data : any = payload;
+      let data: any = payload;
       state.dailyEmissions = data;
       state.dailyEmissionsStatus = Status.SUCCEEDED;
     });
@@ -51,7 +54,7 @@ const statisticsSlice = createSlice({
       state.networkEmissionsStatus = Status.LOADING;
     });
     builder.addCase(loadNetworkEmissions.fulfilled, (state, { payload }) => {
-      let data : any = payload;
+      let data: any = payload;
       state.networkEmissions = data;
       state.networkEmissionsStatus = Status.SUCCEEDED;
     });
@@ -64,12 +67,24 @@ const statisticsSlice = createSlice({
       state.transactionsEmissionsStatus = Status.LOADING;
     });
     builder.addCase(loadTransactionsEmissions.fulfilled, (state, { payload }) => {
-      let data : any = payload;
+      let data: any = payload;
       state.transactionsEmissions = data;
       state.transactionsEmissionsStatus = Status.SUCCEEDED;
     });
     builder.addCase(loadTransactionsEmissions.rejected, (state) => {
       state.transactionsEmissionsStatus = Status.FAILED;
+    });
+
+    builder.addCase(loadDailyTransactionsStatistics.pending, (state) => {
+      state.transactionsPerDayLoading = Status.LOADING;
+    });
+    builder.addCase(loadDailyTransactionsStatistics.fulfilled, (state, { payload }) => {
+      let data: any = payload;
+      state.transactionsPerDay = data;
+      state.transactionsPerDayLoading = Status.SUCCEEDED;
+    });
+    builder.addCase(loadDailyTransactionsStatistics.rejected, (state) => {
+      state.transactionsPerDayLoading = Status.FAILED;
     });
 
   },

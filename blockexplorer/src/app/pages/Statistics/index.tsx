@@ -21,8 +21,9 @@ import {
 } from 'store/statisticsSlice/utils';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
-import CO2Meters from '../../components/Statistics/CO2Charts/index';
+import CO2Charts from '../../components/Statistics/CO2Charts/index';
 import { typeMeter } from './typeMeter';
+import TransactionsCharts from '../../components/Statistics/TransactionsCharts/index';
 
 const Statistics: FC = () => {
 
@@ -58,7 +59,7 @@ const Statistics: FC = () => {
             <Grid container spacing={2}>
 
               <Grid item md={6} xs={12}>
-                <CO2Meters
+                <CO2Charts
                   typeMeter={typeMeter.BAR}
                   darkMode={dark}
                   utilSlice={() => loadDailyEmissions()}
@@ -68,7 +69,7 @@ const Statistics: FC = () => {
               </Grid>
 
               <Grid item md={6} xs={12}>
-                <CO2Meters
+                <CO2Charts
                   typeMeter={typeMeter.TIME_SERIES}
                   darkMode={dark}
                   utilSlice={() => loadNetworkEmissions()}
@@ -78,7 +79,7 @@ const Statistics: FC = () => {
               </Grid>
 
               <Grid item md={6} xs={12}>
-                <CO2Meters
+                <CO2Charts
                   typeMeter={typeMeter.TIME_SERIES}
                   darkMode={dark}
                   utilSlice={() => loadTransactionsEmissions()}
@@ -86,6 +87,11 @@ const Statistics: FC = () => {
                   sliceGetterLoader={getTransactionsEmissionsStatus}
                 />
               </Grid>
+
+              <Grid item md={6} xs={12}>
+                <TransactionsCharts darkMode={dark} titleText={"Transactions"} />
+              </Grid>
+
             </Grid>
           </Box>
         </Fragment>
