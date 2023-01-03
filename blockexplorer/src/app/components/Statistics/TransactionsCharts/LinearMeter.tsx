@@ -109,8 +109,8 @@ const LinearMeter = ({ darkMode, titleText, dataChart }) => {
           <br/>
           <br/>
 
-          -<b>Avg Block Time:</b>${dataTolltip.avgBlockTime} <br/>
-          -<b>Avg Block Size:</b>${dataTolltip.avgBlockSize} <br/>
+          -<b>Avg Block Time:</b>${dataTolltip.avgBlockTime} TH<br/>
+          -<b>Avg Block Size:</b>${dataTolltip.avgBlockSize} GH<br/>
           -<b>Total Block Count:</b>${dataTolltip.totalBlockCount} <br/>
           -<b>Total Uncles Count:</b>${dataTolltip.totalUnclesCount} <br/>
           -<b>New Adress Seen:</b>${dataTolltip.newAdressSen}
