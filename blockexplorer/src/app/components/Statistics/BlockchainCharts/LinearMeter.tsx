@@ -1,8 +1,6 @@
 import React from 'react';
 import Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
-import moment from 'moment';
-import { TransactionsInfo, DailyTransactions } from '../../../../types/transaction';
 import ConfigLinearMeter from './ConfigLinearMeter';
 
 const LinearMeter = ({ darkMode, titleText, data, typeStatistic }) => {
@@ -71,9 +69,7 @@ const LinearMeter = ({ darkMode, titleText, data, typeStatistic }) => {
         };
       },
       formatter: function (tooltip) {
-
         let indexData = this.point.index;
-        let dataTooltip: TransactionsInfo = data[indexData];
         return config.getTooltip(indexData);
       },
     },
