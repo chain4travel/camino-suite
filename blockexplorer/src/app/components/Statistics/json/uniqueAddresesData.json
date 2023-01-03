@@ -1,0 +1,258 @@
+{
+    "HighestValue": 5434,
+    "HighestDate": "2022-06-17",
+    "LowerValue": 7240,
+    "LowerDate": "2022-07-07",
+    "AddressInfo": [
+      {
+        "Date": "2022-05-09",
+        "TotalDistinctAddresses": 8300,
+        "DailyIncrease": 3132
+      },
+      {
+        "Date": "2022-09-22",
+        "TotalDistinctAddresses": 1616,
+        "DailyIncrease": 7321
+      },
+      {
+        "Date": "2022-10-29",
+        "TotalDistinctAddresses": 4866,
+        "DailyIncrease": 3399
+      },
+      {
+        "Date": "2022-05-11",
+        "TotalDistinctAddresses": 2943,
+        "DailyIncrease": 7499
+      },
+      {
+        "Date": "2022-03-04",
+        "TotalDistinctAddresses": 4413,
+        "DailyIncrease": 2630
+      },
+      {
+        "Date": "2022-05-14",
+        "TotalDistinctAddresses": 4408,
+        "DailyIncrease": 9644
+      },
+      {
+        "Date": "2022-08-05",
+        "TotalDistinctAddresses": 7047,
+        "DailyIncrease": 4680
+      },
+      {
+        "Date": "2022-05-27",
+        "TotalDistinctAddresses": 6266,
+        "DailyIncrease": 8729
+      },
+      {
+        "Date": "2022-03-11",
+        "TotalDistinctAddresses": 4103,
+        "DailyIncrease": 6016
+      },
+      {
+        "Date": "2022-04-26",
+        "TotalDistinctAddresses": 1666,
+        "DailyIncrease": 9923
+      },
+      {
+        "Date": "2022-06-09",
+        "TotalDistinctAddresses": 4559,
+        "DailyIncrease": 5212
+      },
+      {
+        "Date": "2022-06-20",
+        "TotalDistinctAddresses": 5094,
+        "DailyIncrease": 5103
+      },
+      {
+        "Date": "2022-12-24",
+        "TotalDistinctAddresses": 1443,
+        "DailyIncrease": 7558
+      },
+      {
+        "Date": "2022-05-12",
+        "TotalDistinctAddresses": 4550,
+        "DailyIncrease": 2386
+      },
+      {
+        "Date": "2022-07-31",
+        "TotalDistinctAddresses": 8082,
+        "DailyIncrease": 2560
+      },
+      {
+        "Date": "2022-06-21",
+        "TotalDistinctAddresses": 7783,
+        "DailyIncrease": 4555
+      },
+      {
+        "Date": "2022-03-03",
+        "TotalDistinctAddresses": 7896,
+        "DailyIncrease": 2488
+      },
+      {
+        "Date": "2022-05-31",
+        "TotalDistinctAddresses": 8411,
+        "DailyIncrease": 6135
+      },
+      {
+        "Date": "2022-08-21",
+        "TotalDistinctAddresses": 6621,
+        "DailyIncrease": 1030
+      },
+      {
+        "Date": "2022-02-17",
+        "TotalDistinctAddresses": 1133,
+        "DailyIncrease": 6428
+      },
+      {
+        "Date": "2022-09-17",
+        "TotalDistinctAddresses": 5233,
+        "DailyIncrease": 8559
+      },
+      {
+        "Date": "2022-07-04",
+        "TotalDistinctAddresses": 2832,
+        "DailyIncrease": 7757
+      },
+      {
+        "Date": "2022-02-05",
+        "TotalDistinctAddresses": 1064,
+        "DailyIncrease": 9988
+      },
+      {
+        "Date": "2022-10-14",
+        "TotalDistinctAddresses": 8794,
+        "DailyIncrease": 1836
+      },
+      {
+        "Date": "2022-12-29",
+        "TotalDistinctAddresses": 1285,
+        "DailyIncrease": 2558
+      },
+      {
+        "Date": "2022-08-29",
+        "TotalDistinctAddresses": 4214,
+        "DailyIncrease": 9985
+      },
+      {
+        "Date": "2022-10-14",
+        "TotalDistinctAddresses": 4151,
+        "DailyIncrease": 5082
+      },
+      {
+        "Date": "2022-03-14",
+        "TotalDistinctAddresses": 9568,
+        "DailyIncrease": 7918
+      },
+      {
+        "Date": "2022-06-25",
+        "TotalDistinctAddresses": 4213,
+        "DailyIncrease": 8776
+      },
+      {
+        "Date": "2022-09-02",
+        "TotalDistinctAddresses": 5777,
+        "DailyIncrease": 4598
+      },
+      {
+        "Date": "2022-08-21",
+        "TotalDistinctAddresses": 6208,
+        "DailyIncrease": 2347
+      },
+      {
+        "Date": "2022-02-17",
+        "TotalDistinctAddresses": 5092,
+        "DailyIncrease": 3495
+      },
+      {
+        "Date": "2022-06-29",
+        "TotalDistinctAddresses": 1747,
+        "DailyIncrease": 5455
+      },
+      {
+        "Date": "2022-04-03",
+        "TotalDistinctAddresses": 9640,
+        "DailyIncrease": 3776
+      },
+      {
+        "Date": "2022-12-26",
+        "TotalDistinctAddresses": 4853,
+        "DailyIncrease": 2434
+      },
+      {
+        "Date": "2022-03-18",
+        "TotalDistinctAddresses": 4969,
+        "DailyIncrease": 7009
+      },
+      {
+        "Date": "2022-05-31",
+        "TotalDistinctAddresses": 1969,
+        "DailyIncrease": 2267
+      },
+      {
+        "Date": "2022-11-01",
+        "TotalDistinctAddresses": 8925,
+        "DailyIncrease": 3437
+      },
+      {
+        "Date": "2022-12-23",
+        "TotalDistinctAddresses": 8170,
+        "DailyIncrease": 2313
+      },
+      {
+        "Date": "2022-11-17",
+        "TotalDistinctAddresses": 5510,
+        "DailyIncrease": 8292
+      },
+      {
+        "Date": "2022-09-24",
+        "TotalDistinctAddresses": 5969,
+        "DailyIncrease": 3313
+      },
+      {
+        "Date": "2022-08-21",
+        "TotalDistinctAddresses": 4209,
+        "DailyIncrease": 5812
+      },
+      {
+        "Date": "2022-11-30",
+        "TotalDistinctAddresses": 1352,
+        "DailyIncrease": 1670
+      },
+      {
+        "Date": "2022-08-02",
+        "TotalDistinctAddresses": 4761,
+        "DailyIncrease": 8735
+      },
+      {
+        "Date": "2022-12-26",
+        "TotalDistinctAddresses": 1423,
+        "DailyIncrease": 3762
+      },
+      {
+        "Date": "2022-12-29",
+        "TotalDistinctAddresses": 1769,
+        "DailyIncrease": 5732
+      },
+      {
+        "Date": "2022-04-15",
+        "TotalDistinctAddresses": 8151,
+        "DailyIncrease": 5591
+      },
+      {
+        "Date": "2022-02-28",
+        "TotalDistinctAddresses": 3780,
+        "DailyIncrease": 6405
+      },
+      {
+        "Date": "2022-08-27",
+        "TotalDistinctAddresses": 1354,
+        "DailyIncrease": 7364
+      },
+      {
+        "Date": "2022-09-30",
+        "TotalDistinctAddresses": 5433,
+        "DailyIncrease": 5203
+      }
+    ]
+  }

@@ -6,26 +6,29 @@ import {
   loadDailyEmissions,
   loadNetworkEmissions,
   loadTransactionsEmissions,
-  loadDailyTransactionsStatistics
+  loadDailyTransactionsStatistics,
+  loadUniqueAddresses
 } from "./utils";
 import MeterCO2Data from '../../types/meterCO2data';
 
-let initialStateData: MeterCO2Data = {
+let initialStateCO2Data: MeterCO2Data = {
   Name: "",
   Value: []
 };
 
 let initialState: initialStatisticsType = {
-  dailyEmissions: initialStateData,
+  dailyEmissions: initialStateCO2Data,
   dailyEmissionsStatus: Status.IDLE,
-  networkEmissions: initialStateData,
+  networkEmissions: initialStateCO2Data,
   networkEmissionsStatus: Status.IDLE,
-  transactionsEmissions: initialStateData,
+  transactionsEmissions: initialStateCO2Data,
   transactionsEmissionsStatus: Status.IDLE,
   carbonIntensityFactor: {},
   carbonIntensityFactorStatus: Status.IDLE,
   transactionsPerDay: null,
-  transactionsPerDayLoading: Status.IDLE
+  transactionsPerDayLoading: Status.IDLE,
+  uniqueAddressesInfo: null,
+  uniqueAddressesInfoLoading: Status.IDLE
 };
 
 const statisticsSlice = createSlice({
@@ -87,6 +90,19 @@ const statisticsSlice = createSlice({
       state.transactionsPerDayLoading = Status.FAILED;
     });
 
+    //Unique Addreses Info
+    builder.addCase(loadUniqueAddresses.pending, (state) => {
+      state.uniqueAddressesInfoLoading = Status.LOADING;
+    });
+    builder.addCase(loadUniqueAddresses.fulfilled, (state, { payload }) => {
+      let data: any = payload;
+      state.uniqueAddressesInfo = data;
+      state.uniqueAddressesInfoLoading = Status.SUCCEEDED;
+    });
+    builder.addCase(loadUniqueAddresses.rejected, (state) => {
+      state.uniqueAddressesInfoLoading = Status.FAILED;
+    });
+
   },
 });
 
@@ -101,6 +117,9 @@ export const getTransactionsEmissionsStatus = (state: RootState) => state.statis
 
 export const getTransactionsPerDay = (state: RootState) => state.statistics.transactionsPerDay;
 export const getTransactionsPerDayStatus = (state: RootState) => state.statistics.transactionsPerDayLoading;
+
+export const getUniqueAddresses = (state: RootState) => state.statistics.uniqueAddressesInfo;
+export const getUniqueAddressesLoading = (state: RootState) => state.statistics.uniqueAddressesInfoLoading;
 
 export const {
   statisticsReducer

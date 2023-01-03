@@ -5,7 +5,10 @@ import {
     fetchTransactionsEmissions
 } from '../../api';
 
-import transactionsData from '../../app/components/Statistics/json/transactionsData.json'
+import transactionsData from '../../app/components/Statistics/json/transactionsData.json';
+
+import uniqueAddresesData from '../../app/components/Statistics/json/uniqueAddresesData.json'
+
 
 export const loadDailyEmissions = createAsyncThunk("co2statistics/dailyEmissions", async () => {
     let response = await fetchDailyEmissions();
@@ -23,9 +26,13 @@ export const loadTransactionsEmissions = createAsyncThunk("co2statistics/transac
     return response;
 });
 
+//Pending of Fetch
 export const loadDailyTransactionsStatistics = createAsyncThunk("transactionsStatistics/transactionsPerDay", async () => {
     let data = transactionsData;  
     return data;
 });
 
-//Magelland Services
+export const loadUniqueAddresses = createAsyncThunk("transactionsStatistics/uniqueAddressesInfo", async () => {
+    let data = uniqueAddresesData;  
+    return data;
+});

@@ -107,7 +107,9 @@ export interface initialStatisticsType {
   carbonIntensityFactor : any,
   carbonIntensityFactorStatus: Status,
   transactionsPerDay: any,
-  transactionsPerDayLoading: Status
+  transactionsPerDayLoading: Status,
+  uniqueAddressesInfo: any,
+  uniqueAddressesInfoLoading: Status
 }
 
 export interface initicalTransactionsStatistics {
