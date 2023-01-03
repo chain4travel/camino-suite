@@ -24,9 +24,9 @@ import {
 } from 'store/statisticsSlice/utils';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
-import CO2Charts from '../../components/Statistics/CO2Charts/index';
+import CO2ConsumptionCharts from '../../components/Statistics/CO2ConsumptionCharts/index';
 import { typesMeter } from './ChartSelector';
-import Charts from '../../components/Statistics/Charts/index';
+import BlockchainCharts from '../../components/Statistics/BlockchainCharts/index';
 import { typesStatistic } from './ChartSelector';
 
 const Statistics: FC = () => {
@@ -62,7 +62,7 @@ const Statistics: FC = () => {
           {/*CO2 Charts */}
           <Grid container spacing={2}>
             <Grid item md={6} xs={12}>
-              <CO2Charts
+              <CO2ConsumptionCharts
                 typeMeter={typesMeter.BAR}
                 darkMode={dark}
                 utilSlice={() => loadDailyEmissions()}
@@ -72,7 +72,7 @@ const Statistics: FC = () => {
             </Grid>
 
             <Grid item md={6} xs={12}>
-              <CO2Charts
+              <CO2ConsumptionCharts
                 typeMeter={typesMeter.TIME_SERIES}
                 darkMode={dark}
                 utilSlice={() => loadNetworkEmissions()}
@@ -82,7 +82,7 @@ const Statistics: FC = () => {
             </Grid>
 
             <Grid item md={6} xs={12}>
-              <CO2Charts
+              <CO2ConsumptionCharts
                 typeMeter={typesMeter.TIME_SERIES}
                 darkMode={dark}
                 utilSlice={() => loadTransactionsEmissions()}
@@ -117,7 +117,7 @@ const Statistics: FC = () => {
         <Box sx={{ flexGrow: 1 }}>
           <Grid container spacing={2}>
             <Grid item md={6} xs={12}>
-              <Charts
+              <BlockchainCharts
                 darkMode={dark}
                 titleText={"Daily Transactions"}
                 utilSlice={() => loadDailyTransactionsStatistics()}

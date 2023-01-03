@@ -14,7 +14,7 @@ import Modal from '@mui/material/Modal';
 import Box from '@mui/material/Box';
 import useWidth from 'app/hooks/useWidth';
 
-const CO2Charts = ({
+const CO2ConsumptionCharts = ({
   utilSlice, typeMeter, darkMode, sliceGetter, sliceGetterLoader
 }) => {
 
@@ -97,4 +97,4 @@ const CO2Charts = ({
   );
 }
 
-export default CO2Charts;
+export default CO2ConsumptionCharts;

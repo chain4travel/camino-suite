@@ -16,7 +16,7 @@ import 'react-datepicker/dist/react-datepicker.css';
 import DateRange from './DateRange';
 import { typesStatistic } from '../../../pages/Statistics/ChartSelector';
 
-const Charts = ({ darkMode, titleText, utilSlice, sliceGetter, sliceGetterLoader, typeStatistic }) => {
+const BlockchainCharts = ({ darkMode, titleText, utilSlice, sliceGetter, sliceGetterLoader, typeStatistic }) => {
   const { isDesktop } = useWidth();
 
   const [openModal, setOpenModal] = useState(false);
@@ -119,4 +119,4 @@ const Charts = ({ darkMode, titleText, utilSlice, sliceGetter, sliceGetterLoader
   );
 };
 
-export default Charts;
+export default BlockchainCharts;
