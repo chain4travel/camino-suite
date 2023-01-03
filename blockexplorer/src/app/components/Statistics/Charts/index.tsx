@@ -2,7 +2,7 @@ import React, { Fragment, useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from 'store/configureStore';
 import { Status } from 'types';
 import CircularProgress from '@mui/material/CircularProgress';
-import LinearMeter from './LinearMeter';
+import LinearMeter from './DailyTransactionsChart';
 import IconButton from '@mui/material/IconButton';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
@@ -15,7 +15,7 @@ import useWidth from 'app/hooks/useWidth';
 import 'react-datepicker/dist/react-datepicker.css';
 import DateRange from './DateRange';
 
-const TransactionsCharts = ({ darkMode, titleText, utilSlice, sliceGetter, sliceGetterLoader }) => {
+const Charts = ({ darkMode, titleText, utilSlice, sliceGetter, sliceGetterLoader }) => {
   const { isDesktop } = useWidth();
 
   const [openModal, setOpenModal] = useState(false);
@@ -124,4 +124,4 @@ const TransactionsCharts = ({ darkMode, titleText, utilSlice, sliceGetter, slice
   );
 };
 
-export default TransactionsCharts;
+export default Charts;

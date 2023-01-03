@@ -26,7 +26,7 @@ import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import CO2Charts from '../../components/Statistics/CO2Charts/index';
 import { typeMeter } from './typeMeter';
-import TransactionsCharts from '../../components/Statistics/TransactionsCharts/index';
+import Charts from '../../components/Statistics/Charts/index';
 
 const Statistics: FC = () => {
 
@@ -92,7 +92,7 @@ const Statistics: FC = () => {
               </Grid>
 
               <Grid item md={6} xs={12}>
-                <TransactionsCharts 
+                <Charts 
                 darkMode={dark} 
                 titleText={"Transactions"} 
                 utilSlice={() => loadDailyTransactionsStatistics()}

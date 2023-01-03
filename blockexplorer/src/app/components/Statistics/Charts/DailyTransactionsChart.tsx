@@ -4,7 +4,7 @@ import HighchartsReact from 'highcharts-react-official';
 import moment from 'moment';
 import { TransactionsInfo, DailyTransactions } from '../../../../types/transaction';
 
-const LinearMeter = ({ darkMode, titleText, dataChart }) => {
+const DailyTransactionsChart = ({ darkMode, titleText, dataChart }) => {
 
   const data = {
     Name: 'Transactions per day',
@@ -151,4 +151,4 @@ const LinearMeter = ({ darkMode, titleText, dataChart }) => {
   );
 };
 
-export default LinearMeter;
+export default DailyTransactionsChart;
