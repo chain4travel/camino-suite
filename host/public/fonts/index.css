@@ -1,0 +1,28 @@
+@font-face {
+  font-family: 'ClashDisplay';
+  font-weight: 500 700;
+  font-display: swap;
+  font-style: normal;
+  src: url('ClashDisplay.woff2') format('woff2'), url('ClashDisplay.woff') format('woff');
+}
+
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400;
+  src: url('inter-v12-latin-regular.woff2') format('woff2'), url('inter-v12-latin-regular.woff') format('woff');
+}
+
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 500;
+  src: url('inter-v12-latin-500.woff2') format('woff2'), url('inter-v12-latin-500.woff') format('woff');
+}
+
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 700;
+  src: url('inter-v12-latin-700.woff2') format('woff2'), url('inter-v12-latin-700.woff') format('woff');
+}

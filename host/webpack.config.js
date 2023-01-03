@@ -74,6 +74,10 @@ module.exports = {
           to: path.resolve(__dirname, "dist/assets"),
         },
         {
+          from: path.resolve(__dirname, "public/fonts"),
+          to: path.resolve(__dirname, "dist/fonts"),
+        },
+        {
           from: "../wallet/public/img",
           to: path.resolve(__dirname, "dist/img"),
         },
