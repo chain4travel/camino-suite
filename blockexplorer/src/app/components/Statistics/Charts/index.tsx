@@ -2,7 +2,7 @@ import React, { Fragment, useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from 'store/configureStore';
 import { Status } from 'types';
 import CircularProgress from '@mui/material/CircularProgress';
-import LinearMeter from './DailyTransactionsChart';
+import LinearMeter from './LinearMeter';
 import IconButton from '@mui/material/IconButton';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
@@ -14,8 +14,9 @@ import Box from '@mui/material/Box';
 import useWidth from 'app/hooks/useWidth';
 import 'react-datepicker/dist/react-datepicker.css';
 import DateRange from './DateRange';
+import { typesStatistic } from '../../../pages/Statistics/ChartSelector';
 
-const Charts = ({ darkMode, titleText, utilSlice, sliceGetter, sliceGetterLoader }) => {
+const Charts = ({ darkMode, titleText, utilSlice, sliceGetter, sliceGetterLoader, typeStatistic }) => {
   const { isDesktop } = useWidth();
 
   const [openModal, setOpenModal] = useState(false);
@@ -83,24 +84,15 @@ const Charts = ({ darkMode, titleText, utilSlice, sliceGetter, sliceGetterLoader
                   setEndDate={setEndDate}
                   setStartDate={setStartDate}
                 />
-                {/* <>
-                  <DatePicker
-                    selected={startDate}
-                    onChange={date => setStartDate(date)}
-                    selectsStart
-                    startDate={startDate}
-                    endDate={endDate}
-                  />
-                  <DatePicker
-                    selected={endDate}
-                    onChange={date => setEndDate(date)}
-                    selectsEnd
-                    startDate={startDate}
-                    endDate={endDate}
-                    minDate={startDate}
-                  />
-                </> */}
-          {dataStatistics != undefined && dataStatistics != null ? <LinearMeter darkMode={darkMode} titleText={titleText} dataChart={dataStatistics} /> : null}
+
+                {dataStatistics != undefined && dataStatistics != null ?
+                  <>
+                    <LinearMeter darkMode={darkMode}
+                      titleText={titleText}
+                      data={dataStatistics}
+                      typeStatistic={typesStatistic.DAILY_TRANSACTIONS}/>
+                  </>
+                  : null}
               </Fragment>
             </Box>
           </Modal>
@@ -115,9 +107,12 @@ const Charts = ({ darkMode, titleText, utilSlice, sliceGetter, sliceGetterLoader
             </IconButton>
           </div>
 
-          {dataStatistics != undefined && dataStatistics != null ? <LinearMeter darkMode={darkMode} titleText={titleText} dataChart={dataStatistics} /> : null}
-
-          
+          {dataStatistics != undefined && dataStatistics != null ? <>
+            <LinearMeter darkMode={darkMode}
+              titleText={titleText}
+              data={dataStatistics}
+              typeStatistic={typesStatistic.DAILY_TRANSACTIONS}/>
+          </> : null}
         </>
       )}
     </Fragment>

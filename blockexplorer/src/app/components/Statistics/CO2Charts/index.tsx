@@ -1,6 +1,6 @@
 import React, { useEffect, Fragment, useState } from 'react';
 import { useAppDispatch, useAppSelector } from 'store/configureStore';
-import { typeMeter as typesMeter } from '../../../pages/Statistics/typeMeter';
+import { typesMeter } from '../../../pages/Statistics/ChartSelector';
 import BarMeter from './BarMeter';
 import TimeSeriesMeter from './TimeSeriesMeter';
 import { Status } from "types";

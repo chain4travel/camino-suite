@@ -8,6 +8,7 @@ interface SubPageTitleProps {
   backToLink: To;
   style?: React.CSSProperties;
   children?: React.ReactNode;
+  hiddenBackButton? : boolean
 }
 
 const SubPageTitle: FC<SubPageTitleProps> = ({
@@ -15,6 +16,7 @@ const SubPageTitle: FC<SubPageTitleProps> = ({
   backToLink,
   style,
   children,
+  hiddenBackButton
 }) => {
   return (
     <Grid
@@ -28,7 +30,7 @@ const SubPageTitle: FC<SubPageTitleProps> = ({
       spacing={2}
     >
       <Grid item xs sm={4} lg={2} order={1}>
-        <BackButton backToLink={backToLink} />
+        {hiddenBackButton == undefined || hiddenBackButton == false ? <BackButton backToLink={backToLink} /> : null}
       </Grid>
       <Grid
         item
