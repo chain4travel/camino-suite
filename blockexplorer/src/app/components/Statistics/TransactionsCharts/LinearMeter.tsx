@@ -1,10 +1,10 @@
 import React from 'react';
 import Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
+import moment from 'moment';
+import { TransactionsInfo, DailyTransactions } from '../../../../types/transaction';
 
 const LinearMeter = ({ darkMode, titleText, dataChart }) => {
-
-  console.log("dataChart", dataChart);
 
   const data = {
     Name: 'Transactions per day',
@@ -96,19 +96,17 @@ const LinearMeter = ({ darkMode, titleText, dataChart }) => {
       },
       formatter: function (tooltip) {
 
-        console.log("tooltipData", tooltip);
-
+        let indexData = this.point.index;
+        let dataTooltip : TransactionsInfo = data.Value[indexData];
 
         let dataTolltip = {
-          dateTime: 'Friday, June 14, 2019',//PENDING TIME, example Friday, June 14, 2019
-          totalTransactions: 825.364,
-          avgDifficulty: '2,000 TH',
-          estHashRate: '159,829 GH',
-          avgBlockTime: '13,17',
-          avgBlockSize: '28,17',
-          totalBlockCount: '6,410',
-          totalUnclesCount: '478',
-          newAdressSen: '86,074',
+          dateTime: moment(new Date(dataTooltip.Date)).format("MMMM Do YYYY"),
+          totalTransactions:`${dataTooltip.TotalTransactions}`,
+          avgBlockTime: `${dataTooltip.AvgBlockTime}`,
+          avgBlockSize: `${dataTooltip.AvgBlockSize}`,
+          totalBlockCount: `${dataTooltip.TotalBlockCount}`,
+          totalUnclesCount: `${dataTooltip.TotalUnclesCount}`,
+          newAdressSen: `${dataTooltip.NewAddressSeen}`,
         };
         const header = `<span>
           ${dataTolltip.dateTime}
@@ -117,9 +115,6 @@ const LinearMeter = ({ darkMode, titleText, dataChart }) => {
           <br/>
           <br/>
 
-
-          -<b>Avg Difficulty:</b>${dataTolltip.avgDifficulty} <br/>
-          -<b>Est Hash Rate:</b>${dataTolltip.estHashRate} <br/>
           -<b>Avg Block Time:</b>${dataTolltip.avgBlockTime} <br/>
           -<b>Avg Block Size:</b>${dataTolltip.avgBlockSize} <br/>
           -<b>Total Block Count:</b>${dataTolltip.totalBlockCount} <br/>
@@ -133,7 +128,7 @@ const LinearMeter = ({ darkMode, titleText, dataChart }) => {
 
     series: [
       {
-        name: 'Highest number of Transactions',
+        name: 'Daily Transactions',
         data: mapSeries(data.Value),
         color: 'hsl(221, 48%, 75%)',
       },
