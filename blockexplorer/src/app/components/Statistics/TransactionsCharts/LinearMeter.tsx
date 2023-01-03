@@ -17,8 +17,6 @@ const LinearMeter = ({ darkMode, titleText, dataChart }) => {
     });
   };
 
-
-
   const options = {
     title: {
       text: titleText,
@@ -35,7 +33,7 @@ const LinearMeter = ({ darkMode, titleText, dataChart }) => {
     yAxis: {
       gridLineColor: darkMode ? 'hsl(221, 0%, 20%)' : 'hsl(221, 0%, 80%)',
       title: {
-        text: 'transactions',
+        text: titleText,
       },
       labels: {
         useHTML: true,
@@ -47,7 +45,6 @@ const LinearMeter = ({ darkMode, titleText, dataChart }) => {
         },
       },
     },
-
     xAxis: {
       accessibility: {
         rangeDescription: 'Range',
@@ -64,7 +61,6 @@ const LinearMeter = ({ darkMode, titleText, dataChart }) => {
         },
       },
     },
-
     legend: {
       layout: 'horizontal',
       align: 'center',
@@ -73,7 +69,6 @@ const LinearMeter = ({ darkMode, titleText, dataChart }) => {
         color: darkMode ? 'white' : 'black',
       },
     },
-
     plotOptions: {
       series: {
         label: {
@@ -81,7 +76,6 @@ const LinearMeter = ({ darkMode, titleText, dataChart }) => {
         },
       },
     },
-
     tooltip: {
       positioner: function (width, height, point) {
         let pointX = point.plotX;
@@ -125,7 +119,6 @@ const LinearMeter = ({ darkMode, titleText, dataChart }) => {
         return header;
       },
     },
-
     series: [
       {
         name: 'Daily Transactions',
@@ -133,7 +126,6 @@ const LinearMeter = ({ darkMode, titleText, dataChart }) => {
         color: 'hsl(221, 48%, 75%)',
       },
     ],
-
     responsive: {
       rules: [
         {
