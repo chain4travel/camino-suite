@@ -1,82 +1,82 @@
 [
     {
         "Date": "2022-08-28",
-        "GasUsed": 8218
+        "TotalGasUsed": 8218
     },
     {
         "Date": "2022-04-11",
-        "GasUsed": 7744
+        "TotalGasUsed": 7744
     },
     {
         "Date": "2022-06-14",
-        "GasUsed": 5520
+        "TotalGasUsed": 5520
     },
     {
         "Date": "2022-07-08",
-        "GasUsed": 2186
+        "TotalGasUsed": 2186
     },
     {
         "Date": "2022-08-22",
-        "GasUsed": 9302
+        "TotalGasUsed": 9302
     },
     {
         "Date": "2022-07-19",
-        "GasUsed": 6295
+        "TotalGasUsed": 6295
     },
     {
         "Date": "2022-05-26",
-        "GasUsed": 1413
+        "TotalGasUsed": 1413
     },
     {
         "Date": "2022-11-20",
-        "GasUsed": 2386
+        "TotalGasUsed": 2386
     },
     {
         "Date": "2022-03-20",
-        "GasUsed": 8313
+        "TotalGasUsed": 8313
     },
     {
         "Date": "2022-03-17",
-        "GasUsed": 3440
+        "TotalGasUsed": 3440
     },
     {
         "Date": "2022-09-29",
-        "GasUsed": 9917
+        "TotalGasUsed": 9917
     },
     {
         "Date": "2022-12-27",
-        "GasUsed": 3435
+        "TotalGasUsed": 3435
     },
     {
         "Date": "2022-03-07",
-        "GasUsed": 6493
+        "TotalGasUsed": 6493
     },
     {
         "Date": "2022-09-26",
-        "GasUsed": 5154
+        "TotalGasUsed": 5154
     },
     {
         "Date": "2022-05-19",
-        "GasUsed": 2060
+        "TotalGasUsed": 2060
     },
     {
         "Date": "2022-07-04",
-        "GasUsed": 9143
+        "TotalGasUsed": 9143
     },
     {
         "Date": "2022-02-08",
-        "GasUsed": 2883
+        "TotalGasUsed": 2883
     },
     {
         "Date": "2022-06-08",
-        "GasUsed": 6347
+        "TotalGasUsed": 6347
     },
     {
         "Date": "2022-10-21",
-        "GasUsed": 9728
+        "TotalGasUsed": 9728
     },
     {
         "Date": "2022-07-21",
-        "GasUsed": 5911
+        "TotalGasUsed": 5911
     }
 ]

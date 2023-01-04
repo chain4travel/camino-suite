@@ -51,7 +51,7 @@ export const gasUsedTooltip = (data: GasUsed) => {
     const header = `<span>
     ${moment(new Date(data.Date)).format("MMMM Do YYYY")}
         <br/>
-        [<label style="color: blue">Total Gas Used:</label> <b>${data.GasUsed}</b>]
+        [<label style="color: blue">Total Gas Used:</label> <b>${data.TotalGasUsed}</b>]
         </span>`;
     return header;
 }

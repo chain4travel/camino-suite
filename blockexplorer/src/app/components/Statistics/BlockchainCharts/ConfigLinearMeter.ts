@@ -61,7 +61,7 @@ class ConfigLinearMeter {
 
             case typesStatistic.GAS_USED:
                 return this.data.map((value, index) => {
-                    return { y: value.GasUsed, name: value.Date };
+                    return { y: value.TotalGasUsed, name: value.Date };
                 });
         }
     }
