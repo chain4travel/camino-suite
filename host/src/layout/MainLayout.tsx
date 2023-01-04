@@ -30,7 +30,7 @@ const MainLayout = ({ children }) => {
     init();
   }, []);
   return (
-    <Box sx={{ display: "flex", flexDirection: "column" }}>
+    <Box sx={{ display: "flex", flexDirection: "column", width: "100%" }}>
       <Navbar />
       <Toolbar
         sx={{
@@ -38,7 +38,11 @@ const MainLayout = ({ children }) => {
           [theme.breakpoints.up("md")]: { minHeight: "69px !important" },
         }}
       />
-      {!loadNetworks && <Box sx={{ flex: 1 }}>{children}</Box>}
+      {!loadNetworks && (
+        <Box sx={{ display: "flex", flexDirection: "column", flex: 1 }}>
+          {children}
+        </Box>
+      )}
     </Box>
   );
 };

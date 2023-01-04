@@ -32,7 +32,12 @@ export default function Navbar() {
 
   return (
     <AppBar
-      sx={{ width: "100%", display: "flex", alignItems: "center" }}
+      sx={{
+        width: "100%",
+        display: "flex",
+        alignItems: "center",
+        minHeight: "65px",
+      }}
       position="fixed"
     >
       <Toolbar
