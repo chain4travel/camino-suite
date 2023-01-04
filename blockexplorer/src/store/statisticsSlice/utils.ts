@@ -10,6 +10,7 @@ import transactionsData from '../../app/components/Statistics/json/transactionsD
 import uniqueAddresesData from '../../app/components/Statistics/json/uniqueAddresesData.json';
 import dailyTokenTransferData from '../../app/components/Statistics/json/dailyTokenTransaction.json';
 import gasUsedData from '../../app/components/Statistics/json/gasUsed.json';
+import activeAddressesData from '../../app/components/Statistics/json/activeAddresses.json';
 
 export const loadDailyEmissions = createAsyncThunk("co2statistics/dailyEmissions", async () => {
     let response = await fetchDailyEmissions();
@@ -45,5 +46,10 @@ export const loadDailyTokenTransfer = createAsyncThunk("transactionsStatistics/d
 
 export const loadGasUsed = createAsyncThunk("transactionsStatistics/gasUsed", async () => {
     let data = gasUsedData;
+    return data;
+});
+
+export const loadActiveAddresses = createAsyncThunk("transactionsStatistics/activeAdresses", async () => {
+    let data = activeAddressesData;
     return data;
 });

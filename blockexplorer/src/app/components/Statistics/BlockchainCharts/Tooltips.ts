@@ -3,6 +3,7 @@ import { TransactionsInfo } from '../../../../types/transaction';
 import { AddressInfo } from '../../../../types/uniqueAddresses';
 import {DailyTokenTransfer} from '../../../../types/dailyTokenTransfer';
 import {GasUsed} from '../../../../types/gasUsed';
+import {ActiveAddresesInfo} from '../../../../types/activeAddresses';
 
 //Transactions
 export const dailyTransactionsTooltip = (data: TransactionsInfo) => {
@@ -52,6 +53,20 @@ export const gasUsedTooltip = (data: GasUsed) => {
     ${moment(new Date(data.Date)).format("MMMM Do YYYY")}
         <br/>
         [<label style="color: blue">Total Gas Used:</label> <b>${data.TotalGasUsed}</b>]
+        </span>`;
+    return header;
+}
+
+//Active Addresses
+export const activeAddressesTooltip = (data: ActiveAddresesInfo) => {
+    const header = `<span>
+    ${moment(new Date(data.Date)).format("MMMM Do YYYY")}
+        <br/>
+        [<label style="color: blue">Total Gas Used:</label> <b>${data.ActiveAddresses}</b>]
+        <br/>
+        <br/>
+        -<b>Receive Count:</b>${data.ReceiveCount}<br/>
+        -<b>Send Count:</b>${data.SendCount}<br/>
         </span>`;
     return header;
 }

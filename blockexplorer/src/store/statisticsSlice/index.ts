@@ -9,7 +9,8 @@ import {
   loadDailyTransactionsStatistics,
   loadUniqueAddresses,
   loadDailyTokenTransfer,
-  loadGasUsed
+  loadGasUsed,
+  loadActiveAddresses
 } from "./utils";
 import MeterCO2Data from '../../types/meterCO2data';
 
@@ -34,7 +35,9 @@ let initialState: initialStatisticsType = {
   dailyTokenTransfers: null,
   dailyTokenTransfersLoading: Status.IDLE,
   gasUsed: null,
-  gasUsedLoading: Status.IDLE
+  gasUsedLoading: Status.IDLE,
+  activeAdresses: null,
+  activeAdressesLoading: Status.IDLE
 };
 
 const statisticsSlice = createSlice({
@@ -110,7 +113,7 @@ const statisticsSlice = createSlice({
       state.uniqueAddressesInfoLoading = Status.FAILED;
     });
 
-    //(Blockchain Data) Unique Addreses Info
+    //(Blockchain Data) Daily Token Transfer
     builder.addCase(loadDailyTokenTransfer.pending, (state) => {
       state.dailyTokenTransfersLoading = Status.LOADING;
     });
@@ -134,6 +137,19 @@ const statisticsSlice = createSlice({
     });
     builder.addCase(loadGasUsed.rejected, (state) => {
       state.gasUsedLoading = Status.FAILED;
+    });
+
+    //(Blockchain Data) Active Addresses
+    builder.addCase(loadActiveAddresses.pending, (state) => {
+      state.activeAdressesLoading = Status.LOADING;
+    });
+    builder.addCase(loadActiveAddresses.fulfilled, (state, { payload }) => {
+      let data: any = payload;
+      state.activeAdresses = data;
+      state.activeAdressesLoading = Status.SUCCEEDED;
+    });
+    builder.addCase(loadActiveAddresses.rejected, (state) => {
+      state.activeAdressesLoading = Status.FAILED;
     });
 
 
@@ -160,6 +176,9 @@ export const getDailyTokenTransfersLoading = (state: RootState) => state.statist
 
 export const getGasUsed = (state: RootState) => state.statistics.gasUsed;
 export const getGasUsedLoading = (state: RootState) => state.statistics.gasUsedLoading;
+
+export const getActiveAddresses = (state: RootState) => state.statistics.activeAdresses;
+export const getActiveAddressesInfo = (state: RootState) => state.statistics.activeAdressesLoading;
 
 export const {
   statisticsReducer

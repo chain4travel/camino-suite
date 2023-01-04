@@ -20,7 +20,9 @@ import {
   getDailyTokenTransfers, 
   getDailyTokenTransfersLoading,
   getGasUsed,
-  getGasUsedLoading
+  getGasUsedLoading,
+  getActiveAddresses,
+  getActiveAddressesInfo
 } from 'store/statisticsSlice';
 import {
   loadDailyEmissions,
@@ -29,7 +31,8 @@ import {
   loadDailyTransactionsStatistics,
   loadUniqueAddresses,
   loadDailyTokenTransfer,
-  loadGasUsed
+  loadGasUsed,
+  loadActiveAddresses
 } from 'store/statisticsSlice/utils';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
@@ -163,6 +166,16 @@ const Statistics: FC = () => {
                 sliceGetter={getGasUsed}
                 sliceGetterLoader={getGasUsedLoading}
                 typeStatistic={typesStatistic.GAS_USED}
+              />
+            </Grid>
+            <Grid item md={6} xs={12}>
+              <BlockchainCharts
+                darkMode={dark}
+                titleText={"Active Addresses"}
+                utilSlice={() => loadActiveAddresses()}
+                sliceGetter={getActiveAddresses}
+                sliceGetterLoader={getActiveAddressesInfo}
+                typeStatistic={typesStatistic.ACTIVE_ADDRESSES}
               />
             </Grid>
           </Grid>

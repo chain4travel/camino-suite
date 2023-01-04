@@ -1,0 +1,126 @@
+{
+    "HighestNumber": 21412,
+    "LowestNumber": 30121,
+    "ActiveAddresesInfo": [
+        {
+          "Date": "2022-11-28",
+          "ActiveAddresses": 2915,
+          "ReceiveCount": 5091,
+          "SendCount": 3379
+        },
+        {
+          "Date": "2022-08-25",
+          "ActiveAddresses": 1820,
+          "ReceiveCount": 8154,
+          "SendCount": 1759
+        },
+        {
+          "Date": "2022-08-25",
+          "ActiveAddresses": 2526,
+          "ReceiveCount": 3056,
+          "SendCount": 4685
+        },
+        {
+          "Date": "2022-09-18",
+          "ActiveAddresses": 2080,
+          "ReceiveCount": 4194,
+          "SendCount": 6282
+        },
+        {
+          "Date": "2022-05-02",
+          "ActiveAddresses": 6027,
+          "ReceiveCount": 7521,
+          "SendCount": 6899
+        },
+        {
+          "Date": "2022-10-27",
+          "ActiveAddresses": 4319,
+          "ReceiveCount": 9075,
+          "SendCount": 6110
+        },
+        {
+          "Date": "2022-08-16",
+          "ActiveAddresses": 8577,
+          "ReceiveCount": 2931,
+          "SendCount": 3464
+        },
+        {
+          "Date": "2022-03-27",
+          "ActiveAddresses": 7477,
+          "ReceiveCount": 1905,
+          "SendCount": 8562
+        },
+        {
+          "Date": "2022-06-25",
+          "ActiveAddresses": 5163,
+          "ReceiveCount": 4197,
+          "SendCount": 8771
+        },
+        {
+          "Date": "2022-12-16",
+          "ActiveAddresses": 1111,
+          "ReceiveCount": 2539,
+          "SendCount": 7288
+        },
+        {
+          "Date": "2022-05-16",
+          "ActiveAddresses": 5513,
+          "ReceiveCount": 5480,
+          "SendCount": 7665
+        },
+        {
+          "Date": "2022-07-18",
+          "ActiveAddresses": 5629,
+          "ReceiveCount": 1150,
+          "SendCount": 5051
+        },
+        {
+          "Date": "2022-04-14",
+          "ActiveAddresses": 6105,
+          "ReceiveCount": 6867,
+          "SendCount": 4809
+        },
+        {
+          "Date": "2022-02-21",
+          "ActiveAddresses": 2200,
+          "ReceiveCount": 9030,
+          "SendCount": 7434
+        },
+        {
+          "Date": "2022-12-03",
+          "ActiveAddresses": 2835,
+          "ReceiveCount": 5379,
+          "SendCount": 9305
+        },
+        {
+          "Date": "2022-11-12",
+          "ActiveAddresses": 8616,
+          "ReceiveCount": 8787,
+          "SendCount": 1901
+        },
+        {
+          "Date": "2022-10-20",
+          "ActiveAddresses": 2921,
+          "ReceiveCount": 3003,
+          "SendCount": 7189
+        },
+        {
+          "Date": "2022-12-04",
+          "ActiveAddresses": 5659,
+          "ReceiveCount": 4113,
+          "SendCount": 8270
+        },
+        {
+          "Date": "2022-05-24",
+          "ActiveAddresses": 6050,
+          "ReceiveCount": 8382,
+          "SendCount": 3138
+        },
+        {
+          "Date": "2022-05-30",
+          "ActiveAddresses": 8500,
+          "ReceiveCount": 3932,
+          "SendCount": 3766
+        }
+      ]
+}

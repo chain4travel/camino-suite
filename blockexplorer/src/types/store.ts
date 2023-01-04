@@ -5,6 +5,7 @@ import { CTransaction, TranscationDetails, XPTransaction, DailyTransactions } fr
 import { UniqueAdressesInfo } from './uniqueAddresses';
 import { DailyTokenTransfer } from './dailyTokenTransfer';
 import { GasUsed } from './gasUsed';
+import {ActiveAddreses } from './activeAddresses';
 import MeterCO2Data from './meterCO2data';
 
 export interface Chain {
@@ -117,6 +118,8 @@ export interface initialStatisticsType {
   dailyTokenTransfersLoading: Status,
   gasUsed: GasUsed,
   gasUsedLoading: Status,
+  activeAdresses: ActiveAddreses,
+  activeAdressesLoading: Status
 }
 
 export interface initicalTransactionsStatistics {
