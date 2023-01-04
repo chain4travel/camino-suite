@@ -20,13 +20,10 @@ const BlockchainCharts = ({ darkMode, titleText, utilSlice, sliceGetter, sliceGe
   const { isDesktop } = useWidth();
 
   const [openModal, setOpenModal] = useState(false);
-  const [startDate, setStartDate] = useState<any>();
-  const [endDate, setEndDate] = useState<any>();
+  const [startDate, setStartDate] = useState<Date>();
+  const [endDate, setEndDate] = useState<Date>();
 
-  useEffect(() => {
-    setStartDate(new Date('2022/12/29'));
-    setEndDate(new Date('2022/12/29'));
-  }, []);
+  useEffect(() => {}, []);
 
   const dispatch = useAppDispatch();
 

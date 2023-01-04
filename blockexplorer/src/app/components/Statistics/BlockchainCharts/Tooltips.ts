@@ -2,6 +2,7 @@ import moment from 'moment';
 import { TransactionsInfo } from '../../../../types/transaction';
 import { AddressInfo } from '../../../../types/uniqueAddresses';
 
+//Transactions
 export const dailyTransactionsTooltip = (data: TransactionsInfo) => {
     const header = `<span>
         ${moment(new Date(data.Date)).format("MMMM Do YYYY")}
@@ -20,6 +21,7 @@ export const dailyTransactionsTooltip = (data: TransactionsInfo) => {
     return header;
 }
 
+//Unique Addresses
 export const uniqueAddressesDailyIncreaseTooltip = (data: AddressInfo) => {
     const header = `<span>
         ${moment(new Date(data.Date)).format("MMMM Do YYYY")}
