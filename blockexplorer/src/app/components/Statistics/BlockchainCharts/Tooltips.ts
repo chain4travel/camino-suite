@@ -27,7 +27,7 @@ export const uniqueAddressesDailyIncreaseTooltip = (data: AddressInfo) => {
         [<label style="color: blue">Total Disctinct Addresses:</label> <b>${data.TotalDistinctAddresses}</b>]
         <br/>
         <br/>
-        -<b>Daily Increase:</b>${data.DailyIncrease} TH<br/>
+        -<b>Daily Increase:</b>${data.DailyIncrease}<br/>
         </span><br/>`;
     return header;
 }
