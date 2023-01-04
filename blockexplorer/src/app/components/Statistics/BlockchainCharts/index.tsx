@@ -90,7 +90,7 @@ const BlockchainCharts = ({ darkMode, titleText, utilSlice, sliceGetter, sliceGe
                     <LinearMeter darkMode={darkMode}
                       titleText={titleText}
                       data={dataStatistics}
-                      typeStatistic={typesStatistic.DAILY_TRANSACTIONS}/>
+                      typeStatistic={typeStatistic} />
                   </>
                   : null}
               </Fragment>
@@ -111,7 +111,7 @@ const BlockchainCharts = ({ darkMode, titleText, utilSlice, sliceGetter, sliceGe
             <LinearMeter darkMode={darkMode}
               titleText={titleText}
               data={dataStatistics}
-              typeStatistic={typesStatistic.DAILY_TRANSACTIONS}/>
+              typeStatistic={typeStatistic} />
           </> : null}
         </>
       )}
