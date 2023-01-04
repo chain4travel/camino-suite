@@ -9,7 +9,7 @@ import {
 import transactionsData from '../../app/components/Statistics/json/transactionsData.json';
 import uniqueAddresesData from '../../app/components/Statistics/json/uniqueAddresesData.json';
 import dailyTokenTransferData from '../../app/components/Statistics/json/dailyTokenTransaction.json';
-
+import gasUsedData from '../../app/components/Statistics/json/gasUsed.json';
 
 export const loadDailyEmissions = createAsyncThunk("co2statistics/dailyEmissions", async () => {
     let response = await fetchDailyEmissions();
@@ -40,5 +40,10 @@ export const loadUniqueAddresses = createAsyncThunk("transactionsStatistics/uniq
 
 export const loadDailyTokenTransfer = createAsyncThunk("transactionsStatistics/dailyTokenTransfers", async () => {
     let data = dailyTokenTransferData;
+    return data;
+});
+
+export const loadGasUsed = createAsyncThunk("transactionsStatistics/gasUsed", async () => {
+    let data = gasUsedData;
     return data;
 });

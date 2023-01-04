@@ -8,7 +8,8 @@ import {
   loadTransactionsEmissions,
   loadDailyTransactionsStatistics,
   loadUniqueAddresses,
-  loadDailyTokenTransfer
+  loadDailyTokenTransfer,
+  loadGasUsed
 } from "./utils";
 import MeterCO2Data from '../../types/meterCO2data';
 
@@ -31,7 +32,9 @@ let initialState: initialStatisticsType = {
   uniqueAddressesInfo: null,
   uniqueAddressesInfoLoading: Status.IDLE,
   dailyTokenTransfers: null,
-  dailyTokenTransfersLoading: Status.IDLE
+  dailyTokenTransfersLoading: Status.IDLE,
+  gasUsed: null,
+  gasUsedLoading: Status.IDLE
 };
 
 const statisticsSlice = createSlice({
@@ -120,6 +123,20 @@ const statisticsSlice = createSlice({
       state.dailyTokenTransfersLoading = Status.FAILED;
     });
 
+    //(Blockchain Data) Gas Used
+    builder.addCase(loadGasUsed.pending, (state) => {
+      state.gasUsedLoading = Status.LOADING;
+    });
+    builder.addCase(loadGasUsed.fulfilled, (state, { payload }) => {
+      let data: any = payload;
+      state.gasUsed = data;
+      state.gasUsedLoading = Status.SUCCEEDED;
+    });
+    builder.addCase(loadGasUsed.rejected, (state) => {
+      state.gasUsedLoading = Status.FAILED;
+    });
+
+
   },
 });
 
@@ -140,6 +157,9 @@ export const getUniqueAddressesLoading = (state: RootState) => state.statistics.
 
 export const getDailyTokenTransfers = (state: RootState) => state.statistics.dailyTokenTransfers;
 export const getDailyTokenTransfersLoading = (state: RootState) => state.statistics.dailyTokenTransfersLoading;
+
+export const getGasUsed = (state: RootState) => state.statistics.gasUsed;
+export const getGasUsedLoading = (state: RootState) => state.statistics.gasUsedLoading;
 
 export const {
   statisticsReducer

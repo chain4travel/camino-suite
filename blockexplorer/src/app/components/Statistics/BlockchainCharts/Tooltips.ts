@@ -2,6 +2,7 @@ import moment from 'moment';
 import { TransactionsInfo } from '../../../../types/transaction';
 import { AddressInfo } from '../../../../types/uniqueAddresses';
 import {DailyTokenTransfer} from '../../../../types/dailyTokenTransfer';
+import {GasUsed} from '../../../../types/gasUsed';
 
 //Transactions
 export const dailyTransactionsTooltip = (data: TransactionsInfo) => {
@@ -41,6 +42,16 @@ export const dailyTokenTransferTooltip = (data: DailyTokenTransfer) => {
     ${moment(new Date(data.Date)).format("MMMM Do YYYY")}
         <br/>
         [<label style="color: blue">Total Token Transfer:</label> <b>${data.TotalTokenTransfer}</b>]
+        </span>`;
+    return header;
+}
+
+//Gas Used
+export const gasUsedTooltip = (data: GasUsed) => {
+    const header = `<span>
+    ${moment(new Date(data.Date)).format("MMMM Do YYYY")}
+        <br/>
+        [<label style="color: blue">Total Gas Used:</label> <b>${data.GasUsed}</b>]
         </span>`;
     return header;
 }

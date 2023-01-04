@@ -1,5 +1,5 @@
 import { typesStatistic } from '../../../pages/Statistics/ChartSelector';
-import { dailyTransactionsTooltip, uniqueAddressesDailyIncreaseTooltip, dailyTokenTransferTooltip } from './Tooltips';
+import { dailyTransactionsTooltip, uniqueAddressesDailyIncreaseTooltip, dailyTokenTransferTooltip, gasUsedTooltip } from './Tooltips';
 
 class ConfigLinearMeter {
 
@@ -21,6 +21,9 @@ class ConfigLinearMeter {
             case typesStatistic.DAILY_TOKEN_TRANSFER:
                 this.data = dataChart;
                 break;
+            case typesStatistic.GAS_USED:
+                this.data = dataChart;
+                break;
         }
     }
 
@@ -36,6 +39,8 @@ class ConfigLinearMeter {
                 return uniqueAddressesDailyIncreaseTooltip(this.data[index]);
             case typesStatistic.DAILY_TOKEN_TRANSFER:
                 return dailyTokenTransferTooltip(this.data[index]);
+            case typesStatistic.GAS_USED:
+                return gasUsedTooltip(this.data[index]);
         }
     }
 
@@ -52,6 +57,11 @@ class ConfigLinearMeter {
             case typesStatistic.DAILY_TOKEN_TRANSFER:
                 return this.data.map((value, index) => {
                     return { y: value.TotalTokenTransfer, name: value.Date };
+                });
+
+            case typesStatistic.GAS_USED:
+                return this.data.map((value, index) => {
+                    return { y: value.GasUsed, name: value.Date };
                 });
         }
     }

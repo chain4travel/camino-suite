@@ -3,7 +3,8 @@ import { BlockDetail, BlockTableData } from './block';
 import { MagellanTransaction } from './magellan-types';
 import { CTransaction, TranscationDetails, XPTransaction, DailyTransactions } from './transaction';
 import { UniqueAdressesInfo } from './uniqueAddresses';
-import { DailyTokenTransfer } from './dailyTokenTransfer'
+import { DailyTokenTransfer } from './dailyTokenTransfer';
+import { GasUsed } from './gasUsed';
 import MeterCO2Data from './meterCO2data';
 
 export interface Chain {
@@ -113,7 +114,9 @@ export interface initialStatisticsType {
   uniqueAddressesInfo: UniqueAdressesInfo,
   uniqueAddressesInfoLoading: Status,
   dailyTokenTransfers: DailyTokenTransfer,
-  dailyTokenTransfersLoading: Status
+  dailyTokenTransfersLoading: Status,
+  gasUsed: GasUsed,
+  gasUsedLoading: Status,
 }
 
 export interface initicalTransactionsStatistics {
