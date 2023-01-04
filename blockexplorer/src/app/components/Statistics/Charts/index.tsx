@@ -15,17 +15,20 @@ import useWidth from 'app/hooks/useWidth';
 import 'react-datepicker/dist/react-datepicker.css';
 import DateRange from './DateRange';
 
-const Charts = ({ darkMode, titleText, utilSlice, sliceGetter, sliceGetterLoader }) => {
+const TransactionsCharts = ({
+  darkMode,
+  titleText,
+  utilSlice,
+  sliceGetter,
+  sliceGetterLoader,
+}) => {
   const { isDesktop } = useWidth();
 
   const [openModal, setOpenModal] = useState(false);
-  const [startDate, setStartDate] = useState<any>();
-  const [endDate, setEndDate] = useState<any>();
+  const [startDate, setStartDate] = useState<Date>();
+  const [endDate, setEndDate] = useState<Date>();
 
-  useEffect(() => {
-    setStartDate(new Date('2022/12/29'));
-    setEndDate(new Date('2022/12/29'));
-  }, []);
+  useEffect(() => {}, []);
 
   const dispatch = useAppDispatch();
 
@@ -100,7 +103,13 @@ const Charts = ({ darkMode, titleText, utilSlice, sliceGetter, sliceGetterLoader
                     minDate={startDate}
                   />
                 </> */}
-          {dataStatistics != undefined && dataStatistics != null ? <LinearMeter darkMode={darkMode} titleText={titleText} dataChart={dataStatistics} /> : null}
+                {dataStatistics !== undefined && dataStatistics != null ? (
+                  <LinearMeter
+                    darkMode={darkMode}
+                    titleText={titleText}
+                    dataChart={dataStatistics}
+                  />
+                ) : null}
               </Fragment>
             </Box>
           </Modal>
@@ -115,13 +124,17 @@ const Charts = ({ darkMode, titleText, utilSlice, sliceGetter, sliceGetterLoader
             </IconButton>
           </div>
 
-          {dataStatistics != undefined && dataStatistics != null ? <LinearMeter darkMode={darkMode} titleText={titleText} dataChart={dataStatistics} /> : null}
-
-          
+          {dataStatistics !== undefined && dataStatistics != null ? (
+            <LinearMeter
+              darkMode={darkMode}
+              titleText={titleText}
+              dataChart={dataStatistics}
+            />
+          ) : null}
         </>
       )}
     </Fragment>
   );
 };
 
-export default Charts;
+export default TransactionsCharts;
