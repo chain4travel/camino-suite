@@ -1,18 +1,16 @@
 import { typesStatistic } from '../../../pages/Statistics/ChartSelector';
-import { dailyTransactionsTooltip, uniqueAddressesDailyIncreaseTooltip } from './Tooltips';
+import { dailyTransactionsTooltip, uniqueAddressesDailyIncreaseTooltip, dailyTokenTransferTooltip } from './Tooltips';
 
 class ConfigLinearMeter {
 
     title: string;
-    categories: any[];
+    categories: any[] = [];
     typeStatistic: string;
-    data: any[];
+    data: any[] = [];
 
     constructor(typeStatistic: string, title: string, dataChart: any) {
         this.typeStatistic = typeStatistic;
         this.title = title;
-
-
         switch (this.typeStatistic) {
             case typesStatistic.DAILY_TRANSACTIONS:
                 this.data = dataChart.TxInfo;
@@ -20,16 +18,14 @@ class ConfigLinearMeter {
             case typesStatistic.UNIQUE_ADRESSES:
                 this.data = dataChart.AddressInfo;
                 break;
-            default:
-                this.data = [];
+            case typesStatistic.DAILY_TOKEN_TRANSFER:
+                this.data = dataChart;
                 break;
         }
-
-        this.categories = this.getCategories();
     }
 
     public getCategories() {
-        return this.data.map((value, index) => value.Date)
+        return this.data.map((value, index) => value.Date);
     }
 
     public getTooltip(index) {
@@ -38,6 +34,8 @@ class ConfigLinearMeter {
                 return dailyTransactionsTooltip(this.data[index]);
             case typesStatistic.UNIQUE_ADRESSES:
                 return uniqueAddressesDailyIncreaseTooltip(this.data[index]);
+            case typesStatistic.DAILY_TOKEN_TRANSFER:
+                return dailyTokenTransferTooltip(this.data[index]);
         }
     }
 
@@ -51,8 +49,10 @@ class ConfigLinearMeter {
                 return this.data.map((value, index) => {
                     return { y: value.DailyIncrease, name: value.Date };
                 });
-            default:
-                break;
+            case typesStatistic.DAILY_TOKEN_TRANSFER:
+                return this.data.map((value, index) => {
+                    return { y: value.TotalTokenTransfer, name: value.Date };
+                });
         }
     }
 

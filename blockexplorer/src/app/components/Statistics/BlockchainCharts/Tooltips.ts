@@ -1,6 +1,7 @@
 import moment from 'moment';
 import { TransactionsInfo } from '../../../../types/transaction';
 import { AddressInfo } from '../../../../types/uniqueAddresses';
+import {DailyTokenTransfer} from '../../../../types/dailyTokenTransfer';
 
 //Transactions
 export const dailyTransactionsTooltip = (data: TransactionsInfo) => {
@@ -30,6 +31,16 @@ export const uniqueAddressesDailyIncreaseTooltip = (data: AddressInfo) => {
         <br/>
         <br/>
         -<b>Daily Increase:</b>${data.DailyIncrease}<br/>
-        </span><br/>`;
+        </span>`;
+    return header;
+}
+
+//Daily Token Transfer
+export const dailyTokenTransferTooltip = (data: DailyTokenTransfer) => {
+    const header = `<span>
+    ${moment(new Date(data.Date)).format("MMMM Do YYYY")}
+        <br/>
+        [<label style="color: blue">Total Token Transfer:</label> <b>${data.TotalTokenTransfer}</b>]
+        </span>`;
     return header;
 }

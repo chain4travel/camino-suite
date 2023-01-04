@@ -16,14 +16,17 @@ import {
   getTransactionsPerDay,
   getTransactionsPerDayStatus,
   getUniqueAddresses,
-  getUniqueAddressesLoading
+  getUniqueAddressesLoading,
+  getDailyTokenTransfers, 
+  getDailyTokenTransfersLoading
 } from 'store/statisticsSlice';
 import {
   loadDailyEmissions,
   loadNetworkEmissions,
   loadTransactionsEmissions,
   loadDailyTransactionsStatistics,
-  loadUniqueAddresses
+  loadUniqueAddresses,
+  loadDailyTokenTransfer
 } from 'store/statisticsSlice/utils';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
@@ -137,6 +140,16 @@ const Statistics: FC = () => {
                 sliceGetter={getUniqueAddresses}
                 sliceGetterLoader={getUniqueAddressesLoading}
                 typeStatistic={typesStatistic.UNIQUE_ADRESSES}
+              />
+            </Grid>
+            <Grid item md={6} xs={12}>
+              <BlockchainCharts
+                darkMode={dark}
+                titleText={"Daily Token Transfer"}
+                utilSlice={() => loadDailyTokenTransfer()}
+                sliceGetter={getDailyTokenTransfers}
+                sliceGetterLoader={getDailyTokenTransfersLoading}
+                typeStatistic={typesStatistic.DAILY_TOKEN_TRANSFER}
               />
             </Grid>
           </Grid>

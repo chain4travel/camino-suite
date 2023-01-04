@@ -10,5 +10,6 @@ export const typesMeter = {
 //Statistic if using Statistics Charts
 export const typesStatistic = {
     DAILY_TRANSACTIONS: 'DAILY_TRANSACTIONS',
-    UNIQUE_ADRESSES: 'UNIQUE_ADRESSES'
+    UNIQUE_ADRESSES: 'UNIQUE_ADRESSES',
+    DAILY_TOKEN_TRANSFER: 'DAILY_TOKEN_TRANSFER'
 }
