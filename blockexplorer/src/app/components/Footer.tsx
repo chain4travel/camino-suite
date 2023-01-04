@@ -61,9 +61,9 @@ export function Footer() {
             >
               <Grid item>
                 {theme.palette.mode === 'light' ? (
-                  <DarkLogo style={{ height: '40px', width: 'auto' }} />
+                  <DarkLogo style={{ height: '50px', width: 'auto' }} />
                 ) : (
-                  <LightLogo style={{ height: '40px', width: 'auto' }} />
+                  <LightLogo style={{ height: '50px', width: 'auto' }} />
                 )}
               </Grid>
               <Grid item>
