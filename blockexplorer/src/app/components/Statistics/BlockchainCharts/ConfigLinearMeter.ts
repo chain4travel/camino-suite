@@ -1,7 +1,5 @@
 import { typesStatistic } from '../../../pages/Statistics/ChartSelector';
 import { dailyTransactionsTooltip, uniqueAddressesDailyIncreaseTooltip } from './Tooltips';
-import { TransactionsInfo } from '../../../../types/transaction';
-import { AddressInfo, DailyTransactions } from '../../../../types/uniqueAddresses';
 
 class ConfigLinearMeter {
 

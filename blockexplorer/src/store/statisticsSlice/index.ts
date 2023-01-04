@@ -7,7 +7,8 @@ import {
   loadNetworkEmissions,
   loadTransactionsEmissions,
   loadDailyTransactionsStatistics,
-  loadUniqueAddresses
+  loadUniqueAddresses,
+  loadDailyTokenTransfer
 } from "./utils";
 import MeterCO2Data from '../../types/meterCO2data';
 
@@ -28,7 +29,9 @@ let initialState: initialStatisticsType = {
   transactionsPerDay: null,
   transactionsPerDayLoading: Status.IDLE,
   uniqueAddressesInfo: null,
-  uniqueAddressesInfoLoading: Status.IDLE
+  uniqueAddressesInfoLoading: Status.IDLE,
+  dailyTokenTransfers: null,
+  dailyTokenTransfersLoading: Status.IDLE
 };
 
 const statisticsSlice = createSlice({
@@ -39,7 +42,7 @@ const statisticsSlice = createSlice({
   },
   extraReducers(builder) {
 
-    //Daily Emissions
+    //(CO2) Daily Emissions
     builder.addCase(loadDailyEmissions.pending, (state) => {
       state.dailyEmissionsStatus = Status.LOADING;
     });
@@ -52,7 +55,7 @@ const statisticsSlice = createSlice({
       state.dailyEmissionsStatus = Status.FAILED;
     });
 
-    //Network Emissions
+    //(CO2) Network Emissions
     builder.addCase(loadNetworkEmissions.pending, (state) => {
       state.networkEmissionsStatus = Status.LOADING;
     });
@@ -65,7 +68,7 @@ const statisticsSlice = createSlice({
       state.networkEmissionsStatus = Status.FAILED;
     });
 
-    //Transactions Emissions
+    //(CO2) Transactions Emissions
     builder.addCase(loadTransactionsEmissions.pending, (state) => {
       state.transactionsEmissionsStatus = Status.LOADING;
     });
@@ -78,6 +81,7 @@ const statisticsSlice = createSlice({
       state.transactionsEmissionsStatus = Status.FAILED;
     });
 
+    //(Blockchain Data) Daily Transactions
     builder.addCase(loadDailyTransactionsStatistics.pending, (state) => {
       state.transactionsPerDayLoading = Status.LOADING;
     });
@@ -90,7 +94,7 @@ const statisticsSlice = createSlice({
       state.transactionsPerDayLoading = Status.FAILED;
     });
 
-    //Unique Addreses Info
+    //(Blockchain Data) Unique Addreses Info
     builder.addCase(loadUniqueAddresses.pending, (state) => {
       state.uniqueAddressesInfoLoading = Status.LOADING;
     });
@@ -101,6 +105,19 @@ const statisticsSlice = createSlice({
     });
     builder.addCase(loadUniqueAddresses.rejected, (state) => {
       state.uniqueAddressesInfoLoading = Status.FAILED;
+    });
+
+    //(Blockchain Data) Unique Addreses Info
+    builder.addCase(loadDailyTokenTransfer.pending, (state) => {
+      state.dailyTokenTransfersLoading = Status.LOADING;
+    });
+    builder.addCase(loadDailyTokenTransfer.fulfilled, (state, { payload }) => {
+      let data: any = payload;
+      state.dailyTokenTransfers = data;
+      state.dailyTokenTransfersLoading = Status.SUCCEEDED;
+    });
+    builder.addCase(loadDailyTokenTransfer.rejected, (state) => {
+      state.dailyTokenTransfersLoading = Status.FAILED;
     });
 
   },
@@ -120,6 +137,9 @@ export const getTransactionsPerDayStatus = (state: RootState) => state.statistic
 
 export const getUniqueAddresses = (state: RootState) => state.statistics.uniqueAddressesInfo;
 export const getUniqueAddressesLoading = (state: RootState) => state.statistics.uniqueAddressesInfoLoading;
+
+export const getDailyTokenTransfers = (state: RootState) => state.statistics.dailyTokenTransfers;
+export const getDailyTokenTransfersLoading = (state: RootState) => state.statistics.dailyTokenTransfersLoading;
 
 export const {
   statisticsReducer

@@ -5,9 +5,10 @@ import {
     fetchTransactionsEmissions
 } from '../../api';
 
+//Temporally JSON Test
 import transactionsData from '../../app/components/Statistics/json/transactionsData.json';
-
-import uniqueAddresesData from '../../app/components/Statistics/json/uniqueAddresesData.json'
+import uniqueAddresesData from '../../app/components/Statistics/json/uniqueAddresesData.json';
+import dailyTokenTransferData from '../../app/components/Statistics/json/dailyTokenTransaction.json';
 
 
 export const loadDailyEmissions = createAsyncThunk("co2statistics/dailyEmissions", async () => {
@@ -34,5 +35,10 @@ export const loadDailyTransactionsStatistics = createAsyncThunk("transactionsSta
 
 export const loadUniqueAddresses = createAsyncThunk("transactionsStatistics/uniqueAddressesInfo", async () => {
     let data = uniqueAddresesData;  
+    return data;
+});
+
+export const loadDailyTokenTransfer = createAsyncThunk("transactionsStatistics/dailyTokenTransfers", async () => {
+    let data = dailyTokenTransferData;
     return data;
 });

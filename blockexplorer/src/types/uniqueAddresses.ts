@@ -4,7 +4,7 @@ export type AddressInfo = {
     DailyIncrease: number;
 }
 
-export type DailyTransactions = {
+export type UniqueAdressesInfo = {
     HighestValue: number;
     HighestDate: string;
     LowerValue: number;

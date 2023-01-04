@@ -14,7 +14,6 @@ import Box from '@mui/material/Box';
 import useWidth from 'app/hooks/useWidth';
 import 'react-datepicker/dist/react-datepicker.css';
 import DateRange from './DateRange';
-import { typesStatistic } from '../../../pages/Statistics/ChartSelector';
 
 const BlockchainCharts = ({ darkMode, titleText, utilSlice, sliceGetter, sliceGetterLoader, typeStatistic }) => {
   const { isDesktop } = useWidth();
