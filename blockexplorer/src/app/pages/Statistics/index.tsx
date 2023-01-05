@@ -26,7 +26,9 @@ import {
   getGasAveragePrice,
   getGasAveragePriceInfo,
   getGasAverageLimit,
-  getGasAverageLimitInfo
+  getGasAverageLimitInfo,
+  getAverageBlockSize,
+  getAverageBlockSizeInfo
 } from 'store/statisticsSlice';
 import {
   loadDailyEmissions,
@@ -38,7 +40,8 @@ import {
   loadGasUsed,
   loadActiveAddresses,
   loadGasAveragePrice,
-  loadGasAverageLimit
+  loadGasAverageLimit,
+  loadAverageBlockSize
 } from 'store/statisticsSlice/utils';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
@@ -204,6 +207,16 @@ const Statistics: FC = () => {
                 sliceGetter={getGasAverageLimit}
                 sliceGetterLoader={getGasAverageLimitInfo}
                 typeStatistic={typesStatistic.GAS_AVERAGE_LIMIT}
+              />
+            </Grid>
+            <Grid item md={6} xs={12}>
+              <BlockchainCharts
+                darkMode={dark}
+                titleText={"Average Block Limit"}
+                utilSlice={() => loadAverageBlockSize()}
+                sliceGetter={getAverageBlockSize}
+                sliceGetterLoader={getAverageBlockSizeInfo}
+                typeStatistic={typesStatistic.AVERAGE_BLOCK_SIZE}
               />
             </Grid>
           </Grid>

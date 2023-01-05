@@ -12,7 +12,8 @@ import {
   loadGasUsed,
   loadActiveAddresses,
   loadGasAveragePrice,
-  loadGasAverageLimit
+  loadGasAverageLimit,
+  loadAverageBlockSize
 } from "./utils";
 import MeterCO2Data from '../../types/meterCO2data';
 
@@ -43,7 +44,9 @@ let initialState: initialStatisticsType = {
   gasAveragePrice: null,
   gasAveragePriceLoading: Status.IDLE,
   gasAverageLimit: null,
-  gasAverageLimitLoading: Status.IDLE
+  gasAverageLimitLoading: Status.IDLE,
+  averageBlockSize: null,
+  averageBlockSizeLoading: Status.IDLE
 };
 
 const statisticsSlice = createSlice({
@@ -182,6 +185,19 @@ const statisticsSlice = createSlice({
       state.gasAverageLimitLoading = Status.FAILED;
     });
 
+    //(Blockchain Data) averageBlockSize
+    builder.addCase(loadAverageBlockSize.pending, (state) => {
+      state.averageBlockSizeLoading = Status.LOADING;
+    });
+    builder.addCase(loadAverageBlockSize.fulfilled, (state, { payload }) => {
+      let data: any = payload;
+      state.averageBlockSize = data;
+      state.averageBlockSizeLoading = Status.SUCCEEDED;
+    });
+    builder.addCase(loadAverageBlockSize.rejected, (state) => {
+      state.averageBlockSizeLoading = Status.FAILED;
+    });
+
 
   },
 });
@@ -215,6 +231,9 @@ export const getGasAveragePriceInfo = (state: RootState) => state.statistics.gas
 
 export const getGasAverageLimit = (state: RootState) => state.statistics.gasAverageLimit;
 export const getGasAverageLimitInfo = (state: RootState) => state.statistics.gasAverageLimitLoading;
+
+export const getAverageBlockSize = (state: RootState) => state.statistics.averageBlockSize;
+export const getAverageBlockSizeInfo = (state: RootState) => state.statistics.averageBlockSizeLoading;
 
 export const {
   statisticsReducer

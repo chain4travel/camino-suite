@@ -7,6 +7,7 @@ import {
   activeAddressesTooltip,
   averageGasPriceTooltip,
   averageGasLimitTooltip,
+  averageBlockSizeTooltip,
 } from './Tooltips';
 
 class ConfigLinearMeter {
@@ -40,6 +41,9 @@ class ConfigLinearMeter {
       case typesStatistic.GAS_AVERAGE_LIMIT:
         this.data = dataChart;
         break;
+      case typesStatistic.AVERAGE_BLOCK_SIZE:
+        this.data = dataChart;
+        break;
     }
   }
 
@@ -63,6 +67,8 @@ class ConfigLinearMeter {
         return averageGasPriceTooltip(this.data[index]);
       case typesStatistic.GAS_AVERAGE_LIMIT:
         return averageGasLimitTooltip(this.data[index]);
+      case typesStatistic.AVERAGE_BLOCK_SIZE:
+        return averageBlockSizeTooltip(this.data[index]);
     }
   }
 
@@ -99,6 +105,11 @@ class ConfigLinearMeter {
       case typesStatistic.GAS_AVERAGE_LIMIT:
         return this.data.map((value, index) => {
           return { y: value.AverageGasLimit, name: value.Date };
+        });
+
+      case typesStatistic.AVERAGE_BLOCK_SIZE:
+        return this.data.map((value, index) => {
+          return { y: value.BlockSize, name: value.Date };
         });
     }
   }

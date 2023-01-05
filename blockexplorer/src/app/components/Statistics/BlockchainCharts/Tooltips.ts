@@ -6,6 +6,7 @@ import {GasUsed} from '../../../../types/gasUsed';
 import {ActiveAddresesInfo} from '../../../../types/activeAddresses';
 import {GasAveragePrice} from '../../../../types/gasAveragePrice';
 import { GasAverageLimit } from '../../../../types/gasAverageLimit';
+import { AverageBlockSize } from '../../../../types/averageBlockSize';
 
 //Transactions
 export const dailyTransactionsTooltip = (data: TransactionsInfo) => {
@@ -78,11 +79,11 @@ export const averageGasPriceTooltip = (data: GasAveragePrice) => {
     const header = `<span>
     ${moment(new Date(data.Date)).format("MMMM Do YYYY")}
         <br/>
-        [<label style="color: blue">average gas price:</label> <b>${data.AverageGasPrice}</b>]
+        [<label style="color: blue">average gas price:</label> <b>${data.AverageGasPrice} Gwei</b>]
         <br/>
         <br/>
-        -<b>Max gas price:</b>${data.MaxGasPrice}<br/>
-        -<b>Min gas price:</b>${data.MinGasPrice}<br/>
+        -<b>Max gas price:</b>${data.MaxGasPrice} Gwei<br/>
+        -<b>Min gas price:</b>${data.MinGasPrice} Gwei<br/>
         </span>`;
     return header;
 }
@@ -93,6 +94,14 @@ export const averageGasLimitTooltip = (data: GasAverageLimit) => {
     ${moment(new Date(data.Date)).format("MMMM Do YYYY")}
         <br/>
         [<label style="color: blue">average gas limit:</label> <b>${data.AverageGasLimit}</b>]
+        <br/>`
+    return header;
+}
+export const averageBlockSizeTooltip = (data: AverageBlockSize) => {
+    const header = `<span>
+    ${moment(new Date(data.Date)).format("MMMM Do YYYY")}
+        <br/>
+        [<label style="color: blue">average gas limit:</label> <b>${data.BlockSize}</b>]
         <br/>`
     return header;
 }
