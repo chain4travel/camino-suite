@@ -1,0 +1,62 @@
+[
+    {
+      "MaxGasPrice": 2484,
+      "MinGasPrice": 706,
+      "AverageGasPrice": 2307,
+      "Date": "2022-12-05"
+    },
+    {
+      "MaxGasPrice": 1172,
+      "MinGasPrice": 742,
+      "AverageGasPrice": 2873,
+      "Date": "2022-12-26"
+    },
+    {
+      "MaxGasPrice": 1996,
+      "MinGasPrice": 588,
+      "AverageGasPrice": 2242,
+      "Date": "2018-02-24"
+    },
+    {
+      "MaxGasPrice": 1908,
+      "MinGasPrice": 651,
+      "AverageGasPrice": 2035,
+      "Date": "2021-08-21"
+    },
+    {
+      "MaxGasPrice": 3078,
+      "MinGasPrice": 742,
+      "AverageGasPrice": 2945,
+      "Date": "2019-07-10"
+    },
+    {
+      "MaxGasPrice": 3924,
+      "MinGasPrice": 738,
+      "AverageGasPrice": 2216,
+      "Date": "2018-08-13"
+    },
+    {
+      "MaxGasPrice": 2714,
+      "MinGasPrice": 854,
+      "AverageGasPrice": 2095,
+      "Date": "2017-02-21"
+    },
+    {
+      "MaxGasPrice": 3201,
+      "MinGasPrice": 640,
+      "AverageGasPrice": 2183,
+      "Date": "2018-11-27"
+    },
+    {
+      "MaxGasPrice": 3355,
+      "MinGasPrice": 730,
+      "AverageGasPrice": 2700,
+      "Date": "2021-07-05"
+    },
+    {
+      "MaxGasPrice": 2644,
+      "MinGasPrice": 630,
+      "AverageGasPrice": 2336,
+      "Date": "2021-12-23"
+    }
+  ]

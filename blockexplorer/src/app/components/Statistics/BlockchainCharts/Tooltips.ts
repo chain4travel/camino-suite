@@ -4,6 +4,7 @@ import { AddressInfo } from '../../../../types/uniqueAddresses';
 import {DailyTokenTransfer} from '../../../../types/dailyTokenTransfer';
 import {GasUsed} from '../../../../types/gasUsed';
 import {ActiveAddresesInfo} from '../../../../types/activeAddresses';
+import {GasAveragePrice} from '../../../../types/gasAveragePrice';
 
 //Transactions
 export const dailyTransactionsTooltip = (data: TransactionsInfo) => {
@@ -67,6 +68,20 @@ export const activeAddressesTooltip = (data: ActiveAddresesInfo) => {
         <br/>
         -<b>Receive Count:</b>${data.ReceiveCount}<br/>
         -<b>Send Count:</b>${data.SendCount}<br/>
+        </span>`;
+    return header;
+}
+
+//Gas Average Price
+export const averageGasPriceTooltip = (data: GasAveragePrice) => {
+    const header = `<span>
+    ${moment(new Date(data.Date)).format("MMMM Do YYYY")}
+        <br/>
+        [<label style="color: blue">average gas price:</label> <b>${data.AverageGasPrice}</b>]
+        <br/>
+        <br/>
+        -<b>Max gas price:</b>${data.MaxGasPrice}<br/>
+        -<b>Min gas price:</b>${data.MinGasPrice}<br/>
         </span>`;
     return header;
 }

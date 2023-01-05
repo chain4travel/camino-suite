@@ -22,7 +22,9 @@ import {
   getGasUsed,
   getGasUsedLoading,
   getActiveAddresses,
-  getActiveAddressesInfo
+  getActiveAddressesInfo,
+  getGasAveragePrice,
+  getGasAveragePriceInfo
 } from 'store/statisticsSlice';
 import {
   loadDailyEmissions,
@@ -32,7 +34,8 @@ import {
   loadUniqueAddresses,
   loadDailyTokenTransfer,
   loadGasUsed,
-  loadActiveAddresses
+  loadActiveAddresses,
+  loadGasAveragePrice
 } from 'store/statisticsSlice/utils';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
@@ -168,6 +171,7 @@ const Statistics: FC = () => {
                 typeStatistic={typesStatistic.GAS_USED}
               />
             </Grid>
+
             <Grid item md={6} xs={12}>
               <BlockchainCharts
                 darkMode={dark}
@@ -176,6 +180,16 @@ const Statistics: FC = () => {
                 sliceGetter={getActiveAddresses}
                 sliceGetterLoader={getActiveAddressesInfo}
                 typeStatistic={typesStatistic.ACTIVE_ADDRESSES}
+              />
+            </Grid>
+            <Grid item md={6} xs={12}>
+              <BlockchainCharts
+                darkMode={dark}
+                titleText={"Gas Average Price"}
+                utilSlice={() => loadGasAveragePrice()}
+                sliceGetter={getGasAveragePrice}
+                sliceGetterLoader={getGasAveragePriceInfo}
+                typeStatistic={typesStatistic.GAS_AVERAGE_PRICE}
               />
             </Grid>
           </Grid>
