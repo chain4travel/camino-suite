@@ -17,7 +17,7 @@ import {
   getTransactionsPerDayStatus,
   getUniqueAddresses,
   getUniqueAddressesLoading,
-  getDailyTokenTransfers, 
+  getDailyTokenTransfers,
   getDailyTokenTransfersLoading,
   getGasUsed,
   getGasUsedLoading,
@@ -50,62 +50,6 @@ const Statistics: FC = () => {
 
   return (
     <PageContainer pageTitle="Validators" metaContent="validators">
-      <Paper
-        variant="outlined"
-        square
-        sx={{
-          minHeight: '544px',
-          width: 1,
-          backgroundColor: 'primary.dark',
-          borderRadius: '12px',
-          borderWidth: '1px',
-          borderColor: 'primary.light',
-          borderStyle: 'solid',
-          p: '1rem 1.5rem 1rem 1.5rem',
-        }}
-      >
-        <SubPageTitle
-          title="CO2 Consumption"
-          style={{ marginBottom: '20px' }}
-          hiddenBackButton={true}
-        />
-        <Box sx={{ flexGrow: 1 }}>
-
-          {/*CO2 Charts */}
-          <Grid container spacing={2}>
-            <Grid item md={6} xs={12}>
-              <CO2ConsumptionCharts
-                typeMeter={typesMeter.BAR}
-                darkMode={dark}
-                utilSlice={() => loadDailyEmissions()}
-                sliceGetter={getDailyEmissions}
-                sliceGetterLoader={getDailyEmissionsStatus}
-              />
-            </Grid>
-
-            <Grid item md={6} xs={12}>
-              <CO2ConsumptionCharts
-                typeMeter={typesMeter.TIME_SERIES}
-                darkMode={dark}
-                utilSlice={() => loadNetworkEmissions()}
-                sliceGetter={getNetworkEmissions}
-                sliceGetterLoader={getNetworkEmissionsStatus}
-              />
-            </Grid>
-
-            <Grid item md={6} xs={12}>
-              <CO2ConsumptionCharts
-                typeMeter={typesMeter.TIME_SERIES}
-                darkMode={dark}
-                utilSlice={() => loadTransactionsEmissions()}
-                sliceGetter={getTransactionsEmissions}
-                sliceGetterLoader={getTransactionsEmissionsStatus}
-              />
-            </Grid>
-          </Grid>
-        </Box>
-
-      </Paper>
 
       <Paper
         variant="outlined"
@@ -182,6 +126,62 @@ const Statistics: FC = () => {
         </Box>
       </Paper>
 
+      <Paper
+        variant="outlined"
+        square
+        sx={{
+          minHeight: '544px',
+          width: 1,
+          backgroundColor: 'primary.dark',
+          borderRadius: '12px',
+          borderWidth: '1px',
+          borderColor: 'primary.light',
+          borderStyle: 'solid',
+          p: '1rem 1.5rem 1rem 1.5rem',
+        }}
+      >
+        <SubPageTitle
+          title="CO2 Consumption"
+          style={{ marginBottom: '20px' }}
+          hiddenBackButton={true}
+        />
+        <Box sx={{ flexGrow: 1 }}>
+
+          {/*CO2 Charts */}
+          <Grid container spacing={2}>
+            <Grid item md={6} xs={12}>
+              <CO2ConsumptionCharts
+                typeMeter={typesMeter.BAR}
+                darkMode={dark}
+                utilSlice={() => loadDailyEmissions()}
+                sliceGetter={getDailyEmissions}
+                sliceGetterLoader={getDailyEmissionsStatus}
+              />
+            </Grid>
+
+            <Grid item md={6} xs={12}>
+              <CO2ConsumptionCharts
+                typeMeter={typesMeter.TIME_SERIES}
+                darkMode={dark}
+                utilSlice={() => loadNetworkEmissions()}
+                sliceGetter={getNetworkEmissions}
+                sliceGetterLoader={getNetworkEmissionsStatus}
+              />
+            </Grid>
+
+            <Grid item md={6} xs={12}>
+              <CO2ConsumptionCharts
+                typeMeter={typesMeter.TIME_SERIES}
+                darkMode={dark}
+                utilSlice={() => loadTransactionsEmissions()}
+                sliceGetter={getTransactionsEmissions}
+                sliceGetterLoader={getTransactionsEmissionsStatus}
+              />
+            </Grid>
+          </Grid>
+        </Box>
+
+      </Paper>
 
 
     </PageContainer>
