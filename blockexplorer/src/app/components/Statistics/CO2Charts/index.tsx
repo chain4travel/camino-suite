@@ -13,7 +13,6 @@ import { faSquareArrowUpRight, faXmark } from '@fortawesome/free-solid-svg-icons
 import Modal from '@mui/material/Modal';
 import Box from '@mui/material/Box';
 import useWidth from 'app/hooks/useWidth';
-import DateRange from '../../../pages/Statistics/DateRange/DateRange';
 
 const CO2Charts = ({
   utilSlice, typeMeter, darkMode, sliceGetter, sliceGetterLoader
@@ -66,12 +65,12 @@ const CO2Charts = ({
               }}
             >
               <Fragment>
-                <DateRange InitianEndDate={InitianEndDate} initialStartDate={initialStartDate} setEndDate={setEndDate} setStartDate={setEndDate} />
                 <div style={{ float: 'right' }}>
                   <IconButton
                     color="info"
                     component="label"
                     onClick={() => setOpenModal(false)}
+                    style={{cursor: 'default'}}
                   >
                     <FontAwesomeIcon icon={faXmark} />
                   </IconButton>
@@ -89,6 +88,7 @@ const CO2Charts = ({
               color="info"
               component="label"
               onClick={() => setOpenModal(true)}
+              style={{cursor: 'default'}}
             >
               <FontAwesomeIcon icon={faSquareArrowUpRight} />
             </IconButton>
