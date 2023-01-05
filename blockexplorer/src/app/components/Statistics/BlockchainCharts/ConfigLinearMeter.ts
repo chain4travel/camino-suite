@@ -9,6 +9,7 @@ import {
   averageGasLimitTooltip,
   averageBlockSizeTooltip,
 } from './Tooltips';
+import moment from 'moment';
 
 class ConfigLinearMeter {
   title: string;
@@ -48,7 +49,9 @@ class ConfigLinearMeter {
   }
 
   public getCategories() {
-    return this.data.map((value, index) => value.Date);
+    return this.data.map((value, index) =>
+      moment(new Date(value.Date)).format('D MMM'),
+    );
   }
 
   public getTooltip(index) {

@@ -49,7 +49,7 @@ const DateRange = ({
     all: moment('01/01/2000'),
   });
   const CustomInput = forwardRef(({ value, onClick, label }: any, ref) => (
-    <CustomInputContainer >
+    <CustomInputContainer style={{ cursor: 'default' }} >
       <NewTextField
         id="standard-basic"
         label={label}
@@ -58,46 +58,16 @@ const DateRange = ({
         ref={ref}
         onClick={onClick}
         color="secondary"
+        style={{ cursor: 'default' }}
       />
       <CalendarMonthIcon
-              onClick={onClick}
-            />
+        onClick={onClick}
+        style={{ cursor: 'default' }}
+      />
     </CustomInputContainer>
   ));
   return (
     <Container>
-      <FilterContainer>
-        <StyledButton
-          onClick={() =>
-            changeDate(moment().subtract(1, 'days').format('YYYY-MM-DD'))
-          }
-        >
-          1 Day
-        </StyledButton>
-
-        <StyledButton
-          onClick={() =>
-            changeDate(moment().subtract(1, 'months').format('YYYY-MM-DD'))
-          }
-        >
-          1 Month
-        </StyledButton>
-        <StyledButton
-          onClick={() =>
-            changeDate(moment().subtract(1, 'years').format('YYYY-MM-DD'))
-          }
-        >
-          1 year
-        </StyledButton>
-
-        <StyledButton
-          onClick={() =>
-            changeDate(moment('01/01/2000', 'DD/MM/YYYY').format('YYYY-MM-DD'))
-          }
-        >
-          All
-        </StyledButton>
-      </FilterContainer>
       <PickerContainer>
         <DatePicker
           selected={initialStartDate}
@@ -106,7 +76,7 @@ const DateRange = ({
           startDate={initialStartDate}
           endDate={InitianEndDate}
           customInput={<CustomInput label="Initial Date" />}
-          // readOnly
+        // readOnly
         />
         <DatePicker
           selected={InitianEndDate}
@@ -116,9 +86,46 @@ const DateRange = ({
           endDate={InitianEndDate}
           minDate={initialStartDate}
           customInput={<CustomInput label="End Date" />}
-          // readOnly
+        // readOnly
         />
       </PickerContainer>
+      <FilterContainer>
+        <StyledButton
+          onClick={() =>
+            changeDate(moment().subtract(1, 'days').format('YYYY-MM-DD'))
+          }
+          style={{ cursor: 'default' }}
+        >
+          1 Day
+        </StyledButton>
+
+        <StyledButton
+          onClick={() =>
+            changeDate(moment().subtract(1, 'months').format('YYYY-MM-DD'))
+          }
+          style={{ cursor: 'default' }}
+        >
+          1 Month
+        </StyledButton>
+        <StyledButton
+          onClick={() =>
+            changeDate(moment().subtract(1, 'years').format('YYYY-MM-DD'))
+          }
+          style={{ cursor: 'default' }}
+        >
+          1 year
+        </StyledButton>
+
+        <StyledButton
+          onClick={() =>
+            changeDate(moment('01/01/2000', 'DD/MM/YYYY').format('YYYY-MM-DD'))
+          }
+          style={{ cursor: 'default' }}
+        >
+          All
+        </StyledButton>
+      </FilterContainer>
+      
     </Container>
   );
 };

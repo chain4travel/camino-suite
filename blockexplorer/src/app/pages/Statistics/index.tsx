@@ -1,11 +1,7 @@
 import React, { FC, useState, Fragment, useEffect } from 'react';
 import SubPageTitle from 'app/components/SubPageTitle';
 import PageContainer from 'app/components/PageContainer';
-import {
-  Paper,
-  useTheme
-} from '@mui/material';
-import { useAppDispatch, useAppSelector } from 'store/configureStore';
+import { Paper, useTheme } from '@mui/material';
 import {
   getDailyEmissions,
   getDailyEmissionsStatus,
@@ -17,7 +13,7 @@ import {
   getTransactionsPerDayStatus,
   getUniqueAddresses,
   getUniqueAddressesLoading,
-  getDailyTokenTransfers, 
+  getDailyTokenTransfers,
   getDailyTokenTransfersLoading,
   getGasUsed,
   getGasUsedLoading,
@@ -28,7 +24,7 @@ import {
   getGasAverageLimit,
   getGasAverageLimitInfo,
   getAverageBlockSize,
-  getAverageBlockSizeInfo
+  getAverageBlockSizeInfo,
 } from 'store/statisticsSlice';
 import {
   loadDailyEmissions,
@@ -41,7 +37,7 @@ import {
   loadActiveAddresses,
   loadGasAveragePrice,
   loadGasAverageLimit,
-  loadAverageBlockSize
+  loadAverageBlockSize,
 } from 'store/statisticsSlice/utils';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
@@ -51,11 +47,10 @@ import BlockchainCharts from '../../components/Statistics/BlockchainCharts/index
 import { typesStatistic } from './ChartSelector';
 
 const Statistics: FC = () => {
-
   const theme = useTheme();
 
-  const test = "";
-  const dark = theme.palette.mode === 'light' ? false : true
+  const test = '';
+  const dark = theme.palette.mode === 'light' ? false : true;
 
   return (
     <PageContainer pageTitle="Validators" metaContent="validators">
@@ -74,12 +69,118 @@ const Statistics: FC = () => {
         }}
       >
         <SubPageTitle
-          title="CO2 Consumption"
+          title="Blockchain Data"
           style={{ marginBottom: '20px' }}
-          hiddenBackButton={false}
+          hiddenBackButton={true}
         />
         <Box sx={{ flexGrow: 1 }}>
+          <Grid container spacing={2}>
+            <Grid item md={6} xs={12}>
+              <BlockchainCharts
+                darkMode={dark}
+                titleText={'Daily Transactions'}
+                utilSlice={() => loadDailyTransactionsStatistics()}
+                sliceGetter={getTransactionsPerDay}
+                sliceGetterLoader={getTransactionsPerDayStatus}
+                typeStatistic={typesStatistic.DAILY_TRANSACTIONS}
+              />
+            </Grid>
+            <Grid item md={6} xs={12}>
+              <BlockchainCharts
+                darkMode={dark}
+                titleText={'Unique Adresses'}
+                utilSlice={() => loadUniqueAddresses()}
+                sliceGetter={getUniqueAddresses}
+                sliceGetterLoader={getUniqueAddressesLoading}
+                typeStatistic={typesStatistic.UNIQUE_ADRESSES}
+              />
+            </Grid>
+            <Grid item md={6} xs={12}>
+              <BlockchainCharts
+                darkMode={dark}
+                titleText={'Daily Token Transfer'}
+                utilSlice={() => loadDailyTokenTransfer()}
+                sliceGetter={getDailyTokenTransfers}
+                sliceGetterLoader={getDailyTokenTransfersLoading}
+                typeStatistic={typesStatistic.DAILY_TOKEN_TRANSFER}
+              />
+            </Grid>
+            <Grid item md={6} xs={12}>
+              <BlockchainCharts
+                darkMode={dark}
+                titleText={'Gas Used'}
+                utilSlice={() => loadGasUsed()}
+                sliceGetter={getGasUsed}
+                sliceGetterLoader={getGasUsedLoading}
+                typeStatistic={typesStatistic.GAS_USED}
+              />
+            </Grid>
 
+            <Grid item md={6} xs={12}>
+              <BlockchainCharts
+                darkMode={dark}
+                titleText={'Active Addresses'}
+                utilSlice={() => loadActiveAddresses()}
+                sliceGetter={getActiveAddresses}
+                sliceGetterLoader={getActiveAddressesInfo}
+                typeStatistic={typesStatistic.ACTIVE_ADDRESSES}
+              />
+            </Grid>
+            <Grid item md={6} xs={12}>
+              <BlockchainCharts
+                darkMode={dark}
+                titleText={'Gas Average Price'}
+                utilSlice={() => loadGasAveragePrice()}
+                sliceGetter={getGasAveragePrice}
+                sliceGetterLoader={getGasAveragePriceInfo}
+                typeStatistic={typesStatistic.GAS_AVERAGE_PRICE}
+              />
+            </Grid>
+
+            <Grid item md={6} xs={12}>
+              <BlockchainCharts
+                darkMode={dark}
+                titleText={'Gas Average Limit'}
+                utilSlice={() => loadGasAverageLimit()}
+                sliceGetter={getGasAverageLimit}
+                sliceGetterLoader={getGasAverageLimitInfo}
+                typeStatistic={typesStatistic.GAS_AVERAGE_LIMIT}
+              />
+            </Grid>
+            <Grid item md={6} xs={12}>
+              <BlockchainCharts
+                darkMode={dark}
+                titleText={'Average Block Limit'}
+                utilSlice={() => loadAverageBlockSize()}
+                sliceGetter={getAverageBlockSize}
+                sliceGetterLoader={getAverageBlockSizeInfo}
+                typeStatistic={typesStatistic.AVERAGE_BLOCK_SIZE}
+              />
+            </Grid>
+          </Grid>
+        </Box>
+      </Paper>
+
+      <Paper
+        variant="outlined"
+        square
+        sx={{
+          minHeight: '544px',
+          width: 1,
+          backgroundColor: 'primary.dark',
+          borderRadius: '12px',
+          borderWidth: '1px',
+          borderColor: 'primary.light',
+          borderStyle: 'solid',
+          p: '1rem 1.5rem 1rem 1.5rem',
+        }}
+      >
+        <SubPageTitle
+          title="CO2 Consumption"
+          style={{ marginBottom: '20px' }}
+          hiddenBackButton={true}
+        />
+        <Box sx={{ flexGrow: 1 }}>
           {/*CO2 Charts */}
           <Grid container spacing={2}>
             <Grid item md={6} xs={12}>
@@ -113,118 +214,7 @@ const Statistics: FC = () => {
             </Grid>
           </Grid>
         </Box>
-
       </Paper>
-
-      <Paper
-        variant="outlined"
-        square
-        sx={{
-          minHeight: '544px',
-          width: 1,
-          backgroundColor: 'primary.dark',
-          borderRadius: '12px',
-          borderWidth: '1px',
-          borderColor: 'primary.light',
-          borderStyle: 'solid',
-          p: '1rem 1.5rem 1rem 1.5rem',
-        }}
-      >
-        <SubPageTitle
-          title="Blockchain Data"
-          style={{ marginBottom: '20px' }}
-          hiddenBackButton={true}
-        />
-        <Box sx={{ flexGrow: 1 }}>
-          <Grid container spacing={2}>
-            <Grid item md={6} xs={12}>
-              <BlockchainCharts
-                darkMode={dark}
-                titleText={"Daily Transactions"}
-                utilSlice={() => loadDailyTransactionsStatistics()}
-                sliceGetter={getTransactionsPerDay}
-                sliceGetterLoader={getTransactionsPerDayStatus}
-                typeStatistic={typesStatistic.DAILY_TRANSACTIONS}
-              />
-            </Grid>
-            <Grid item md={6} xs={12}>
-              <BlockchainCharts
-                darkMode={dark}
-                titleText={"Unique Adresses"}
-                utilSlice={() => loadUniqueAddresses()}
-                sliceGetter={getUniqueAddresses}
-                sliceGetterLoader={getUniqueAddressesLoading}
-                typeStatistic={typesStatistic.UNIQUE_ADRESSES}
-              />
-            </Grid>
-            <Grid item md={6} xs={12}>
-              <BlockchainCharts
-                darkMode={dark}
-                titleText={"Daily Token Transfer"}
-                utilSlice={() => loadDailyTokenTransfer()}
-                sliceGetter={getDailyTokenTransfers}
-                sliceGetterLoader={getDailyTokenTransfersLoading}
-                typeStatistic={typesStatistic.DAILY_TOKEN_TRANSFER}
-              />
-            </Grid>
-            <Grid item md={6} xs={12}>
-              <BlockchainCharts
-                darkMode={dark}
-                titleText={"Gas Used"}
-                utilSlice={() => loadGasUsed()}
-                sliceGetter={getGasUsed}
-                sliceGetterLoader={getGasUsedLoading}
-                typeStatistic={typesStatistic.GAS_USED}
-              />
-            </Grid>
-
-            <Grid item md={6} xs={12}>
-              <BlockchainCharts
-                darkMode={dark}
-                titleText={"Active Addresses"}
-                utilSlice={() => loadActiveAddresses()}
-                sliceGetter={getActiveAddresses}
-                sliceGetterLoader={getActiveAddressesInfo}
-                typeStatistic={typesStatistic.ACTIVE_ADDRESSES}
-              />
-            </Grid>
-            <Grid item md={6} xs={12}>
-              <BlockchainCharts
-                darkMode={dark}
-                titleText={"Gas Average Price"}
-                utilSlice={() => loadGasAveragePrice()}
-                sliceGetter={getGasAveragePrice}
-                sliceGetterLoader={getGasAveragePriceInfo}
-                typeStatistic={typesStatistic.GAS_AVERAGE_PRICE}
-              />
-            </Grid>
-
-            <Grid item md={6} xs={12}>
-              <BlockchainCharts
-                darkMode={dark}
-                titleText={"Gas Average Limit"}
-                utilSlice={() => loadGasAverageLimit()}
-                sliceGetter={getGasAverageLimit}
-                sliceGetterLoader={getGasAverageLimitInfo}
-                typeStatistic={typesStatistic.GAS_AVERAGE_LIMIT}
-              />
-            </Grid>
-            <Grid item md={6} xs={12}>
-              <BlockchainCharts
-                darkMode={dark}
-                titleText={"Average Block Limit"}
-                utilSlice={() => loadAverageBlockSize()}
-                sliceGetter={getAverageBlockSize}
-                sliceGetterLoader={getAverageBlockSizeInfo}
-                typeStatistic={typesStatistic.AVERAGE_BLOCK_SIZE}
-              />
-            </Grid>
-          </Grid>
-        </Box>
-      </Paper>
-
-
-
     </PageContainer>
   );
 };
