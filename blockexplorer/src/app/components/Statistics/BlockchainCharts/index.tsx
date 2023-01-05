@@ -13,7 +13,7 @@ import Modal from '@mui/material/Modal';
 import Box from '@mui/material/Box';
 import useWidth from 'app/hooks/useWidth';
 import 'react-datepicker/dist/react-datepicker.css';
-import DateRange from './DateRange';
+import DateRange from '../DateRange/DateRange';
 
 const BlockchainCharts = ({ darkMode, titleText, utilSlice, sliceGetter, sliceGetterLoader, typeStatistic }) => {
   const { isDesktop } = useWidth();

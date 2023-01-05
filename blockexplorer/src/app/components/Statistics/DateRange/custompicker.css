@@ -1,9 +1,9 @@
 .react-datepicker__month-container{
-    background-color:#2A4379;
-    color:white
+    background-color:#2A4379 !important;
+    color:white !important
 }
 .react-datepicker__header {
-    background-color: #7793CF;
+    background-color: #7793CF !important;
 }
 .react-datepicker__day {
     color: white;
