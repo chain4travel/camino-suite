@@ -11,7 +11,8 @@ import {
   loadDailyTokenTransfer,
   loadGasUsed,
   loadActiveAddresses,
-  loadGasAveragePrice
+  loadGasAveragePrice,
+  loadGasAverageLimit
 } from "./utils";
 import MeterCO2Data from '../../types/meterCO2data';
 
@@ -40,7 +41,9 @@ let initialState: initialStatisticsType = {
   activeAdresses: null,
   activeAdressesLoading: Status.IDLE,
   gasAveragePrice: null,
-  gasAveragePriceLoading: Status.IDLE
+  gasAveragePriceLoading: Status.IDLE,
+  gasAverageLimit: null,
+  gasAverageLimitLoading: Status.IDLE
 };
 
 const statisticsSlice = createSlice({
@@ -166,6 +169,18 @@ const statisticsSlice = createSlice({
     builder.addCase(loadGasAveragePrice.rejected, (state) => {
       state.gasAveragePriceLoading = Status.FAILED;
     });
+    //(Blockchain Data) gasAverageLimit
+    builder.addCase(loadGasAverageLimit.pending, (state) => {
+      state.gasAverageLimitLoading = Status.LOADING;
+    });
+    builder.addCase(loadGasAverageLimit.fulfilled, (state, { payload }) => {
+      let data: any = payload;
+      state.gasAverageLimit = data;
+      state.gasAverageLimitLoading = Status.SUCCEEDED;
+    });
+    builder.addCase(loadGasAverageLimit.rejected, (state) => {
+      state.gasAverageLimitLoading = Status.FAILED;
+    });
 
 
   },
@@ -197,6 +212,9 @@ export const getActiveAddressesInfo = (state: RootState) => state.statistics.act
 
 export const getGasAveragePrice = (state: RootState) => state.statistics.gasAveragePrice;
 export const getGasAveragePriceInfo = (state: RootState) => state.statistics.gasAveragePriceLoading;
+
+export const getGasAverageLimit = (state: RootState) => state.statistics.gasAverageLimit;
+export const getGasAverageLimitInfo = (state: RootState) => state.statistics.gasAverageLimitLoading;
 
 export const {
   statisticsReducer

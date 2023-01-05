@@ -24,7 +24,9 @@ import {
   getActiveAddresses,
   getActiveAddressesInfo,
   getGasAveragePrice,
-  getGasAveragePriceInfo
+  getGasAveragePriceInfo,
+  getGasAverageLimit,
+  getGasAverageLimitInfo
 } from 'store/statisticsSlice';
 import {
   loadDailyEmissions,
@@ -35,7 +37,8 @@ import {
   loadDailyTokenTransfer,
   loadGasUsed,
   loadActiveAddresses,
-  loadGasAveragePrice
+  loadGasAveragePrice,
+  loadGasAverageLimit
 } from 'store/statisticsSlice/utils';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
@@ -190,6 +193,17 @@ const Statistics: FC = () => {
                 sliceGetter={getGasAveragePrice}
                 sliceGetterLoader={getGasAveragePriceInfo}
                 typeStatistic={typesStatistic.GAS_AVERAGE_PRICE}
+              />
+            </Grid>
+
+            <Grid item md={6} xs={12}>
+              <BlockchainCharts
+                darkMode={dark}
+                titleText={"Gas Average Limit"}
+                utilSlice={() => loadGasAverageLimit()}
+                sliceGetter={getGasAverageLimit}
+                sliceGetterLoader={getGasAverageLimitInfo}
+                typeStatistic={typesStatistic.GAS_AVERAGE_LIMIT}
               />
             </Grid>
           </Grid>

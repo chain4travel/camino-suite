@@ -12,6 +12,7 @@ import dailyTokenTransferData from '../../app/components/Statistics/json/dailyTo
 import gasUsedData from '../../app/components/Statistics/json/gasUsed.json';
 import activeAddressesData from '../../app/components/Statistics/json/activeAddresses.json';
 import gasAveragePriceData from '../../app/components/Statistics/json/gasAveragePrice.json';
+import gasAverageLimitData from '../../app/components/Statistics/json/gasAverageLimit.json';
 
 export const loadDailyEmissions = createAsyncThunk("co2statistics/dailyEmissions", async () => {
     let response = await fetchDailyEmissions();
@@ -56,5 +57,9 @@ export const loadActiveAddresses = createAsyncThunk("transactionsStatistics/acti
 });
 export const loadGasAveragePrice = createAsyncThunk("transactionsStatistics/gasAveragePrice", async () => {
     let data = gasAveragePriceData;
+    return data;
+});
+export const loadGasAverageLimit = createAsyncThunk("transactionsStatistics/gasAverageLimit", async () => {
+    let data = gasAverageLimitData;
     return data;
 });

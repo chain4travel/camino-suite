@@ -5,6 +5,7 @@ import {DailyTokenTransfer} from '../../../../types/dailyTokenTransfer';
 import {GasUsed} from '../../../../types/gasUsed';
 import {ActiveAddresesInfo} from '../../../../types/activeAddresses';
 import {GasAveragePrice} from '../../../../types/gasAveragePrice';
+import { GasAverageLimit } from '../../../../types/gasAverageLimit';
 
 //Transactions
 export const dailyTransactionsTooltip = (data: TransactionsInfo) => {
@@ -83,5 +84,15 @@ export const averageGasPriceTooltip = (data: GasAveragePrice) => {
         -<b>Max gas price:</b>${data.MaxGasPrice}<br/>
         -<b>Min gas price:</b>${data.MinGasPrice}<br/>
         </span>`;
+    return header;
+}
+
+//Gas Average Limit
+export const averageGasLimitTooltip = (data: GasAverageLimit) => {
+    const header = `<span>
+    ${moment(new Date(data.Date)).format("MMMM Do YYYY")}
+        <br/>
+        [<label style="color: blue">average gas limit:</label> <b>${data.AverageGasLimit}</b>]
+        <br/>`
     return header;
 }

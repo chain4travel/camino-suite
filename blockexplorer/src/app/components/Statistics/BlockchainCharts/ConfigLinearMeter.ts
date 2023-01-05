@@ -6,6 +6,7 @@ import {
   gasUsedTooltip,
   activeAddressesTooltip,
   averageGasPriceTooltip,
+  averageGasLimitTooltip,
 } from './Tooltips';
 
 class ConfigLinearMeter {
@@ -36,6 +37,9 @@ class ConfigLinearMeter {
       case typesStatistic.GAS_AVERAGE_PRICE:
         this.data = dataChart;
         break;
+      case typesStatistic.GAS_AVERAGE_LIMIT:
+        this.data = dataChart;
+        break;
     }
   }
 
@@ -57,6 +61,8 @@ class ConfigLinearMeter {
         return activeAddressesTooltip(this.data[index]);
       case typesStatistic.GAS_AVERAGE_PRICE:
         return averageGasPriceTooltip(this.data[index]);
+      case typesStatistic.GAS_AVERAGE_LIMIT:
+        return averageGasLimitTooltip(this.data[index]);
     }
   }
 
@@ -82,14 +88,17 @@ class ConfigLinearMeter {
 
       case typesStatistic.ACTIVE_ADDRESSES:
         return this.data.map((value, index) => {
-          console.log('valueAddresses', value);
           return { y: value.ActiveAddresses, name: value.Date };
         });
 
       case typesStatistic.GAS_AVERAGE_PRICE:
         return this.data.map((value, index) => {
-          console.log('valueAddresses', value);
           return { y: value.AverageGasPrice, name: value.Date };
+        });
+
+      case typesStatistic.GAS_AVERAGE_LIMIT:
+        return this.data.map((value, index) => {
+          return { y: value.AverageGasLimit, name: value.Date };
         });
     }
   }
