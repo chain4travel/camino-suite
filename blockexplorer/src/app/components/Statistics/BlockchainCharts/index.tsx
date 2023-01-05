@@ -70,6 +70,7 @@ const BlockchainCharts = ({ darkMode, titleText, utilSlice, sliceGetter, sliceGe
                     color="info"
                     component="label"
                     onClick={() => setOpenModal(false)}
+                    style={{cursor: 'none'}}
                   >
                     <FontAwesomeIcon icon={faXmark} />
                   </IconButton>
@@ -98,6 +99,7 @@ const BlockchainCharts = ({ darkMode, titleText, utilSlice, sliceGetter, sliceGe
               color="info"
               component="label"
               onClick={() => setOpenModal(true)}
+              style={{cursor: 'none'}}
             >
               <FontAwesomeIcon icon={faSquareArrowUpRight} />
             </IconButton>

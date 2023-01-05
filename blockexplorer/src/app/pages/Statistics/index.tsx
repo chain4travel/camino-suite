@@ -67,7 +67,7 @@ const Statistics: FC = () => {
         <SubPageTitle
           title="CO2 Consumption"
           style={{ marginBottom: '20px' }}
-          hiddenBackButton={false}
+          hiddenBackButton={true}
         />
         <Box sx={{ flexGrow: 1 }}>
 
