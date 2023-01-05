@@ -7,6 +7,9 @@ import { DailyTokenTransfer } from './dailyTokenTransfer';
 import { GasUsed } from './gasUsed';
 import {ActiveAddreses } from './activeAddresses';
 import MeterCO2Data from './meterCO2data';
+import { GasAveragePrice } from './gasAveragePrice';
+import { GasAverageLimit } from './gasAverageLimit';
+import { AverageBlockSize } from './averageBlockSize';
 
 export interface Chain {
   chainID: string;
@@ -119,7 +122,13 @@ export interface initialStatisticsType {
   gasUsed: GasUsed,
   gasUsedLoading: Status,
   activeAdresses: ActiveAddreses,
-  activeAdressesLoading: Status
+  activeAdressesLoading: Status,
+  gasAveragePrice: GasAveragePrice,
+  gasAveragePriceLoading: Status,
+  gasAverageLimit: GasAverageLimit,
+  gasAverageLimitLoading: Status,
+  averageBlockSize: AverageBlockSize,
+  averageBlockSizeLoading: Status,
 }
 
 export interface initicalTransactionsStatistics {

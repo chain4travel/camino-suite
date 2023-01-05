@@ -1,11 +1,7 @@
 import React, { FC, useState, Fragment, useEffect } from 'react';
 import SubPageTitle from 'app/components/SubPageTitle';
 import PageContainer from 'app/components/PageContainer';
-import {
-  Paper,
-  useTheme
-} from '@mui/material';
-import { useAppDispatch, useAppSelector } from 'store/configureStore';
+import { Paper, useTheme } from '@mui/material';
 import {
   getDailyEmissions,
   getDailyEmissionsStatus,
@@ -22,7 +18,13 @@ import {
   getGasUsed,
   getGasUsedLoading,
   getActiveAddresses,
-  getActiveAddressesInfo
+  getActiveAddressesInfo,
+  getGasAveragePrice,
+  getGasAveragePriceInfo,
+  getGasAverageLimit,
+  getGasAverageLimitInfo,
+  getAverageBlockSize,
+  getAverageBlockSizeInfo,
 } from 'store/statisticsSlice';
 import {
   loadDailyEmissions,
@@ -32,7 +34,10 @@ import {
   loadUniqueAddresses,
   loadDailyTokenTransfer,
   loadGasUsed,
-  loadActiveAddresses
+  loadActiveAddresses,
+  loadGasAveragePrice,
+  loadGasAverageLimit,
+  loadAverageBlockSize,
 } from 'store/statisticsSlice/utils';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
@@ -42,15 +47,13 @@ import BlockchainCharts from '../../components/Statistics/BlockchainCharts/index
 import { typesStatistic } from './ChartSelector';
 
 const Statistics: FC = () => {
-
   const theme = useTheme();
 
-  const test = "";
-  const dark = theme.palette.mode === 'light' ? false : true
+  const test = '';
+  const dark = theme.palette.mode === 'light' ? false : true;
 
   return (
     <PageContainer pageTitle="Validators" metaContent="validators">
-
       <Paper
         variant="outlined"
         square
@@ -75,7 +78,7 @@ const Statistics: FC = () => {
             <Grid item md={6} xs={12}>
               <BlockchainCharts
                 darkMode={dark}
-                titleText={"Daily Transactions"}
+                titleText={'Daily Transactions'}
                 utilSlice={() => loadDailyTransactionsStatistics()}
                 sliceGetter={getTransactionsPerDay}
                 sliceGetterLoader={getTransactionsPerDayStatus}
@@ -85,7 +88,7 @@ const Statistics: FC = () => {
             <Grid item md={6} xs={12}>
               <BlockchainCharts
                 darkMode={dark}
-                titleText={"Unique Adresses"}
+                titleText={'Unique Adresses'}
                 utilSlice={() => loadUniqueAddresses()}
                 sliceGetter={getUniqueAddresses}
                 sliceGetterLoader={getUniqueAddressesLoading}
@@ -95,7 +98,7 @@ const Statistics: FC = () => {
             <Grid item md={6} xs={12}>
               <BlockchainCharts
                 darkMode={dark}
-                titleText={"Daily Token Transfer"}
+                titleText={'Daily Token Transfer'}
                 utilSlice={() => loadDailyTokenTransfer()}
                 sliceGetter={getDailyTokenTransfers}
                 sliceGetterLoader={getDailyTokenTransfersLoading}
@@ -105,21 +108,53 @@ const Statistics: FC = () => {
             <Grid item md={6} xs={12}>
               <BlockchainCharts
                 darkMode={dark}
-                titleText={"Gas Used"}
+                titleText={'Gas Used'}
                 utilSlice={() => loadGasUsed()}
                 sliceGetter={getGasUsed}
                 sliceGetterLoader={getGasUsedLoading}
                 typeStatistic={typesStatistic.GAS_USED}
               />
             </Grid>
+
             <Grid item md={6} xs={12}>
               <BlockchainCharts
                 darkMode={dark}
-                titleText={"Active Addresses"}
+                titleText={'Active Addresses'}
                 utilSlice={() => loadActiveAddresses()}
                 sliceGetter={getActiveAddresses}
                 sliceGetterLoader={getActiveAddressesInfo}
                 typeStatistic={typesStatistic.ACTIVE_ADDRESSES}
+              />
+            </Grid>
+            <Grid item md={6} xs={12}>
+              <BlockchainCharts
+                darkMode={dark}
+                titleText={'Gas Average Price'}
+                utilSlice={() => loadGasAveragePrice()}
+                sliceGetter={getGasAveragePrice}
+                sliceGetterLoader={getGasAveragePriceInfo}
+                typeStatistic={typesStatistic.GAS_AVERAGE_PRICE}
+              />
+            </Grid>
+
+            <Grid item md={6} xs={12}>
+              <BlockchainCharts
+                darkMode={dark}
+                titleText={'Gas Average Limit'}
+                utilSlice={() => loadGasAverageLimit()}
+                sliceGetter={getGasAverageLimit}
+                sliceGetterLoader={getGasAverageLimitInfo}
+                typeStatistic={typesStatistic.GAS_AVERAGE_LIMIT}
+              />
+            </Grid>
+            <Grid item md={6} xs={12}>
+              <BlockchainCharts
+                darkMode={dark}
+                titleText={'Average Block Limit'}
+                utilSlice={() => loadAverageBlockSize()}
+                sliceGetter={getAverageBlockSize}
+                sliceGetterLoader={getAverageBlockSizeInfo}
+                typeStatistic={typesStatistic.AVERAGE_BLOCK_SIZE}
               />
             </Grid>
           </Grid>
@@ -146,7 +181,6 @@ const Statistics: FC = () => {
           hiddenBackButton={true}
         />
         <Box sx={{ flexGrow: 1 }}>
-
           {/*CO2 Charts */}
           <Grid container spacing={2}>
             <Grid item md={6} xs={12}>
@@ -180,10 +214,7 @@ const Statistics: FC = () => {
             </Grid>
           </Grid>
         </Box>
-
       </Paper>
-
-
     </PageContainer>
   );
 };
