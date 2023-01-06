@@ -55,6 +55,13 @@ const LinearMeter = ({ darkMode, titleText, data, typeStatistic }) => {
           label: {
             connectorAllowed: false,
           },
+          marker: {
+            states: {
+              hover: {
+                radius: 3
+              }
+            }
+          }
         },
       },
       tooltip: {
@@ -77,7 +84,7 @@ const LinearMeter = ({ darkMode, titleText, data, typeStatistic }) => {
         {
           name: titleText,
           data: config.getMappedSeries(),
-          color: 'hsl(221, 48%, 75%)'
+          color: 'hsl(221, 48%, 75%)',
         },
       ],
       responsive: {
