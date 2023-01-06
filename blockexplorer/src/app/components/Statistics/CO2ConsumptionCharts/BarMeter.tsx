@@ -48,7 +48,7 @@ const BarMeter = ({ dataSeries, darkMode, titleText }) => {
         },
         yAxis: {
             title: {
-                text: 'CO2',
+                text: 'gCO2',
                 style: {
                     color: darkMode ? 'white' : 'black'
                 }

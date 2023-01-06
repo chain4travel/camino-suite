@@ -28,7 +28,7 @@ const NewTextField = styled(TextField)`
 const CustomInputContainer = styled.div`
   display: flex;
   align-content: center;
-  align-items: center;
+  align-items: baseline;
   cursor: pointer;
 `;
 
@@ -62,13 +62,55 @@ const DateRange = ({
       />
       <CalendarMonthIcon
         onClick={onClick}
-        style={{ cursor: 'default' }}
+        style={{ cursor: 'default', position:'relative', top: 10 }}
       />
     </CustomInputContainer>
   ));
   return (
     <Container>
-      <PickerContainer>
+
+      <div style={{position:'relative', right: 150}}>
+        <FilterContainer>
+          <StyledButton
+            onClick={() =>
+              changeDate(moment().subtract(1, 'days').format('YYYY-MM-DD'))
+            }
+            style={{ cursor: 'default' }}
+          >
+            1 Day
+          </StyledButton>
+
+          <StyledButton
+            onClick={() =>
+              changeDate(moment().subtract(1, 'months').format('YYYY-MM-DD'))
+            }
+            style={{ cursor: 'default' }}
+          >
+            1 Month
+          </StyledButton>
+          <StyledButton
+            onClick={() =>
+              changeDate(moment().subtract(1, 'years').format('YYYY-MM-DD'))
+            }
+            style={{ cursor: 'default' }}
+          >
+            1 year
+          </StyledButton>
+
+          <StyledButton
+            onClick={() =>
+              changeDate(moment('01/01/2000', 'DD/MM/YYYY').format('YYYY-MM-DD'))
+            }
+            style={{ cursor: 'default' }}
+          >
+            All
+          </StyledButton>
+        </FilterContainer>
+      </div>
+
+
+
+      <PickerContainer style={{position:'relative', right: '30%', top: -25}}>
         <DatePicker
           selected={initialStartDate}
           onChange={date => setStartDate(date)}
@@ -89,43 +131,8 @@ const DateRange = ({
         // readOnly
         />
       </PickerContainer>
-      <FilterContainer>
-        <StyledButton
-          onClick={() =>
-            changeDate(moment().subtract(1, 'days').format('YYYY-MM-DD'))
-          }
-          style={{ cursor: 'default' }}
-        >
-          1 Day
-        </StyledButton>
 
-        <StyledButton
-          onClick={() =>
-            changeDate(moment().subtract(1, 'months').format('YYYY-MM-DD'))
-          }
-          style={{ cursor: 'default' }}
-        >
-          1 Month
-        </StyledButton>
-        <StyledButton
-          onClick={() =>
-            changeDate(moment().subtract(1, 'years').format('YYYY-MM-DD'))
-          }
-          style={{ cursor: 'default' }}
-        >
-          1 year
-        </StyledButton>
 
-        <StyledButton
-          onClick={() =>
-            changeDate(moment('01/01/2000', 'DD/MM/YYYY').format('YYYY-MM-DD'))
-          }
-          style={{ cursor: 'default' }}
-        >
-          All
-        </StyledButton>
-      </FilterContainer>
-      
     </Container>
   );
 };

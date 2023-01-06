@@ -176,7 +176,7 @@ const Statistics: FC = () => {
         }}
       >
         <SubPageTitle
-          title="CO2 Consumption"
+          title="CO2 Emissions"
           style={{ marginBottom: '20px' }}
           hiddenBackButton={true}
         />
