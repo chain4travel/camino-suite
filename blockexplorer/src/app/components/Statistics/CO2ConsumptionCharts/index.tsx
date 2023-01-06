@@ -65,7 +65,7 @@ const CO2ConsumptionCharts = ({
               }}
             >
               <Fragment>
-              <div style={{ float: 'right' }}>
+                <div style={{ float: 'right' }}>
                   <IconButton
                     color="info"
                     component="label"
@@ -81,7 +81,7 @@ const CO2ConsumptionCharts = ({
                   setEndDate={setEndDate}
                   setStartDate={setStartDate}
                 />
-                
+
                 {typeMeter == typesMeter.BAR && <BarMeter darkMode={darkMode} dataSeries={meterCO2.Value} titleText={meterCO2.Name} />}
                 {typeMeter == typesMeter.TIME_SERIES && <TimeSeriesMeter darkMode={darkMode} dataSeries={meterCO2.Value} titleText={meterCO2.Name} />}
               </Fragment>

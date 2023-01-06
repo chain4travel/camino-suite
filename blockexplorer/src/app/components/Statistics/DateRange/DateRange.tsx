@@ -69,7 +69,7 @@ const DateRange = ({
   return (
     <Container>
 
-      <div style={{position:'relative', right: 150}}>
+      <div style={{position:'relative', right: '12%'}}>
         <FilterContainer>
           <StyledButton
             onClick={() =>

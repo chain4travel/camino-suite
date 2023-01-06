@@ -7,8 +7,7 @@ const LinearMeter = ({ darkMode, titleText, data, typeStatistic }) => {
 
   let config = new ConfigLinearMeter(typeStatistic, titleText, data);
 
-  if(config.data != undefined && config.data != null)
-  {
+  if (config.data != undefined && config.data != null) {
     const options = {
       title: {
         text: titleText,
@@ -37,10 +36,10 @@ const LinearMeter = ({ darkMode, titleText, data, typeStatistic }) => {
           rangeDescription: 'Range',
         },
         categories: config.getCategories(),
-  
+
         labels: {
           useHTML: true,
-          formatter: function (obj) {return `<span style="text-align: center;color:${darkMode === true ? 'white' : 'black'}"> ${obj.value}</span>`},
+          formatter: function (obj) { return `<span style="text-align: center;color:${darkMode === true ? 'white' : 'black'}"> ${obj.value}</span>` },
         },
       },
       legend: {
@@ -79,6 +78,10 @@ const LinearMeter = ({ darkMode, titleText, data, typeStatistic }) => {
           name: titleText,
           data: config.getMappedSeries(),
           color: 'hsl(221, 48%, 75%)',
+          marker: {
+            width: 100,
+            height: 100
+          },
         },
       ],
       responsive: {
@@ -105,8 +108,7 @@ const LinearMeter = ({ darkMode, titleText, data, typeStatistic }) => {
       </div>
     );
   }
-  else
-  {
+  else {
     return (<></>);
   }
 };
