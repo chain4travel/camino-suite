@@ -77,11 +77,7 @@ const LinearMeter = ({ darkMode, titleText, data, typeStatistic }) => {
         {
           name: titleText,
           data: config.getMappedSeries(),
-          color: 'hsl(221, 48%, 75%)',
-          marker: {
-            width: 100,
-            height: 100
-          },
+          color: 'hsl(221, 48%, 75%)'
         },
       ],
       responsive: {
