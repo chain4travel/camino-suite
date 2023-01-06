@@ -19,11 +19,11 @@ export const dailyTransactionsTooltip = (data: TransactionsInfo) => {
         <br/>
         <br/>
 
-        -<b>Avg Block Time:</b>${data.AvgBlockTime} TH<br/>
-        -<b>Avg Block Size:</b>${data.AvgBlockSize} GH<br/>
-        -<b>Total Block Count:</b>${data.TotalBlockCount} <br/>
-        -<b>Total Uncles Count:</b>${data.TotalUnclesCount} <br/>
-        -<b>New Adress Seen:</b>${data.NewAddressSeen}
+        <b>Avg Block Time:</b>${data.AvgBlockTime} TH<br/>
+        <b>Avg Block Size:</b>${data.AvgBlockSize} GH<br/>
+        <b>Total Block Count:</b>${data.TotalBlockCount} <br/>
+        <b>Total Uncles Count:</b>${data.TotalUnclesCount} <br/>
+        <b>New Adress Seen:</b>${data.NewAddressSeen}
         
         </span><br/>`;
   return header;
@@ -39,7 +39,7 @@ export const uniqueAddressesDailyIncreaseTooltip = (data: AddressInfo) => {
         }</b>]
         <br/>
         <br/>
-        -<b>Daily Increase:</b>${data.DailyIncrease}<br/>
+        <b>Daily Increase:</b>${data.DailyIncrease}<br/>
         </span>`;
   return header;
 };
@@ -78,8 +78,8 @@ export const activeAddressesTooltip = (data: ActiveAddresesInfo) => {
         }</b>]
         <br/>
         <br/>
-        -<b>Receive Count:</b>${data.ReceiveCount}<br/>
-        -<b>Send Count:</b>${data.SendCount}<br/>
+        <b>Receive Count:</b>${data.ReceiveCount}<br/>
+        <b>Send Count:</b>${data.SendCount}<br/>
         </span>`;
   return header;
 };
@@ -94,8 +94,8 @@ export const averageGasPriceTooltip = (data: GasAveragePrice) => {
         } Gwei</b>]
         <br/>
         <br/>
-        -<b>Max gas price:</b>${data.MaxGasPrice} Gwei<br/>
-        -<b>Min gas price:</b>${data.MinGasPrice} Gwei<br/>
+        <b>Max gas price:</b>${data.MaxGasPrice} Gwei<br/>
+        <b>Min gas price:</b>${data.MinGasPrice} Gwei<br/>
         </span>`;
   return header;
 };

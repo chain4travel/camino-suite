@@ -65,16 +65,7 @@ const LinearMeter = ({ darkMode, titleText, data, typeStatistic }) => {
         },
       },
       tooltip: {
-        positioner: function (width, height, point) {
-          let pointX = point.plotX;
-          return {
-            x:
-              pointX > 100
-                ? point.plotX - this.chart.plotLeft
-                : point.plotX + this.chart.plotLeft,
-            y: 50,
-          };
-        },
+        
         formatter: function (tooltip) {
           let indexData = this.point.index;
           return config.getTooltip(indexData);
