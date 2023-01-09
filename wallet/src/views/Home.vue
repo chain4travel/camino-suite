@@ -128,6 +128,7 @@ export default class Home extends Vue {
             display: flex;
             align-items: center;
             gap: 15px;
+            font-family: 'ClashDisplay';
         }
         .content {
             max-width: 700px;

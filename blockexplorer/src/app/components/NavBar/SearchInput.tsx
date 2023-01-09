@@ -131,7 +131,7 @@ function OutlinedSearchInput() {
               borderWidth: '0px',
               fontSize: '15px',
               lineHeight: '24px',
-              fontWeight: 400,
+              fontWeight: 500,
               '.MuiOutlinedInput-notchedOutline': {
                 border: 'none',
               },

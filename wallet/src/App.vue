@@ -136,6 +136,17 @@ p {
     min-height: 100% !important;
 }
 
+#app {
+    min-height: 100%;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-align: left;
+    color: var(--primary-color);
+    background-color: var(--bg) !important;
+    font-family: 'Inter', sans-serif;
+    transition-duration: 0.2s;
+}
+
 #nav {
     height: 80px;
     display: flex;

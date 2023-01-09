@@ -73,7 +73,7 @@ export default function Logo() {
             <Typography
               variant="h4"
               component="span"
-              fontWeight="300"
+              fontWeight="400"
               sx={{ ml: ".5rem", color: "#149EED" }}
             >
               {app}
@@ -100,7 +100,7 @@ export default function Logo() {
                   variant="h5"
                   component="span"
                   noWrap
-                  fontWeight="300"
+                  fontWeight="500"
                   sx={{ color: "#149EED" }}
                 >
                   {app.name}
