@@ -72,16 +72,7 @@ const BlockDetails: FC = () => {
             </Box>
           </Grid>
         </Paper>
-        <Grid
-          item
-          container
-          alignItems="center"
-          justifyContent="center"
-          xs={12}
-          sx={{ borderRadius: '12px' }}
-        >
-          <TransactionsView loading={loading} blockDetails={blockDetails} />
-        </Grid>
+        <TransactionsView loading={loading} blockDetails={blockDetails} />
       </Box>
     </PageContainer>
   );
