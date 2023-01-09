@@ -6,15 +6,6 @@ const VuetifyLoaderPlugin = require('vuetify-loader/lib/plugin')
 const path = require('path')
 const deps = require('./package.json').dependencies
 module.exports = {
-    output: {
-        publicPath: 'https://playground.suite-wallet.camino.foundation/',
-    },
-
-    devServer: {
-        port: 3003,
-        historyApiFallback: true,
-    },
-
     module: {
         rules: [
             {
@@ -46,7 +37,7 @@ module.exports = {
     resolve: {
         extensions: ['.tsx', '.ts', '.vue', '.jsx', '.js', '.json'],
         alias: {
-            vue: 'vue/dist/vue.js',
+            vue: 'vue/dist/vue.min.js',
             '@': path.resolve(__dirname, 'src'),
         },
     },
