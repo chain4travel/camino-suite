@@ -90,16 +90,19 @@ const typography = {
   body1: {
     fontFamily: FONT_SECONDARY,
     lineHeight: 1.5,
+    fontWeight: 500,
     fontSize: pxToRem(16),
   },
   body2: {
     fontFamily: FONT_SECONDARY,
     lineHeight: 22 / 14,
+    fontWeight: 500,
     fontSize: pxToRem(14),
   },
   caption: {
     fontFamily: FONT_SECONDARY,
     lineHeight: 1.5,
+    fontWeight: 500,
     fontSize: pxToRem(12),
   },
   overline: {
