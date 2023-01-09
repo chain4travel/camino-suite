@@ -143,7 +143,7 @@ p {
     text-align: left;
     color: var(--primary-color);
     background-color: var(--bg) !important;
-    font-family: 'Rubik', sans-serif;
+    font-family: 'Inter', sans-serif;
     transition-duration: 0.2s;
 }
 
