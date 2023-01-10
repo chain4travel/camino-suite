@@ -88,7 +88,7 @@ export default class BaseTxOutput extends Vue {
         white-space: nowrap;
         font-size: 12px;
         line-height: 12px;
-        font-family: monospace;
+        font-family: 'Inter';
         text-overflow: ellipsis;
     }
 

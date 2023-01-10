@@ -2,11 +2,12 @@
     "name": "camino-wallet",
     "version": "1.0.0",
     "scripts": {
-        "build": "webpack --mode production",
-        "build:dev": "webpack --mode development",
+        "build": "webpack --config webpack.prod.js",
+        "build:dev": "webpack --config webpack.dev.js",
         "build:start": "cd dist && PORT=3003 npx serve",
-        "start": "webpack-dev-server --open --mode development",
-        "start:live": "webpack-dev-server --open --mode development --live-reload"
+        "start": "webpack-dev-server --config webpack.dev.js",
+        "start:live": "webpack-dev-server --open --config webpack.dev.js --live-reload",
+        "dev": "webpack-dev-server --mode development --open"
     },
     "license": "MIT",
     "author": {
@@ -123,7 +124,6 @@
         "reflect-metadata": "0.1.13",
         "register-service-worker": "1.6.2",
         "release-it": "^14.10.0",
-        "roboto-fontface": "0.10.0",
         "sass": "~1.32.6",
         "sass-loader": "^8.0.2",
         "serve": "11.3.2",
@@ -157,7 +157,7 @@
         "weekstart": "1.0.1"
     },
     "dependencies": {
-        "vue": "^2.6.14",
+        "vue": "^2.5.18",
         "vue-cli-plugin-vuetify": "^2.0.3",
         "vuetify": "2.3.9",
         "vuetify-loader": "^1.9.2"
