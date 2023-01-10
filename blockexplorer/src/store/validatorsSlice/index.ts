@@ -106,14 +106,21 @@ const validatorsSlice = createSlice({
     });
     builder.addCase(loadValidators.fulfilled, (state, { payload }) => {
       let responsePayload: any = payload;
-      state.numberOfValidators = responsePayload.length;
-      state.numberOfActiveValidators = responsePayload.filter((v: any) => v.connected).length;
-      state.percentageOfActiveValidators = parseInt(((state.numberOfActiveValidators / state.numberOfValidators) * 100).toFixed(0));
-      state.validators = responsePayload.map(mapToTableDataMagelland);
-      state.locationNodes = state.validators.filter((v: any) => v.status == "Connected" && v.lng != 0 && v.lat != 0);
-      state.nodesPerCountry = sumNodesPerCountry(state.locationNodes);
-      state.nodesPerCity = sumNodesPerCity(state.locationNodes);
-      state.validatorsLoading = Status.SUCCEEDED;
+      if(responsePayload != null && responsePayload != undefined)
+      {
+        state.numberOfValidators = responsePayload.length;
+        state.numberOfActiveValidators = responsePayload.filter((v: any) => v.connected).length;
+        state.percentageOfActiveValidators = parseInt(((state.numberOfActiveValidators / state.numberOfValidators) * 100).toFixed(0));
+        state.validators = responsePayload.map(mapToTableDataMagelland);
+        state.locationNodes = state.validators.filter((v: any) => v.status == "Connected" && v.lng != 0 && v.lat != 0);
+        state.nodesPerCountry = sumNodesPerCountry(state.locationNodes);
+        state.nodesPerCity = sumNodesPerCity(state.locationNodes);
+        state.validatorsLoading = Status.SUCCEEDED;
+      }
+      else
+      {
+        state.validatorsLoading = Status.FAILED;
+      }
     });
     builder.addCase(loadValidators.rejected, (state) => {
       state.validatorsLoading = Status.FAILED;
