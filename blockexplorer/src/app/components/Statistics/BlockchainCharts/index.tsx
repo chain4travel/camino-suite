@@ -14,6 +14,9 @@ import Box from '@mui/material/Box';
 import useWidth from 'app/hooks/useWidth';
 import 'react-datepicker/dist/react-datepicker.css';
 import DateRange from '../DateRange/DateRange';
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
+import CardHeader from '@mui/material/CardHeader';
 
 const BlockchainCharts = ({ darkMode, titleText, utilSlice, sliceGetter, sliceGetterLoader, typeStatistic }) => {
   const { isDesktop } = useWidth();
@@ -22,7 +25,7 @@ const BlockchainCharts = ({ darkMode, titleText, utilSlice, sliceGetter, sliceGe
   const [startDate, setStartDate] = useState<Date>();
   const [endDate, setEndDate] = useState<Date>();
 
-  useEffect(() => {}, []);
+  useEffect(() => { }, []);
 
   const dispatch = useAppDispatch();
 
@@ -58,59 +61,64 @@ const BlockchainCharts = ({ darkMode, titleText, utilSlice, sliceGetter, sliceGe
           >
             <Box
               sx={{
-                backgroundColor: 'primary.main',
+                backgroundColor: 'transparent',
                 borderRadius: '7px',
                 padding: '1.5rem',
-                minWidth: isDesktop ? '1300px' : '0px',
+                minWidth: isDesktop ? '1500px' : '0px',
               }}
             >
-              <Fragment>
-                <div style={{ float: 'right' }}>
-                  <IconButton
-                    color="info"
-                    component="label"
-                    onClick={() => setOpenModal(false)}
-                    style={{cursor: 'default'}}
-                  >
-                    <FontAwesomeIcon icon={faXmark} />
-                  </IconButton>
-                </div>
-                <DateRange
-                  initialStartDate={startDate}
-                  InitianEndDate={endDate}
-                  setEndDate={setEndDate}
-                  setStartDate={setStartDate}
-                />
+              <Card style={{ backgroundColor: darkMode ? "#060F24" : "white" }}>
+                <CardHeader title={titleText} action={<IconButton
+                  color="info"
+                  component="label"
+                  onClick={() => setOpenModal(false)}
+                  style={{ cursor: 'default' }}
+                >
+                  <FontAwesomeIcon icon={faXmark} />
+                </IconButton>} />
+                <CardContent>
+                  <Fragment>
+                    <DateRange
+                      initialStartDate={startDate}
+                      InitianEndDate={endDate}
+                      setEndDate={setEndDate}
+                      setStartDate={setStartDate}
+                      darkMode={darkMode}
+                    />
 
-                {dataStatistics != undefined && dataStatistics != null ?
-                  <>
-                    <LinearMeter darkMode={darkMode}
-                      titleText={titleText}
-                      data={dataStatistics}
-                      typeStatistic={typeStatistic} />
-                  </>
-                  : null}
-              </Fragment>
+                    {dataStatistics != undefined && dataStatistics != null ?
+                      <>
+                        <LinearMeter darkMode={darkMode}
+                          titleText={titleText}
+                          data={dataStatistics}
+                          typeStatistic={typeStatistic} />
+                      </>
+                      : null}
+                  </Fragment>
+                </CardContent></Card>
             </Box>
           </Modal>
 
-          <div style={{ float: 'right' }}>
-            <IconButton
-              color="info"
-              component="label"
-              onClick={() => setOpenModal(true)}
-              style={{cursor: 'default'}}
-            >
-              <FontAwesomeIcon icon={faSquareArrowUpRight} />
-            </IconButton>
-          </div>
-
-          {dataStatistics != undefined && dataStatistics != null ? <>
-            <LinearMeter darkMode={darkMode}
-              titleText={titleText}
-              data={dataStatistics}
-              typeStatistic={typeStatistic} />
-          </> : null}
+          <Card style={{ backgroundColor: darkMode ? "#060F24" : "white" }}>
+            <CardHeader title={titleText} action={
+              <IconButton
+                color="info"
+                component="label"
+                onClick={() => setOpenModal(true)}
+                style={{ cursor: 'default' }}
+              >
+                <FontAwesomeIcon icon={faSquareArrowUpRight} />
+              </IconButton>
+            } />
+            <CardContent>
+              {dataStatistics != undefined && dataStatistics != null ? <>
+                <LinearMeter darkMode={darkMode}
+                  titleText={titleText}
+                  data={dataStatistics}
+                  typeStatistic={typeStatistic} />
+              </> : null}
+            </CardContent>
+          </Card>
         </>
       )}
     </Fragment>

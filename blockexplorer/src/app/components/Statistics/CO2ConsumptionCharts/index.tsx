@@ -14,6 +14,9 @@ import Modal from '@mui/material/Modal';
 import Box from '@mui/material/Box';
 import useWidth from 'app/hooks/useWidth';
 import DateRange from '../DateRange/DateRange';
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
+import CardHeader from '@mui/material/CardHeader';
 
 const CO2ConsumptionCharts = ({
   utilSlice, typeMeter, darkMode, sliceGetter, sliceGetterLoader
@@ -58,51 +61,61 @@ const CO2ConsumptionCharts = ({
           >
             <Box
               sx={{
-                backgroundColor: 'primary.main',
+                backgroundColor: 'transparent',
                 borderRadius: '7px',
                 padding: '1.5rem',
-                minWidth: isDesktop ? '1300px' : '0px',
+                minWidth: isDesktop ? '1500px' : '0px',
               }}
             >
-              <Fragment>
-                <div style={{ float: 'right' }}>
-                  <IconButton
-                    color="info"
-                    component="label"
-                    onClick={() => setOpenModal(false)}
-                    style={{ cursor: 'default' }}
-                  >
-                    <FontAwesomeIcon icon={faXmark} />
-                  </IconButton>
-                </div>
-                <DateRange
-                  initialStartDate={startDate}
-                  InitianEndDate={endDate}
-                  setEndDate={setEndDate}
-                  setStartDate={setStartDate}
-                />
 
-                {typeMeter == typesMeter.BAR && <BarMeter darkMode={darkMode} dataSeries={meterCO2.Value} titleText={meterCO2.Name} />}
-                {typeMeter == typesMeter.TIME_SERIES && <TimeSeriesMeter darkMode={darkMode} dataSeries={meterCO2.Value} titleText={meterCO2.Name} />}
-              </Fragment>
+              <Card style={{ backgroundColor: darkMode ? "#060F24" : "white" }}>
+                <CardHeader title={meterCO2.Name} action={<IconButton
+                  color="info"
+                  component="label"
+                  onClick={() => setOpenModal(false)}
+                  style={{ cursor: 'default' }}
+                >
+                  <FontAwesomeIcon icon={faXmark} />
+                </IconButton>} />
+                <CardContent>
+                  <Fragment>
+                    <DateRange
+                      initialStartDate={startDate}
+                      InitianEndDate={endDate}
+                      setEndDate={setEndDate}
+                      setStartDate={setStartDate}
+                      darkMode={darkMode}
+                    />
+
+                    {typeMeter == typesMeter.BAR && <BarMeter darkMode={darkMode} dataSeries={meterCO2.Value} titleText={meterCO2.Name} />}
+                    {typeMeter == typesMeter.TIME_SERIES && <TimeSeriesMeter darkMode={darkMode} dataSeries={meterCO2.Value} titleText={meterCO2.Name} />}
+                  </Fragment>
+                </CardContent></Card>
+
+
+
+
             </Box>
           </Modal>
 
         </> : <>
 
-          <div style={{ float: 'right' }}>
-            <IconButton
-              color="info"
-              component="label"
-              onClick={() => setOpenModal(true)}
-              style={{ cursor: 'default' }}
-            >
-              <FontAwesomeIcon icon={faSquareArrowUpRight} />
-            </IconButton>
-          </div>
-
-          {typeMeter == typesMeter.BAR && <BarMeter darkMode={darkMode} dataSeries={meterCO2.Value} titleText={meterCO2.Name} />}
-          {typeMeter == typesMeter.TIME_SERIES && <TimeSeriesMeter darkMode={darkMode} dataSeries={meterCO2.Value} titleText={meterCO2.Name} />}
+          <Card style={{ backgroundColor: darkMode ? "#060F24" : "white" }}>
+            <CardHeader title={meterCO2.Name} action={
+              <IconButton
+                color="info"
+                component="label"
+                onClick={() => setOpenModal(true)}
+                style={{ cursor: 'default' }}
+              >
+                <FontAwesomeIcon icon={faSquareArrowUpRight} />
+              </IconButton>
+            } />
+            <CardContent>
+              {typeMeter == typesMeter.BAR && <BarMeter darkMode={darkMode} dataSeries={meterCO2.Value} titleText={meterCO2.Name} />}
+              {typeMeter == typesMeter.TIME_SERIES && <TimeSeriesMeter darkMode={darkMode} dataSeries={meterCO2.Value} titleText={meterCO2.Name} />}
+            </CardContent>
+          </Card>
         </>}
       </>}
     </Fragment>

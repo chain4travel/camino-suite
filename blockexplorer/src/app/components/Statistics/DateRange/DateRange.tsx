@@ -37,6 +37,7 @@ const DateRange = ({
   InitianEndDate,
   setEndDate,
   setStartDate,
+  darkMode
 }) => {
   const changeDate = date => {
     setEndDate(new Date());
@@ -60,18 +61,18 @@ const DateRange = ({
         color="secondary"
         style={{ cursor: 'default' }}
         variant="outlined"
-        style={{width: 250}}
+        style={{ width: 250 }}
       />
       <CalendarMonthIcon
         onClick={onClick}
-        style={{ cursor: 'default', position:'relative', top: 10 }}
+        style={{ cursor: 'default', position: 'relative', top: 10 }}
       />
     </CustomInputContainer>
   ));
   return (
     <Container>
 
-      <div style={{position:'relative', right: '12%'}}>
+      <div style={{ position: 'relative', right: '12%' }}>
         <FilterContainer>
           <StyledButton
             onClick={() =>
@@ -110,28 +111,26 @@ const DateRange = ({
         </FilterContainer>
       </div>
 
-
-
-      <PickerContainer style={{position:'relative', right: '30%', top: -25}}>
-        <DatePicker
-          selected={initialStartDate}
-          onChange={date => setStartDate(date)}
-          selectsStart
-          startDate={initialStartDate}
-          endDate={InitianEndDate}
-          customInput={<CustomInput label="Initial Date" />}
-        // readOnly
-        />
-        <DatePicker
-          selected={InitianEndDate}
-          onChange={date => setEndDate(date)}
-          selectsEnd
-          startDate={initialStartDate}
-          endDate={InitianEndDate}
-          minDate={initialStartDate}
-          customInput={<CustomInput label="End Date" />}
-        // readOnly
-        />
+      <PickerContainer className={darkMode ? 'picker-container' : ''} style={{ position: 'relative', right: '30%', top: -25 }}>
+          <DatePicker
+            selected={initialStartDate}
+            onChange={date => setStartDate(date)}
+            selectsStart
+            startDate={initialStartDate}
+            endDate={InitianEndDate}
+            customInput={<CustomInput label="Initial Date" />}
+          // readOnly
+          />
+          <DatePicker
+            selected={InitianEndDate}
+            onChange={date => setEndDate(date)}
+            selectsEnd
+            startDate={initialStartDate}
+            endDate={InitianEndDate}
+            minDate={initialStartDate}
+            customInput={<CustomInput label="End Date" />}
+          // readOnly
+          />
       </PickerContainer>
 
 

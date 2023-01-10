@@ -10,7 +10,7 @@ const LinearMeter = ({ darkMode, titleText, data, typeStatistic }) => {
   if (config.data != undefined && config.data != null) {
     const options = {
       title: {
-        text: titleText,
+        text: "",
         style: {
           color: darkMode ? 'white' : 'black',
         },

@@ -11,7 +11,7 @@ const TimeSeriesMeter = ({ dataSeries, darkMode, titleText }) => {
             backgroundColor: 'rgba(0,0,0,0)'
         },
         title: {
-            text: titleText,
+            text: "",
             style: {
                 color: darkMode ? 'white' : 'black'
             }

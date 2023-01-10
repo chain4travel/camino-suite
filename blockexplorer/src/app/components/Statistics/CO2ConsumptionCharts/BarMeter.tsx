@@ -25,17 +25,11 @@ const BarMeter = ({ dataSeries, darkMode, titleText }) => {
         },
         title: {
             align: 'center',
-            text: titleText,
+            text: "",
             style: {
                 color: darkMode ? 'white' : 'black'
             }
         },
-        /*
-        subtitle: {
-            align: 'left',
-            text: 'Click the columns to view versions. Source: <a href="http://statcounter.com" target="_blank">statcounter.com</a>'
-        },
-        */
         xAxis: {
             type: 'category',
             labels: {
