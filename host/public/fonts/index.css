@@ -1,0 +1,90 @@
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 200;
+  src: url('inter-200.woff2') format('woff2'), url('inter-200.woff') format('woff');
+}
+
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 300;
+  src: url('inter-300.woff2') format('woff2'), url('inter-300.woff') format('woff');
+}
+
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400;
+  src: url('Inter-400.woff2') format('woff2'), url('Inter-400.woff') format('woff');
+}
+
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 500;
+  src: url('inter-500.woff2') format('woff2'), url('inter-500.woff') format('woff');
+}
+
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 600;
+  src: url('inter-600.woff2') format('woff2'), url('inter-600.woff') format('woff');
+}
+
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 700;
+  src: url('inter-700.woff2') format('woff2'), url('inter-700.woff') format('woff');
+}
+
+@font-face {
+  font-family: 'ClashDisplay';
+  font-weight: 200;
+  font-display: swap;
+  font-style: normal;
+  src: url('ClashDisplay-200.woff2') format('woff2'), url('ClashDisplay-200.woff') format('woff');
+}
+
+@font-face {
+  font-family: 'ClashDisplay';
+  font-weight: 300;
+  font-display: swap;
+  font-style: normal;
+  src: url('ClashDisplay-300.woff2') format('woff2'), url('ClashDisplay-300.woff') format('woff');
+}
+
+@font-face {
+  font-family: 'ClashDisplay';
+  font-weight: 400;
+  font-display: swap;
+  font-style: normal;
+  src: url('ClashDisplay-400.woff2') format('woff2'), url('ClashDisplay-400.woff') format('woff');
+}
+
+@font-face {
+  font-family: 'ClashDisplay';
+  font-weight: 500;
+  font-display: swap;
+  font-style: normal;
+  src: url('ClashDisplay-500.woff2') format('woff2'), url('ClashDisplay-500.woff') format('woff');
+}
+
+@font-face {
+  font-family: 'ClashDisplay';
+  font-weight: 600;
+  font-display: swap;
+  font-style: normal;
+  src: url('ClashDisplay-600.woff2') format('woff2'), url('ClashDisplay-600.woff') format('woff');
+}
+
+@font-face {
+  font-family: 'ClashDisplay';
+  font-weight: 700;
+  font-display: swap;
+  font-style: normal;
+  src: url('ClashDisplay-700.woff2') format('woff2'), url('ClashDisplay-700.woff') format('woff');
+}
+

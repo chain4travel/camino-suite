@@ -85,11 +85,7 @@ export function GasAmount({ amount }: { amount: number }) {
         {getDisplayAmount(amount).value.toLocaleString('en-US')}
       </Typography>
       <GasStationOutline
-        style={{
-          width: '26px',
-          height: '26px',
-          marginLeft: '5px',
-        }}
+        style={{ width: '24px', height: '24px', marginLeft: '6px' }}
       />
     </>
   );

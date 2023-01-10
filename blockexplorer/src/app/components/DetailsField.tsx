@@ -136,7 +136,7 @@ export default function DetailsField({
 export const Field = ({
   type,
   value,
-  fontWeight = 'fontWeightRegular',
+  fontWeight = 'fontWeightMedium',
 }: {
   type: string;
   value: string | number | object | undefined;

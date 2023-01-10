@@ -146,7 +146,7 @@ tr {
 }
 
 td {
-    font-family: monospace;
+    font-family: 'Inter';
     padding: 0;
 }
 
