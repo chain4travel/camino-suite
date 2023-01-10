@@ -62,7 +62,16 @@ const statisticsSlice = createSlice({
     });
     builder.addCase(loadDailyEmissions.fulfilled, (state, { payload }) => {
       let data: any = payload;
-      state.dailyEmissions = data;
+
+      if(data != null && data != undefined)
+      {
+        state.dailyEmissions = data;
+      }
+      else
+      {
+        state.dailyEmissions = initialStateCO2Data;
+      }
+
       state.dailyEmissionsStatus = Status.SUCCEEDED;
     });
     builder.addCase(loadDailyEmissions.rejected, state => {
@@ -75,8 +84,18 @@ const statisticsSlice = createSlice({
     });
     builder.addCase(loadNetworkEmissions.fulfilled, (state, { payload }) => {
       let data: any = payload;
-      state.networkEmissions = data;
+
+      if(data != null && data != undefined)
+      {
+        state.networkEmissions = data;
+      }
+      else
+      {
+        state.networkEmissions = initialStateCO2Data;
+      }
+
       state.networkEmissionsStatus = Status.SUCCEEDED;
+     
     });
     builder.addCase(loadNetworkEmissions.rejected, state => {
       state.networkEmissionsStatus = Status.FAILED;
@@ -90,7 +109,16 @@ const statisticsSlice = createSlice({
       loadTransactionsEmissions.fulfilled,
       (state, { payload }) => {
         let data: any = payload;
-        state.transactionsEmissions = data;
+
+        if(data != null && data != undefined)
+        {
+          state.transactionsEmissions = data;
+        }
+        else
+        {
+          state.transactionsEmissions = initialStateCO2Data;
+        }
+
         state.transactionsEmissionsStatus = Status.SUCCEEDED;
       },
     );
