@@ -40,7 +40,7 @@ const TimeSeriesMeter = ({ dataSeries, darkMode, titleText }) => {
                 formatter: function (obj) {
                     let index = obj.pos;
                     let dataDay = dataSeries[index];
-                    return `<span style="color:${darkMode == true ? 'white' : 'black'}">${dataDay != undefined && dataDay != null ? moment(dataDay.time).format("MM-DD") : ""
+                    return `<span style="color:${darkMode == true ? 'white' : 'black'}">${dataDay != undefined && dataDay != null ? moment(dataDay.time).format("D MMM") : ""
                     }</span>`;
                 },
             },

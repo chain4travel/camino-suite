@@ -59,6 +59,8 @@ const DateRange = ({
         onClick={onClick}
         color="secondary"
         style={{ cursor: 'default' }}
+        variant="outlined"
+        style={{width: 250}}
       />
       <CalendarMonthIcon
         onClick={onClick}
