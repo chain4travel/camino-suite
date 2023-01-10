@@ -101,15 +101,13 @@
     "web-vitals": "2.1.2",
     "webpack": "^5.57.1",
     "webpack-cli": "^4.9.0",
-    "webpack-dev-server": "^4.3.1"
-  },
-  "dependencies": {
+    "webpack-dev-server": "^4.3.1",
     "highcharts": "^10.3.2",
     "highcharts-react-official": "^3.1.0",
     "json-loader": "^0.5.7",
-    "path": "^0.12.7",
-    "react-simple-maps": "^3.0.0",
-    "react-svg-loader": "^3.0.3",
-    "url-loader": "^4.1.1"
+    "react-simple-maps": "^3.0.0"
+  },
+  "dependencies": {
+    "path": "^0.12.7"
   }
 }
