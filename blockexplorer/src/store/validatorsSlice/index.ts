@@ -33,7 +33,7 @@ function mapToTableData(item): ValidatorType {
 }
 
 function mapToTableDataMagelland(item): ValidatorType {
-  let uptime = Math.round(item.Uptime * 100) + "%";
+  let uptime = Math.round(item.uptime * 100) + "%";
   return {
     status: item.connected ? "Connected" : "Disconnected",
     nodeID: item.nodeID,
