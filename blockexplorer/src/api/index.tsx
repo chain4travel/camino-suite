@@ -182,7 +182,7 @@ export const fetchBlocksTransactionsCChain =
 
   export async function loadValidatorsInfo() {
     return new Promise((resolve, reject) => {
-      const urlValidators = "https://63a3220e9704d18da086d8da.mockapi.io/v2/validatorsInfo";
+      const urlValidators = "https://magellan.free.beeceptor.com/v2/validatorsInfo";
       let networks = store.getState().appConfig;
       let activeNetwork = networks.networks.find(
         element => element.id === networks.activeNetwork,
