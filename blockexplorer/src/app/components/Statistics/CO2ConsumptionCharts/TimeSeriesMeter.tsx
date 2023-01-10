@@ -6,7 +6,7 @@ import moment from 'moment';
 const TimeSeriesMeter = ({ dataSeries, darkMode, titleText }) => {
 
     const validateMappedSeries = (series) => {
-        series.map((dat) => {
+        return series.map((dat) => {
             if(dat != null && dat != undefined)
             {
                 return {
