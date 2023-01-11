@@ -106,7 +106,7 @@ const validatorsSlice = createSlice({
     });
     builder.addCase(loadValidators.fulfilled, (state, { payload }) => {
       let responsePayload: any = payload;
-      if(responsePayload != null && responsePayload != undefined)
+      if(responsePayload !== null && responsePayload !== undefined)
       {
         state.numberOfValidators = responsePayload.length;
         state.numberOfActiveValidators = responsePayload.filter((v: any) => v.connected).length;

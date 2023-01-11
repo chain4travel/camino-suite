@@ -1,14 +1,10 @@
 import React, { Fragment, useEffect, useState } from 'react';
-import Tooltip from '@mui/material/Tooltip';
 import { Marker } from 'react-simple-maps';
 import './styles/CircleMarker.css';
-//import Popover from '@mui/material/Popover';
 import Typography from '@mui/material/Typography';
 import Popper, { PopperPlacementType } from '@mui/material/Popper';
 import Fade from '@mui/material/Fade';
 import Paper from '@mui/material/Paper';
-import PopupState, { bindToggle, bindPopper } from 'material-ui-popup-state';
-
 
 const CircleMarker = ({
   country,

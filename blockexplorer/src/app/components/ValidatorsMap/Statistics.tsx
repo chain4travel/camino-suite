@@ -3,7 +3,7 @@ import Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
 import flags from './json/flags.json';
 
-const StadisticsV2 = ({ nodesPerCountry, darkMode }) => {
+const Statistics = ({ nodesPerCountry, darkMode }) => {
   const getUrlFlag = index => {
     let objFlag = nodesPerCountry[index];
     let code = flags.find(flag => flag.code == objFlag.alpha2);
@@ -76,4 +76,4 @@ const StadisticsV2 = ({ nodesPerCountry, darkMode }) => {
   );
 };
 
-export default StadisticsV2;
+export default Statistics;

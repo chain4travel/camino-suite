@@ -29,33 +29,25 @@ import features from 'app/components/ValidatorsMap/json/features.json';
 import CircleMarker from 'app/components/ValidatorsMap/CircleMarker';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
-import Typography from '@mui/material/Typography';
 import CircularProgress from '@mui/material/CircularProgress';
 import '../../components/ValidatorsMap/styles/NotoFont.css';
-import Stadistics from 'app/components/ValidatorsMap/Stadistics';
-import { Status } from "types";
+import Statistics from 'app/components/ValidatorsMap/Statistics';
 
 const Validators: FC = () => {
   const theme = useTheme();
   const { isDesktop, isWidescreen } = useWidth();
 
   const validators = useAppSelector(selectAllValidators);
-  const data = useAppSelector(getLocationsNodes);
-
   const nodesPerCountry = useAppSelector(getSumNodesPerCountry);
   const nodesPerCity = useAppSelector(getSumNodesPerCity);
+  const loadingStatus = useAppSelector(getValidatorsStatus);
 
   const dispatch = useAppDispatch();
 
-  const loadingStatus = useAppSelector(getValidatorsStatus);
-
   const loading = loadingStatus == "loading" ? true : false;
 
-  //Map And Stadistics
   const [activeTab, setActiveTab] = useState(0);
-  //const [maxValue, setMaxValue] = useState(0);
   const [zoomValue, setZoomValue] = useState(1.5);
-  const [error, setError] = useState(false);
   const [sizeCircle, setSizeCircle] = useState(10);
   const [sizeStroke, setSizeStroke] = useState(7);
 
@@ -98,23 +90,19 @@ const Validators: FC = () => {
 
         <Fragment>
           <div style={{ position: 'relative' }}>
-            {loading == false ? (
+            {loading && (
+              <Box
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              <CircularProgress color="secondary" />
+            </Box>
+            )}
+            {!loading && (
               <>
-                {error == true ? (
-                  <>
-                    <Typography
-                      style={{ textAlign: 'center' }}
-                      component="div"
-                      variant="body1"
-                    >
-                      <Box sx={{ color: 'error.main' }}>
-                        {/*<h4>Could not connect to the geolocation API</h4>*/}
-                      </Box>
-                    </Typography>
-                  </>
-                ) : null}
-
-
                 <div>
                   <Tabs
                     variant="fullWidth"
@@ -145,7 +133,7 @@ const Validators: FC = () => {
                   </Tabs>
                 </div>
 
-                {activeTab == 0 ? (
+                {activeTab === 0 && (
                   <>
                     <TableContainer sx={{ minHeight: '400px' }}>
                       {isWidescreen || isDesktop ? (
@@ -169,9 +157,9 @@ const Validators: FC = () => {
                       )}
                     </TableContainer>
                   </>
-                ) : null}
+                ) }
 
-                {activeTab == 1 ? (
+                {activeTab === 1 && (
                   <>
                     <ComposableMap
                       style={{
@@ -232,34 +220,24 @@ const Validators: FC = () => {
                       </ZoomableGroup>
                     </ComposableMap>
                   </>
-                ) : null}
+                ) }
 
-                {activeTab == 2 ? (
+                {activeTab === 2 && (
                   <div className="noto-flags">
                     {theme.palette.mode == 'light' ? (
-                      <Stadistics
+                      <Statistics
                         nodesPerCountry={nodesPerCountry}
                         darkMode={false}
                       />
                     ) : (
-                      <Stadistics
+                      <Statistics
                         nodesPerCountry={nodesPerCountry}
                         darkMode={true}
                       />
                     )}
                   </div>
-                ) : null}
+                )}
               </>
-            ) : (
-              <Box
-                sx={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}
-              >
-                <CircularProgress color="secondary" />
-              </Box>
             )}
           </div>
         </Fragment>
