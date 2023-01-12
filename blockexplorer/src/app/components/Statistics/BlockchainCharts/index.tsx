@@ -1,4 +1,5 @@
 import React, { Fragment, useEffect, useState } from 'react';
+
 import { useAppDispatch, useAppSelector } from 'store/configureStore';
 import { Status } from 'types';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -17,6 +18,14 @@ import DateRange from '../DateRange/DateRange';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import CardHeader from '@mui/material/CardHeader';
+import Tooltip from '@mui/material/Tooltip';
+import InfoIcon from '@mui/icons-material/Info';
+import styled from 'styled-components';
+
+const TooltipContainer = styled.div`
+  display: flex;
+`
+
 
 const BlockchainCharts = ({ darkMode, titleText, utilSlice, sliceGetter, sliceGetterLoader, typeStatistic }) => {
   const { isDesktop } = useWidth();
@@ -100,7 +109,14 @@ const BlockchainCharts = ({ darkMode, titleText, utilSlice, sliceGetter, sliceGe
           </Modal>
 
           <Card style={{ backgroundColor: darkMode ? "#060F24" : "white" }}>
+          
             <CardHeader title={titleText} action={
+              <TooltipContainer>
+              <Tooltip title="This chart highlights the total number of transactions on the Camino blockchain with daily individual breakdown for estimated hash rate, average block time and size, total block and uncle block count and total new address seen." placement="top">
+              <IconButton>
+          <InfoIcon />
+        </IconButton>
+          </Tooltip>
               <IconButton
                 color="info"
                 component="label"
@@ -109,7 +125,9 @@ const BlockchainCharts = ({ darkMode, titleText, utilSlice, sliceGetter, sliceGe
               >
                 <FontAwesomeIcon icon={faSquareArrowUpRight} />
               </IconButton>
+              </TooltipContainer>
             } />
+            
             <CardContent>
               {dataStatistics != undefined && dataStatistics != null ? <>
                 <LinearMeter darkMode={darkMode}
