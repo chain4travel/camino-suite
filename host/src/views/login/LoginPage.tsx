@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from "react";
-import { Box, Paper, Typography, Button } from "@mui/material";
+import { Box, Paper, Typography, Button, MenuItem } from "@mui/material";
 import { Grid, alpha } from "@mui/material";
 import {
   mdiShieldKeyOutline,
@@ -10,15 +10,12 @@ import {
 } from "@mdi/js";
 import Icon from "@mdi/react";
 import { Link } from "react-router-dom";
-// import { makeStyles, withStyles } from "tss-react/mui";
-// import { red } from "@mui/material/colors";
+import { styled } from "@mui/material/styles";
 
-// const useStyles = makeStyles((theme) => ({
-//   link: {
-//     color: theme.palette.text.primary,
-//     textDecorationColor: "inherit",
-//   },
-// }));
+const StyledLink = styled(Link)(({ theme }) => ({
+  color: theme.palette.text.primary,
+  textDecoration: "underline !important",
+}));
 
 export default function LoginPage() {
   return (
@@ -31,6 +28,10 @@ export default function LoginPage() {
           borderRadius: "18px",
           textAlign: "center",
           gap: "1rem",
+          m: ".75rem",
+          "@media (max-width: 600px)": {
+            p: "20px",
+          },
         }}
       >
         <Typography variant="h2">Camino Application Suite</Typography>
@@ -86,10 +87,10 @@ export default function LoginPage() {
             <Typography variant="body1">Create a wallet</Typography>
           </Button>
           <Typography variant="body2" color="text.secondary">
-            By using this application, you agree to the{" "}
-            <Link to="/legal" /*className={useStyles().link}*/>
+            By using this application, you agree to the&nbsp;
+            <StyledLink to="/legal" style={{ textDecoration: "none" }}>
               Terms of Service
-            </Link>
+            </StyledLink>
           </Typography>
         </Box>
       </Paper>

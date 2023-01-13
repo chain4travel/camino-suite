@@ -50,7 +50,6 @@ const ERROR = {
   dark: "#B63831",
   main: "#DD5E56",
 };
-// #e2e8f0;
 const GREY = {
   0: "#FFFFFF",
   50: "#F8FAFC",
@@ -104,12 +103,14 @@ const palette = {
     text: { primary: GREY[800], secondary: GREY[600], disabled: GREY[500] },
     background: { paper: "#fff", default: GREY[200], neutral: GREY[200] },
     action: { active: GREY[600], ...COMMON.action },
+    button: { primary: GREY[200], secondary: GREY[100] },
   },
   dark: {
     ...COMMON,
     text: { primary: "#fff", secondary: GREY[500], disabled: GREY[600] },
     background: { paper: GREY[900], default: GREY[900], neutral: GREY[500_16] },
     action: { active: GREY[500], ...COMMON.action },
+    button: { primary: GREY[700], secondary: GREY[800] },
   },
 };
 
