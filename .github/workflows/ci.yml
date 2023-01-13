@@ -2,14 +2,14 @@ name: camino-suite ci
 
 on:
   workflow_dispatch:
-  push:    
+  push:
     branches:
       - main
       - dev
   pull_request:
     branches:
-        - main
-        - dev
+      - main
+      - dev
 
 env:
   node_version: 16
@@ -19,11 +19,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      with: submodules: recursive
+        with:
+          submodules: recursive
       - uses: actions/setup-node@v3
         with:
           node-version: ${{ env.node_version }}
-          
+
       - name: install yarn dependencies - host
         working-directory: ./host
         run: yarn install
@@ -57,16 +58,16 @@ jobs:
               echo "explorer_bucket=playground.suite-explorer.camino.foundation" >> $GITHUB_OUTPUT
           fi
 
-      - name: 'gcloud authentication'
-        id: 'auth'
+      - name: "gcloud authentication"
+        id: "auth"
         if: ${{ github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev' }}
-        uses: 'google-github-actions/auth@v1'
+        uses: "google-github-actions/auth@v1"
         with:
-            credentials_json: '${{ secrets.GOOGLE_CREDENTIALS }}'
+          credentials_json: "${{ secrets.GOOGLE_CREDENTIALS }}"
 
-      - name: 'Set up Cloud SDK'
+      - name: "Set up Cloud SDK"
         if: ${{ github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev' }}
-        uses: 'google-github-actions/setup-gcloud@v1'
+        uses: "google-github-actions/setup-gcloud@v1"
 
       - name: update suite bucket files
         if: ${{ github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev' }}
