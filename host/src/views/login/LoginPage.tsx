@@ -47,13 +47,13 @@ export default function LoginPage() {
           <Grid container rowSpacing={2}>
             <Grid container item xs={12} justifyContent="center" spacing={2}>
               <Grid item xs={12} sm={6}>
-                <AccessActionButton>
+                <AccessActionButton to="/access/privateKey">
                   <Typography variant="body1">Private Key</Typography>
                   <Icon path={mdiShieldKeyOutline} size={1} />
                 </AccessActionButton>
               </Grid>
               <Grid item xs={12} sm={6}>
-                <AccessActionButton>
+                <AccessActionButton to="/access/mnemonic">
                   <Typography variant="body1">Mnemonic Key Phrase</Typography>
                   <Icon path={mdiListBoxOutline} size={1} />
                 </AccessActionButton>
@@ -61,7 +61,7 @@ export default function LoginPage() {
             </Grid>
             <Grid container item xs={12} justifyContent="center" spacing={2}>
               <Grid item xs={12} sm={6}>
-                <AccessActionButton>
+                <AccessActionButton to="/access/keystore">
                   <Typography variant="body1">Keystore File</Typography>
                   <Icon path={mdiFileKeyOutline} size={1} />
                 </AccessActionButton>
@@ -125,24 +125,26 @@ function SavedWalletButton({ label }, props) {
 
 function AccessActionButton(props) {
   return (
-    <Button
-      variant="contained"
-      sx={{
-        p: ".75rem",
-        width: "100%",
-        bgcolor: "button.secondary",
-        padding: "1.25rem",
-        justifyContent: "space-between",
-        "&:hover": { bgcolor: "button.secondary", opacity: ".8" },
-        "&:disabled": {
-          opacity: ".3",
+    <Link to={props.to}>
+      <Button
+        variant="contained"
+        sx={{
+          p: ".75rem",
+          width: "100%",
           bgcolor: "button.secondary",
-          cursor: "not-allowed",
-        },
-      }}
-      {...props}
-    >
-      {props.children}
-    </Button>
+          padding: "1.25rem",
+          justifyContent: "space-between",
+          "&:hover": { bgcolor: "button.secondary", opacity: ".8" },
+          "&:disabled": {
+            opacity: ".3",
+            bgcolor: "button.secondary",
+            cursor: "not-allowed",
+          },
+        }}
+        {...props}
+      >
+        {props.children}
+      </Button>
+    </Link>
   );
 }

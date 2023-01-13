@@ -6,6 +6,7 @@ import ExplorerApp from "./ExplorerApp";
 import Wallet from "./WalletApp";
 import { getActiveApp } from "../redux/slices/app-config";
 import Login from "./Login";
+import LoginPage from "../views/login/LoginPage";
 import Create from "./Create";
 import Legal from "./Legal";
 import Menu from "./Menu";
@@ -30,7 +31,7 @@ export default function Layout() {
               </Protected>
             }
           />
-          <Route path="/login" element={<Login />} />
+          <Route path="/login" element={<LoginPage />} />
           <Route path="/create" element={<Create />} />
           <Route path="/legal" element={<Legal />} />
           <Route path="/access" element={<AccessLayout />}>
