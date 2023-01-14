@@ -20,7 +20,7 @@
             >
                 {{ $t('access.submit') }}
             </v-btn>
-            <div @click="navigate('/access')" class="link">
+            <div @click="navigate('/login')" class="link">
                 {{ $t('access.cancel') }}
             </div>
         </div>

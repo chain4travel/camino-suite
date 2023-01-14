@@ -1,8 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { mountCreateWallet } from "wallet/mountCreate";
-import { useAppSelector } from "../hooks/reduxHooks";
-import { getActiveApp } from "../redux/slices/app-config";
+import { useAppSelector } from "../../hooks/reduxHooks";
+import { getActiveApp } from "../../redux/slices/app-config";
 
 const CreateWallet = ({ props }) => {
   const ref = useRef(null);
@@ -11,7 +11,15 @@ const CreateWallet = ({ props }) => {
   }, []);
 
   return (
-    <div>
+    <div
+      style={{
+        display: "flex",
+        width: "100%",
+        height: "100%",
+        justifyContent: "center",
+        alignItems: "center",
+      }}
+    >
       <div ref={ref} />
     </div>
   );

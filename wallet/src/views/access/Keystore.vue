@@ -27,7 +27,7 @@
                     {{ $t('access.submit') }}
                 </v-btn>
             </form>
-            <div @click="navigate('/access')" class="link">{{ $t('access.cancel') }}</div>
+            <div @click="navigate('/login')" class="link">{{ $t('access.cancel') }}</div>
         </div>
     </div>
 </template>
@@ -127,6 +127,7 @@ export default class Keystore extends Vue {
     margin-bottom: 22px;
 }
 .access_card {
+    max-width: 420px;
     background-color: var(--bg-light);
     padding: main.$container-padding;
     width: 100%;
@@ -138,17 +139,20 @@ export default class Keystore extends Vue {
 }
 
 .content {
+    display: flex;
+    flex-direction: column;
     width: 340px;
     max-width: 100%;
     margin: 0px auto;
+    align-items: center;
 }
 
 h1 {
     font-size: main.$m-size;
     font-weight: 400;
 }
-
 .file_in {
+    width: 100%;
     margin: 30px auto 10px;
     font-size: 13px;
     border: none !important;

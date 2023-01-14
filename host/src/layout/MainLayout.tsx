@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
 import store from "wallet/store";
 import { Status } from "../@types";
 import { useAppDispatch } from "../hooks/reduxHooks";
@@ -39,10 +40,19 @@ const MainLayout = ({ children }) => {
         }}
       />
       {!loadNetworks && (
-        <Box sx={{ display: "flex", flexDirection: "column", flex: 1 }}>
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            flex: 1,
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
           {children}
         </Box>
       )}
+      <Footer />
     </Box>
   );
 };

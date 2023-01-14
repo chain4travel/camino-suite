@@ -36,10 +36,10 @@ export default function LoginPage() {
       >
         <Typography variant="h2">Camino Application Suite</Typography>
         {/* Saved wallets section */}
-        <Box sx={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+        {/* <Box sx={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
           <Typography variant="subtitle1">Saved Camino Wallets</Typography>
           <SavedWalletButton label="Daniel's Wallet" />
-        </Box>
+        </Box> */}
         {/* Access wallet section */}
         <Box sx={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
           <Typography variant="subtitle1">
@@ -79,13 +79,11 @@ export default function LoginPage() {
         {/* Actions section */}
         <Box sx={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
           <Typography variant="subtitle1">Don't have a wallet yet ?</Typography>
-          <Button
-            variant="contained"
-            sx={{ p: ".75rem", width: "100%" }}
-            href="/create"
-          >
-            <Typography variant="body1">Create a wallet</Typography>
-          </Button>
+          <StyledLink to="/create" style={{ textDecoration: "none" }}>
+            <Button variant="contained" sx={{ p: ".75rem", width: "100%" }}>
+              <Typography variant="body1">Create a wallet</Typography>
+            </Button>
+          </StyledLink>
           <Typography variant="body2" color="text.secondary">
             By using this application, you agree to the&nbsp;
             <StyledLink to="/legal" style={{ textDecoration: "none" }}>
@@ -126,7 +124,7 @@ function SavedWalletButton({ label }, props) {
 
 function AccessActionButton(props) {
   return (
-    <Link to={props.to}>
+    <Link to={props.to} style={{ textDecoration: "none" }}>
       <Button
         variant="contained"
         sx={{

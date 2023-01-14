@@ -15,7 +15,7 @@
                                 <img v-else src="@/assets/diamond-secondary-night.svg" alt />
                             </div>
                             <h1>{{ $t('create.generate') }}</h1>
-                            <div @click="navigate('/access')" class="link">
+                            <div @click="navigate('/login')" class="link">
                                 {{ $t('create.but_have') }}
                             </div>
                             <div class="options">
