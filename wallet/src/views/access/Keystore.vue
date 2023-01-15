@@ -46,7 +46,6 @@ import { AllKeyFileTypes } from '@/js/IKeystore'
 })
 export default class Keystore extends Vue {
     @Prop() navigate: any
-    @Prop() setLogged: any
     pass: string = ''
     file: File | null = null
     fileText: string | null = null
@@ -91,7 +90,8 @@ export default class Keystore extends Vue {
                 .dispatch('importKeyfile', data)
                 .then((res) => {
                     parent.isLoading = false
-                    this.setLogged(this.$store.state)
+                    let { updateSuiteStore } = this.globalHelper()
+                    updateSuiteStore(this.$store.state)
                 })
                 .catch((err) => {
                     console.log(err)

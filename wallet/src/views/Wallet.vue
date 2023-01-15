@@ -101,6 +101,7 @@ export default class Wallet extends Vue {
     intervalId: NodeJS.Timeout | null = null
     logoutTimestamp = Date.now() + TIMEOUT_DUR_MS
     isLogOut = false
+    helper = this.globalHelper()
 
     // Set the logout timestamp to now + TIMEOUT_DUR_MS
     resetTimer() {
@@ -114,6 +115,7 @@ export default class Wallet extends Vue {
         if (now >= this.logoutTimestamp && !this.isLogOut) {
             this.isLogOut = true
             this.$store.dispatch('timeoutLogout')
+            this.helper.updateSuiteStore(this.$store.state)
         }
     }
 

@@ -58,6 +58,10 @@ export default {
         this.$store.dispatch('Assets/ERCNft/init')
         this.$store.dispatch('updateAvaxPrice')
     },
+    mounted() {
+        let { updateSuiteStore } = this.globalHelper()
+        updateSuiteStore(this.$store.state)
+    },
     computed: {
         isNavbar() {
             if (this.$route.path.includes('/wallet/home')) {

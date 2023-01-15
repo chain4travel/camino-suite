@@ -35,6 +35,22 @@ function mountComponent(type: string) {
 }
 
 export const mountAccessComponents = (el: string, type: string, props: any) => {
+    const { setUpdateStore, setLogOut } = props
+    const MyPlugin = {
+        install(Vue, options) {
+            Vue.prototype.globalHelper = () => {
+                return {
+                    updateSuiteStore: (s) => {
+                        setUpdateStore(s)
+                    },
+                    logout: () => {
+                        setLogOut(true)
+                    },
+                }
+            }
+        },
+    }
+    Vue.use(MyPlugin)
     const app = new Vue({
         router,
         store,
