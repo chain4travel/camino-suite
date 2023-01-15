@@ -1,7 +1,7 @@
 import { mount } from "wallet/mountApp";
 import React, { useRef, useEffect, useState } from "react";
-import { useAppDispatch } from "../hooks/reduxHooks";
-import { updateAuthStatus, updateValues } from "../redux/slices/app-config";
+import { useAppDispatch } from "../../hooks/reduxHooks";
+import { updateAuthStatus, updateValues } from "../../redux/slices/app-config";
 
 const LoadWallet = () => {
   const [updateStore, setUpdateStore] = useState(null);
