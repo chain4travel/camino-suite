@@ -75,7 +75,7 @@ export default class Modal extends Vue {
 }
 
 .modal_main {
-    z-index: 3;
+    z-index: 1000;
     position: fixed;
     top: 0;
     left: 0;

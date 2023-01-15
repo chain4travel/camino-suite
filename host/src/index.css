@@ -73,4 +73,5 @@ html[data-theme='night'] {
   background-color: var(--bg) !important;
   font-family: 'Rubik', sans-serif;
   transition-duration: 0.2s;
+  width: 100%;
 }

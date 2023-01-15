@@ -175,11 +175,13 @@ export default class Wallet extends Vue {
 @use "../styles/main";
 .content {
     width: 100%;
-    margin-top: 70px;
+    margin-top: 60px;
     display: grid;
     column-gap: 15px;
     background-color: var(--bg);
     grid-template-columns: 1fr 300px;
+    align-items: center;
+    padding: 12px;
 }
 
 .top-bar {

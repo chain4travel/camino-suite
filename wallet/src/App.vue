@@ -100,7 +100,7 @@ export default {
 
 .main_cols {
     &[wallet_view] {
-        height: 100vh;
+        // height: 100vh;
 
         #router_view {
             padding: 0;
@@ -138,17 +138,6 @@ p {
 
 .v-application--wrap {
     min-height: 100% !important;
-}
-
-#app {
-    min-height: 100%;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    text-align: left;
-    color: var(--primary-color);
-    background-color: var(--bg) !important;
-    font-family: 'Inter', sans-serif;
-    transition-duration: 0.2s;
 }
 
 #nav {
