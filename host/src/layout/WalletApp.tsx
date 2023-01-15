@@ -1,14 +1,7 @@
 import { mount } from "wallet/mountApp";
 import React, { useRef, useEffect, useState } from "react";
-import { store as appSuiteStore } from "../App";
-import { useSuiteStore } from "../redux/useSuiteStore";
 import { useAppDispatch } from "../hooks/reduxHooks";
-import { updateValues } from "../redux/slices/app-config";
-
-const useUpdateStore = () => {
-  // const updateStore;
-  return {};
-};
+import { updateAuthStatus, updateValues } from "../redux/slices/app-config";
 
 const LoadWallet = () => {
   const [updateStore, setUpdateStore] = useState(null);
@@ -17,6 +10,7 @@ const LoadWallet = () => {
   const ref = useRef(null);
   useEffect(() => {
     dispatch(updateValues(updateStore));
+    if (updateStore) dispatch(updateAuthStatus(true));
   }, [updateStore]);
   useEffect(() => {
     dispatch(updateValues(updateStore));
