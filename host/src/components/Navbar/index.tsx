@@ -4,31 +4,25 @@ import { Toolbar } from "@mui/material";
 import Logo from "../Logo";
 import NetworkSwitcher from "./NetworkSwitcher";
 import ThemeSwitcher from "./ThemeSwitcher";
-import { useAppSelector } from "../../hooks/reduxHooks";
+import { useAppDispatch, useAppSelector } from "../../hooks/reduxHooks";
 import { getActiveNetwork } from "../../redux/slices/network";
 import store from "wallet/store";
 import { mdiLogout, mdiWalletOutline } from "@mdi/js";
 import Icon from "@mdi/react";
 import { useNavigate } from "react-router-dom";
+import { updateAuthStatus } from "../../redux/slices/app-config";
 
 export default function Navbar() {
   const activeNetwork = useAppSelector(getActiveNetwork);
-  const [auth, setAuth] = useState(false);
+  const auth = useAppSelector((state) => state.appConfig.isAuth);
+
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const logout = async () => {
     await store.dispatch("logout");
-    await store.dispatch("Notifications/add", {
-      title: "Logout",
-      message: "You have successfully logged out of your wallet.",
-    });
-    setAuth(false);
+    dispatch(updateAuthStatus(false));
     navigate("/login");
   };
-  useEffect(() => {
-    setInterval(() => {
-      if (store.state.isAuth) setAuth(true);
-    }, 1000);
-  }, []);
 
   return (
     <AppBar
@@ -56,7 +50,7 @@ export default function Navbar() {
         <Box sx={{ display: "flex", alignItems: "center", gap: ".5rem" }}>
           <ThemeSwitcher />
           {activeNetwork && <NetworkSwitcher />}
-          {auth ? (
+          {auth !== false ? (
             <Box
               onClick={logout}
               sx={{
