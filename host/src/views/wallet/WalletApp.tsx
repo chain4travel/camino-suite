@@ -1,7 +1,8 @@
 import { mount } from "wallet/mountApp";
 import React, { useRef, useEffect, useState } from "react";
-import { useAppDispatch } from "../../hooks/reduxHooks";
+import { useAppDispatch, useAppSelector } from "../../hooks/reduxHooks";
 import { updateAuthStatus, updateValues } from "../../redux/slices/app-config";
+import { Navigate } from "react-router-dom";
 
 const LoadWallet = () => {
   const [updateStore, setUpdateStore] = useState(null);
@@ -35,6 +36,8 @@ const LoadWallet = () => {
 };
 
 const Wallet = () => {
+  const auth = useAppSelector((state) => state.appConfig.isAuth);
+  if (!auth) return <Navigate to="/login"></Navigate>;
   return (
     <React.Suspense fallback={<div>Loading...</div>}>
       <LoadWallet />

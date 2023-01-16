@@ -38,7 +38,9 @@ export const mount = (el: string, appSuiteStore: any) => {
         render: (createElement) => {
             return createElement(App)
         },
-        created: () => {},
+        created: function () {
+            store.commit('Accounts/loadAccounts')
+        },
         mounted() {
             // Reveal app version
             // Hide loader once vue is initialized

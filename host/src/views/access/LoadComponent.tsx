@@ -9,8 +9,11 @@ const LoadComponent = ({ type, props }) => {
   const dispatch = useAppDispatch();
   useEffect(() => {
     dispatch(updateValues(updateStore));
-    if (updateStore?.isAuth) dispatch(updateAuthStatus(updateStore?.isAuth));
+    if (updateStore?.isAuth) {
+      dispatch(updateAuthStatus(updateStore?.isAuth));
+    }
   }, [updateStore]);
+
   useEffect(() => {
     mountAccessComponents(ref.current, type, {
       ...props,

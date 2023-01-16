@@ -1,18 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { useAppDispatch, useAppSelector } from "../../hooks/reduxHooks";
-import {
-  getActiveApp,
-  selectAuthStatus,
-  updateValues,
-} from "../../redux/slices/app-config";
+import { useAppSelector } from "../../hooks/reduxHooks";
+import { getActiveApp, selectAuthStatus } from "../../redux/slices/app-config";
 import LoadComponent from "./LoadComponent";
 const MountAccessComponent = ({ type }) => {
   const navigate = useNavigate();
   const [logged, setLogged] = useState(null);
   const app = useAppSelector(getActiveApp);
   const auth = useAppSelector(selectAuthStatus);
-  const dispatch = useAppDispatch();
   const location = useLocation();
   useEffect(() => {
     if (auth) {
