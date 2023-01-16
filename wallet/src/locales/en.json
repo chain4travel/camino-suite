@@ -123,6 +123,9 @@
             "hide": "Hide Breakdown",
             "available": "Available",
             "locked": "Locked",
+            "deposited": "Deposited",
+            "bonded": "Bonded",
+            "bonded_deposited": "Bonded & Deposited",
             "locked_stake": "Locked Stakeable",
             "stake": "Staking",
             "collectibles": "Collectibles"

@@ -133,7 +133,7 @@ import { ChainIdType } from '@/constants'
 import ChainSwapForm from '@/components/wallet/earn/ChainTransfer/Form.vue'
 
 import { WalletType } from '@/js/wallets/types'
-import * as SDK from '@c4tplatform/camino-wallet-sdk'
+import * as SDK from '@c4tplatform/camino-wallet-sdk/dist'
 
 const IMPORT_DELAY = 5000 // in ms
 const BALANCE_DELAY = 2000 // in ms
@@ -177,6 +177,8 @@ export default class ChainTransfer extends Vue {
     importState: TxState = TxState.waiting
     importStatus: string | null = null
     importReason: string | null = null
+    depositAndBound: Boolean =
+        ava.getNetwork().P.lockModeBondDeposit && ava.getNetwork().P.verifyNodeSignature
 
     @Watch('sourceChain')
     @Watch('targetChain')
@@ -184,6 +186,12 @@ export default class ChainTransfer extends Vue {
         if (this.sourceChain === 'C' || this.targetChain === 'C') {
             this.updateBaseFee()
         }
+    }
+
+    @Watch('$store.state.Network.selectedNetwork.networkId')
+    SupportdepositAndBound(): void {
+        this.depositAndBound =
+            ava.getNetwork().P.lockModeBondDeposit && ava.getNetwork().P.verifyNodeSignature
     }
 
     created() {
@@ -196,6 +204,7 @@ export default class ChainTransfer extends Vue {
     }
 
     get platformUnlocked(): BN {
+        if (this.depositAndBound) return this.$store.getters['Assets/walletPlatformBalanceUnlocked']
         return this.$store.getters['Assets/walletPlatformBalance']
     }
 
@@ -341,28 +350,32 @@ export default class ChainTransfer extends Vue {
         let exportTxId
         this.exportState = TxState.started
 
-        switch (sourceChain) {
-            case 'X':
-                exportTxId = await wallet.exportFromXChain(
-                    amt,
-                    destinationChain as SDK.ExportChainsX,
-                    this.importFeeBN
-                )
-                break
-            case 'P':
-                exportTxId = await wallet.exportFromPChain(
-                    amt,
-                    destinationChain as SDK.ExportChainsP,
-                    this.importFeeBN
-                )
-                break
-            case 'C':
-                exportTxId = await wallet.exportFromCChain(
-                    amt,
-                    destinationChain as SDK.ExportChainsC,
-                    this.exportFeeBN
-                )
-                break
+        try {
+            switch (sourceChain) {
+                case 'X':
+                    exportTxId = await wallet.exportFromXChain(
+                        amt,
+                        destinationChain as SDK.ExportChainsX,
+                        this.importFeeBN
+                    )
+                    break
+                case 'P':
+                    exportTxId = await wallet.exportFromPChain(
+                        amt,
+                        destinationChain as SDK.ExportChainsP,
+                        this.importFeeBN
+                    )
+                    break
+                case 'C':
+                    exportTxId = await wallet.exportFromCChain(
+                        amt,
+                        destinationChain as SDK.ExportChainsC,
+                        this.exportFeeBN
+                    )
+                    break
+            }
+        } catch (e) {
+            throw e
         }
 
         this.exportId = exportTxId
@@ -545,6 +558,7 @@ export default class ChainTransfer extends Vue {
         setTimeout(() => {
             this.$store.dispatch('Assets/updateUTXOs')
             this.$store.dispatch('History/updateTransactionHistory')
+            if (this.depositAndBound) this.$store.dispatch('Assets/getPChainBalances')
         }, BALANCE_DELAY)
     }
 

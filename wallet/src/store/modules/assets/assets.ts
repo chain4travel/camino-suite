@@ -5,6 +5,7 @@ import {
     AssetsState,
     TokenList,
     TokenListToken,
+    WalletBalance,
 } from '@/store/modules/assets/types'
 import {
     IWalletAssetsDict,
@@ -53,6 +54,14 @@ const assets_module: Module<AssetsState, RootState> = {
         // isUpdateBalance: false,
         assets: [],
         assetsDict: {}, // holds meta data of assets
+        balances: {
+            balances: {},
+            unlockedOutputs: {},
+            bondedOutputs: {},
+            depositedOutputs: {},
+            bondedDepositedOutputs: {},
+            utxoIDs: [],
+        },
         nftFams: [],
         nftFamsDict: {},
         balanceDict: {},
@@ -453,6 +462,16 @@ const assets_module: Module<AssetsState, RootState> = {
             await commit('addNftFamily', newFam)
             return desc
         },
+
+        async getPChainBalances({ state, commit, rootState }) {
+            let wallet: WalletType | null = rootState.activeWallet
+            if (!wallet) return
+            let pchain = ava.PChain()
+
+            let pBalance = await pchain.getBalance({ address: wallet!.getAllAddressesP()[0] })
+            state.balances = (pBalance as unknown) as WalletBalance
+            return
+        },
     },
     getters: {
         networkErc20Tokens(state: AssetsState, getters, rootState: RootState): Erc20Token[] {
@@ -504,6 +523,8 @@ const assets_module: Module<AssetsState, RootState> = {
             // @ts-ignore
             let assetsDict: AssetsDict = state.assetsDict
             let res: IWalletAssetsDict = {}
+            let supportBond =
+                ava.getNetwork().P.lockModeBondDeposit && ava.getNetwork().P.verifyNodeSignature
 
             for (var assetId in assetsDict) {
                 let balanceAmt = balanceDict[assetId]
@@ -522,10 +543,16 @@ const assets_module: Module<AssetsState, RootState> = {
                 // Add extras for Native token
                 // @ts-ignore
                 if (asset.id === state.AVA_ASSET_ID) {
-                    asset.addExtra(getters.walletStakingBalance)
-                    asset.addExtra(getters.walletPlatformBalance)
-                    asset.addExtra(getters.walletPlatformBalanceLocked)
-                    asset.addExtra(getters.walletPlatformBalanceLockedStakeable)
+                    if (supportBond) {
+                        asset.addExtra(getters.walletPlatformBalance)
+                        asset.addExtra(getters.walletPlatformBalanceLocked)
+                        asset.addExtra(getters.walletPlatformBalanceLockedStakeable)
+                    } else {
+                        asset.addExtra(getters.walletStakingBalance)
+                        asset.addExtra(getters.walletPlatformBalance)
+                        asset.addExtra(getters.walletPlatformBalanceLocked)
+                        asset.addExtra(getters.walletPlatformBalanceLockedStakeable)
+                    }
                 }
 
                 res[assetId] = asset
@@ -654,6 +681,32 @@ const assets_module: Module<AssetsState, RootState> = {
             }
 
             return amt
+        },
+
+        walletPlatformBalanceTotalLocked(state, getters, rootState): BN {
+            return new BN(state.balances.depositedOutputs[state.AVA_ASSET_ID || ''] || 0)
+                .add(new BN(state.balances.bondedOutputs[state.AVA_ASSET_ID || ''] || 0))
+                .add(new BN(state.balances.bondedDepositedOutputs[state.AVA_ASSET_ID || ''] || 0))
+        },
+
+        walletPlatformBalanceDeposited(state, getters, rootState): BN {
+            return new BN(state.balances.depositedOutputs[state.AVA_ASSET_ID || ''] || 0)
+        },
+
+        walletPlatformBalanceBonded(state, getters, rootState): BN {
+            return new BN(state.balances.bondedOutputs[state.AVA_ASSET_ID || ''] || 0)
+        },
+
+        walletPlatformBalanceBondedDeposited(state, getters, rootState): BN {
+            return new BN(state.balances.bondedDepositedOutputs[state.AVA_ASSET_ID || ''] || 0)
+        },
+
+        walletPlatformBalanceTotal(state, getters, rootState): BN {
+            return new BN(state.balances.balances[state.AVA_ASSET_ID || ''] || 0)
+        },
+
+        walletPlatformBalanceUnlocked(state, getters, rootState): BN {
+            return new BN(state.balances.unlockedOutputs[state.AVA_ASSET_ID || ''] || 0)
         },
 
         nftMintDict(state): IWalletNftMintDict {

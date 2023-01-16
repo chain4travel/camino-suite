@@ -151,6 +151,8 @@ const network_module: Module<NetworkState, RootState> = {
             dispatch('updateTxFee')
             // Update tx history
             dispatch('History/updateTransactionHistory', null, { root: true })
+            if (ava.getNetwork().P.lockModeBondDeposit && ava.getNetwork().P.verifyNodeSignature)
+                dispatch('Assets/getPChainBalances')
 
             // Set the SDK Network
             setAvalanche(ava)
