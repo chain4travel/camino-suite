@@ -73,6 +73,7 @@
             "send": "Send",
             "export": "Cross Chain",
             "earn": "Earn",
+            "validator": "Validator",
             "studio": "Studio",
             "advanced": "Advanced",
             "activity": "Activity",
@@ -637,7 +638,7 @@
         "mode1": "All",
         "mode2": "Transfer",
         "mode3": "Export & Import",
-        "mode4": "Validation & Delegation",
+        "mode4": "Validation",
         "found": "{0} transactions found",
         "months": {
             "0": "January",

@@ -9,7 +9,15 @@ const LoadMenu = ({ type, props }) => {
   }, []);
 
   return (
-    <div>
+    <div
+      style={{
+        display: "flex",
+        width: "100%",
+        height: "100%",
+        justifyContent: "center",
+        alignItems: "center",
+      }}
+    >
       <div ref={ref} />
     </div>
   );

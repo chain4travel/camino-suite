@@ -4,8 +4,6 @@
             <template>
                 <!-- <UrlBanner></UrlBanner> -->
 
-                <!-- <navbar v-show="isNavbar"></navbar> -->
-
                 <div class="main_cols" :wallet_view="!isNavbar">
                     <UpgradeToAccountModal></UpgradeToAccountModal>
 
@@ -30,7 +28,6 @@
 
 <script>
 import Notifications from '@/components/Notifications'
-import Navbar from './components/Navbar'
 import SaveAccountModal from '@/components/modals/SaveAccount/SaveAccountModal'
 import LedgerBlock from '@/components/modals/LedgerBlock'
 import LedgerUpgrade from '@/components/modals/LedgerUpgrade'
@@ -49,7 +46,6 @@ export default {
         LedgerBlock,
         LedgerUpgrade,
         SaveAccountModal,
-        Navbar,
         Notifications,
     },
     async created() {
@@ -96,7 +92,7 @@ export default {
 
 .main_cols {
     &[wallet_view] {
-        height: 100vh;
+        // height: 100vh;
 
         #router_view {
             padding: 0;
@@ -108,6 +104,7 @@ export default {
         position: relative;
         min-height: calc(100vh - 80px);
         display: flex;
+        justify-content: center;
     }
 }
 
@@ -134,17 +131,6 @@ p {
 
 .v-application--wrap {
     min-height: 100% !important;
-}
-
-#app {
-    min-height: 100%;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    text-align: left;
-    color: var(--primary-color);
-    background-color: var(--bg) !important;
-    font-family: 'Inter', sans-serif;
-    transition-duration: 0.2s;
 }
 
 #nav {

@@ -24,6 +24,13 @@
                     >
                         {{ $t('wallet.sidebar.export') }}
                     </router-link>
+                    <router-link
+                        to="/wallet/home/validator"
+                        data-cy="wallet_validator"
+                        class="wallet_validator wallet_link"
+                    >
+                        {{ $t('wallet.sidebar.validator') }}
+                    </router-link>
                     <router-link to="/wallet/home/earn" data-cy="wallet_earn" class="wallet_link">
                         {{ $t('wallet.sidebar.earn') }}
                     </router-link>
@@ -173,11 +180,13 @@ export default class Wallet extends Vue {
 @use "../styles/main";
 .content {
     width: 100%;
-    margin-top: 70px;
+    margin-top: 60px;
     display: grid;
     column-gap: 15px;
     background-color: var(--bg);
     grid-template-columns: 1fr 300px;
+    align-items: center;
+    padding: 12px;
 }
 
 .top-bar {
