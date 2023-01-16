@@ -24,7 +24,7 @@
                 <br />
                 <br />
             </form>
-            <router-link to="/wallet/access" class="link">{{ $t('access.cancel') }}</router-link>
+            <div @click="returnToLogin" class="link">{{ $t('access.cancel') }}</div>
         </div>
     </div>
 </template>
@@ -57,6 +57,10 @@ export default class Account extends Vue {
             this.navigate('/login')
             return
         }
+    }
+
+    returnToLogin() {
+        this.navigate(`/login`)
     }
 
     async access() {
@@ -138,6 +142,7 @@ export default class Account extends Vue {
     width: 340px;
     max-width: 100%;
     margin: 0px auto;
+    text-align: center;
 }
 h1 {
     font-size: main.$m-size;
