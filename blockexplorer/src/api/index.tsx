@@ -182,25 +182,18 @@ export const fetchBlocksTransactionsCChain =
 
   export async function loadValidatorsInfo() {
     return new Promise((resolve, reject) => {
-      //const urlValidators = `https://magellan.free.beeceptor.com/v2/validatorsInfo`;
-      const urlValidators = `${getBaseUrl()}${baseEndpoint}/v2/validatorsInfo`;
+      const urlValidators = `${getBaseUrl()}${baseEndpoint}/validatorsInfo`;
       let networks = store.getState().appConfig;
       let activeNetwork = networks.networks.find(
         element => element.id === networks.activeNetwork,
       );
-  
-      var data = JSON.stringify({
-        rpc: `${activeNetwork?.protocol}://${activeNetwork?.host}:${activeNetwork?.port}`,
-        ip_provider: "ip-api",
-      });
   
       var request = {
         method: 'post',
         url: urlValidators,
         headers: {
           'Content-Type': 'application/json',
-        },
-        data: data,
+        }
       };
   
       axios(request).then(function (response: any) {
