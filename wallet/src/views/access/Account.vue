@@ -77,7 +77,6 @@ export default class Account extends Vue {
                     pass: this.password,
                 })
                 .then((res) => {
-                    console.log('ta mereremermerme')
                     let { updateSuiteStore } = this.globalHelper()
                     updateSuiteStore(parent.$store.state)
                     parent.isLoading = false
