@@ -9,6 +9,7 @@ import useWidth from 'app/hooks/useWidth';
 import LoadingWrapper from 'app/components/LoadingWrapper';
 import { Status } from 'types';
 import { queryClient } from '../../../../App.tsx';
+import { getAddressFromUrl } from 'utils/route-utils';
 
 const Transactions: FC = () => {
   const location = useLocation();
@@ -27,7 +28,7 @@ const Transactions: FC = () => {
     `/c-address}`,
     ({ pageParam = 50 }) =>
       loadCAddressTransactions({
-        address: location.pathname.split('/')[4],
+        address: getAddressFromUrl(),
         offset: pageParam,
       }),
     {

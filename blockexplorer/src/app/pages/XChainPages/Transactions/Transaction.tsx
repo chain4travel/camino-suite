@@ -8,13 +8,17 @@ import {
   Chip,
 } from '@mui/material';
 import { Field } from 'app/components/DetailsField';
-import { getAddressLink } from 'utils/route-utils';
+import {
+  getAddressLink,
+  getTransactionType,
+  getAddressType,
+} from 'utils/route-utils';
 import { ChainType } from 'utils/types/chain-type';
-import { XADDRESS, XTRANSACTIONS } from 'utils/route-paths';
 import AddressLink from 'app/components/AddressLink';
 import useWidth from 'app/hooks/useWidth';
 import moment from 'utils/helpers/moment';
 import { NoMaxWidthTooltip } from 'app/components/RelativeTime';
+import { getChainTypeFromUrl } from 'utils/route-utils';
 
 interface Props {
   transaction: any;
@@ -71,6 +75,8 @@ const Transaction = React.forwardRef<Ref, Props>((props, ref) => {
 export default Transaction;
 
 const GridItem = ({ transaction }) => {
+  const chainType = getChainTypeFromUrl() as ChainType;
+
   return (
     <>
       <Grid item xs={12} md zeroMinWidth order={{ xs: 3, md: 2 }}>
@@ -78,7 +84,7 @@ const GridItem = ({ transaction }) => {
           Hash
         </Typography>
         <AddressLink
-          to={`${XTRANSACTIONS}/${transaction.hash}`}
+          to={`${getTransactionType(chainType)}/${transaction.hash}`}
           value={transaction.hash}
           typographyVariant="body1"
           truncate={true}
@@ -90,8 +96,8 @@ const GridItem = ({ transaction }) => {
         </Typography>
         {transaction.from[0]?.address ? (
           <AddressLink
-            to={`${XADDRESS}/${getAddressLink(
-              ChainType.X_CHAIN,
+            to={`${getAddressType(chainType)}/${getAddressLink(
+              chainType,
               transaction.from[0]?.address,
             )}`}
             value={transaction.from[0]?.address}
@@ -108,8 +114,8 @@ const GridItem = ({ transaction }) => {
         </Typography>
         {transaction.to[0]?.address ? (
           <AddressLink
-            to={`${XADDRESS}/${getAddressLink(
-              ChainType.X_CHAIN,
+            to={`${getAddressType(chainType)}/${getAddressLink(
+              chainType,
               transaction.to[0]?.address,
             )}`}
             value={transaction.to[0]?.address}
@@ -157,6 +163,8 @@ const GridItem = ({ transaction }) => {
 };
 
 const CustomRow = ({ transaction }) => {
+  const chainType = getChainTypeFromUrl() as ChainType;
+
   return (
     <>
       <TableCell
@@ -165,7 +173,7 @@ const CustomRow = ({ transaction }) => {
         width="20%"
       >
         <AddressLink
-          to={`${XTRANSACTIONS}/${transaction.hash}`}
+          to={`${getTransactionType(chainType)}/${transaction.hash}`}
           value={transaction.hash}
           typographyVariant="body1"
           truncate={true}
@@ -178,8 +186,8 @@ const CustomRow = ({ transaction }) => {
       >
         {transaction.from[0]?.address ? (
           <AddressLink
-            to={`${XADDRESS}/${getAddressLink(
-              ChainType.X_CHAIN,
+            to={`${getAddressType(chainType)}/${getAddressLink(
+              chainType,
               transaction.from[0]?.address,
             )}`}
             value={transaction.from[0]?.address}
@@ -197,8 +205,8 @@ const CustomRow = ({ transaction }) => {
       >
         {transaction.to[0]?.address ? (
           <AddressLink
-            to={`${XADDRESS}/${getAddressLink(
-              ChainType.X_CHAIN,
+            to={`${getAddressType(chainType)}/${getAddressLink(
+              chainType,
               transaction.to[0]?.address,
             )}`}
             value={transaction.to[0]?.address}

@@ -9,6 +9,7 @@ import { AddressSection } from './AddressSection';
 import { InputOutputSection } from './InputOutputSection';
 import { getBaseUrl, getChainID } from 'api/utils';
 import { xpTransactionApi } from 'utils/magellan-api-utils';
+import { getAddressFromUrl } from 'utils/route-utils';
 
 export function createTransaction(magellanTransaction: MagellanXPTransaction) {
   return {
@@ -53,7 +54,7 @@ export default function XPAddressView({ chainType }: { chainType: ChainType }) {
   const [rows, setRows] = React.useState<any[]>([]);
   const location = useLocation();
 
-  const CHAIN_ID = getChainID(location.pathname.split('/')[4][0].toLowerCase());
+  const CHAIN_ID = getChainID(getAddressFromUrl()[0].toLowerCase());
   const loadMore = React.useCallback(() => {
     setLoading(true);
     loadItems();
@@ -62,7 +63,7 @@ export default function XPAddressView({ chainType }: { chainType: ChainType }) {
   const loadItems = async () => {
     await new Promise<void>(resolve => {
       loadTransactions({
-        address: location.pathname.split('/')[4],
+        address: getAddressFromUrl(),
         offset: rows.length,
         limit: 10,
         chainID: CHAIN_ID,
@@ -100,7 +101,7 @@ export default function XPAddressView({ chainType }: { chainType: ChainType }) {
 
   React.useEffect(() => {
     loadTransactions({
-      address: location.pathname.split('/')[4],
+      address: getAddressFromUrl(),
       offset: 0,
       limit: 10,
       chainID: CHAIN_ID,
