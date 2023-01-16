@@ -1,7 +1,14 @@
 import React from "react";
 import { useState, useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "../../hooks/reduxHooks";
-import { Button, MenuItem, Typography, Select, useTheme } from "@mui/material";
+import {
+  Button,
+  MenuItem,
+  Typography,
+  Select,
+  DialogTitle,
+  useTheme,
+} from "@mui/material";
 import { mdiTrashCanOutline } from "@mdi/js";
 import Icon from "@mdi/react";
 import { nameOfActiveNetwork } from "../../utils/componentsUtils";
@@ -18,6 +25,8 @@ import {
   getNetworks,
 } from "../../redux/slices/network";
 import { Status } from "../../@types";
+import { useNavigate } from "react-router-dom";
+import DialogAnimate from "../Animate/DialogAnimate";
 
 export default function NetworkSwitcher() {
   const dispatch = useAppDispatch();
@@ -94,52 +103,94 @@ export default function NetworkSwitcher() {
     let selectedNetwork = networks.find((net) => net.name === selected);
     switchNetwork(selectedNetwork);
   };
+
+  const navigate = useNavigate();
+  const [network, setNetwork] = React.useState(
+    nameOfActiveNetwork(networks, activeNetwork)
+  );
+
+  // React.useMemo(() => {
+  //   dispatch(resetCChainReducer());
+  //   dispatch(resetValidatorsReducer());
+  //   dispatch(resetXPChainReducer());
+  //   if (activeNetwork === "mainnet-testnet") navigate("/mainnet");
+  //   else navigate("/");
+  // }, [activeNetwork]); // eslint-disable-line
+
+  React.useEffect(() => {
+    setNetwork(nameOfActiveNetwork(networks, activeNetwork));
+  }, [activeNetwork]); // eslint-disable-line
+
+  // const status = useAppSelector(selectNetworkStatus);
+
+  const [open, setOpen] = React.useState(false);
+  const [selectedNetwork, setSelectedNetwork] = React.useState(null);
+
+  const handleCloseModal = () => {
+    setOpen(false);
+  };
+
+  const handleOpenModal = (event) => {
+    setOpen(true);
+  };
+
   return (
-    <Select
-      value={activeNetwork.name}
-      onChange={(e) => {
-        handleChangeNetwork(e.target.value);
-      }}
-      renderValue={() => <SelectedNetwork />}
-      sx={{
-        maxWidth: "13rem",
-        ".MuiOutlinedInput-notchedOutline": { border: "none" },
-        ".MuiSvgIcon-root": { color: theme.palette.text.primary },
-      }}
-    >
-      {networks?.map((network) => (
-        <MenuItem
-          key={network.id}
-          value={network.name}
-          divider
-          sx={{ gap: ".6rem", justifyContent: "space-between" }}
-        >
-          <Typography variant="subtitle1" component="span" noWrap>
-            {network.name}
-          </Typography>
-          {!network.readonly && (
-            <Button
-              sx={{
-                width: "30px",
-                height: "30px",
-                backgroundColor: "secondary.main",
-                borderRadius: "7px",
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                minWidth: "auto",
-                "&:hover": {
+    <>
+      <Select
+        value={activeNetwork.name}
+        onChange={(e) => {
+          handleChangeNetwork(e.target.value);
+        }}
+        renderValue={() => <SelectedNetwork />}
+        sx={{
+          maxWidth: "13rem",
+          ".MuiOutlinedInput-notchedOutline": { border: "none" },
+          ".MuiSvgIcon-root": { color: theme.palette.text.primary },
+        }}
+      >
+        {networks?.map((network) => (
+          <MenuItem
+            key={network.id}
+            value={network.name}
+            divider
+            sx={{ gap: ".6rem", justifyContent: "space-between" }}
+          >
+            <Typography variant="subtitle1" component="span" noWrap>
+              {network.name}
+            </Typography>
+            {!network.readonly && (
+              <Button
+                sx={{
+                  width: "30px",
+                  height: "30px",
                   backgroundColor: "secondary.main",
-                },
-              }}
-              onClick={() => handleRemoveCustomNetwork()}
-            >
-              <Icon path={mdiTrashCanOutline} size={0.7} color="white" />
-            </Button>
-          )}
+                  borderRadius: "7px",
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  minWidth: "auto",
+                  "&:hover": {
+                    backgroundColor: "secondary.main",
+                  },
+                }}
+                onClick={() => handleRemoveCustomNetwork()}
+              >
+                <Icon path={mdiTrashCanOutline} size={0.7} color="white" />
+              </Button>
+            )}
+          </MenuItem>
+        ))}
+        <MenuItem
+          onClick={handleOpenModal}
+          sx={{ typography: "body1", width: "100%", maxWidth: "326px" }}
+        >
+          Add Custom Network
         </MenuItem>
-      ))}
-      <AddNewNetwork />
-    </Select>
+      </Select>
+      <DialogAnimate open={open} onClose={handleCloseModal}>
+        <DialogTitle>Add New Network</DialogTitle>
+        <AddNewNetwork networks={networks} handleClose={handleCloseModal} />
+      </DialogAnimate>
+    </>
   );
 }
