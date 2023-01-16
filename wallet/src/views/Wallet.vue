@@ -24,6 +24,13 @@
                     >
                         {{ $t('wallet.sidebar.export') }}
                     </router-link>
+                    <router-link
+                        to="/wallet/home/validator"
+                        data-cy="wallet_validator"
+                        class="wallet_validator wallet_link"
+                    >
+                        {{ $t('wallet.sidebar.validator') }}
+                    </router-link>
                     <router-link to="/wallet/home/earn" data-cy="wallet_earn" class="wallet_link">
                         {{ $t('wallet.sidebar.earn') }}
                     </router-link>

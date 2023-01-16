@@ -29,8 +29,8 @@
     </div>
 </template>
 <script lang="ts">
-import { Vue, Component, Prop } from 'vue-property-decorator'
-import { ImportKeyfileInput, iUserAccountEncrypted } from '@/store/types'
+import { Vue, Component } from 'vue-property-decorator'
+import { ImportKeyfileInput } from '@/store/types'
 import Identicon from '@/components/misc/Identicon.vue'
 
 @Component({

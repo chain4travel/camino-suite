@@ -8,6 +8,7 @@ import WalletHome from '@/views/wallet/Portfolio.vue'
 import Earn from '@/views/wallet/Earn.vue'
 import Advanced from '@/views/wallet/Advanced.vue'
 import Activity from '@/views/wallet/Activity.vue'
+import Validator from '@/views/wallet/Validator.vue'
 import Launch from '@/views/wallet/Launch.vue'
 import Legal from '@/views/Legal.vue'
 import store from '../store/index'
@@ -67,6 +68,10 @@ const routes = [
             {
                 path: 'earn',
                 component: Earn,
+            },
+            {
+                path: 'validator',
+                component: Validator,
             },
             {
                 path: 'studio',
