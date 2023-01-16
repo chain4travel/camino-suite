@@ -1,5 +1,4 @@
 import React from "react";
-import { useState, useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "../../hooks/reduxHooks";
 import {
   Button,
@@ -14,8 +13,6 @@ import Icon from "@mdi/react";
 import { nameOfActiveNetwork } from "../../utils/componentsUtils";
 import SelectedNetwork from "./SelectNetwork";
 import AddNewNetwork from "./AddNewNetwork";
-import { getChains } from "../../api/index";
-import { useStore } from "Explorer/useStore";
 import store from "wallet/store";
 import {
   addNetworks,
@@ -33,10 +30,6 @@ export default function NetworkSwitcher() {
   const networks = useAppSelector(getNetworks);
   const activeNetwork = useAppSelector(getActiveNetwork);
   const theme = useTheme();
-  // const { changeNetworkExplorer } = useStore();
-  useEffect(() => {
-    // dispatch(getChains());
-  }, [activeNetwork]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleRemoveCustomNetwork = () => {
     store.dispatch("Network/removeCustomNetwork", activeNetwork);
@@ -51,22 +44,7 @@ export default function NetworkSwitcher() {
     let networks = store.getters["Network/allNetworks"];
     dispatch(addNetworks(networks));
     switchNetwork(networks[0]);
-    // const customNetworks = JSON.parse(
-    //   localStorage.getItem("customNetworks") || "[]"
-    // );
-    // const newCustomNetworks = customNetworks.filter(
-    //   (network: Network) => network.id !== id
-    // );
-    // localStorage.setItem("customNetworks", JSON.stringify(newCustomNetworks));
-    // dispatch(changeNetwork("Columbus"));
-    // dispatch(removeCustomNetwork(id));
   };
-  // useEffect(() => {
-  //   console.log(activeNetwork.name);
-  // }, [networks]);
-  // useEffect(() => {
-  //   console.log(activeNetwork?.name);
-  // }, [activeNetwork]);
 
   const switchNetwork = async (network) => {
     try {
@@ -76,7 +54,7 @@ export default function NetworkSwitcher() {
         "Notifications/add",
         {
           title: "Network Connected",
-          message: "Connected to " + networks.name,
+          message: "Connected to " + network.name,
           type: "success",
         },
         { root: true }
