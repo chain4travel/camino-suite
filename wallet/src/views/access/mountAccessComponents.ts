@@ -60,7 +60,9 @@ export const mountAccessComponents = (el: string, type: string, props: any) => {
         vuetify,
         i18n,
         data: {},
-        created: function () {},
+        created: function () {
+            store.commit('Accounts/loadAccounts')
+        },
         render: (createElement) => {
             const context = {
                 props: props,

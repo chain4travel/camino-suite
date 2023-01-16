@@ -110,10 +110,12 @@ export default function Navbar() {
             </Box>
           )}
           {auth === true && (
-            <div>
-              {cAddress}
-              <LoadAccountMenu />
-            </div>
+            <>
+              <div>{cAddress}</div>
+              <div>
+                <LoadAccountMenu />
+              </div>
+            </>
           )}
           {/* {auth === true && <div>{cAddress}</div>} */}
         </Box>

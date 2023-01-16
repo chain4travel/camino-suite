@@ -77,12 +77,12 @@ export default class Account extends Vue {
         setTimeout(() => {
             this.$store
                 .dispatch('Accounts/accessAccount', {
-                    index: this.index,
+                    index: parseInt(this.index),
                     pass: this.password,
                 })
-                .then((res) => {
+                .then(() => {
                     let { updateSuiteStore } = this.globalHelper()
-                    updateSuiteStore(parent.$store.state)
+                    updateSuiteStore(this.$store.state)
                     parent.isLoading = false
                 })
                 .catch((err) => {

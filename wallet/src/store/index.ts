@@ -233,10 +233,14 @@ const store = new Vuex.Store({
 
         // Add a singleton wallet from private key string
         async addWalletSingleton({ state, dispatch }, pk: string): Promise<SingletonWallet | null> {
-            let keyBuf = Buffer.from(pk, 'hex')
-            // @ts-ignore
-            privateToAddress(keyBuf)
-            pk = `PrivateKey-${bintools.cb58Encode(keyBuf)}`
+            try {
+                let keyBuf = Buffer.from(pk, 'hex')
+                // @ts-ignore
+                privateToAddress(keyBuf)
+                pk = `PrivateKey-${bintools.cb58Encode(keyBuf)}`
+            } catch (e) {
+                //
+            }
 
             // Cannot add singleton wallets on ledger mode
             if (state.activeWallet?.type === 'ledger') return null
