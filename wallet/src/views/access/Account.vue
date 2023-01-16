@@ -29,7 +29,7 @@
     </div>
 </template>
 <script lang="ts">
-import { Vue, Component } from 'vue-property-decorator'
+import { Vue, Component, Prop } from 'vue-property-decorator'
 import { ImportKeyfileInput, iUserAccountEncrypted } from '@/store/types'
 import Identicon from '@/components/misc/Identicon.vue'
 
@@ -37,15 +37,15 @@ import Identicon from '@/components/misc/Identicon.vue'
     components: { Identicon },
 })
 export default class Account extends Vue {
+    @Prop() index: string
+    @Prop() navigate: any
     password: string = ''
     isLoading: boolean = false
     error: string = ''
 
-    get index() {
-        return this.$route.params.index
-    }
     get accounts() {
-        return this.$store.state.Accounts.accounts
+        let accountsRaw = localStorage.getItem('accounts') || '{}'
+        return JSON.parse(accountsRaw) || []
     }
 
     get account() {
@@ -54,7 +54,7 @@ export default class Account extends Vue {
 
     created() {
         if (!this.account) {
-            this.$router.replace('/wallet/access')
+            this.navigate('/login')
             return
         }
     }
@@ -70,7 +70,6 @@ export default class Account extends Vue {
             password: this.password,
             data: account.wallet,
         }
-
         setTimeout(() => {
             this.$store
                 .dispatch('Accounts/accessAccount', {
@@ -78,6 +77,9 @@ export default class Account extends Vue {
                     pass: this.password,
                 })
                 .then((res) => {
+                    console.log('ta mereremermerme')
+                    let { updateSuiteStore } = this.globalHelper()
+                    updateSuiteStore(parent.$store.state)
                     parent.isLoading = false
                 })
                 .catch((err) => {

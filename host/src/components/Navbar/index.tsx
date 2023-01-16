@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { AppBar, Box, Typography } from "@mui/material";
 import { Toolbar } from "@mui/material";
 import Logo from "../Logo";
@@ -7,15 +7,41 @@ import ThemeSwitcher from "./ThemeSwitcher";
 import { useAppDispatch, useAppSelector } from "../../hooks/reduxHooks";
 import { getActiveNetwork } from "../../redux/slices/network";
 import store from "wallet/store";
+import { mountAccountMenu } from "wallet/mountAccountMenu";
+
 import { mdiLogout, mdiWalletOutline } from "@mdi/js";
 import Icon from "@mdi/react";
 import { useNavigate } from "react-router-dom";
 import { updateAuthStatus } from "../../redux/slices/app-config";
 
+const LoadAccountMenu = () => {
+  const ref = useRef(null);
+
+  useEffect(() => {
+    mountAccountMenu(ref.current);
+  }, []);
+
+  return (
+    <div
+      style={{
+        display: "flex",
+        width: "100%",
+        height: "100%",
+        justifyContent: "center",
+        alignItems: "center",
+      }}
+    >
+      <div ref={ref} />
+    </div>
+  );
+};
+
 export default function Navbar() {
   const activeNetwork = useAppSelector(getActiveNetwork);
   const auth = useAppSelector((state) => state.appConfig.isAuth);
-
+  const cAddress = useAppSelector(
+    (state) => state.appConfig.walletStore?.activeWallet?.ethAddress
+  );
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const logout = async () => {
@@ -83,6 +109,13 @@ export default function Navbar() {
               </Typography>
             </Box>
           )}
+          {auth === true && (
+            <div>
+              {cAddress}
+              <LoadAccountMenu />
+            </div>
+          )}
+          {/* {auth === true && <div>{cAddress}</div>} */}
         </Box>
       </Toolbar>
     </AppBar>

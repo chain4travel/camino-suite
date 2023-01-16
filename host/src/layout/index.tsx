@@ -47,6 +47,10 @@ export default function Layout() {
               path="privateKey"
               element={<MountAccessComponent type="PrivateKey" />}
             />
+            <Route
+              path="account/*"
+              element={<MountAccessComponent type="Account" />}
+            />
           </Route>
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>

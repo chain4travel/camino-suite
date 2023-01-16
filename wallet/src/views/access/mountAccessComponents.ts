@@ -18,6 +18,7 @@ import KeySore from './Keystore.vue'
 import Mnemonic from './Mnemonic.vue'
 import PrivateKey from './PrivateKey.vue'
 import Menu from './Menu.vue'
+import Account from './Account.vue'
 
 function mountComponent(type: string) {
     switch (type) {
@@ -29,6 +30,8 @@ function mountComponent(type: string) {
             return Menu
         case 'PrivateKey':
             return PrivateKey
+        case 'Account':
+            return Account
         default:
             return Access
     }

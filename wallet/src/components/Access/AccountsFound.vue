@@ -12,7 +12,7 @@
     </div>
 </template>
 <script lang="ts">
-import { Vue, Component } from 'vue-property-decorator'
+import { Vue, Component, Prop } from 'vue-property-decorator'
 import { iUserAccountEncrypted } from '@/store/types'
 import Identicon from '@/components/misc/Identicon.vue'
 
@@ -22,6 +22,8 @@ import Identicon from '@/components/misc/Identicon.vue'
     },
 })
 export default class AccountsFound extends Vue {
+    @Prop() navigate: any
+
     accounts: iUserAccountEncrypted[] = []
 
     created() {
@@ -33,7 +35,7 @@ export default class AccountsFound extends Vue {
     }
 
     selectAccount(index: number) {
-        this.$router.push(`/wallet/access/account/${index}`)
+        this.navigate(`/access/account/${index}`)
     }
 }
 </script>

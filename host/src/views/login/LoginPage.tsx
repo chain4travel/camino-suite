@@ -9,13 +9,38 @@ import {
   mdiWalletOutline,
 } from "@mdi/js";
 import Icon from "@mdi/react";
-import { Link } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { styled } from "@mui/material/styles";
-
+// mountAccounts
+import { mountAccounts } from "wallet/mountAccounts";
 const StyledLink = styled(Link)(({ theme }) => ({
   color: theme.palette.text.primary,
   textDecoration: "underline !important",
 }));
+
+const LoadAccountMenu = () => {
+  const ref = useRef(null);
+  const navigate = useNavigate();
+  useEffect(() => {
+    mountAccounts(ref.current, {
+      navigate: (location) => navigate(location),
+    });
+  }, []);
+
+  return (
+    <div
+      style={{
+        display: "flex",
+        width: "100%",
+        height: "100%",
+        justifyContent: "center",
+        alignItems: "center",
+      }}
+    >
+      <div ref={ref} />
+    </div>
+  );
+};
 
 export default function LoginPage() {
   return (
@@ -36,6 +61,7 @@ export default function LoginPage() {
       >
         <Typography variant="h2">Camino Application Suite</Typography>
         {/* Saved wallets section */}
+        <LoadAccountMenu />
         {/* <Box sx={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
           <Typography variant="subtitle1">Saved Camino Wallets</Typography>
           <SavedWalletButton label="Daniel's Wallet" />

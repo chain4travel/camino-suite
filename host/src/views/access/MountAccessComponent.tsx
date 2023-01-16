@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../hooks/reduxHooks";
 import {
   getActiveApp,
@@ -13,7 +13,7 @@ const MountAccessComponent = ({ type }) => {
   const app = useAppSelector(getActiveApp);
   const auth = useAppSelector(selectAuthStatus);
   const dispatch = useAppDispatch();
-
+  const location = useLocation();
   useEffect(() => {
     if (auth) {
       if (app === "wallet") {
@@ -29,6 +29,7 @@ const MountAccessComponent = ({ type }) => {
         props={{
           navigate: (location) => navigate(location),
           setLogged: setLogged,
+          index: location.pathname.split("/")[3],
         }}
       />
     </React.Suspense>
