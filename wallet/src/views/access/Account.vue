@@ -29,7 +29,7 @@
     </div>
 </template>
 <script lang="ts">
-import { Vue, Component } from 'vue-property-decorator'
+import { Vue, Component, Prop } from 'vue-property-decorator'
 import { ImportKeyfileInput } from '@/store/types'
 import Identicon from '@/components/misc/Identicon.vue'
 
@@ -126,12 +126,8 @@ export default class Account extends Vue {
     height: 40px !important;
 }
 .access_card {
-    /*max-width: 80vw;*/
-    //background-color: var(--bg-light);
-    //padding: main.$container-padding;
     width: 100%;
-    /*max-width: 240px;*/
-    /*max-width: 1000px;*/
+
     display: flex;
     flex-direction: column;
     justify-content: center;

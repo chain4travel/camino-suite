@@ -6,49 +6,17 @@ import NetworkSwitcher from "./NetworkSwitcher";
 import ThemeSwitcher from "./ThemeSwitcher";
 import { useAppDispatch, useAppSelector } from "../../hooks/reduxHooks";
 import { getActiveNetwork } from "../../redux/slices/network";
-import store from "wallet/store";
-import { mountAccountMenu } from "wallet/mountAccountMenu";
 
-import { mdiLogout, mdiWalletOutline } from "@mdi/js";
+import { mdiWalletOutline } from "@mdi/js";
 import Icon from "@mdi/react";
 import { useNavigate } from "react-router-dom";
-import { updateAuthStatus } from "../../redux/slices/app-config";
-
-const LoadAccountMenu = () => {
-  const ref = useRef(null);
-
-  useEffect(() => {
-    mountAccountMenu(ref.current);
-  }, []);
-
-  return (
-    <div
-      style={{
-        display: "flex",
-        width: "100%",
-        height: "100%",
-        justifyContent: "center",
-        alignItems: "center",
-      }}
-    >
-      <div ref={ref} />
-    </div>
-  );
-};
-
+import LoginIcon from "./LoginIcon";
 export default function Navbar() {
   const activeNetwork = useAppSelector(getActiveNetwork);
   const auth = useAppSelector((state) => state.appConfig.isAuth);
-  const cAddress = useAppSelector(
-    (state) => state.appConfig.walletStore?.activeWallet?.ethAddress
-  );
+
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const logout = async () => {
-    await store.dispatch("logout");
-    dispatch(updateAuthStatus(false));
-    navigate("/login");
-  };
 
   return (
     <AppBar
@@ -76,22 +44,7 @@ export default function Navbar() {
         <Box sx={{ display: "flex", alignItems: "center", gap: ".5rem" }}>
           <ThemeSwitcher />
           {activeNetwork && <NetworkSwitcher />}
-          {auth !== false ? (
-            <Box
-              onClick={logout}
-              sx={{
-                display: "flex",
-                alignItems: "center",
-                gap: "5px",
-                cursor: "pointer",
-              }}
-            >
-              <Icon path={mdiLogout} size={0.7} />
-              <Typography variant="subtitle1" component="span">
-                logout
-              </Typography>
-            </Box>
-          ) : (
+          {!auth && (
             <Box
               onClick={() => {
                 navigate("/login");
@@ -109,15 +62,7 @@ export default function Navbar() {
               </Typography>
             </Box>
           )}
-          {auth === true && (
-            <>
-              <div>{cAddress}</div>
-              <div>
-                <LoadAccountMenu />
-              </div>
-            </>
-          )}
-          {/* {auth === true && <div>{cAddress}</div>} */}
+          {auth && <LoginIcon />}
         </Box>
       </Toolbar>
     </AppBar>

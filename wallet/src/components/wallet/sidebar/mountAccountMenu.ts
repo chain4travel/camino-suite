@@ -9,7 +9,8 @@ import i18n from '@/plugins/i18n'
 import BootstrapVue from 'bootstrap-vue'
 import vuetify from '@/plugins/vuetify'
 
-import AccountMenu from './AccountMenu.vue'
+import AccountUserItem from './AccountUserItem.vue'
+import AccountKycItem from './AccountKycItem.vue'
 
 Vue.use(VueMeta)
 Vue.use(BootstrapVue)
@@ -27,7 +28,7 @@ export const mountAccountMenu = (el: string, props: any) => {
             const context = {
                 props: props,
             }
-            return createElement(AccountMenu, context)
+            return createElement(props.type === 'kyc' ? AccountKycItem : AccountUserItem, context)
         },
     })
     app.$mount(el)
