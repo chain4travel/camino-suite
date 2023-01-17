@@ -45,7 +45,7 @@ export default function LoginIcon() {
       <Select
         value={cAddress}
         onChange={(e) => {}}
-        renderValue={() => cAddress}
+        renderValue={() => `0x${cAddress}`}
         sx={{
           maxWidth: "13rem",
           ".MuiOutlinedInput-notchedOutline": { border: "none" },
