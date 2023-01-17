@@ -4,7 +4,6 @@ import { Timeframe } from 'types';
 export interface Fund {
   address: string;
   value?: number;
-  signature?: string;
 }
 
 export function getStartDate(endDate: DateTime, timeframe: string): DateTime {

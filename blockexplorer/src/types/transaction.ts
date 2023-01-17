@@ -25,7 +25,6 @@ export interface XPTransaction {
 export interface Fund {
   address: string;
   value: number;
-  signature: string;
 }
 
 export interface TransactionTableData {

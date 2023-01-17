@@ -1,5 +1,10 @@
 import { ChainType } from './types/chain-type';
-import { BASE_PATH } from './route-paths';
+import {
+  XADDRESS,
+  PADDRESS,
+  XTRANSACTIONS,
+  PTRANSACTIONS,
+} from 'utils/route-paths';
 
 export const DETAILS = 'details';
 export const TABLES = 'all';
@@ -17,7 +22,7 @@ export function getTransactionDetailsPath(
   chaintype: ChainType,
   transactionId: string,
 ): string {
-  const basePath = `${BASE_PATH}/${getPathElement(chaintype)}/${transactions}/`;
+  const basePath = `/${getPathElement(chaintype)}/${transactions}/`;
   if (transactionId) {
     return basePath + transactionId;
   }
@@ -28,14 +33,14 @@ export function getAddressDetailsPath(
   chaintype: ChainType,
   addressId: string,
 ): string {
-  return `${BASE_PATH}/${getPathElement(chaintype)}/${address}/${addressId}`;
+  return `/${getPathElement(chaintype)}/${address}/${addressId}`;
 }
 
 export function getBlockDetailsPath(
   chaintype: ChainType,
   blockId: string | number,
 ): string {
-  const basePath = `${BASE_PATH}/${getPathElement(chaintype)}/${blocks}/`;
+  const basePath = `/${getPathElement(chaintype)}/${blocks}/`;
   if (blockId !== undefined) {
     return basePath + blockId;
   }
@@ -43,15 +48,15 @@ export function getBlockDetailsPath(
 }
 
 export function getAllBlocksPath(chaintype: ChainType) {
-  return `${BASE_PATH}/${TABLES}/${getPathElement(chaintype)}/${blocks}`;
+  return `/${TABLES}/${getPathElement(chaintype)}/${blocks}`;
 }
 
 export function getAllTransactionsPath(chaintype: ChainType) {
-  return `${BASE_PATH}/${TABLES}/${getPathElement(chaintype)}/${transactions}`;
+  return `/${TABLES}/${getPathElement(chaintype)}/${transactions}`;
 }
 
 export function getAllValidatorsPath() {
-  return `${BASE_PATH}/${TABLES}/${validators}`;
+  return `/${TABLES}/${validators}`;
 }
 
 export function getTransactionsPathName(chaintype: ChainType) {
@@ -78,4 +83,50 @@ export function getAddressLink(chaintype: ChainType, value: string): string {
     return 'P-' + value;
   }
   return value;
+}
+
+export function getAddressFromUrl(): string {
+  return window.location.pathname.split('/').pop();
+}
+
+export function getTransactionFromUrl(): string {
+  return window.location.pathname.split('/').pop();
+}
+
+export function getBlockNumber(): string {
+  return window.location.pathname.split('/').pop();
+}
+
+export function getChainTypeFromUrl(): ChainType {
+  const chainType = window.location.pathname.split('/')[2];
+
+  if (chainType === ChainType.X_CHAIN) {
+    return ChainType.X_CHAIN;
+  }
+  if (chainType === ChainType.P_CHAIN) {
+    return ChainType.P_CHAIN;
+  }
+  return ChainType.C_CHAIN;
+}
+
+export function getTransactionType(chainType) {
+  switch (chainType) {
+    case ChainType.X_CHAIN:
+      return XTRANSACTIONS;
+    case ChainType.P_CHAIN:
+      return PTRANSACTIONS;
+    default:
+      return XTRANSACTIONS;
+  }
+}
+
+export function getAddressType(chainType) {
+  switch (chainType) {
+    case ChainType.X_CHAIN:
+      return XADDRESS;
+    case ChainType.P_CHAIN:
+      return PADDRESS;
+    default:
+      return XADDRESS;
+  }
 }

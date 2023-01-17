@@ -13,7 +13,6 @@ import {
   loadTotalGasFess,
 } from 'store/cchainSlice/utils';
 import useWidth from 'app/hooks/useWidth';
-import { useLocation } from 'react-router-dom';
 import {
   changetimeFramePchain,
   changetimeFrameXchain,
@@ -26,6 +25,7 @@ import {
 } from 'store/xchainSlice/utils';
 import { getChainID } from 'api/utils';
 import { ChainType } from 'utils/types/chain-type';
+import { getChainTypeFromUrl } from 'utils/route-utils';
 
 export default function RowRadioButtonsGroup({
   chainType,
@@ -36,14 +36,13 @@ export default function RowRadioButtonsGroup({
   timeFrame: string;
   style?: React.CSSProperties;
 }) {
-  const location = useLocation();
   const dispatch = useAppDispatch();
   const [value, setValue] = React.useState(timeFrame);
 
   useEffect(() => {
-    if (location.pathname.split('/')[1] === ChainType.C_CHAIN)
+    if (getChainTypeFromUrl() === ChainType.C_CHAIN)
       dispatch(changetimeFrame(value));
-    else if (location.pathname.split('/')[1] === ChainType.X_CHAIN)
+    else if (getChainTypeFromUrl() === ChainType.X_CHAIN)
       dispatch(changetimeFrameXchain(value));
     else dispatch(changetimeFramePchain(value));
   }, [value]); // eslint-disable-line
@@ -63,14 +62,14 @@ export default function RowRadioButtonsGroup({
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (
-      (location.pathname.split('/')[2] === ChainType.C_CHAIN &&
+      (getChainTypeFromUrl() === ChainType.C_CHAIN &&
         event.target.value !== Timeframe.MONTHS_1 &&
         cGasFeesLoading !== Status.LOADING &&
         cTransactionsLoading !== Status.LOADING) ||
-      (location.pathname.split('/')[2] === ChainType.X_CHAIN &&
+      (getChainTypeFromUrl() === ChainType.X_CHAIN &&
         xGasFeesLoading !== Status.LOADING &&
         xTransactionsLoading !== Status.LOADING) ||
-      (location.pathname.split('/')[2] === ChainType.P_CHAIN &&
+      (getChainTypeFromUrl() === ChainType.P_CHAIN &&
         pGasFeesLoading !== Status.LOADING &&
         pTransactionsLoading !== Status.LOADING)
     ) {
@@ -79,22 +78,22 @@ export default function RowRadioButtonsGroup({
   };
 
   useEffect(() => {
-    if (location.pathname.split('/')[2] === ChainType.C_CHAIN) {
+    if (getChainTypeFromUrl() === ChainType.C_CHAIN) {
       dispatch(loadNumberOfTransactions(timeFrame));
       dispatch(loadTotalGasFess(timeFrame));
     } else {
       dispatch(
         loadNumberOfPXTransactions({
           timeframe: timeFrame,
-          chainId: getChainID(location.pathname.split('/')[2][0]),
-          chainAlias: location.pathname.split('/')[2][0],
+          chainId: getChainID(getChainTypeFromUrl()[0]),
+          chainAlias: getChainTypeFromUrl()[0],
         }),
       );
       dispatch(
         loadTotalPXGasFess({
           timeframe: timeFrame,
-          chainId: getChainID(location.pathname.split('/')[2][0]),
-          chainAlias: location.pathname.split('/')[2][0],
+          chainId: getChainID(getChainTypeFromUrl()[0]),
+          chainAlias: getChainTypeFromUrl()[0],
         }),
       );
     }

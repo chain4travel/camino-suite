@@ -11,6 +11,7 @@ import TransactionsList from 'app/pages/CChainPages/LatestBlocksAndTransactionsL
 import PageContainer from 'app/components/PageContainer';
 import BlockDetailView from './BlockDetailView';
 import SubPageTitle from 'app/components/SubPageTitle';
+import { getBlockNumber } from 'utils/route-utils';
 
 const BlockDetails: FC = () => {
   const dispatch = useAppDispatch();
@@ -19,7 +20,7 @@ const BlockDetails: FC = () => {
   const loading = useAppSelector(getCBlockDetailStatus);
 
   React.useEffect(() => {
-    dispatch(fetchCBlockDetail(parseInt(location.pathname.split('/')[4])));
+    dispatch(fetchCBlockDetail(parseInt(getBlockNumber())));
   }, [location, dispatch]);
 
   return (
@@ -54,7 +55,7 @@ const BlockDetails: FC = () => {
             }}
           >
             <SubPageTitle
-              title={`Block ${location.pathname.split('/')[4]}`}
+              title={`Block ${getBlockNumber()}`}
               backToLink={CCHAIN}
             />
             <Box

@@ -31,6 +31,7 @@ import DetailsField from 'app/components/DetailsField';
 import Icon from '@mdi/react';
 import TransactionDetailView from './TransactionDetailView';
 import SubPageTitle from 'app/components/SubPageTitle';
+import { getTransactionFromUrl } from 'utils/route-utils';
 
 const TransactionDetails: FC = () => {
   const theme = useTheme();
@@ -53,7 +54,7 @@ const TransactionDetails: FC = () => {
   };
 
   useEffect(() => {
-    dispatch(fetchTransactionDetails(location.pathname.split('/')[4]));
+    dispatch(fetchTransactionDetails(getTransactionFromUrl()));
     return () => {
       changeCurrentIndex(0);
       dispatch(clearTr());
@@ -78,7 +79,7 @@ const TransactionDetails: FC = () => {
   useEffect(() => {
     if (
       nextPrevTX.length > 0 &&
-      location.pathname.split('/')[4] !== nextPrevTX[currentIndex]?.hash
+      getTransactionFromUrl() !== nextPrevTX[currentIndex]?.hash
     )
       navigate(`${CTRANSACTIONS}/${nextPrevTX[currentIndex]?.hash}`);
     // eslint-disable-next-line react-hooks/exhaustive-deps
