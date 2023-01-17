@@ -200,7 +200,7 @@ export const fetchBlocksTransactionsCChain =
         resolve(response.data.value);
       }).catch(function (error) {
         reject([]);
-        console.log(error);
+        console.error(error,500);
       });
     });
   }

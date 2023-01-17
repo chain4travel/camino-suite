@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect, useState } from 'react';
+import React, { Fragment, useEffect, useState, useRef } from 'react';
 import { Marker } from 'react-simple-maps';
 import './styles/CircleMarker.css';
 import Typography from '@mui/material/Typography';
@@ -17,9 +17,8 @@ const CircleMarker = ({
 }: any) => {
 
   let cityNodes = nodes;
-
   const [changeColor, setChangeColor] = useState(false);
-  const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
+  const anchorEl = useRef(null); 
   const [open, setOpen] = useState(false);
   const [placement, setPlacement] = useState<PopperPlacementType>();
 
@@ -27,7 +26,7 @@ const CircleMarker = ({
 
   return (
     <Fragment>
-      <Marker coordinates={[lng, lat]} aria-describedby={id}>
+      <Marker ref={anchorEl} coordinates={[lng, lat]} aria-describedby={id}>
         <circle
           className="animated flash"
           fill={changeColor == true ? '#000000' : '#4782da'}
@@ -38,19 +37,17 @@ const CircleMarker = ({
           strokeOpacity="0.4"
           cursor="pointer"
           onMouseOver={(e: any) => {
-            setAnchorEl(e.currentTarget);
             setOpen(true);
             setChangeColor(true);
           }}
           onMouseOut={(e) => {
-            setAnchorEl(null);
             setOpen(false);
             setChangeColor(false);
           }}
         />
       </Marker>
 
-      <Popper open={open} anchorEl={anchorEl} placement={placement} transition>
+      <Popper open={open} anchorEl={anchorEl.current} placement={placement} transition>
         {({ TransitionProps }) => (
           <Fade {...TransitionProps} timeout={350}>
             <Paper>
