@@ -58,6 +58,8 @@ module.exports = {
                 './mountCreate': './src/views/createMount.ts',
                 './mountAccessComponents': './src/views/access/mountAccessComponents.ts',
                 './mountLegal': './src/views/mountLegal.ts',
+                './mountAccountMenu': './src/components/wallet/sidebar/mountAccountMenu.ts',
+                './mountAccounts': './src/components/Access/mountAccounts.ts',
             },
             shared: {
                 ...deps,

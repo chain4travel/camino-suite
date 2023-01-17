@@ -14,6 +14,8 @@ interface initialStateAppConfigType {
   networks: Network[];
   chains: IChain[];
   status: Status;
+  isAuth: boolean;
+  walletStore: any;
 }
 
 const getNetworkFromLocalStorage = () => {
@@ -81,6 +83,8 @@ let initialState: initialStateAppConfigType = {
   ],
   chains: [],
   status: Status.IDLE,
+  walletStore: null,
+  isAuth: false,
 };
 
 const appConfigSlice = createSlice({
@@ -109,6 +113,12 @@ const appConfigSlice = createSlice({
       if (payload === "Wallet") state.activeApp = "wallet";
       else if (payload === "Explorer") state.activeApp = "explorer";
       else state.activeApp = "";
+    },
+    updateValues(state, { payload }) {
+      state.walletStore = payload;
+    },
+    updateAuthStatus(state, { payload }) {
+      state.isAuth = payload;
     },
   },
   extraReducers(builder) {
@@ -155,11 +165,18 @@ export const selectAllChains = (state: RootState) => state.appConfig.chains;
 // Select Network Status
 export const selectNetworkStatus = (state: RootState) => state.appConfig.status;
 
+// Select Auth Status
+export const selectAuthStatus = (state: RootState) =>
+  state.appConfig.walletStore?.isAuth;
+export const getAuthStatus = (state: RootState) => state.appConfig.isAuth;
+
 export const {
   changeNetwork,
   addCustomNetwork,
   removeCustomNetwork,
   resetChains,
   changeActiveApp,
+  updateValues,
+  updateAuthStatus,
 } = appConfigSlice.actions;
 export default appConfigSlice.reducer;

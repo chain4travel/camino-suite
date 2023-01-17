@@ -42,7 +42,6 @@ import MnemonicInput from '@/components/misc/MnemonicInput.vue'
 })
 export default class Mnemonic extends Vue {
     @Prop() navigate: any
-    @Prop() setLogged: any
     phrase: string = ''
     isLoading: boolean = false
     err: string = ''
@@ -102,7 +101,8 @@ export default class Mnemonic extends Vue {
         setTimeout(async () => {
             try {
                 await this.$store.dispatch('accessWallet', phrase)
-                this.setLogged(this.$store.state)
+                let { updateSuiteStore } = this.globalHelper()
+                updateSuiteStore(this.$store.state)
                 this.isLoading = false
             } catch (e) {
                 this.isLoading = false

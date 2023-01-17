@@ -13,14 +13,34 @@ Vue.use(VueMeta)
 Vue.use(BootstrapVue)
 Vue.component('datetime', Datetime)
 
-export const mount = (el: string) => {
+export const mount = (el: string, appSuiteStore: any) => {
+    const { setUpdateStore, setLogOut } = appSuiteStore
+    const MyPlugin = {
+        install(Vue, options) {
+            Vue.prototype.globalHelper = () => {
+                return {
+                    updateSuiteStore: (s) => {
+                        setUpdateStore(s)
+                    },
+                    logout: () => {
+                        setLogOut(true)
+                    },
+                }
+            }
+        },
+    }
+    Vue.use(MyPlugin)
     const app = new Vue({
         router,
         store,
         vuetify,
         i18n,
-        render: (h) => h(App),
-        created: () => {},
+        render: (createElement) => {
+            return createElement(App)
+        },
+        created: function () {
+            store.commit('Accounts/loadAccounts')
+        },
         mounted() {
             // Reveal app version
             // Hide loader once vue is initialized
