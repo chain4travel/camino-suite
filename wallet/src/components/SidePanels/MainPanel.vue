@@ -37,7 +37,7 @@ export default {
     row-gap: 6px;
     padding-top: 8px;
     padding-bottom: 8px;
-    height: 100vh;
+    // height: 100vh;
     min-height: 100%;
 }
 .panel_nav {

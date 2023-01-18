@@ -87,7 +87,6 @@ export default function MainLayout() {
         <NavBar />
       </Box>
       <Content />
-      <Footer />
     </>
   );
 }

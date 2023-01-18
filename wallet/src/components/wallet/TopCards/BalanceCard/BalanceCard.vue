@@ -33,7 +33,7 @@
                     <span class="smaller">.{{ balanceTextRight }}</span>
                     {{ nativeAssetSymbol }}
                 </p>
-                <div style="display: flex; flex-direction: row">
+                <!-- <div style="display: flex; flex-direction: row">
                     <p class="balance_usd">
                         <b>$ {{ totalBalanceUSDText }}</b>
                         USD
@@ -44,7 +44,7 @@
                         <b>${{ avaxPriceText }}</b>
                         USD
                     </p>
-                </div>
+                </div> -->
             </div>
             <!--            <button class="expand_but">Show Breakdown<fa icon="list-ol"></fa></button>-->
             <div class="alt_info">
@@ -98,8 +98,8 @@ import NftCol from './NftCol.vue'
 import Tooltip from '@/components/misc/Tooltip.vue'
 
 import Big from 'big.js'
-import { BN } from '@c4tplatform/camino/dist'
-import { ONEAVAX } from '@c4tplatform/camino/dist/utils'
+import { BN } from '@c4tplatform/caminojs/dist'
+import { ONEAVAX } from '@c4tplatform/caminojs/dist/utils'
 import { bnToBig } from '@/helpers/helper'
 import { priceDict } from '@/store/types'
 import { WalletType } from '@/js/wallets/types'

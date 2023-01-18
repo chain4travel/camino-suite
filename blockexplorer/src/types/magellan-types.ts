@@ -161,7 +161,6 @@ export interface MagellanXPInput {
 export interface MagellanXPCredentials {
   address: string;
   public_key: string;
-  signature: string;
 }
 
 export interface MagellanSearchResponse {

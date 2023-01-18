@@ -13,7 +13,8 @@ import { ChainType } from 'utils/types/chain-type';
 import { mdiFileDocumentOutline } from '@mdi/js';
 import { getBaseUrl } from 'api/utils';
 import { addressesApi, assetsApi } from 'utils/magellan-api-utils';
-import { XCHAIN } from 'utils/route-paths';
+import { BASE_PATH } from '../../../../utils/route-paths';
+import { getChainTypeFromUrl, getAddressFromUrl } from 'utils/route-utils';
 
 const tabOptions = [
   {
@@ -44,7 +45,8 @@ export interface AddressBalance {
 
 export default function XAddressDetail() {
   // getting the address from the url by getting what comes after the last slash
-  const address = window.location.pathname.split('/').pop() as string;
+  const address = getAddressFromUrl();
+  const chainType = getChainTypeFromUrl() as ChainType;
   const [value, setValue] = React.useState(0);
   const [balance, setBalance] = useState(0);
   // const dispatch = useAppDispatch();
@@ -72,14 +74,30 @@ export default function XAddressDetail() {
     return [];
   }
   useEffect(() => {
-    loadBalances(location.pathname.split('/')[4]);
+    loadBalances(getAddressFromUrl());
   }, [location]);
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
   };
+  const getChainPageTitle = (chainType: ChainType) => {
+    switch (chainType) {
+      case ChainType.X_CHAIN:
+        return 'X chain';
+      case ChainType.P_CHAIN:
+        return 'P chain';
+      default:
+        return 'X chain';
+    }
+  };
   return (
-    <PageContainer pageTitle="X chain" metaContent="chain-overview x-chain">
-      <SubPageTitle title="Address Detail" backToLink={XCHAIN} />
+    <PageContainer
+      pageTitle={getChainPageTitle(chainType)}
+      metaContent={`chain-overview ${chainType}`}
+    >
+      <SubPageTitle
+        title="Address Detail"
+        backToLink={BASE_PATH + '/' + chainType}
+      />
       <CopyTitleCard
         label="Address"
         value={address}
@@ -87,11 +105,7 @@ export default function XAddressDetail() {
         mixedStyle
       />
       <AddressOverviewCard balance={balance} />
-      <Paper
-        square
-        variant="outlined"
-        sx={{ backgroundColor: 'card.background' }}
-      >
+      <Paper square variant="outlined" sx={{ backgroundColor: 'primary.dark' }}>
         <TabsHeader
           tabValue={value}
           changeAction={handleChange}
@@ -99,7 +113,7 @@ export default function XAddressDetail() {
         >
           <Panels
             value={value}
-            chainType={location.pathname.split('/')[1] as ChainType}
+            chainType={getChainTypeFromUrl() as ChainType}
           />
         </TabsHeader>
       </Paper>
@@ -126,7 +140,7 @@ const Panels = ({
 
 export const AddressOverviewCard = ({ balance }: { balance: number }) => {
   return (
-    <Paper variant="outlined" sx={{ backgroundColor: 'card.background' }}>
+    <Paper variant="outlined" sx={{ backgroundColor: 'primary.dark' }}>
       <Box p={2}>
         <Grid container spacing={2}>
           <Grid item xs md={6}>

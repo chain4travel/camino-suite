@@ -19,7 +19,7 @@
             ”, or “
             <b>our</b>
             ”), concerning your access to and use of the
-            <span class="s1">https://wallet.camino.foundation/</span>
+            <span class="s1">https://wallet.camino.network/</span>
             website and related features and services, including but not limited to the Camino
             wallet functionality, as well as any other media form, media channel, mobile website or
             mobile application related, linked, or otherwise connected thereto, (collectively, the
@@ -606,10 +606,10 @@
         <p style="text-indent: 0pt; text-align: left"><br /></p>
         <p style="padding-left: 5pt; text-indent: 0pt; text-align: justify">
             We care about data privacy and security. Please review our Privacy Policy:
-            <a href="https://camino.foundation/privacy-policy" class="s7" target="_blank">
-                https://camino.foundation/privacy-policy
+            <a href="https://camino.network/privacy-policy" class="s7" target="_blank">
+                https://camino.network/privacy-policy
             </a>
-            <a href="https://camino.foundation/privacy-policy" class="a" target="_blank">.</a>
+            <a href="https://camino.network/privacy-policy" class="a" target="_blank">.</a>
             By using the Site, you agree to be bound by our Privacy Policy, which is incorporated
             into these Terms of Use. Please be advised the Site is hosted in EU-West. If you access
             the Site from any other region of the world with laws or other requirements governing

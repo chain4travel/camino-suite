@@ -56,8 +56,6 @@ export function getInputFunds(
   if (magellanTransaction.inputs) {
     for (const input of magellanTransaction.inputs) {
       const inputFund = createFundFromOutput(input.output);
-      inputFund.signature =
-        input?.credentials !== null ? input?.credentials[0]?.signature : '';
       inputfunds.push(inputFund);
     }
   }

@@ -2,16 +2,16 @@ import {
     KeyChain as AVMKeyChain,
     KeyPair as AVMKeyPair,
     UTXOSet as AVMUTXOSet,
-} from '@c4tplatform/camino/dist/apis/avm'
+} from '@c4tplatform/caminojs/dist/apis/avm'
 
-import { UTXOSet as PlatformUTXOSet } from '@c4tplatform/camino/dist/apis/platformvm'
+import { UTXOSet as PlatformUTXOSet } from '@c4tplatform/caminojs/dist/apis/platformvm'
 import { ava, bintools } from '@/AVA'
 import HDKey from 'hdkey'
-import { Buffer } from '@c4tplatform/camino'
+import { Buffer } from '@c4tplatform/caminojs'
 import {
     KeyChain as PlatformVMKeyChain,
     KeyPair as PlatformVMKeyPair,
-} from '@c4tplatform/camino/dist/apis/platformvm'
+} from '@c4tplatform/caminojs/dist/apis/platformvm'
 import store from '@/store'
 
 import { getAddressChains } from '@/explorer_api'
@@ -427,7 +427,7 @@ class HdHelper {
 
         // No need for PlatformKeypair because addressToString uses chainID to decode
         let keypair = new AVMKeyPair(hrp, chainId)
-        let addrBuf = keypair.addressFromPublicKey(pkBuff)
+        let addrBuf = AVMKeyPair.addressFromPublicKey(pkBuff)
         let addr = bintools.addressToString(hrp, chainId, addrBuf)
 
         this.addressCache[index] = addr

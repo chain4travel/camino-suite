@@ -20,7 +20,7 @@
             >
                 {{ $t('access.submit') }}
             </v-btn>
-            <div @click="navigate('/access')" class="link">
+            <div @click="navigate('/login')" class="link">
                 {{ $t('access.cancel') }}
             </div>
         </div>
@@ -42,7 +42,6 @@ import MnemonicInput from '@/components/misc/MnemonicInput.vue'
 })
 export default class Mnemonic extends Vue {
     @Prop() navigate: any
-    @Prop() setLogged: any
     phrase: string = ''
     isLoading: boolean = false
     err: string = ''
@@ -102,7 +101,8 @@ export default class Mnemonic extends Vue {
         setTimeout(async () => {
             try {
                 await this.$store.dispatch('accessWallet', phrase)
-                this.setLogged(this.$store.state)
+                let { updateSuiteStore } = this.globalHelper()
+                updateSuiteStore(this.$store.state)
                 this.isLoading = false
             } catch (e) {
                 this.isLoading = false
@@ -123,6 +123,10 @@ export default class Mnemonic extends Vue {
     display: flex;
     flex-direction: column;
     align-items: center;
+    border-radius: 12px;
+    margin-top: 15px;
+    margin-bottom: 15px;
+    gap: 12px;
 }
 
 h1 {
@@ -181,7 +185,7 @@ textarea {
 }
 
 .but_primary {
-    margin-top: 20px;
+    // margin-top: 20px;
     margin-bottom: 15px;
 }
 
@@ -189,6 +193,10 @@ textarea {
     display: flex;
     flex-direction: column;
     align-items: center;
+}
+
+.link {
+    margin-bottom: 0px;
 }
 
 @include main.mobile_device {
@@ -220,6 +228,10 @@ textarea {
         }
     }
 
+    .link {
+        margin-bottom: 20px;
+    }
+
     h1 {
         text-align: center;
         font-size: main.$m-size-mobile;
@@ -233,7 +245,6 @@ textarea {
     .phrase_disp {
         width: 100%;
         max-width: 560px;
-        margin-bottom: main.$vertical-padding-mobile;
     }
 
     .err {
