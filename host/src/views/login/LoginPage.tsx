@@ -11,8 +11,8 @@ import {
 import Icon from "@mdi/react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { styled } from "@mui/material/styles";
-// mountAccounts
 import { mountAccounts } from "wallet/mountAccounts";
+
 const StyledLink = styled(Link)(({ theme }) => ({
   color: theme.palette.text.primary,
   textDecoration: "underline !important",
@@ -149,27 +149,27 @@ function SavedWalletButton({ label }, props) {
 }
 
 function AccessActionButton(props) {
+  const navigate = useNavigate();
   return (
-    <Link to={props.to} style={{ textDecoration: "none" }}>
-      <Button
-        variant="contained"
-        sx={{
-          p: ".75rem",
-          width: "100%",
+    <Button
+      variant="contained"
+      sx={{
+        p: ".75rem",
+        width: "100%",
+        bgcolor: "button.secondary",
+        padding: "1.25rem",
+        justifyContent: "space-between",
+        "&:hover": { bgcolor: "button.secondary", opacity: ".8" },
+        "&:disabled": {
+          opacity: ".3",
           bgcolor: "button.secondary",
-          padding: "1.25rem",
-          justifyContent: "space-between",
-          "&:hover": { bgcolor: "button.secondary", opacity: ".8" },
-          "&:disabled": {
-            opacity: ".3",
-            bgcolor: "button.secondary",
-            cursor: "not-allowed",
-          },
-        }}
-        {...props}
-      >
-        {props.children}
-      </Button>
-    </Link>
+          cursor: "not-allowed",
+        },
+      }}
+      onClick={() => navigate(props.to)}
+      // {...props}
+    >
+      {props.children}
+    </Button>
   );
 }
