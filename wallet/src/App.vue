@@ -36,7 +36,6 @@ import UpgradeToAccountModal from '@/components/modals/SaveAccount/UpgradeToAcco
 import LedgerWalletLoading from '@/components/modals/LedgerWalletLoading'
 import UrlBanner from '@/components/misc/UrlBanner'
 import router from '@/router'
-
 export default {
     components: {
         UrlBanner,
@@ -58,14 +57,7 @@ export default {
         let { updateSuiteStore } = this.globalHelper()
         updateSuiteStore(this.$store.state)
     },
-    computed: {
-        isNavbar() {
-            if (this.$route.path.includes('/wallet/home')) {
-                return false
-            }
-            return true
-        },
-    },
+
     metaInfo: {
         meta: [
             {

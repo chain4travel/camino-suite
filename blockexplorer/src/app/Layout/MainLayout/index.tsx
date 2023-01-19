@@ -54,9 +54,6 @@ const Content: React.FC = () => {
         >
           Something went wrong, Please Again!
         </Typography>
-        <MainButton variant="contained" onClick={handleClick}>
-          Switch to Columbus Network
-        </MainButton>
       </Box>
     </PageContainer>
   );

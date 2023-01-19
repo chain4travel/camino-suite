@@ -107,12 +107,7 @@ export const getActiveNetwork = (state: RootState) =>
   state.appConfig.activeNetwork;
 // Select magellanAddress
 export const selectMagellanAddress = (state: RootState) => {
-  // state.appConfig.networks.filter()
-  let networks = state.appConfig;
-  let activeNetwork = networks.networks.find(
-    element => element.id === networks.activeNetwork,
-  );
-  return activeNetwork?.explorerUrl;
+  return state.appConfig.activeNetwork?.explorerUrl;
 };
 
 // Select All chains
