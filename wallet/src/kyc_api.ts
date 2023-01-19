@@ -17,18 +17,26 @@ const kyc_api: AxiosInstance = axios.create({
 
 async function generateToken(address: string, publicKeyByte: string): Promise<AccessToken> {
     let url = `/generate_token`
-    let res = await kyc_api.post(url, {
-        external_user_id: address,
-        public_key: publicKeyByte,
-    })
-    return res.data
+    try {
+        let res = await kyc_api.post(url, {
+            external_user_id: address,
+            public_key: publicKeyByte,
+        })
+        return res.data
+    } catch (e) {
+        throw e
+    }
 }
 
 async function checkVerificationStatus(address: string): Promise<boolean> {
     let url = `/verified/${address}`
 
-    let res = await kyc_api.get(url)
-    return res.data
+    try {
+        let res = await kyc_api.get(url)
+        return res.data
+    } catch (e) {
+        throw e
+    }
 }
 
 export { kyc_api, generateToken, checkVerificationStatus }

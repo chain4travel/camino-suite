@@ -383,9 +383,3 @@ const store = new Vuex.Store({
 })
 
 export default store
-// export default {
-//   store,
-//   install(Vue, options) {
-//     Vue.prototype.$store = store;
-//   },
-// };

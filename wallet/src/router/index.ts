@@ -70,10 +70,6 @@ const routes = [
                 component: Earn,
             },
             {
-                path: 'validator',
-                component: Validator,
-            },
-            {
                 path: 'studio',
                 component: Studio,
             },
@@ -88,6 +84,10 @@ const routes = [
             {
                 path: 'launch',
                 component: Launch,
+            },
+            {
+                path: 'validator',
+                component: Validator,
             },
         ],
         component: Wallet,

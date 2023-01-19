@@ -64,7 +64,7 @@ import { ParseableAvmTxEnum, ParseablePlatformEnum, ParseableEvmTxEnum } from '.
 import { ILedgerBlockMessage } from '../../store/modules/ledger/types'
 import Erc20Token from '@/js/Erc20Token'
 import { WalletHelper } from '@/helpers/wallet_helper'
-import { idToChainAlias } from '@c4tplatform/camino-wallet-sdk'
+import { idToChainAlias } from '@c4tplatform/camino-wallet-sdk/dist'
 
 export const MIN_EVM_SUPPORT_V = '0.5.3'
 
@@ -630,7 +630,6 @@ class LedgerWallet extends HdWalletCore implements AvaWalletCore {
     getEvmTransactionMessages(tx: Transaction): ILedgerBlockMessage[] {
         let gasPrice = tx.gasPrice
         let gasLimit = tx.gasLimit
-        // @ts-ignore
         let totFee = gasPrice.mul(new BN(gasLimit.toString()))
         let feeNano = bnToBig(new BN(totFee.toString()), 9)
 
@@ -693,7 +692,9 @@ class LedgerWallet extends HdWalletCore implements AvaWalletCore {
         return signedTx
     }
 
-    async signP(unsignedTx: PlatformUnsignedTx): Promise<PlatformTx> {
+    async signP(unsignedTx: PlatformUnsignedTx, additionalSigners?: string[]): Promise<PlatformTx> {
+        if (additionalSigners?.length) throw 'AdditionalSigners not supported.'
+
         let tx = unsignedTx.getTransaction()
         let txType = tx.getTxType()
         let chainId: ChainIdType = 'P'
@@ -811,7 +812,6 @@ class LedgerWallet extends HdWalletCore implements AvaWalletCore {
             tx.to !== undefined ? tx.to.buf : Buffer.from([]),
             bnToRlp(tx.value),
             tx.data,
-            // @ts-ignore
             bnToRlp(new BN(tx.getChainId())),
             Buffer.from([]),
             Buffer.from([]),
@@ -849,7 +849,6 @@ class LedgerWallet extends HdWalletCore implements AvaWalletCore {
             }
 
             const signedTx = Transaction.fromTxData(
-                // @ts-ignore
                 {
                     nonce: tx.nonce,
                     gasPrice: tx.gasPrice,
