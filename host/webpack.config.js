@@ -8,6 +8,8 @@ module.exports = {
     publicPath: "https://playground.suite.camino.foundation/",
   },
 
+  devtool: "inline-source-map",
+
   resolve: {
     extensions: [".vue", ".tsx", ".ts", ".jsx", ".js", ".json"],
   },

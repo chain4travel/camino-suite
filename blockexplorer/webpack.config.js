@@ -7,6 +7,8 @@ module.exports = {
     publicPath: 'https://playground.suite-explorer.camino.foundation/',
   },
 
+  devtool: 'inline-source-map',
+
   resolve: {
     extensions: ['.tsx', '.ts', '.jsx', '.js', '.json'],
     alias: {
