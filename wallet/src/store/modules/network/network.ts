@@ -9,8 +9,7 @@ import { BN } from '@c4tplatform/caminojs'
 import router from '@/router'
 import { web3 } from '@/evm'
 import { setSocketNetwork } from '../../../providers'
-import { setAvalanche } from '@c4tplatform/camino-wallet-sdk'
-
+import { setAvalanche } from '@c4tplatform/camino-wallet-sdk/dist'
 const network_module: Module<NetworkState, RootState> = {
     namespaced: true,
     state: {
@@ -44,6 +43,7 @@ const network_module: Module<NetworkState, RootState> = {
             state.networksCustom.push(net)
             dispatch('save')
         },
+
         async removeCustomNetwork({ state, dispatch }, net: AvaNetwork) {
             let index = state.networksCustom.indexOf(net)
             state.networksCustom.splice(index, 1)
@@ -150,6 +150,8 @@ const network_module: Module<NetworkState, RootState> = {
             dispatch('updateTxFee')
             // Update tx history
             dispatch('History/updateTransactionHistory', null, { root: true })
+            if (ava.getNetwork().P.lockModeBondDeposit && ava.getNetwork().P.verifyNodeSignature)
+                dispatch('Assets/getPChainBalances')
 
             // Set the SDK Network
             setAvalanche(ava)
@@ -176,10 +178,10 @@ const network_module: Module<NetworkState, RootState> = {
 
             let columbus = new AvaNetwork(
                 'Columbus',
-                'https://columbus.camino.foundation',
+                'https://columbus.camino.network',
                 1001,
-                'https://magellan.columbus.camino.foundation',
-                'https://explorer.camino.foundation',
+                'https://magellan.columbus.camino.network',
+                'https://explorer.columbus.camino.network',
                 true
             )
 

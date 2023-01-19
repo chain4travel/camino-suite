@@ -90,7 +90,7 @@ export default class Home extends Vue {
 </script>
 
 <style scoped lang="scss">
-@use "../styles/main";
+@use '../styles/main';
 .home {
     display: flex;
     justify-content: center;

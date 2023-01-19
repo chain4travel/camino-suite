@@ -136,5 +136,8 @@ a {
     .but_primary {
         width: 100%;
     }
+    .access_card {
+        padding: main.$container-padding-mobile;
+    }
 }
 </style>
