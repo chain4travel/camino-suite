@@ -9,6 +9,37 @@ import i18n from './plugins/i18n'
 import BootstrapVue from 'bootstrap-vue'
 import vuetify from '@/plugins/vuetify'
 
+declare module 'big.js' {
+    interface Big {
+        toLocaleString(toFixed?: number): string
+    }
+}
+
+Big.prototype.toLocaleString = function (toFixed: number = 9) {
+    let value = this
+
+    let fixedStr = this.toFixed(toFixed)
+    let split = fixedStr.split('.')
+    let wholeStr = parseInt(split[0]).toLocaleString('en-US')
+
+    if (split.length === 1) {
+        return wholeStr
+    } else {
+        let remainderStr = split[1]
+
+        // remove trailing 0s
+        let lastChar = remainderStr.charAt(remainderStr.length - 1)
+        while (lastChar === '0') {
+            remainderStr = remainderStr.substring(0, remainderStr.length - 1)
+            lastChar = remainderStr.charAt(remainderStr.length - 1)
+        }
+
+        let trimmed = remainderStr.substring(0, toFixed)
+        if (!trimmed) return wholeStr
+        return `${wholeStr}.${trimmed}`
+    }
+}
+
 Vue.use(VueMeta)
 Vue.use(BootstrapVue)
 Vue.component('datetime', Datetime)
@@ -38,9 +69,6 @@ export const mount = (el: string, appSuiteStore: any) => {
         render: (createElement) => {
             return createElement(App)
         },
-        created: function () {
-            store.commit('Accounts/loadAccounts')
-        },
         mounted() {
             // Reveal app version
             // Hide loader once vue is initialized
@@ -57,3 +85,44 @@ export const mount = (el: string, appSuiteStore: any) => {
 }
 
 // mount("#app");
+
+// @ts-ignore
+if (window.Cypress) {
+    // only available during E2E tests
+    // @ts-ignore
+    window.app = app
+}
+
+// Extending Big.js with a helper function
+import Big from 'big.js'
+
+declare module 'big.js' {
+    interface Big {
+        toLocaleString(toFixed?: number): string
+    }
+}
+
+Big.prototype.toLocaleString = function (toFixed: number = 9) {
+    let value = this
+
+    let fixedStr = this.toFixed(toFixed)
+    let split = fixedStr.split('.')
+    let wholeStr = parseInt(split[0]).toLocaleString('en-US')
+
+    if (split.length === 1) {
+        return wholeStr
+    } else {
+        let remainderStr = split[1]
+
+        // remove trailing 0s
+        let lastChar = remainderStr.charAt(remainderStr.length - 1)
+        while (lastChar === '0') {
+            remainderStr = remainderStr.substring(0, remainderStr.length - 1)
+            lastChar = remainderStr.charAt(remainderStr.length - 1)
+        }
+
+        let trimmed = remainderStr.substring(0, toFixed)
+        if (!trimmed) return wholeStr
+        return `${wholeStr}.${trimmed}`
+    }
+}

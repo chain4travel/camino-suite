@@ -18,7 +18,6 @@ export interface RootState {
     volatileWallets: WalletType[] // will be forgotten when tab is closed
     warnUpdateKeyfile: boolean
     prices: priceDict // USD value of 1 native token
-    updateSuite: any
 }
 
 export interface ILedgerAppConfig {

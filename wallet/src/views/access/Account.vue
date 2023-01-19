@@ -179,4 +179,9 @@ a {
         width: 100%;
     }
 }
+@media only screen and (max-width: main.$mobile_width) {
+    .access_card {
+        padding: main.$container-padding-mobile;
+    }
+}
 </style>

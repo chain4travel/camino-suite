@@ -1,10 +1,10 @@
-import React, { useState, useEffect, useRef } from "react";
+import React from "react";
 import { AppBar, Box, Typography } from "@mui/material";
 import { Toolbar } from "@mui/material";
 import Logo from "../Logo";
 import NetworkSwitcher from "./NetworkSwitcher";
 import ThemeSwitcher from "./ThemeSwitcher";
-import { useAppDispatch, useAppSelector } from "../../hooks/reduxHooks";
+import { useAppSelector } from "../../hooks/reduxHooks";
 import { getActiveNetwork } from "../../redux/slices/network";
 
 import { mdiWalletOutline } from "@mdi/js";
@@ -14,8 +14,6 @@ import LoginIcon from "./LoginIcon";
 export default function Navbar() {
   const activeNetwork = useAppSelector(getActiveNetwork);
   const auth = useAppSelector((state) => state.appConfig.isAuth);
-
-  const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
   return (

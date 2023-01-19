@@ -36,7 +36,6 @@ import UpgradeToAccountModal from '@/components/modals/SaveAccount/UpgradeToAcco
 import LedgerWalletLoading from '@/components/modals/LedgerWalletLoading'
 import UrlBanner from '@/components/misc/UrlBanner'
 import router from '@/router'
-
 export default {
     components: {
         UrlBanner,
@@ -49,23 +48,13 @@ export default {
         Notifications,
     },
     async created() {
-        router.push('/wallet/home')
-        this.$store.dispatch('Assets/initErc20List')
-        this.$store.dispatch('Assets/ERCNft/init')
-        this.$store.dispatch('updateAvaxPrice')
+        if (router.currentRoute.path !== '/wallet/home') router.push('/wallet/home')
     },
     mounted() {
         let { updateSuiteStore } = this.globalHelper()
         updateSuiteStore(this.$store.state)
     },
-    computed: {
-        isNavbar() {
-            if (this.$route.path.includes('/wallet/home')) {
-                return false
-            }
-            return true
-        },
-    },
+
     metaInfo: {
         meta: [
             {

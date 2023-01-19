@@ -42,40 +42,41 @@ export default function LoginIcon() {
   };
   return (
     <>
-      <Select
-        value={cAddress}
-        onChange={(e) => {}}
-        renderValue={() => `0x${cAddress}`}
-        sx={{
-          maxWidth: "13rem",
-          ".MuiOutlinedInput-notchedOutline": { border: "none" },
-          ".MuiSvgIcon-root": { color: theme.palette.text.primary },
-        }}
-      >
-        <MenuItem
-          sx={{ typography: "body1", width: "100%", maxWidth: "326px" }}
-        >
-          <LoadAccountMenu type="user" />
-        </MenuItem>
-        <MenuItem
-          sx={{ typography: "body1", width: "100%", maxWidth: "326px" }}
-        >
-          <LoadAccountMenu type="kyc" />
-        </MenuItem>
-        <MenuItem
-          onClick={logout}
+      {cAddress && (
+        <Select
+          value={cAddress ? cAddress : ""}
+          renderValue={() => `0x${cAddress}`}
           sx={{
-            typography: "body1",
-            width: "100%",
-            maxWidth: "326px",
-            display: "flex",
-            justifyContent: "center",
+            maxWidth: "13rem",
+            ".MuiOutlinedInput-notchedOutline": { border: "none" },
+            ".MuiSvgIcon-root": { color: theme.palette.text.primary },
           }}
         >
-          <Icon path={mdiLogout} size={0.7} />
-          logout
-        </MenuItem>
-      </Select>
+          <MenuItem
+            sx={{ typography: "body1", width: "100%", maxWidth: "326px" }}
+          >
+            <LoadAccountMenu type="user" />
+          </MenuItem>
+          <MenuItem
+            sx={{ typography: "body1", width: "100%", maxWidth: "326px" }}
+          >
+            <LoadAccountMenu type="kyc" />
+          </MenuItem>
+          <MenuItem
+            onClick={logout}
+            sx={{
+              typography: "body1",
+              width: "100%",
+              maxWidth: "326px",
+              display: "flex",
+              justifyContent: "center",
+            }}
+          >
+            <Icon path={mdiLogout} size={0.7} />
+            logout
+          </MenuItem>
+        </Select>
+      )}
     </>
   );
 }
