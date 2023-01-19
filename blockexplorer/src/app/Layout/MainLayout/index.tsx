@@ -52,7 +52,7 @@ const Content: React.FC = () => {
           fontWeight="fontWeightBold"
           sx={{ color: 'error.light' }}
         >
-          Something went wrong, Please Again!
+          Something went wrong, Please Try Again!
         </Typography>
       </Box>
     </PageContainer>
