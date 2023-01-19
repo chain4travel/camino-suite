@@ -28,6 +28,9 @@ const MainLayout = ({ children }) => {
       dispatch(changeActiveApp("Explorer"));
     dispatch(changeNetworkStatus(Status.LOADING));
     await store.dispatch("Network/init");
+    await store.dispatch("Assets/initErc20List");
+    await store.dispatch("Assets/ERCNft/init");
+    await store.dispatch("updateAvaxPrice");
     let networks = store.getters["Network/allNetworks"];
     dispatch(addNetworks(networks));
     let selectedNetwork = store.state.Network.selectedNetwork

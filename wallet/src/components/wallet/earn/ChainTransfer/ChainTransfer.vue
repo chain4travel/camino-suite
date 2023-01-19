@@ -350,7 +350,6 @@ export default class ChainTransfer extends Vue {
         let exportTxId
         this.exportState = TxState.started
 
-        // eslint-disable-next-line no-useless-catch
         try {
             switch (sourceChain) {
                 case 'X':
