@@ -268,7 +268,7 @@ const SearchResultMenuList = ({ menuItems }) => {
         <MenuItem
           key={item.label + Math.random().toString(36).substring(2, 15)}
           onClick={() => {
-            window.location.href = item.link;
+            window.location.href = `/explorer${item.link}`;
           }}
           sx={{ gap: '10px' }}
         >

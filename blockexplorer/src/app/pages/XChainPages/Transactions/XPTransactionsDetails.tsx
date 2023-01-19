@@ -83,7 +83,7 @@ export default function XPTransactionDetails() {
               gap: '20px',
             }}
           >
-            <BackButton backToLink={`/${getChainTypeFromUrl()}`} />
+            <BackButton backToLink={`/explorer/${getChainTypeFromUrl()}`} />
             <Typography variant="h5" component="h5" fontWeight="fontWeightBold">
               {`${location.pathname
                 .split('/')[2][0]
