@@ -167,7 +167,7 @@ function AccessActionButton(props) {
         },
       }}
       onClick={() => navigate(props.to)}
-      // {...props}
+      {...props}
     >
       {props.children}
     </Button>
