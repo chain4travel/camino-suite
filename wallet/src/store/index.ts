@@ -88,9 +88,6 @@ const store = new Vuex.Store({
                 updateFilterAddresses()
             }
         },
-        updateTheme(state) {
-            state.theme = state.theme === 'dark' ? 'light' : 'dark'
-        },
     },
     actions: {
         // Used in home page to access a user's wallet
@@ -135,27 +132,23 @@ const store = new Vuex.Store({
 
             await dispatch('activateWallet', wallet)
 
-            let storeCopy = await dispatch('onAccess')
-            return storeCopy
+            dispatch('onAccess')
         },
 
         async accessWalletSingleton({ state, dispatch }, key: string) {
             let wallet = await dispatch('addWalletSingleton', key)
             await dispatch('activateWallet', wallet)
 
-            let storeCopy = await dispatch('onAccess')
-            return storeCopy
+            dispatch('onAccess')
         },
 
         async onAccess(store) {
             store.state.isAuth = true
-
             store.dispatch('Assets/updateAvaAsset')
             store.dispatch('Platform/update')
             store.dispatch('Assets/updateUTXOs')
             store.dispatch('Accounts/updateKycStatus')
             store.dispatch('Launch/initialize')
-            return store
         },
 
         // TODO: Parts can be shared with the logout function below
@@ -275,8 +268,12 @@ const store = new Vuex.Store({
             let orders = data.orders
             let memo = data.memo
 
-            let txId: string = await wallet.issueBatchTx(orders, toAddr, memo)
-            return txId
+            try {
+                let txId: string = await wallet.issueBatchTx(orders, toAddr, memo)
+                return txId
+            } catch (e) {
+                throw e
+            }
         },
 
         async activateWallet({ state, dispatch, commit }, wallet: MnemonicWallet | LedgerWallet) {
@@ -336,40 +333,44 @@ const store = new Vuex.Store({
 
             let version = fileData.version
 
-            // Decrypt the key file with the password
-            let keyFile: AllKeyFileDecryptedTypes = await readKeyFile(fileData, pass)
-            // Extract wallet keys
-            let keys = extractKeysFromDecryptedFile(keyFile)
+            try {
+                // Decrypt the key file with the password
+                let keyFile: AllKeyFileDecryptedTypes = await readKeyFile(fileData, pass)
+                // Extract wallet keys
+                let keys = extractKeysFromDecryptedFile(keyFile)
 
-            // If not auth, login user then add keys
-            if (!store.state.isAuth) {
-                await store.dispatch('accessWalletMultiple', {
-                    keys,
-                    activeIndex: keyFile.activeIndex,
-                })
-            } else {
-                for (let i = 0; i < keys.length; i++) {
-                    let key = keys[i]
+                // If not auth, login user then add keys
+                if (!store.state.isAuth) {
+                    await store.dispatch('accessWalletMultiple', {
+                        keys,
+                        activeIndex: keyFile.activeIndex,
+                    })
+                } else {
+                    for (let i = 0; i < keys.length; i++) {
+                        let key = keys[i]
 
-                    // Private keys from the keystore file do not have the PrivateKey- prefix
-                    if (key.type === 'mnemonic') {
-                        await store.dispatch('addWalletMnemonic', key.key)
-                    } else if (key.type === 'singleton') {
-                        await store.dispatch('addWalletSingleton', key.key)
+                        // Private keys from the keystore file do not have the PrivateKey- prefix
+                        if (key.type === 'mnemonic') {
+                            await store.dispatch('addWalletMnemonic', key.key)
+                        } else if (key.type === 'singleton') {
+                            await store.dispatch('addWalletSingleton', key.key)
+                        }
                     }
                 }
-            }
 
-            // Keystore warning flag asking users to update their keystore files;
-            store.state.warnUpdateKeyfile = false
-            if (version !== KEYSTORE_VERSION) {
-                store.state.warnUpdateKeyfile = true
-            }
-            store.state.volatileWallets = []
+                // Keystore warning flag asking users to update their keystore files;
+                store.state.warnUpdateKeyfile = false
+                if (version !== KEYSTORE_VERSION) {
+                    store.state.warnUpdateKeyfile = true
+                }
+                store.state.volatileWallets = []
 
-            return {
-                success: true,
-                message: 'success',
+                return {
+                    success: true,
+                    message: 'success',
+                }
+            } catch (err) {
+                throw err
             }
         },
 

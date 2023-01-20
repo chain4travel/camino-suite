@@ -20,6 +20,7 @@ import {
   getActiveNetwork,
   getNetworks,
 } from "../../redux/slices/network";
+import { updateAuthStatus } from "../../redux/slices/app-config";
 import { Status } from "../../@types";
 import DialogAnimate from "../Animate/DialogAnimate";
 import { useStore } from "Explorer/useStore";
@@ -62,6 +63,7 @@ export default function NetworkSwitcher() {
     } catch (e) {
       store.state.Network.selectedNetwork = null;
       store.state.Network.status = "disconnected";
+      dispatch(updateAuthStatus(false));
       dispatch(changeNetworkStatus(Status.FAILED));
     } finally {
       let newSelectedNetwork = store.state.Network.selectedNetwork
