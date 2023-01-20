@@ -135,8 +135,6 @@ const network_module: Module<NetworkState, RootState> = {
 
             // If authenticated
             if (rootState.isAuth) {
-                // Go back to wallet page
-                router.replace('/wallet/home')
                 for (var i = 0; i < rootState.wallets.length; i++) {
                     let w = rootState.wallets[i]
                     w.onnetworkchange()
@@ -208,7 +206,7 @@ const network_module: Module<NetworkState, RootState> = {
             try {
                 let isSet = await dispatch('loadSelectedNetwork')
                 if (!isSet) {
-                    await dispatch('setNetwork', state.networks[1])
+                    await dispatch('setNetwork', state.networks[0])
                 }
                 return true
             } catch (e) {

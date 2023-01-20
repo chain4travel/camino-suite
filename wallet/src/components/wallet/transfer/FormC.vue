@@ -134,7 +134,7 @@ import {
     bnToAvaxC,
     bnToBigAvaxC,
     bnToBigAvaxX,
-} from '@c4tplatform/camino-wallet-sdk'
+} from '@c4tplatform/camino-wallet-sdk/dist'
 
 // @ts-ignore
 import { QrInput } from '@c4tplatform/vue_components'
@@ -300,14 +300,6 @@ export default class FormC extends Vue {
     get maxFeeText(): string {
         return bnToAvaxC(this.maxFee)
     }
-
-    // balance - (gas * price)
-    // get maxAmt() {
-    //     // let priceWei = new BN(this.gasPrice).mul(new BN(Math.pow(10, 9)))
-    //     // let res = priceWei.mul(new BN(this.gasLimit))
-    //     let res = this.rawBalance.sub(this.maxFee)
-    //     return res.divRound(new BN(Math.pow(10, 9)))
-    // }
 
     async estimateGas() {
         if (!this.wallet) return

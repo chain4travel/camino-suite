@@ -81,7 +81,8 @@ const assets_module: Module<AssetsState, RootState> = {
                 // console.info(`Failed to add asset. Asset already exists. (${asset.id})`)
                 return
             }
-            state.assets.push(asset)
+            state.assets = [...state.assets, asset]
+
             Vue.set(state.assetsDict, asset.id, asset)
         },
         addNftFamily(state, family: AvaNftFamily) {
@@ -89,7 +90,7 @@ const assets_module: Module<AssetsState, RootState> = {
                 // console.info(`Failed to add NFT Family. Asset already exists. (${family.id})`)
                 return
             }
-            state.nftFams.push(family)
+            state.nftFams = [...state.nftFams, family]
             Vue.set(state.nftFamsDict, family.id, family)
         },
         removeAllAssets(state) {
@@ -114,7 +115,7 @@ const assets_module: Module<AssetsState, RootState> = {
             let tokensRaw = localStorage.getItem('erc20_tokens') || '[]'
             let tokens: TokenListToken[] = JSON.parse(tokensRaw)
             for (var i = 0; i < tokens.length; i++) {
-                state.erc20TokensCustom.push(new Erc20Token(tokens[i]))
+                state.erc20TokensCustom = [...state.erc20TokensCustom, new Erc20Token(tokens[i])]
             }
         },
 
@@ -124,7 +125,7 @@ const assets_module: Module<AssetsState, RootState> = {
         },
 
         whitelistNFT(state, id: string) {
-            state.nftWhitelist.push(id)
+            state.nftWhitelist = [...state.nftWhitelist, id]
         },
     },
     actions: {
@@ -174,9 +175,9 @@ const assets_module: Module<AssetsState, RootState> = {
                 let outId = utxo.getOutput().getOutputID()
 
                 if (outId === 11) {
-                    nftUtxos.push(utxo)
+                    if (nftUtxos.length > 0) nftUtxos = [...nftUtxos, utxo]
                 } else if (outId === 10) {
-                    nftMintUtxos.push(utxo)
+                    if (nftMintUtxos.length > 0) nftMintUtxos = [...nftMintUtxos, utxo]
                 }
             }
 
@@ -204,7 +205,7 @@ const assets_module: Module<AssetsState, RootState> = {
             }
 
             let t = new Erc20Token(token)
-            state.erc20Tokens.push(t)
+            state.erc20Tokens = [...state.erc20Tokens, t]
         },
 
         async addCustomErc20Token({ state, rootState, commit }, token: TokenListToken) {
@@ -220,7 +221,7 @@ const assets_module: Module<AssetsState, RootState> = {
 
             let t = new Erc20Token(token)
             // Save token state to storage
-            state.erc20TokensCustom.push(t)
+            state.erc20TokensCustom = [...state.erc20TokensCustom, t]
 
             let w = rootState.activeWallet
             if (w) {
@@ -267,16 +268,16 @@ const assets_module: Module<AssetsState, RootState> = {
 
         async addTokenList({ state, dispatch, commit }, tokenList: TokenList) {
             let tokens: TokenListToken[] = tokenList.tokens
-            state.tokenLists.push(tokenList)
+            state.tokenLists = [...state.tokenLists, tokenList]
             for (var i = 0; i < tokens.length; i++) {
                 dispatch('addErc20Token', tokens[i])
             }
 
             if (!tokenList.readonly) {
-                state.tokenListsCustom.push(tokenList.url)
+                state.tokenListsCustom = [...state.tokenListsCustom, tokenList.url]
                 commit('saveCustomTokenLists')
             } else {
-                state.tokenListUrls.push(tokenList.url)
+                state.tokenListUrls = [...state.tokenListUrls, tokenList.url]
             }
         },
 
@@ -508,7 +509,7 @@ const assets_module: Module<AssetsState, RootState> = {
                 let assetId = bintools.cb58Encode(assetIdBuff)
 
                 if (res[assetId]) {
-                    res[assetId].push(utxo)
+                    res[assetId] = [...res[assetId], utxo]
                 } else {
                     res[assetId] = [utxo]
                 }
@@ -567,7 +568,7 @@ const assets_module: Module<AssetsState, RootState> = {
 
             for (var id in assetsDict) {
                 let asset = assetsDict[id]
-                res.push(asset)
+                res = [...res, asset]
             }
             return res
         },
@@ -719,7 +720,7 @@ const assets_module: Module<AssetsState, RootState> = {
 
                 let target = res[assetId]
                 if (target) {
-                    target.push(utxo)
+                    target = [...target, utxo]
                 } else {
                     res[assetId] = [utxo]
                 }

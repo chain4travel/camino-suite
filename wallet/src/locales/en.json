@@ -57,7 +57,7 @@
         "password_error": "Invalid Password.",
         "submit": "Access Wallet",
         "mnemonic": {
-            "title": "Enter your MNEMONIC phrase\n",
+            "title": "Enter your key phrase",
             "subtitle": "Your key phrase consists of 24 words separated by an empty space",
             "cancel": "Cancel",
             "error": "Invalid key phrase. Your phrase must be 24 words separated by a single space.",
@@ -73,11 +73,11 @@
             "send": "Send",
             "export": "Cross Chain",
             "earn": "Earn",
-            "validator": "Validator",
             "studio": "Studio",
             "advanced": "Advanced",
             "activity": "Activity",
-            "launch": "Launch"
+            "launch": "Launch",
+            "validator": "Validator"
         },
         "address_card": {},
         "collectibles": {
@@ -122,10 +122,10 @@
             "show": "Show Breakdown",
             "hide": "Hide Breakdown",
             "available": "Available",
+            "locked": "Locked",
             "deposited": "Deposited",
             "bonded": "Bonded",
             "bonded_deposited": "Bonded & Deposited",
-            "locked": "Locked",
             "locked_stake": "Locked Stakeable",
             "stake": "Staking",
             "collectibles": "Collectibles"
@@ -462,8 +462,8 @@
                 "end": "End Date & Time"
             },
             "amount": {
-                "label": "Stake Amount",
-                "desc": "The amount of @.native:(0) to lock for staking."
+                "label": "Deposit Amount",
+                "desc": "Deposited amount is always 100.000 @.native:(0)."
             },
             "fee": {
                 "label": "Delegation Fee",
@@ -478,7 +478,7 @@
             "summary": {
                 "max_del": "Max Delegation Amount",
                 "max_del_tooltip": "Maximum amount that can be delegated to this validator.",
-                "duration": "Staking Duration",
+                "duration": "Duration",
                 "rewards": "Estimated Rewards",
                 "warn": "If it is your first time staking, start small. Staked tokens are locked until the end of the staking period."
             },
