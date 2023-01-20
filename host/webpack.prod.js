@@ -1,5 +1,7 @@
-const merge = require("webpack-merge");
+const { merge } = require("webpack-merge");
 const common = require("./webpack.common.js");
+const ModuleFederationPlugin = require("webpack/lib/container/ModuleFederationPlugin.js");
+const deps = require("./package.json").dependencies;
 
 module.exports = merge(common, {
   mode: "production",
@@ -9,7 +11,7 @@ module.exports = merge(common, {
     publicPath: "https://playground.suite.camino.foundation/",
   },
 
-  lugins: [
+  plugins: [
     new ModuleFederationPlugin({
       name: "host_react",
       filename: "remoteEntry.js",
