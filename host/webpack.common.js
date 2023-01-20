@@ -1,22 +1,9 @@
 const HtmlWebPackPlugin = require("html-webpack-plugin");
-const ModuleFederationPlugin = require("webpack/lib/container/ModuleFederationPlugin");
 const path = require("path");
 const CopyWebpackPlugin = require("copy-webpack-plugin");
-const deps = require("./package.json").dependencies;
 module.exports = {
-  output: {
-    publicPath: "https://playground.suite.camino.foundation/",
-  },
-
-  devtool: "inline-source-map",
-
   resolve: {
     extensions: [".vue", ".tsx", ".ts", ".jsx", ".js", ".json"],
-  },
-
-  devServer: {
-    port: 3000,
-    historyApiFallback: true,
   },
 
   module: {
@@ -43,28 +30,6 @@ module.exports = {
   },
 
   plugins: [
-    new ModuleFederationPlugin({
-      name: "host_react",
-      filename: "remoteEntry.js",
-      remotes: {
-        Explorer:
-          "Explorer@https://playground.suite-explorer.camino.foundation/remoteEntry.js",
-        wallet:
-          "wallet@https://playground.suite-wallet.camino.foundation/remoteEntry.js",
-      },
-      exposes: {},
-      shared: {
-        ...deps,
-        react: {
-          singleton: true,
-          requiredVersion: deps.react,
-        },
-        "react-dom": {
-          singleton: true,
-          requiredVersion: deps["react-dom"],
-        },
-      },
-    }),
     new HtmlWebPackPlugin({
       template: path.resolve(__dirname, "public/index.html"),
       favicon: "./public/favicon.ico",
