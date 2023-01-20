@@ -31,11 +31,7 @@ export const InputOutputSection = ({ inputs, outputs }) => {
         {inputs.map((item, index) => {
           return (
             <Grid key={index} container item xs justifyContent="center">
-              <InputCard
-                address={item.address}
-                signature={item.signature}
-                value={item.value}
-              />
+              <InputCard address={item.address} value={item.value} />
             </Grid>
           );
         })}
@@ -73,7 +69,7 @@ export const InputOutputSection = ({ inputs, outputs }) => {
   );
 };
 
-const InputCard = ({ address, signature, value }) => {
+const InputCard = ({ address, value }) => {
   return (
     <Paper
       sx={{
@@ -101,12 +97,6 @@ const InputCard = ({ address, signature, value }) => {
         type="string"
         tooltip="Fee"
         allowCopy={true}
-      />
-      <DetailsField
-        field="Signature"
-        value={signature}
-        type="string"
-        tooltip="Fee"
       />
       <DetailsField field="Value" value={value} type="ncam" tooltip="Fee" />
     </Paper>

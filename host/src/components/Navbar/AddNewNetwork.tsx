@@ -13,9 +13,15 @@ import { Button } from "@mui/material";
 import { AvaNetwork } from "wallet/AvaNetwork";
 import store from "wallet/store";
 import { addNetworks } from "../../redux/slices/network";
+import { useStore } from "Explorer/useStore";
 
-export default function AddNewNetwork({ networks, handleClose }) {
+export default function AddNewNetwork({
+  networks,
+  handleClose,
+  switchNetwork,
+}) {
   const [error, setError] = React.useState("");
+  const { updateNetworks } = useStore();
   const dispatch = useAppDispatch();
   const getInitialValues = () => {
     const _newNetwork = {
@@ -98,11 +104,12 @@ export default function AddNewNetwork({ networks, handleClose }) {
         store.dispatch("Network/addCustomNetwork", net);
         let allNetworks = store.getters["Network/allNetworks"];
         dispatch(addNetworks(allNetworks));
+        updateNetworks(allNetworks);
+        switchNetwork(net);
         resetForm();
         setSubmitting(false);
         handleClose();
       } catch (error) {
-        console.log("error", error);
         console.error(error);
       }
     },

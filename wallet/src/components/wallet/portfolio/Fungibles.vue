@@ -273,6 +273,9 @@ export default class Fungibles extends Vue {
 }
 
 @include main.mobile-device {
+    .add_token_row {
+        flex-direction: column;
+    }
     .fungibles_view {
         .headers,
         .asset {

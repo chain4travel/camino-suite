@@ -9,13 +9,38 @@ import {
   mdiWalletOutline,
 } from "@mdi/js";
 import Icon from "@mdi/react";
-import { Link } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { styled } from "@mui/material/styles";
+import { mountAccounts } from "wallet/mountAccounts";
 
 const StyledLink = styled(Link)(({ theme }) => ({
   color: theme.palette.text.primary,
   textDecoration: "underline !important",
 }));
+
+const LoadAccountMenu = () => {
+  const ref = useRef(null);
+  const navigate = useNavigate();
+  useEffect(() => {
+    mountAccounts(ref.current, {
+      navigate: (location) => navigate(location),
+    });
+  }, []);
+
+  return (
+    <div
+      style={{
+        display: "flex",
+        width: "100%",
+        height: "100%",
+        justifyContent: "center",
+        alignItems: "center",
+      }}
+    >
+      <div ref={ref} />
+    </div>
+  );
+};
 
 export default function LoginPage() {
   return (
@@ -36,6 +61,7 @@ export default function LoginPage() {
       >
         <Typography variant="h2">Camino Application Suite</Typography>
         {/* Saved wallets section */}
+        <LoadAccountMenu />
         {/* <Box sx={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
           <Typography variant="subtitle1">Saved Camino Wallets</Typography>
           <SavedWalletButton label="Daniel's Wallet" />
@@ -123,27 +149,27 @@ function SavedWalletButton({ label }, props) {
 }
 
 function AccessActionButton(props) {
+  const navigate = useNavigate();
   return (
-    <Link to={props.to} style={{ textDecoration: "none" }}>
-      <Button
-        variant="contained"
-        sx={{
-          p: ".75rem",
-          width: "100%",
+    <Button
+      variant="contained"
+      sx={{
+        p: ".75rem",
+        width: "100%",
+        bgcolor: "button.secondary",
+        padding: "1.25rem",
+        justifyContent: "space-between",
+        "&:hover": { bgcolor: "button.secondary", opacity: ".8" },
+        "&:disabled": {
+          opacity: ".3",
           bgcolor: "button.secondary",
-          padding: "1.25rem",
-          justifyContent: "space-between",
-          "&:hover": { bgcolor: "button.secondary", opacity: ".8" },
-          "&:disabled": {
-            opacity: ".3",
-            bgcolor: "button.secondary",
-            cursor: "not-allowed",
-          },
-        }}
-        {...props}
-      >
-        {props.children}
-      </Button>
-    </Link>
+          cursor: "not-allowed",
+        },
+      }}
+      onClick={() => navigate(props.to)}
+      {...props}
+    >
+      {props.children}
+    </Button>
   );
 }

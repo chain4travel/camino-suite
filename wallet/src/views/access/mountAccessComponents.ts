@@ -18,6 +18,7 @@ import KeySore from './Keystore.vue'
 import Mnemonic from './Mnemonic.vue'
 import PrivateKey from './PrivateKey.vue'
 import Menu from './Menu.vue'
+import Account from './Account.vue'
 
 function mountComponent(type: string) {
     switch (type) {
@@ -29,19 +30,39 @@ function mountComponent(type: string) {
             return Menu
         case 'PrivateKey':
             return PrivateKey
+        case 'Account':
+            return Account
         default:
             return Access
     }
 }
 
 export const mountAccessComponents = (el: string, type: string, props: any) => {
+    const { setUpdateStore, setLogOut } = props
+    const MyPlugin = {
+        install(Vue, options) {
+            Vue.prototype.globalHelper = () => {
+                return {
+                    updateSuiteStore: (s) => {
+                        setUpdateStore(s)
+                    },
+                    logout: () => {
+                        setLogOut(true)
+                    },
+                }
+            }
+        },
+    }
+    Vue.use(MyPlugin)
     const app = new Vue({
         router,
         store,
         vuetify,
         i18n,
         data: {},
-        created: function () {},
+        created: function () {
+            store.commit('Accounts/loadAccounts')
+        },
         render: (createElement) => {
             const context = {
                 props: props,

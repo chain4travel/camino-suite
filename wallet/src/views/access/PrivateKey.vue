@@ -34,7 +34,6 @@ import { Vue, Component, Prop } from 'vue-property-decorator'
 @Component
 export default class PrivateKey extends Vue {
     @Prop() navigate: any
-    @Prop() setLogged: any
     privatekey: string = ''
     isLoading: boolean = false
     error: string = ''
@@ -47,7 +46,9 @@ export default class PrivateKey extends Vue {
 
         try {
             await this.$store.dispatch('accessWalletSingleton', key)
-            this.setLogged(this.$store.state)
+            // this.setLogged(this.$store.state)
+            let { updateSuiteStore } = parent.globalHelper()
+            updateSuiteStore(this.$store.state)
             this.onsuccess()
         } catch (e) {
             this.onerror('Invalid Private Key.')
@@ -134,6 +135,9 @@ a {
     }
     .but_primary {
         width: 100%;
+    }
+    .access_card {
+        padding: main.$container-padding-mobile;
     }
 }
 </style>

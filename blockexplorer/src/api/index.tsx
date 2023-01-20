@@ -123,8 +123,14 @@ export async function getXPTransactions(offset: number, alias: string) {
 }
 
 export const getChains = createAsyncThunk('appConfig/chains', async () => {
-  const res = await axios.get(`${getBaseUrl()}${baseEndpoint}`);
-  return res.data;
+  try {
+    const res = await axios.get(`${getBaseUrl()}${baseEndpoint}`);
+    if (Object.keys(res.data.chains).length !== 3)
+      throw new Error('failed to load chains');
+    return res.data;
+  } catch (e) {
+    throw new Error('can not connect');
+  }
 });
 
 export interface loadBlocksTransactionstype {

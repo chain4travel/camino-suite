@@ -12,6 +12,7 @@ import {
   MAINNET,
 } from 'utils/route-paths';
 import { ChainType } from 'utils/types/chain-type';
+import { getChainTypeFromUrl } from 'utils/route-utils';
 
 function a11yProps(index: number) {
   return {
@@ -33,9 +34,7 @@ const activeTab = (path: string): number => {
 
 export default function Links() {
   const location = useLocation();
-  const [value, setValue] = useState(
-    activeTab(location.pathname.split('/')[1]),
-  );
+  const [value, setValue] = useState(activeTab(getChainTypeFromUrl()));
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     if (location.pathname !== MAINNET) {
       if (newValue === 3) window.open(DOCS);

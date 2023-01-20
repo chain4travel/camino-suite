@@ -24,12 +24,12 @@
                 <br />
                 <br />
             </form>
-            <router-link to="/wallet/access" class="link">{{ $t('access.cancel') }}</router-link>
+            <div @click="returnToLogin" class="link">{{ $t('access.cancel') }}</div>
         </div>
     </div>
 </template>
 <script lang="ts">
-import { Vue, Component } from 'vue-property-decorator'
+import { Vue, Component, Prop } from 'vue-property-decorator'
 import { ImportKeyfileInput } from '@/store/types'
 import Identicon from '@/components/misc/Identicon.vue'
 
@@ -37,15 +37,15 @@ import Identicon from '@/components/misc/Identicon.vue'
     components: { Identicon },
 })
 export default class Account extends Vue {
+    @Prop() index: string
+    @Prop() navigate: any
     password: string = ''
     isLoading: boolean = false
     error: string = ''
 
-    get index() {
-        return this.$route.params.index
-    }
     get accounts() {
-        return this.$store.state.Accounts.accounts
+        let accountsRaw = localStorage.getItem('accounts') || '{}'
+        return JSON.parse(accountsRaw) || []
     }
 
     get account() {
@@ -54,9 +54,13 @@ export default class Account extends Vue {
 
     created() {
         if (!this.account) {
-            this.$router.replace('/wallet/access')
+            this.navigate('/login')
             return
         }
+    }
+
+    returnToLogin() {
+        this.navigate(`/login`)
     }
 
     async access() {
@@ -70,14 +74,15 @@ export default class Account extends Vue {
             password: this.password,
             data: account.wallet,
         }
-
         setTimeout(() => {
             this.$store
                 .dispatch('Accounts/accessAccount', {
-                    index: this.index,
+                    index: parseInt(this.index),
                     pass: this.password,
                 })
-                .then((res) => {
+                .then(() => {
+                    let { updateSuiteStore } = this.globalHelper()
+                    updateSuiteStore(this.$store.state)
                     parent.isLoading = false
                 })
                 .catch((err) => {
@@ -121,12 +126,8 @@ export default class Account extends Vue {
     height: 40px !important;
 }
 .access_card {
-    /*max-width: 80vw;*/
-    //background-color: var(--bg-light);
-    //padding: main.$container-padding;
     width: 100%;
-    /*max-width: 240px;*/
-    /*max-width: 1000px;*/
+
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -137,6 +138,7 @@ export default class Account extends Vue {
     width: 340px;
     max-width: 100%;
     margin: 0px auto;
+    text-align: center;
 }
 h1 {
     font-size: main.$m-size;
@@ -175,6 +177,11 @@ a {
     }
     .but_primary {
         width: 100%;
+    }
+}
+@media only screen and (max-width: main.$mobile_width) {
+    .access_card {
+        padding: main.$container-padding-mobile;
     }
 }
 </style>

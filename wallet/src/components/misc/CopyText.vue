@@ -20,10 +20,10 @@ export default {
             copytext.setSelectionRange(0, 99999)
 
             document.execCommand('copy')
-            this.$store.dispatch('Notifications/add', {
-                title: ' Copied',
-                message: 'Copied to clipboard.',
-            })
+            // this.$store.dispatch('Notifications/add', {
+            //     title: ' Copied',
+            //     message: 'Copied to clipboard.',
+            // })
         },
     },
 }

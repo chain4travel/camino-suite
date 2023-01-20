@@ -1,7 +1,6 @@
-import { Helmet } from 'react-helmet-async';
 import React from 'react';
+import { Helmet } from 'react-helmet-async';
 import { GlobalStyle } from 'styles/global-styles';
-import { useTranslation } from 'react-i18next';
 import { BrowserRouter, Route, Routes, Navigate } from 'react-router-dom';
 import {
   CChainPage,
@@ -25,15 +24,12 @@ import NotFoundPage from './pages/PageNotFound';
 import { BASE_PATH } from '../utils/route-paths';
 
 export function App() {
-  const { i18n } = useTranslation();
-
   return (
     <BrowserRouter>
       <CssBaseline enableColorScheme />
       <Helmet
         titleTemplate="%s | Camino Block Explorer"
         defaultTitle="Camino Block Explorer"
-        htmlAttributes={{ lang: i18n.language }}
       >
         <meta name="description" content="Camino Block Explorer" />
       </Helmet>

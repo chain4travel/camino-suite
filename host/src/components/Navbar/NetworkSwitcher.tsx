@@ -10,7 +10,6 @@ import {
 } from "@mui/material";
 import { mdiTrashCanOutline } from "@mdi/js";
 import Icon from "@mdi/react";
-import { nameOfActiveNetwork } from "../../utils/componentsUtils";
 import SelectedNetwork from "./SelectNetwork";
 import AddNewNetwork from "./AddNewNetwork";
 import store from "wallet/store";
@@ -21,9 +20,10 @@ import {
   getActiveNetwork,
   getNetworks,
 } from "../../redux/slices/network";
+import { updateAuthStatus } from "../../redux/slices/app-config";
 import { Status } from "../../@types";
-import { useNavigate } from "react-router-dom";
 import DialogAnimate from "../Animate/DialogAnimate";
+import { useStore } from "Explorer/useStore";
 
 export default function NetworkSwitcher() {
   const dispatch = useAppDispatch();
@@ -31,6 +31,13 @@ export default function NetworkSwitcher() {
   const activeNetwork = useAppSelector(getActiveNetwork);
   const theme = useTheme();
 
+  const {
+    updateNetworks,
+    changeNetworkExplorer,
+    resetCChainReducer,
+    resetValidatorsReducer,
+    resetXPChainReducer,
+  } = useStore();
   const handleRemoveCustomNetwork = () => {
     store.dispatch("Network/removeCustomNetwork", activeNetwork);
     store.dispatch(
@@ -43,6 +50,8 @@ export default function NetworkSwitcher() {
     );
     let networks = store.getters["Network/allNetworks"];
     dispatch(addNetworks(networks));
+    updateNetworks(networks);
+    dispatch(changeNetworkExplorer(networks[0]));
     switchNetwork(networks[0]);
   };
 
@@ -50,31 +59,18 @@ export default function NetworkSwitcher() {
     try {
       dispatch(changeNetworkStatus(Status.LOADING));
       await store.dispatch("Network/setNetwork", network);
-      store.dispatch(
-        "Notifications/add",
-        {
-          title: "Network Connected",
-          message: "Connected to " + network.name,
-          type: "success",
-        },
-        { root: true }
-      );
       dispatch(changeNetworkStatus(Status.SUCCEEDED));
     } catch (e) {
       store.state.Network.selectedNetwork = null;
       store.state.Network.status = "disconnected";
-      store.dispatch(
-        "Notifications/add",
-        {
-          title: "Connection Failed",
-          message: `Failed to connect ${network.name}`,
-          type: "error",
-        },
-        { root: true }
-      );
+      dispatch(updateAuthStatus(false));
       dispatch(changeNetworkStatus(Status.FAILED));
     } finally {
-      dispatch(changeActiveNetwork(network));
+      let newSelectedNetwork = store.state.Network.selectedNetwork
+        ? store.state.Network.selectedNetwork
+        : network;
+      dispatch(changeActiveNetwork(newSelectedNetwork));
+      changeNetworkExplorer(newSelectedNetwork);
     }
   };
   const handleChangeNetwork = (selected: string) => {
@@ -82,40 +78,29 @@ export default function NetworkSwitcher() {
     switchNetwork(selectedNetwork);
   };
 
-  const navigate = useNavigate();
-  const [network, setNetwork] = React.useState(
-    nameOfActiveNetwork(networks, activeNetwork)
-  );
-
-  // React.useMemo(() => {
-  //   dispatch(resetCChainReducer());
-  //   dispatch(resetValidatorsReducer());
-  //   dispatch(resetXPChainReducer());
-  //   if (activeNetwork === "mainnet-testnet") navigate("/mainnet");
-  //   else navigate("/");
-  // }, [activeNetwork]); // eslint-disable-line
+  const [network, setNetwork] = React.useState("");
 
   React.useEffect(() => {
-    setNetwork(nameOfActiveNetwork(networks, activeNetwork));
+    resetCChainReducer();
+    resetValidatorsReducer();
+    resetXPChainReducer();
+    setNetwork(activeNetwork.name);
   }, [activeNetwork]); // eslint-disable-line
 
-  // const status = useAppSelector(selectNetworkStatus);
-
   const [open, setOpen] = React.useState(false);
-  const [selectedNetwork, setSelectedNetwork] = React.useState(null);
 
   const handleCloseModal = () => {
     setOpen(false);
   };
 
-  const handleOpenModal = (event) => {
+  const handleOpenModal = () => {
     setOpen(true);
   };
 
   return (
     <>
       <Select
-        value={activeNetwork.name}
+        value={network}
         onChange={(e) => {
           handleChangeNetwork(e.target.value);
         }}
@@ -167,7 +152,11 @@ export default function NetworkSwitcher() {
       </Select>
       <DialogAnimate open={open} onClose={handleCloseModal}>
         <DialogTitle>Add New Network</DialogTitle>
-        <AddNewNetwork networks={networks} handleClose={handleCloseModal} />
+        <AddNewNetwork
+          networks={networks}
+          handleClose={handleCloseModal}
+          switchNetwork={switchNetwork}
+        />
       </DialogAnimate>
     </>
   );

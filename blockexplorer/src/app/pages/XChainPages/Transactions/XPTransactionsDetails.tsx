@@ -13,6 +13,7 @@ import { XPTransactionDetail } from 'types/magellan-types';
 import { transactionApi } from 'utils/magellan-api-utils';
 import { useAppSelector } from 'store/configureStore';
 import { selectMagellanAddress } from 'store/app-config';
+import { getChainTypeFromUrl, getAddressFromUrl } from 'utils/route-utils';
 
 export default function XPTransactionDetails() {
   const [result, setResult] = React.useState<XPTransaction>();
@@ -22,9 +23,7 @@ export default function XPTransactionDetails() {
   async function fetchTransactionDetail(): Promise<void> {
     const res = (
       await axios.get(
-        `${magellanAddress}${transactionApi}/${
-          location.pathname.split('/')[4]
-        }`,
+        `${magellanAddress}${transactionApi}/${getAddressFromUrl()}`,
       )
     ).data;
     let transaction: XPTransaction = {
@@ -84,7 +83,7 @@ export default function XPTransactionDetails() {
               gap: '20px',
             }}
           >
-            <BackButton backToLink={`/${location.pathname.split('/')[1]}`} />
+            <BackButton backToLink={`/explorer/${getChainTypeFromUrl()}`} />
             <Typography variant="h5" component="h5" fontWeight="fontWeightBold">
               {`${location.pathname
                 .split('/')[2][0]
@@ -106,7 +105,7 @@ export default function XPTransactionDetails() {
         </Grid>
         {details && (
           <Box sx={{ display: 'flex', width: '100%', paddingTop: '1rem' }}>
-            <BackButton backToLink={`/${location.pathname.split('/')[1]}`} />
+            <BackButton backToLink={`/${getChainTypeFromUrl()}`} />
           </Box>
         )}
       </Paper>

@@ -207,8 +207,12 @@ export default class CreateWallet extends Vue {
 
         this.isLoad = true
 
-        await this.$store.dispatch('accessWallet', this.keyPhrase!.getValue())
-        this.setLogged(this.$store.state)
+        let parent = this
+
+        setTimeout(async () => {
+            await parent.$store.dispatch('accessWallet', this.keyPhrase!.getValue())
+            parent.setLogged(parent.$store.state)
+        }, 500)
     }
 }
 </script>

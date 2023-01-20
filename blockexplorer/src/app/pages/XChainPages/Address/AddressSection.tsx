@@ -1,11 +1,10 @@
 import React from 'react';
 import { Grid, Box, Chip } from '@mui/material';
-import { useLocation } from 'react-router-dom';
 import AddressLink from 'app/components/AddressLink';
 import moment from 'utils/helpers/moment';
+import { getAddressFromUrl } from 'utils/route-utils';
 
 export const AddressSection = ({ type, timestamp, id, chainType }) => {
-  const location = useLocation();
   return (
     <>
       <Grid
@@ -48,7 +47,7 @@ export const AddressSection = ({ type, timestamp, id, chainType }) => {
               height: '50px',
             }}
           >
-            {location.pathname.split('/')[4][0]}
+            {getAddressFromUrl()[0]}
           </Box>
         </Grid>
         <Grid
