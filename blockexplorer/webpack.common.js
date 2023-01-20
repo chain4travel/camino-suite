@@ -3,10 +3,6 @@ const ModuleFederationPlugin = require('webpack/lib/container/ModuleFederationPl
 const path = require('path');
 const deps = require('./package.json').devDependencies;
 module.exports = {
-  output: {
-    publicPath: 'https://playground.suite-explorer.camino.foundation/',
-  },
-
   resolve: {
     extensions: ['.tsx', '.ts', '.jsx', '.js', '.json'],
     alias: {
@@ -18,11 +14,6 @@ module.exports = {
       utils: path.resolve(__dirname, 'src/utils'),
       styles: path.resolve(__dirname, 'src/styles'),
     },
-  },
-
-  devServer: {
-    port: 3001,
-    historyApiFallback: true,
   },
 
   module: {
