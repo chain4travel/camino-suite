@@ -5,7 +5,7 @@ const deps = require("./package.json").dependencies;
 
 module.exports = merge(common, {
   mode: "production",
-  devtool: "inline-source-map",
+  devtool: "source-map",
 
   output: {
     publicPath: "https://playground.suite.camino.foundation/",

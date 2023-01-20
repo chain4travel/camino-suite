@@ -3,7 +3,7 @@ const common = require('./webpack.common.js');
 
 module.exports = merge(common, {
   mode: 'production',
-  devtool: 'inline-source-map',
+  devtool: 'source-map',
 
   output: {
     publicPath: 'https://playground.suite-explorer.camino.foundation/',
