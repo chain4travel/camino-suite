@@ -426,12 +426,6 @@ export default class AddValidator extends Vue {
     }
 
     onsuccess() {
-        this.$store.dispatch('Notifications/add', {
-            type: 'success',
-            title: 'Validator Added',
-            message: 'Your tokens are now locked to stake.',
-        })
-
         // Update History
         setTimeout(() => {
             this.$store.dispatch('Assets/updateUTXOs')
@@ -485,12 +479,6 @@ export default class AddValidator extends Vue {
         } else {
             this.err = err.message
         }
-
-        this.$store.dispatch('Notifications/add', {
-            type: 'error',
-            title: 'Validation Failed',
-            message: 'Failed to add validator.',
-        })
     }
 
     get nativeAssetSymbol(): string {

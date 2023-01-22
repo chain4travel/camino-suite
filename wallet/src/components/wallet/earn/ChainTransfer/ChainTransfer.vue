@@ -514,11 +514,6 @@ export default class ChainTransfer extends Vue {
         console.error(err)
         this.isLoading = false
         this.err = err
-        this.$store.dispatch('Notifications/add', {
-            type: 'error',
-            title: 'Transfer Failed',
-            message: err,
-        })
     }
 
     onErrorImport(err: any) {
@@ -549,11 +544,6 @@ export default class ChainTransfer extends Vue {
     onsuccess() {
         // Clear Form
         this.isSuccess = true
-        this.$store.dispatch('Notifications/add', {
-            type: 'success',
-            title: 'Transfer Complete',
-            message: 'Funds transferred between chains.',
-        })
 
         setTimeout(() => {
             this.$store.dispatch('Assets/updateUTXOs')

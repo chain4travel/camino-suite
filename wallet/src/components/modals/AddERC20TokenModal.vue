@@ -108,12 +108,7 @@ export default class AddERC20TokenModal extends Vue {
                 logoURI: '',
             }
 
-            let token: Erc20Token = await this.$store.dispatch('Assets/addCustomErc20Token', data)
-
-            this.$store.dispatch('Notifications/add', {
-                title: 'ERC20 Token Added',
-                message: token.data.name,
-            })
+            // let token: Erc20Token = await this.$store.dispatch('Assets/addCustomErc20Token', data)
             this.close()
         } catch (e) {
             this.err = (e as Error).message
