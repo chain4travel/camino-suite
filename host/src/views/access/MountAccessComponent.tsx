@@ -5,7 +5,6 @@ import { getActiveApp, selectAuthStatus } from "../../redux/slices/app-config";
 import LoadComponent from "./LoadComponent";
 const MountAccessComponent = ({ type }) => {
   const navigate = useNavigate();
-  const [logged, setLogged] = useState(null);
   const app = useAppSelector(getActiveApp);
   const auth = useAppSelector(selectAuthStatus);
   const location = useLocation();
@@ -23,7 +22,6 @@ const MountAccessComponent = ({ type }) => {
         type={type}
         props={{
           navigate: (location) => navigate(location),
-          setLogged: setLogged,
           index: location.pathname.split("/")[3],
         }}
       />
