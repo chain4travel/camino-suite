@@ -460,12 +460,6 @@ export default class FormC extends Vue {
         this.isSuccess = true
         this.txHash = txId
 
-        this.$store.dispatch('Notifications/add', {
-            title: this.$t('transfer.success_title'),
-            message: this.$t('transfer.success_msg'),
-            type: 'success',
-        })
-
         // Refresh UTXOs
         this.canSendAgain = false
         setTimeout(() => {
@@ -480,12 +474,6 @@ export default class FormC extends Vue {
         this.isLoading = false
 
         console.error(err)
-
-        this.$store.dispatch('Notifications/add', {
-            title: this.$t('transfer.error_title'),
-            message: this.$t('transfer.error_msg'),
-            type: 'error',
-        })
     }
 }
 </script>
