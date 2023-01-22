@@ -34,7 +34,7 @@ export default function GlobalReloadButton({
   const frameTime = useAppSelector(getTimeFrame);
   const timeFrameXPchain = useAppSelector(getTimeFrameXchain);
   let chainAlias = getChainTypeFromUrl()[0];
-  let chainName = getChainTypeFromUrl()[1];
+  let chainName = getChainTypeFromUrl();
   const { gasFeesLoading, transactionsLoading } = useAppSelector(
     chainName === ChainType.C_CHAIN ? getCchainOverreview : getXchainOverreview,
   );
