@@ -17,8 +17,6 @@
             </div>
         </div>
         <div class="coming_soon" v-else>
-            <!--            <img v-if="$root.theme === 'day'" src="@/assets/nft_preview.png" />-->
-            <!--            <img v-else src="@/assets/nft_preview_night.png" />-->
             <p>{{ $t('portfolio.nobalance_nft') }}</p>
             <div class="add_token_row">
                 <button @click="showModal">Add Collectible</button>
@@ -48,7 +46,7 @@ import { WalletType } from '@/js/wallets/types'
 })
 export default class Collectibles extends Vue {
     @Prop() search!: string
-    nftFams: AvaNftFamily[]
+    nftFams: AvaNftFamily[] = []
     isScroll = false
 
     $refs!: {

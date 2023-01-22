@@ -82,7 +82,9 @@ const assets_module: Module<AssetsState, RootState> = {
                 return
             }
             state.assets = [...state.assets, asset]
-            Vue.set(state.assetsDict, asset.id, asset)
+            let obj = {}
+            obj[asset.id] = asset
+            state.assetsDict = { ...state.assetsDict, ...obj }
         },
         addNftFamily(state, family: AvaNftFamily) {
             if (state.nftFamsDict[family.id]) {
@@ -90,7 +92,9 @@ const assets_module: Module<AssetsState, RootState> = {
                 return
             }
             state.nftFams = [...state.nftFams, family]
-            Vue.set(state.nftFamsDict, family.id, family)
+            let obj = {}
+            obj[family.id] = family
+            state.nftFamsDict = { ...state.nftFamsDict, ...obj }
         },
         removeAllAssets(state) {
             state.assets = []
