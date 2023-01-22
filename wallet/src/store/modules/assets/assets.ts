@@ -82,7 +82,6 @@ const assets_module: Module<AssetsState, RootState> = {
                 return
             }
             state.assets = [...state.assets, asset]
-
             Vue.set(state.assetsDict, asset.id, asset)
         },
         addNftFamily(state, family: AvaNftFamily) {
@@ -175,9 +174,9 @@ const assets_module: Module<AssetsState, RootState> = {
                 let outId = utxo.getOutput().getOutputID()
 
                 if (outId === 11) {
-                    if (nftUtxos.length > 0) nftUtxos = [...nftUtxos, utxo]
+                    nftUtxos = [...nftUtxos, utxo]
                 } else if (outId === 10) {
-                    if (nftMintUtxos.length > 0) nftMintUtxos = [...nftMintUtxos, utxo]
+                    nftMintUtxos = [...nftMintUtxos, utxo]
                 }
             }
 
