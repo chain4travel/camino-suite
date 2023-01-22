@@ -40,14 +40,6 @@ export default function NetworkSwitcher() {
   } = useStore();
   const handleRemoveCustomNetwork = () => {
     store.dispatch("Network/removeCustomNetwork", activeNetwork);
-    store.dispatch(
-      "Notifications/add",
-      {
-        title: "Network Removed",
-        message: "Removed custom network.",
-      },
-      { root: true }
-    );
     let networks = store.getters["Network/allNetworks"];
     dispatch(addNetworks(networks));
     updateNetworks(networks);

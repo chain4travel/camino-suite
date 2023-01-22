@@ -40,7 +40,7 @@ const network_module: Module<NetworkState, RootState> = {
                     return
                 }
             }
-            state.networksCustom.push(net)
+            state.networksCustom = [...state.networksCustom, net]
             dispatch('save')
         },
 
