@@ -20,7 +20,7 @@ import {
   getActiveNetwork,
   getNetworks,
 } from "../../redux/slices/network";
-import { updateAuthStatus } from "../../redux/slices/app-config";
+import { updateAuthStatus, updateValues } from "../../redux/slices/app-config";
 import { Status } from "../../@types";
 import DialogAnimate from "../Animate/DialogAnimate";
 import { useStore } from "Explorer/useStore";
@@ -32,19 +32,18 @@ export default function NetworkSwitcher() {
   const theme = useTheme();
 
   const {
-    updateNetworks,
     changeNetworkExplorer,
     resetCChainReducer,
     resetValidatorsReducer,
     resetXPChainReducer,
   } = useStore();
-  const handleRemoveCustomNetwork = () => {
+  const handleRemoveCustomNetwork = async () => {
     store.dispatch("Network/removeCustomNetwork", activeNetwork);
     let networks = store.getters["Network/allNetworks"];
+    await switchNetwork(networks[0]);
     dispatch(addNetworks(networks));
-    updateNetworks(networks);
-    dispatch(changeNetworkExplorer(networks[0]));
-    switchNetwork(networks[0]);
+    dispatch(changeActiveNetwork(networks[0]));
+    changeNetworkExplorer(networks[0]);
   };
 
   const switchNetwork = async (network) => {
@@ -55,6 +54,7 @@ export default function NetworkSwitcher() {
     } catch (e) {
       store.state.Network.selectedNetwork = null;
       store.state.Network.status = "disconnected";
+      dispatch(updateValues(null));
       dispatch(updateAuthStatus(false));
       dispatch(changeNetworkStatus(Status.FAILED));
     } finally {
