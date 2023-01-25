@@ -20,15 +20,21 @@ import {
   getActiveNetwork,
   getNetworks,
 } from "../../redux/slices/network";
-import { updateAuthStatus, updateValues } from "../../redux/slices/app-config";
+import {
+  getActiveApp,
+  updateAuthStatus,
+  updateValues,
+} from "../../redux/slices/app-config";
 import { Status } from "../../@types";
 import DialogAnimate from "../Animate/DialogAnimate";
 import { useStore } from "Explorer/useStore";
+import { logoutFromWallet, updateAssets } from "../../helpers/walletStore";
 
 export default function NetworkSwitcher() {
   const dispatch = useAppDispatch();
   const networks = useAppSelector(getNetworks);
   const activeNetwork = useAppSelector(getActiveNetwork);
+  const activeApp = useAppSelector(getActiveApp);
   const theme = useTheme();
 
   const {
@@ -54,15 +60,19 @@ export default function NetworkSwitcher() {
     } catch (e) {
       store.state.Network.selectedNetwork = null;
       store.state.Network.status = "disconnected";
+      if (activeApp === "wallet") logoutFromWallet();
       dispatch(updateValues(null));
-      dispatch(updateAuthStatus(false));
       dispatch(changeNetworkStatus(Status.FAILED));
+      dispatch(updateAuthStatus(false));
     } finally {
       let newSelectedNetwork = store.state.Network.selectedNetwork
         ? store.state.Network.selectedNetwork
         : network;
       dispatch(changeActiveNetwork(newSelectedNetwork));
       changeNetworkExplorer(newSelectedNetwork);
+      if (store.state.Network.selectedNetwork) {
+        await updateAssets();
+      }
     }
   };
   const handleChangeNetwork = (selected: string) => {
@@ -76,7 +86,7 @@ export default function NetworkSwitcher() {
     resetCChainReducer();
     resetValidatorsReducer();
     resetXPChainReducer();
-    setNetwork(activeNetwork.name);
+    if (activeNetwork.name) setNetwork(activeNetwork.name);
   }, [activeNetwork]); // eslint-disable-line
 
   const [open, setOpen] = React.useState(false);
