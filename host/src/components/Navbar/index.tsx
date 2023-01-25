@@ -86,29 +86,37 @@ export default function Navbar() {
                   width: DRAWER_WIDTH,
                   maxWidth: "100%",
                   bgcolor: theme.palette.background.secondary,
+                  justifyContent: "space-between",
                 },
-                "& .MuiPaper-root": { border: "none" },
+                "& .MuiPaper-root": { border: "none", pb: "1rem" },
                 borderRadius: "0",
               }}
             >
-              <Stack
-                direction="row"
-                alignItems="center"
-                justifyContent="center"
-                sx={{ padding: theme.spacing(2) }}
-              >
+              <Box sx={{ display: "flex", flexDirection: "column" }}>
+                <Stack
+                  direction="row"
+                  alignItems="center"
+                  justifyContent="center"
+                  sx={{ padding: theme.spacing(2) }}
+                >
+                  <Box>
+                    <ThemeSwitcher />
+                    <IconButton onClick={() => navigate("/login")}>
+                      <Icon path={mdiWalletOutline} size={1} />
+                    </IconButton>
+                  </Box>
+                  <Box sx={{ flexGrow: 1 }} />
+                  <MIconButton onClick={handleCloseSidebar}>
+                    <Icon path={mdiClose} size={1} />
+                  </MIconButton>
+                </Stack>
+                {activeNetwork && <NetworkSwitcher />}
+              </Box>
+              {auth && (
                 <Box>
-                  <ThemeSwitcher />
-                  <IconButton onClick={() => navigate("/login")}>
-                    <Icon path={mdiWalletOutline} size={1} />
-                  </IconButton>
+                  <LoginButton />
                 </Box>
-                <Box sx={{ flexGrow: 1 }} />
-                <MIconButton onClick={handleCloseSidebar}>
-                  <Icon path={mdiClose} size={1} />
-                </MIconButton>
-              </Stack>
-              {activeNetwork && <NetworkSwitcher />}
+              )}
             </Drawer>
             <MIconButton onClick={handleOpenSidebar}>
               <Icon path={mdiMenu} size={1} />

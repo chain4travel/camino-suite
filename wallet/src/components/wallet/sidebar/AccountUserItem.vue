@@ -1,5 +1,5 @@
 <template>
-    <div v-if="!isLedger && wallet">
+    <div v-if="!isLedger && wallet" class="userItem">
         <template v-if="account">
             <button class="account_but" @click="openSettings">
                 <Identicon :value="account.baseAddresses.join('')" diameter="18"></Identicon>
@@ -62,6 +62,9 @@ export default class AccountUserItem extends Vue {
 </script>
 <style scoped lang="scss">
 @use '../../../styles/main';
+.userItem {
+    width: auto;
+}
 .sidebar_account_menu {
     display: flex;
     flex-direction: row;
@@ -106,6 +109,7 @@ export default class AccountUserItem extends Vue {
 .warning_button {
     text-align: left;
     color: var(--warning);
+    width: 100%;
     svg {
         margin-right: 10px;
     }
@@ -115,6 +119,9 @@ export default class AccountUserItem extends Vue {
 }
 
 @include main.medium-device {
+    .userItem {
+        width: 100%;
+    }
     .warning_button {
         svg {
             margin-right: 14px;
