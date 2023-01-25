@@ -67,10 +67,9 @@ export function NavBar() {
       <AppBar
         position="relative"
         sx={{
-          [theme.breakpoints.up('md')]: { minHeight: '81px', top: '69px' },
+          [theme.breakpoints.up('md')]: { minHeight: '81px' },
           minHeight: '65px',
           boxShadow: 'none',
-          top: '65px',
         }}
       />
     </>
