@@ -10,6 +10,7 @@ import {
   faSquareArrowUpRight,
   faXmark,
 } from '@fortawesome/free-solid-svg-icons';
+import ArrowOutwardIcon from '@mui/icons-material/ArrowOutward';
 import Modal from '@mui/material/Modal';
 import Box from '@mui/material/Box';
 import useWidth from 'app/hooks/useWidth';
@@ -21,28 +22,62 @@ import CardHeader from '@mui/material/CardHeader';
 import Tooltip from '@mui/material/Tooltip';
 import InfoIcon from '@mui/icons-material/Info';
 import styled from 'styled-components';
+import { Grid } from '@mui/material';
+import moment from 'moment';
 
 const TooltipContainer = styled.div`
   display: flex;
+  padding-top: 2rem;
+`;
+const TooltipStyle = styled(Tooltip)`
+  margin-right: 20rem;
 `
+const CardHeaderStyle = styled(CardHeader)`
+  margin-bottom: 0rem;
+  margin-left: 1.5rem;
+`;
+const LinearMeterContainer = styled.div`
+  margin-top: -3rem;
+`;
+const DateRangeContainer = styled.div`
+  margin-top: 2rem;
+`;
+const Text = styled.p`
+  margin-left: 3rem !important;
+  margin-right: 1rem !important;
+  margin-top: 0.5rem !important;
+  margin-bottom: 0.5rem !important;
+  // border: solid 2px black;
+  border-radius: 0.5rem;
+  // background: #1e293b;
+  background: #0f172a;
+  padding: 0.5rem;
+`;
 
-
-const BlockchainCharts = ({ darkMode, titleText, utilSlice, sliceGetter, sliceGetterLoader, typeStatistic }) => {
+const BlockchainCharts = ({
+  darkMode,
+  titleText,
+  utilSlice,
+  sliceGetter,
+  sliceGetterLoader,
+  typeStatistic,
+  tooltipTitle,
+}) => {
   const { isDesktop } = useWidth();
 
   const [openModal, setOpenModal] = useState(false);
   const [startDate, setStartDate] = useState<Date>();
   const [endDate, setEndDate] = useState<Date>();
-
-  useEffect(() => { }, []);
-
   const dispatch = useAppDispatch();
 
   useEffect(() => {
+    setStartDate(new Date(moment().subtract(1, 'months').format()));
+    setEndDate(new Date());
     dispatch(utilSlice());
   }, []);
 
   const dataStatistics: any = useAppSelector(sliceGetter);
+
 
   const loader = useAppSelector(sliceGetterLoader);
 
@@ -76,65 +111,106 @@ const BlockchainCharts = ({ darkMode, titleText, utilSlice, sliceGetter, sliceGe
                 minWidth: isDesktop ? '1500px' : '0px',
               }}
             >
-              <Card style={{ backgroundColor: darkMode ? "#060F24" : "white" }}>
-                <CardHeader title={titleText} action={<IconButton
-                  color="info"
-                  component="label"
-                  onClick={() => setOpenModal(false)}
-                  style={{ cursor: 'default' }}
-                >
-                  <FontAwesomeIcon icon={faXmark} />
-                </IconButton>} />
+              <Card style={{ backgroundColor: darkMode ? '#060F24' : 'white' }}>
+                <CardHeaderStyle
+                  title={titleText}
+                  action={
+                    <IconButton
+                      color="info"
+                      component="label"
+                      onClick={() => setOpenModal(false)}
+                      style={{ cursor: 'default', color: 'white' }}
+                    >
+                      <FontAwesomeIcon icon={faXmark} />
+                    </IconButton>
+                  }
+                />
                 <CardContent>
                   <Fragment>
-                    <DateRange
-                      initialStartDate={startDate}
-                      InitianEndDate={endDate}
-                      setEndDate={setEndDate}
-                      setStartDate={setStartDate}
-                      darkMode={darkMode}
-                    />
+                    <Grid
+                      container
+                      spacing={2}
+                      justifyContent="center"
+                      alignItems="center"
+                    >
+                      <Grid xs={12}>
+                        <Text>{tooltipTitle}</Text>
+                      </Grid>
+                      <Grid xs={6}>
+                        <Text>
+                          Highest number of 38000 transactions on{' '}
+                          {`${moment(startDate).format('dddd, MMMM DD, YYYY')}`}
+                        </Text>
+                      </Grid>
+                      <Grid xs={6}>
+                        <Text>
+                          Lowest number of 643 transactions on{' '}
+                          {`${moment(endDate).format('dddd, MMMM DD, YYYY')}`}
+                        </Text>
+                      </Grid>
+                    </Grid>
+                    <DateRangeContainer>
+                      <DateRange
+                        initialStartDate={startDate}
+                        InitianEndDate={endDate}
+                        setEndDate={setEndDate}
+                        setStartDate={setStartDate}
+                        darkMode={darkMode}
+                      />
+                    </DateRangeContainer>
 
-                    {dataStatistics != undefined && dataStatistics != null ?
-                      <>
-                        <LinearMeter darkMode={darkMode}
+                    {dataStatistics !== undefined && dataStatistics !== null && (
+                      <LinearMeterContainer>
+                        <LinearMeter
+                          darkMode={darkMode}
                           titleText={titleText}
                           data={dataStatistics}
-                          typeStatistic={typeStatistic} />
-                      </>
-                      : null}
+                          typeStatistic={typeStatistic}
+                        />
+                      </LinearMeterContainer>
+                    )}
                   </Fragment>
-                </CardContent></Card>
+                </CardContent>
+              </Card>
             </Box>
           </Modal>
 
-          <Card style={{ backgroundColor: darkMode ? "#060F24" : "white" }}>
-          
-            <CardHeader title={titleText} action={
-              <TooltipContainer>
-              <Tooltip title="This chart highlights the total number of transactions on the Camino blockchain with daily individual breakdown for estimated hash rate, average block time and size, total block and uncle block count and total new address seen." placement="top">
-              <IconButton>
-          <InfoIcon />
-        </IconButton>
-          </Tooltip>
-              <IconButton
-                color="info"
-                component="label"
-                onClick={() => setOpenModal(true)}
-                style={{ cursor: 'default' }}
-              >
-                <FontAwesomeIcon icon={faSquareArrowUpRight} />
-              </IconButton>
-              </TooltipContainer>
-            } />
-            
+          <Card style={{ backgroundColor: darkMode ? '#060F24' : 'white' }}>
+            <CardHeaderStyle
+              title={titleText}
+              action={
+                <TooltipContainer>
+                  <TooltipStyle title={tooltipTitle} placement="top">
+                    <IconButton>
+                      <InfoIcon />
+                    </IconButton>
+                  </TooltipStyle>
+                  <IconButton
+                    color="info"
+                    component="label"
+                    onClick={() => setOpenModal(true)}
+                    style={{
+                      cursor: 'default',
+                      color:'GrayText',
+                    }}
+                  >
+                    <ArrowOutwardIcon />
+                  </IconButton>
+                </TooltipContainer>
+              }
+            />
+
             <CardContent>
-              {dataStatistics != undefined && dataStatistics != null ? <>
-                <LinearMeter darkMode={darkMode}
-                  titleText={titleText}
-                  data={dataStatistics}
-                  typeStatistic={typeStatistic} />
-              </> : null}
+              {dataStatistics !== undefined && dataStatistics !== null ? (
+                <>
+                  <LinearMeter
+                    darkMode={darkMode}
+                    titleText={titleText}
+                    data={dataStatistics}
+                    typeStatistic={typeStatistic}
+                  />
+                </>
+              ) : null}
             </CardContent>
           </Card>
         </>

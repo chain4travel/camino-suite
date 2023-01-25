@@ -5,7 +5,6 @@ import BarMeter from './BarMeter';
 import TimeSeriesMeter from './TimeSeriesMeter';
 import { Status } from "types";
 import MeterCO2Data from '../../../types/meterCO2data';
-import CountriesBarMeter from './CountriesBarMeter';
 import CircularProgress from '@mui/material/CircularProgress';
 import IconButton from '@mui/material/IconButton';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -18,8 +17,10 @@ import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import CardHeader from '@mui/material/CardHeader';
 
+
+
 const CO2ConsumptionCharts = ({
-  utilSlice, typeMeter, darkMode, sliceGetter, sliceGetterLoader
+  utilSlice, typeMeter, darkMode, sliceGetter, sliceGetterLoader, titleText
 }) => {
 
   const { isDesktop } = useWidth();
@@ -69,11 +70,11 @@ const CO2ConsumptionCharts = ({
             >
 
               <Card style={{ backgroundColor: darkMode ? "#060F24" : "white" }}>
-                <CardHeader title={meterCO2.Name} action={<IconButton
+                <CardHeaderContainer title={titleText} action={<IconButton
                   color="info"
                   component="label"
                   onClick={() => setOpenModal(false)}
-                  style={{ cursor: 'default' }}
+                  style={{ cursor: 'default'}}
                 >
                   <FontAwesomeIcon icon={faXmark} />
                 </IconButton>} />
@@ -87,8 +88,8 @@ const CO2ConsumptionCharts = ({
                       darkMode={darkMode}
                     />
 
-                    {typeMeter == typesMeter.BAR && <BarMeter darkMode={darkMode} dataSeries={meterCO2.Value} titleText={meterCO2.Name} />}
-                    {typeMeter == typesMeter.TIME_SERIES && <TimeSeriesMeter darkMode={darkMode} dataSeries={meterCO2.Value} titleText={meterCO2.Name} />}
+                    {typeMeter == typesMeter.BAR && <BarMeter darkMode={darkMode} dataSeries={meterCO2.Value} titleText={titleText} />}
+                    {typeMeter == typesMeter.TIME_SERIES && <TimeSeriesMeter darkMode={darkMode} dataSeries={meterCO2.Value} titleText={titleText} />}
                   </Fragment>
                 </CardContent></Card>
 
@@ -101,19 +102,19 @@ const CO2ConsumptionCharts = ({
         </> : <>
 
           <Card style={{ backgroundColor: darkMode ? "#060F24" : "white" }}>
-            <CardHeader title={meterCO2.Name} action={
+            <CardHeader title={titleText} action={
               <IconButton
                 color="info"
                 component="label"
                 onClick={() => setOpenModal(true)}
-                style={{ cursor: 'default' }}
+                style={{ cursor: 'default', color: 'white' }}
               >
                 <FontAwesomeIcon icon={faSquareArrowUpRight} />
               </IconButton>
             } />
             <CardContent>
-              {typeMeter == typesMeter.BAR && <BarMeter darkMode={darkMode} dataSeries={meterCO2.Value} titleText={meterCO2.Name} />}
-              {typeMeter == typesMeter.TIME_SERIES && <TimeSeriesMeter darkMode={darkMode} dataSeries={meterCO2.Value} titleText={meterCO2.Name} />}
+              {typeMeter == typesMeter.BAR && <BarMeter darkMode={darkMode} dataSeries={meterCO2.Value} titleText={titleText} />}
+              {typeMeter == typesMeter.TIME_SERIES && <TimeSeriesMeter darkMode={darkMode} dataSeries={meterCO2.Value} titleText={titleText} />}
             </CardContent>
           </Card>
         </>}
