@@ -29,6 +29,9 @@ export default function Button(theme: Theme) {
             backgroundColor: alpha(theme.palette.secondary.main, 0.1),
           },
         },
+        "&.Mui-disabled": {
+          cursor: "not-allowed",
+        },
       },
     },
   };

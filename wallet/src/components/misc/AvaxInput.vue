@@ -18,7 +18,7 @@
             <div>
                 <p>
                     <b>{{ $t('misc.balance') }}:</b>
-                    {{ balance.toLocaleString() }}
+                    {{ balanceBig }}
                 </p>
                 <p>
                     <b>$</b>
@@ -64,6 +64,17 @@ export default class AvaxInput extends Vue {
 
     amount_in(val: BN) {
         this.$emit('change', val)
+    }
+
+    get balanceBig() {
+        if (this.balance) {
+            let split = this.balance.toString().split('.')
+            let wholeStr = parseInt(split[0])
+                .toString()
+                .replace(/\B(?=(\d{3})+(?!\d))/g, ' ')
+            return wholeStr + '.' + split[1]
+        }
+        return '0'
     }
 
     get amountUSD(): Big {

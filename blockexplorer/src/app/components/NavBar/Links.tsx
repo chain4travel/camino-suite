@@ -64,14 +64,14 @@ export default function Links() {
       }}
     >
       <Tabs
-        // variant="fullWidth"
         value={value}
         onChange={handleChange}
         textColor="secondary"
         // remove the underline
-        sx={{ maxWidth: '90%', '& .MuiTabs-indicator': { display: 'none' } }}
+        sx={{ '& .MuiTabs-indicator': { display: 'none' } }}
         scrollButtons="auto"
         variant="scrollable"
+        allowScrollButtonsMobile
       >
         <Tab className="tab" disableRipple label="C-Chain" {...a11yProps(0)} />
         <Tab className="tab" disableRipple label="X-Chain" {...a11yProps(1)} />

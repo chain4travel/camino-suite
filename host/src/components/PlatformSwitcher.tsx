@@ -27,7 +27,7 @@ export default function PlatformSwitcher() {
   return (
     <Box
       sx={{
-        borderRight: `1px solid ${theme.palette.divider}`,
+        borderRight: { xs: "none", md: `1px solid ${theme.palette.divider}` },
         minHeight: "100%",
         display: "flex",
         alignItems: "center",
@@ -74,7 +74,7 @@ export default function PlatformSwitcher() {
               variant="h4"
               component="span"
               fontWeight="400"
-              sx={{ ml: ".5rem", color: "#149EED" }}
+              sx={{ ml: ".5rem", color: theme.palette.logo.primary }}
             >
               {app}
             </Typography>

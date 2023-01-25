@@ -76,7 +76,9 @@ Big.prototype.toLocaleString = function (toFixed: number = 9) {
 
     let fixedStr = this.toFixed(toFixed)
     let split = fixedStr.split('.')
-    let wholeStr = parseInt(split[0]).toLocaleString('en-US')
+    let wholeStr = parseInt(split[0])
+        .toString()
+        .replace(/\B(?=(\d{3})+(?!\d))/g, ' ')
 
     if (split.length === 1) {
         return wholeStr

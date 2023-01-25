@@ -53,22 +53,23 @@ const MainLayout = ({ children }) => {
       <Toolbar
         sx={{
           minHeight: "65px !important",
+          p: "0px !important",
           [theme.breakpoints.up("md")]: { minHeight: "69px !important" },
         }}
       />
-      {!loadNetworks && (
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            flex: 1,
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          {children}
-        </Box>
-      )}
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          flex: 1,
+          justifyContent: "center",
+          alignItems: "center",
+          minHeight: "calc(80vh - 69px)",
+          padding: "0 .75rem",
+        }}
+      >
+        {!loadNetworks && <>{children}</>}
+      </Box>
       <Footer />
     </Box>
   );
