@@ -12,13 +12,14 @@ export function NavBar() {
     <>
       <AppBar
         sx={{
-          top: 'auto',
           borderBottom: '1px solid',
           borderColor: 'card.border',
           backgroundColor: 'card.navBar',
           borderRadius: '0px',
           backgroundImage: 'none',
           boxShadow: 'none',
+          top: '65px',
+          [theme.breakpoints.up('md')]: { top: '69px' },
         }}
         position="fixed"
       >
@@ -66,9 +67,10 @@ export function NavBar() {
       <AppBar
         position="relative"
         sx={{
-          [theme.breakpoints.up('md')]: { minHeight: '81px' },
+          [theme.breakpoints.up('md')]: { minHeight: '81px', top: '69px' },
           minHeight: '65px',
           boxShadow: 'none',
+          top: '65px',
         }}
       />
     </>
