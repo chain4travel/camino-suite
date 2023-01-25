@@ -25,6 +25,8 @@
   <style>
     body {
       background-color: #fff;
+      overflow-x: hidden !important;
+      overflow: initial;
     }
 
     #app_loading {
@@ -36,6 +38,11 @@
     #app_loading img {
       width: 120px;
       object-fit: contain;
+    }
+
+    ::-webkit-scrollbar {
+      z-index: 1200;
+      background-color: red;
     }
   </style>
 </html>

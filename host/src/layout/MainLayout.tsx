@@ -53,6 +53,7 @@ const MainLayout = ({ children }) => {
       <Toolbar
         sx={{
           minHeight: "65px !important",
+          p: "0px !important",
           [theme.breakpoints.up("md")]: { minHeight: "69px !important" },
         }}
       />
