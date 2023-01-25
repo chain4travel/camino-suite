@@ -9,7 +9,7 @@ import {
   mdiWalletOutline,
 } from "@mdi/js";
 import Icon from "@mdi/react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { styled } from "@mui/material/styles";
 import { mountAccounts } from "wallet/mountAccounts";
 

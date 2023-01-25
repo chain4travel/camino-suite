@@ -3,7 +3,7 @@
         <AddERCNftTokenModal ref="add_token_modal"></AddERCNftTokenModal>
         <div v-if="!isEmpty" class="list">
             <CollectibleFamilyRow
-                v-for="fam in nftFams"
+                v-for="fam in nftFamsArray"
                 :key="fam.id"
                 :family="fam"
             ></CollectibleFamilyRow>
@@ -46,7 +46,6 @@ import { WalletType } from '@/js/wallets/types'
 })
 export default class Collectibles extends Vue {
     @Prop() search!: string
-    nftFams: AvaNftFamily[] = []
     isScroll = false
 
     $refs!: {
@@ -75,7 +74,7 @@ export default class Collectibles extends Vue {
     }
 
     get nftFamsArray() {
-        let fams: AvaNftFamily[] = this.$store.state.Assets.nftFams
+        let fams: AvaNftFamily[] = [...this.$store.state.Assets.nftFams]
         // If search query
         if (this.search) {
             let query = this.search
@@ -104,9 +103,6 @@ export default class Collectibles extends Vue {
         })
 
         return fams
-    }
-    mounted() {
-        this.nftFams = [...this.nftFamsArray]
     }
     get nftFamsDict(): NftFamilyDict {
         let dict = this.$store.state.Assets.nftFamsDict

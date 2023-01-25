@@ -174,9 +174,7 @@ const store = new Vuex.Store({
             store.dispatch('Accounts/onLogout')
             store.dispatch('Assets/onLogout')
             store.dispatch('Launch/onLogout')
-
-            // Go to the base URL with GET request not router
-            router.push(store.getters['Accounts/hasAccounts'] ? '/wallet/access' : '/wallet')
+            router.push('/login')
         },
 
         // used with logout
