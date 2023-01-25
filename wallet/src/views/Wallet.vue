@@ -189,7 +189,7 @@ export default class Wallet extends Vue {
             event.preventDefault()
             this.isLogOut = false
             event.returnValue = ''
-            this.$router.push('/wallet/keys')
+            this.$router.push('/wallet/home/keys')
             this.resetTimer()
         }
     }
