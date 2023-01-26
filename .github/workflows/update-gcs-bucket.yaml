@@ -1,4 +1,4 @@
-name: camino-suite ci
+name: update-gcs-bucket
 
 on:
   workflow_dispatch:
@@ -72,14 +72,14 @@ jobs:
       - name: update suite bucket files
         if: ${{ github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev' }}
         working-directory: ./host
-        run: gsutil rsync -R -d dist gs://${{ steps.setBucketNames.outputs.suite_bucket }}
+        run: gsutil rsync -R -J -d dist gs://${{ steps.setBucketNames.outputs.suite_bucket }}
 
       - name: update suite-explorer bucket files
         if: ${{ github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev' }}
         working-directory: ./blockexplorer
-        run: gsutil rsync -R -d dist gs://${{ steps.setBucketNames.outputs.explorer_bucket }}
+        run: gsutil rsync -R -J -d dist gs://${{ steps.setBucketNames.outputs.explorer_bucket }}
 
       - name: update suite-wallet bucket files
         if: ${{ github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev' }}
         working-directory: ./wallet
-        run: gsutil rsync -R -d dist gs://${{ steps.setBucketNames.outputs.wallet_bucket }}
+        run: gsutil rsync -R -J -d dist gs://${{ steps.setBucketNames.outputs.wallet_bucket }}
