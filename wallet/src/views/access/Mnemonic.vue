@@ -45,7 +45,7 @@ export default class Mnemonic extends Vue {
     phrase: string = ''
     isLoading: boolean = false
     err: string = ''
-
+    helpers = this.globalHelper()
     beforeDestroy() {
         this.phrase = ''
     }
@@ -101,8 +101,7 @@ export default class Mnemonic extends Vue {
         setTimeout(async () => {
             try {
                 await this.$store.dispatch('accessWallet', phrase)
-                let { updateSuiteStore } = this.globalHelper()
-                updateSuiteStore(this.$store.state)
+                this.helpers.updateSuiteStore(this.$store.state)
                 this.isLoading = false
             } catch (e) {
                 this.isLoading = false

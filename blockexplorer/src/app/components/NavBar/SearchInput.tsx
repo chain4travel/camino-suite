@@ -262,13 +262,14 @@ const SearchResultMenu = ({ children }: { children?: React.ReactNode }) => {
 };
 
 const SearchResultMenuList = ({ menuItems }) => {
+  const navigate = useNavigate();
   return (
     <MenuList>
       {menuItems.map(item => (
         <MenuItem
           key={item.label + Math.random().toString(36).substring(2, 15)}
           onClick={() => {
-            window.location.href = `/explorer${item.link}`;
+            navigate(`/explorer${item.link}`);
           }}
           sx={{ gap: '10px' }}
         >

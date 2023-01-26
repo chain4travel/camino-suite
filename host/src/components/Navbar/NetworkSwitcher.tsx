@@ -69,22 +69,17 @@ export default function NetworkSwitcher() {
       dispatch(changeNetworkStatus(Status.LOADING));
       await store.dispatch("Network/setNetwork", network);
       dispatch(changeNetworkStatus(Status.SUCCEEDED));
+      await updateAssets();
     } catch (e) {
       store.state.Network.selectedNetwork = null;
       store.state.Network.status = "disconnected";
-      if (activeApp === "wallet") logoutFromWallet();
-      dispatch(updateValues(null));
       dispatch(changeNetworkStatus(Status.FAILED));
-      dispatch(updateAuthStatus(false));
     } finally {
       let newSelectedNetwork = store.state.Network.selectedNetwork
         ? store.state.Network.selectedNetwork
         : network;
       dispatch(changeActiveNetwork(newSelectedNetwork));
       changeNetworkExplorer(newSelectedNetwork);
-      if (store.state.Network.selectedNetwork) {
-        await updateAssets();
-      }
     }
   };
   const handleChangeNetwork = (selected: string) => {
