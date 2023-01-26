@@ -78,7 +78,7 @@ Big.prototype.toLocaleString = function (toFixed: number = 9) {
     let split = fixedStr.split('.')
     let wholeStr = parseInt(split[0])
         .toString()
-        .replace(/\B(?=(\d{3})+(?!\d))/g, ' ')
+        .replace(/\B(?=(\d{3})+(?!\d))/g, '\u200A')
 
     if (split.length === 1) {
         return wholeStr
