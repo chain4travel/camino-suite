@@ -52,13 +52,7 @@ export function NavBar() {
             }}
           >
             <Links />
-            <Box
-              sx={{
-                display: 'flex',
-                pr: '10px',
-                ml: !isDesktop ? 'auto' : '0',
-              }}
-            >
+            <Box sx={{ display: 'flex', ml: !isDesktop ? 'auto' : '0' }}>
               <SearchInput />
             </Box>
           </Toolbar>
