@@ -22,6 +22,7 @@ export default function AddNewNetwork({
   switchNetwork,
 }) {
   const [error, setError] = React.useState("");
+  const [isLoading, setIsLoading] = React.useState(false);
   const { updateNetworks } = useStore();
   const dispatch = useAppDispatch();
   const getInitialValues = () => {
@@ -113,6 +114,7 @@ export default function AddNewNetwork({
           setError("Network Name already exists");
           return;
         }
+        setIsLoading(true);
 
         let url = `${newNetwork.protocol}://${newNetwork.host}:${newNetwork.port}`;
         let net = new AvaNetwork(
@@ -129,6 +131,7 @@ export default function AddNewNetwork({
 
         if (!validNetId) {
           setError("Camino Network Not Found");
+          setIsLoading(false);
           return;
         }
         store.dispatch("Network/addCustomNetwork", net);
@@ -137,6 +140,7 @@ export default function AddNewNetwork({
         updateNetworks(allNetworks);
         switchNetwork(net);
         resetForm();
+        setIsLoading(false);
         setSubmitting(false);
         handleClose();
       } catch (error) {
@@ -206,7 +210,7 @@ export default function AddNewNetwork({
         <DialogActions
           sx={{ display: "flex", justifyContent: "center", mb: 2, gap: 2 }}
         >
-          <Button variant="outlined" type="submit">
+          <Button disabled={isLoading} variant="outlined" type="submit">
             Add Network
           </Button>
           <Button variant="contained" onClick={handleClose}>
