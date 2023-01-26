@@ -14,6 +14,7 @@ import { AvaNetwork } from "wallet/AvaNetwork";
 import store from "wallet/store";
 import { addNetworks } from "../../redux/slices/network";
 import { useStore } from "Explorer/useStore";
+import axios from "axios";
 
 export default function AddNewNetwork({
   networks,
@@ -72,7 +73,27 @@ export default function AddNewNetwork({
     if (_duplicate) return true;
     return false;
   };
-
+  async function tryConnection(
+    url,
+    credential = false
+  ): Promise<number | null> {
+    try {
+      let resp = await axios.post(
+        url + "/ext/info",
+        {
+          jsonrpc: "2.0",
+          id: 1,
+          method: "info.getNetworkID",
+        },
+        {
+          withCredentials: credential,
+        }
+      );
+      return parseInt(resp.data.result.networkID);
+    } catch (err) {
+      return null;
+    }
+  }
   const formik = useFormik({
     initialValues: getInitialValues(),
     validationSchema: EventSchema,
@@ -101,6 +122,15 @@ export default function AddNewNetwork({
           newNetwork.magellanAddress,
           ""
         );
+        let credNum = await tryConnection(url, true);
+        let noCredNum = await tryConnection(url);
+
+        let validNetId = credNum || noCredNum;
+
+        if (!validNetId) {
+          setError("Camino Network Not Found");
+          return;
+        }
         store.dispatch("Network/addCustomNetwork", net);
         let allNetworks = store.getters["Network/allNetworks"];
         dispatch(addNetworks(allNetworks));
