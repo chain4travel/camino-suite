@@ -67,14 +67,14 @@ export default class AvaxInput extends Vue {
     }
 
     get balanceBig() {
-        if (this.balance) {
-            let split = this.balance.toString().split('.')
+        if (!this.balance) return '0'
+        else {
+            let split = this.balance.toString().split('.') || '00'
             let wholeStr = parseInt(split[0])
                 .toString()
-                .replace(/\B(?=(\d{3})+(?!\d))/g, ' ')
+                .replace(/\B(?=(\d{3})+(?!\d))/g, '\u200A')
             return wholeStr + '.' + split[1]
         }
-        return '0'
     }
 
     get amountUSD(): Big {
