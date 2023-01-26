@@ -146,6 +146,9 @@ export default function Footer() {
                           p: 0,
                           minHeight: "auto",
                           justifyContent: { xs: "center", md: "left" },
+                          "&:hover": {
+                            backgroundColor: "transparent",
+                          },
                         }}
                         key={i}
                       >

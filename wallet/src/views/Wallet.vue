@@ -237,7 +237,7 @@ export default class Wallet extends Vue {
     background-color: var(--bg);
     grid-template-columns: 1fr 300px;
     align-items: center;
-    padding: 12px 0px;
+    padding: 12px 20px;
 }
 
 .top-bar {
@@ -250,6 +250,7 @@ export default class Wallet extends Vue {
     background-color: var(--bg);
     border-bottom: 1px solid rgba(145, 158, 171, 0.24);
     left: 0;
+    align-items: center;
     .links {
         display: flex;
         flex-direction: row;
@@ -274,6 +275,10 @@ export default class Wallet extends Vue {
             opacity: 1;
         }
     }
+    .container {
+        padding: 0px;
+        overflow: auto;
+    }
 }
 
 @media screen and (max-width: 900px) {
@@ -284,6 +289,11 @@ export default class Wallet extends Vue {
 @media screen and (max-width: 900px) {
     .content {
         grid-template-columns: 1fr;
+    }
+}
+@media screen and (max-width: 600px) {
+    .content {
+        padding: 12px 0px;
     }
 }
 </style>
