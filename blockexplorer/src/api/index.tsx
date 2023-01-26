@@ -77,31 +77,41 @@ export async function loadTransactionFeesAggregates(
 }
 
 export async function loadBlocksAndTransactions({ address, offset }) {
-  return await axios.get(
-    `${getBaseUrl()}${baseEndpoint}/cblocks?address=${address}&limit=0&limit=${offset}`,
-  );
+  try {
+    let res = await axios.get(
+      `${getBaseUrl()}${baseEndpoint}/cblocks?address=${address}&limit=0&limit=${offset}`,
+    );
+    return res.data;
+  } catch (e) {
+    throw new Error(e.message);
+  }
 }
 
 export async function loadCAddressTransactions({ address, offset }) {
-  let res = (await loadBlocksAndTransactions({ address, offset })).data;
-  return res.transactions.map(transaction => {
-    return {
-      blockNumber: parseInt(transaction.block),
-      transactionIndex: parseInt(transaction.index),
-      from: transaction.from,
-      hash: transaction.hash,
-      status:
-        parseInt(transaction.status) === 1
-          ? 'Success'
-          : `Failed-${parseInt(transaction.status)}`,
-      timestamp: parseInt(transaction.timestamp) * 1000,
-      to: transaction.to,
-      value: parseInt(transaction.value),
-      transactionCost:
-        parseInt(transaction.gasUsed) * parseInt(transaction.effectiveGasPrice),
-      direction: transaction.from === address ? 'out' : 'in',
-    };
-  });
+  try {
+    let res = await loadBlocksAndTransactions({ address, offset });
+    return res.transactions.map(transaction => {
+      return {
+        blockNumber: parseInt(transaction.block),
+        transactionIndex: parseInt(transaction.index),
+        from: transaction.from,
+        hash: transaction.hash,
+        status:
+          parseInt(transaction.status) === 1
+            ? 'Success'
+            : `Failed-${parseInt(transaction.status)}`,
+        timestamp: parseInt(transaction.timestamp) * 1000,
+        to: transaction.to,
+        value: parseInt(transaction.value),
+        transactionCost:
+          parseInt(transaction.gasUsed) *
+          parseInt(transaction.effectiveGasPrice),
+        direction: transaction.from === address ? 'out' : 'in',
+      };
+    });
+  } catch (e) {
+    throw new Error(e.message);
+  }
 }
 
 export async function loadXPTransactions(offset: number, chainID: string) {
