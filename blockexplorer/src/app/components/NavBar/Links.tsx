@@ -73,9 +73,27 @@ export default function Links() {
         variant="scrollable"
         allowScrollButtonsMobile
       >
-        <Tab className="tab" disableRipple label="C-Chain" {...a11yProps(0)} />
-        <Tab className="tab" disableRipple label="X-Chain" {...a11yProps(1)} />
-        <Tab className="tab" disableRipple label="P-Chain" {...a11yProps(2)} />
+        <Tab
+          className="tab"
+          disableRipple
+          label="C-Chain"
+          {...a11yProps(0)}
+          sx={{ alignItems: { xs: 'center', sm: 'self-start' } }}
+        />
+        <Tab
+          className="tab"
+          disableRipple
+          label="X-Chain"
+          {...a11yProps(1)}
+          sx={{ alignItems: { xs: 'center', sm: 'self-start' } }}
+        />
+        <Tab
+          className="tab"
+          disableRipple
+          label="P-Chain"
+          {...a11yProps(2)}
+          sx={{ alignItems: { xs: 'center', sm: 'self-start' } }}
+        />
       </Tabs>
     </Box>
   );
