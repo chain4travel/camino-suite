@@ -54,9 +54,7 @@ export default function LoginIcon() {
   };
 
   const handleKeyDown = (e) => {
-    if (e.key === "Tab") {
-      e.stopPropagation();
-    }
+    e.stopPropagation();
   }
 
   return (
