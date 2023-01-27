@@ -30,7 +30,7 @@
                 </p>
                 <p class="balance" data-cy="wallet_balance" v-else>
                     <span>{{ balanceTextLeft }}</span>
-                    <span class="smaller">.{{ balanceTextRight }}</span>
+                    <small class="smaller">.{{ balanceTextRight }}</small>
                     {{ nativeAssetSymbol }}
                 </p>
             </div>
@@ -402,8 +402,11 @@ h4 {
     white-space: normal;
     /*font-weight: bold;*/
     font-family: 'Inter', sans-serif;
+    span {
+        float: left;
+    }
 
-    span.smaller {
+    small.smaller {
         font-size: 0.8em;
         /*color: var(--primary-color-light);*/
     }
