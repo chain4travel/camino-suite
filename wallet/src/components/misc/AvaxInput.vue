@@ -66,14 +66,30 @@ export default class AvaxInput extends Vue {
         this.$emit('change', val)
     }
 
-    get balanceBig() {
-        if (!this.balance) return '0'
-        else {
-            let split = this.balance.toString().split('.') || '00'
-            let wholeStr = parseInt(split[0])
-                .toString()
-                .replace(/\B(?=(\d{3})+(?!\d))/g, '\u200A')
-            return wholeStr + '.' + split[1]
+    get balanceBig(): string {
+        if (!this.balance) return ''
+
+        let fixedStr = this.balance?.toFixed(9)
+        let split = fixedStr?.split('.')
+        let wholeStr = parseInt(split[0])
+            .toString()
+            .replace(/\B(?=(\d{3})+(?!\d))/g, '\u200A')
+
+        if (split.length === 1) {
+            return wholeStr
+        } else {
+            let remainderStr = split[1]
+
+            // remove trailing 0s
+            let lastChar = remainderStr.charAt(remainderStr.length - 1)
+            while (lastChar === '0') {
+                remainderStr = remainderStr.substring(0, remainderStr.length - 1)
+                lastChar = remainderStr.charAt(remainderStr.length - 1)
+            }
+
+            let trimmed = remainderStr.substring(0, 9)
+            if (!trimmed) return wholeStr
+            return `${wholeStr}.${trimmed}`
         }
     }
 
