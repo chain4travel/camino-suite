@@ -12,6 +12,7 @@ interface initialStateAppConfigType {
   status: Status;
   isAuth: boolean;
   walletStore: any;
+  account: any;
 }
 
 let initialState: initialStateAppConfigType = {
@@ -19,6 +20,7 @@ let initialState: initialStateAppConfigType = {
   status: Status.IDLE,
   walletStore: null,
   isAuth: false,
+  account: null,
 };
 
 const appConfigSlice = createSlice({
@@ -36,6 +38,9 @@ const appConfigSlice = createSlice({
     updateAuthStatus(state, { payload }) {
       state.isAuth = payload;
     },
+    updateAccount(state, { payload }) {
+      state.account = payload;
+    },
   },
 });
 
@@ -46,6 +51,13 @@ export const selectAuthStatus = (state: RootState) =>
   state.appConfig.walletStore?.isAuth;
 export const getAuthStatus = (state: RootState) => state.appConfig.isAuth;
 
-export const { changeActiveApp, updateValues, updateAuthStatus } =
-  appConfigSlice.actions;
+//select account
+export const getAccount = (state: RootState) => state.appConfig.account;
+
+export const {
+  changeActiveApp,
+  updateValues,
+  updateAuthStatus,
+  updateAccount,
+} = appConfigSlice.actions;
 export default appConfigSlice.reducer;

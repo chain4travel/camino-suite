@@ -39,6 +39,7 @@ import Identicon from '@/components/misc/Identicon.vue'
 export default class Account extends Vue {
     @Prop() index: string
     @Prop() navigate: any
+    helpers = this.globalHelper()
     password: string = ''
     isLoading: boolean = false
     error: string = ''
@@ -81,8 +82,8 @@ export default class Account extends Vue {
                     pass: this.password,
                 })
                 .then(() => {
-                    let { updateSuiteStore } = this.globalHelper()
-                    updateSuiteStore(this.$store.state)
+                    parent.helpers.updateSuiteStore(this.$store.state)
+                    parent.helpers.setAccount(this.$store.getters['Accounts/account'])
                     parent.isLoading = false
                 })
                 .catch((err) => {
