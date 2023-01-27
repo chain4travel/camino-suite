@@ -34,9 +34,6 @@ export default class AccountUserItem extends Vue {
     @Prop() type: any
     @Prop() setAccount: any
 
-    mounted() {
-        console.log(this.type, typeof this.setAccount)
-    }
     $refs!: {
         save_modal: SaveAccountModal
         settings_modal: AccountSettingsModal
