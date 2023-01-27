@@ -11,10 +11,22 @@ import vuetify from '@/plugins/vuetify'
 
 import AccountUserItem from './AccountUserItem.vue'
 import AccountKycItem from './AccountKycItem.vue'
+import AccountCard from './AccountCard.vue'
 
 Vue.use(VueMeta)
 Vue.use(BootstrapVue)
 Vue.component('datetime', Datetime)
+
+function selectAccountMenuItem(type: string) {
+    switch (type) {
+        case 'kyc':
+            return AccountKycItem
+        case 'user':
+            return AccountUserItem
+        default:
+            return AccountCard
+    }
+}
 
 export const mountAccountMenu = (el: string, props: any) => {
     const app = new Vue({
@@ -28,7 +40,7 @@ export const mountAccountMenu = (el: string, props: any) => {
             const context = {
                 props: props,
             }
-            return createElement(props.type === 'kyc' ? AccountKycItem : AccountUserItem, context)
+            return createElement(selectAccountMenuItem(props.type), context)
         },
     })
     app.$mount(el)

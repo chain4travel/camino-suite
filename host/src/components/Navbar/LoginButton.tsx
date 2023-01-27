@@ -4,7 +4,11 @@ import { Box, MenuItem, Select, IconButton, useTheme } from "@mui/material";
 import store from "wallet/store";
 import { mountAccountMenu } from "wallet/mountAccountMenu";
 import { useNavigate } from "react-router-dom";
-import { updateAuthStatus } from "../../redux/slices/app-config";
+import {
+  getAccount,
+  updateAuthStatus,
+  updateAccount,
+} from "../../redux/slices/app-config";
 import { mdiLogout } from "@mdi/js";
 import { styled } from "@mui/material/styles";
 import Icon from "@mdi/react";
@@ -23,8 +27,10 @@ const StyledBox = styled(Box)(({ theme }) => ({
 
 const LoadAccountMenu = (props: { type: string }) => {
   const ref = useRef(null);
+  const dispatch = useAppDispatch();
+  const setAccount = (account) => dispatch(updateAccount(account));
   useEffect(() => {
-    mountAccountMenu(ref.current, props);
+    mountAccountMenu(ref.current, { ...props, setAccount });
   }, []);
 
   return (
@@ -39,6 +45,7 @@ export default function LoginIcon() {
   );
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+  const account = useAppSelector(getAccount);
   const theme = useTheme();
   const logout = async () => {
     await store.dispatch("logout");
@@ -67,8 +74,10 @@ export default function LoginIcon() {
       <MHidden width="smDown">
         {cAddress && (
           <Select
-            value={cAddress ? cAddress : ""}
-            renderValue={() => `0x${cAddress}`}
+            value={!account ? cAddress : <LoadAccountMenu type="" />}
+            renderValue={() =>
+              account ? <LoadAccountMenu type="" /> : `0x${cAddress}`
+            }
             sx={{
               maxWidth: "13rem",
               ".MuiOutlinedInput-notchedOutline": { border: "none" },

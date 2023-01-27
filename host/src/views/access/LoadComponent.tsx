@@ -1,12 +1,17 @@
 import { mountAccessComponents } from "wallet/mountAccessComponents";
 import React, { useRef, useEffect, useState } from "react";
-import { updateAuthStatus, updateValues } from "../../redux/slices/app-config";
+import {
+  updateAccount,
+  updateAuthStatus,
+  updateValues,
+} from "../../redux/slices/app-config";
 import { useAppDispatch } from "../../hooks/reduxHooks";
 
 const LoadComponent = ({ type, props }) => {
   const ref = useRef(null);
   const [updateStore, setUpdateStore] = useState(null);
   const dispatch = useAppDispatch();
+  const setAccount = (account) => dispatch(updateAccount(account));
   useEffect(() => {
     dispatch(updateValues(updateStore));
     if (updateStore?.isAuth) {
@@ -18,6 +23,7 @@ const LoadComponent = ({ type, props }) => {
     mountAccessComponents(ref.current, type, {
       ...props,
       setUpdateStore,
+      setAccount,
     });
   }, []);
 
