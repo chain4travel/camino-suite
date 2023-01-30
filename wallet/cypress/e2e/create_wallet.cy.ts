@@ -2,12 +2,12 @@ import { expect } from 'chai'
 import '@cypress/xpath';
 import { changeNetwork } from '../utils/network';
 
-describe('Wallet Click', () => {
+describe('Wallet Creation', () => {
     before(() => {
         cy.visit('/')
     })
 
-    it('open suite/charge wallet', () => {
+    it('open suite/create wallet', () => {
         changeNetwork(cy);
         cy.wait(2000);
         cy.get('.css-1gr9h7h > .MuiTypography-root').click();
