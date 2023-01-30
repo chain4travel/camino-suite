@@ -3,7 +3,7 @@ import {
   Box,
   Grid,
   Typography,
-  Link,
+  Link as MuiLink,
   useTheme,
   Divider,
   Container,
@@ -22,6 +22,7 @@ import {
   DISCORD,
   WALLET,
 } from "../../constants/route-paths";
+import { Link } from "react-router-dom";
 
 export default function Footer() {
   const theme = useTheme();
@@ -150,9 +151,10 @@ export default function Footer() {
                             backgroundColor: "transparent",
                           },
                         }}
+                        disableRipple
                         key={i}
                       >
-                        <Link
+                        <MuiLink
                           href={l.url}
                           style={{
                             color: "secondary.primary",
@@ -167,7 +169,7 @@ export default function Footer() {
                           >
                             {l.text}
                           </Typography>
-                        </Link>
+                        </MuiLink>
                       </MenuItem>
                     ))}
                   </ul>
@@ -190,24 +192,26 @@ const SecondaryButton = ({
   toLink: string;
   target?: string;
 }) => (
-  <Button
-    variant="contained"
-    href={toLink}
-    target={target}
-    sx={{
-      backgroundColor: "#2563eb",
-      p: ".5rem 1rem",
-      color: "white",
-      "&:hover": {
-        backgroundColor: "#b5e3fd",
-        color: "#0f172a",
-      },
-    }}
-  >
-    <Typography variant="body1" component="span" fontWeight="fontWeightBold">
-      {label}
-    </Typography>
-  </Button>
+  <Link to={toLink} target={target}>
+    <Button
+      variant="contained"
+      href={toLink}
+      target={target}
+      sx={{
+        backgroundColor: "#2563eb",
+        p: ".5rem 1rem",
+        color: "white",
+        "&:hover": {
+          backgroundColor: "#b5e3fd",
+          color: "#0f172a",
+        },
+      }}
+    >
+      <Typography variant="body1" component="span" fontWeight="fontWeightBold">
+        {label}
+      </Typography>
+    </Button>
+  </Link>
 );
 
 const FooterLinks = [
