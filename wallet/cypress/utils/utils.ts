@@ -4,13 +4,13 @@ export function changeNetwork(cy: any) {
     cy.get('[data-value="Columbus"] > .MuiTypography-root').click(); //Select Columbus Network
 }
 
-export function accessWallet(cy: any, mainAccount: boolean) {
+export function accessWallet(cy: any, mnemonic: boolean) {
     cy.wait(2000);
     cy.get('.css-1gr9h7h > .MuiTypography-root').click();
 
     cy.get('.css-1u20msc > :nth-child(1) > :nth-child(2) > .MuiButtonBase-root').click();
 
-    cy.readFile(`cypress/temp/wallets/testWallet.json`).then((data) => {
+    cy.readFile(`cypress/temp/wallets/mnemonic_wallet.json`).then((data) => {
         let phraseArr = data;
         for (let i = 0; i < phraseArr.length; i++) {
             let indexInput = i + 1;
