@@ -9,6 +9,6 @@ describe('Wallet Access Mnemonic', () => {
 
     it('open suite/open wallet using mnemonic', () => {
         changeNetwork(cy);
-        accessWallet(cy, true);
+        accessWallet(cy, "mnemonic");
     });
 })
