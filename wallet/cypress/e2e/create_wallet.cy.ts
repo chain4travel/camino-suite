@@ -1,6 +1,6 @@
 import { expect } from 'chai'
 import '@cypress/xpath';
-import { changeNetwork } from '../utils/network';
+import { changeNetwork } from '../utils/utils';
 import moment from 'moment';
 
 describe('Wallet Creation', () => {
