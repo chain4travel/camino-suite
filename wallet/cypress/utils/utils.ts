@@ -1,10 +1,10 @@
 
-export function changeNetwork(cy: any) {
+export function changeNetwork(cy: Cypress.cy & CyEventEmitter) {
     cy.get('.css-1nt3z7i > .MuiInputBase-root > .MuiSelect-select').click(); //Network Switcher
     cy.get('[data-value="Columbus"] > .MuiTypography-root').click(); //Select Columbus Network
 }
 
-export async function accessWallet(cy: any, type: string) {
+export async function accessWallet(cy: Cypress.cy & CyEventEmitter, type: string) {
     cy.get('.css-1gr9h7h > .MuiTypography-root').click();
     if (type === "mnemonic") {
         cy.get('.css-1u20msc > :nth-child(1) > :nth-child(2) > .MuiButtonBase-root').click();
