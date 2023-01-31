@@ -5,7 +5,7 @@ describe('access wallet', () => {
     before(() => {
         cy.visit('/')
     })
-    it('Select the upper left drop-down menu Explorer', () => {
+    it('Wallet access private key ', () => {
         changeNetwork(cy);
         accessWallet(cy, "privateKey");
        
