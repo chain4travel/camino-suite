@@ -1,14 +1,14 @@
 import React from "react";
-// import useWidth from "app/hooks/useWidth";
 import {
   Box,
   Grid,
   Typography,
-  Link,
+  Link as MuiLink,
   useTheme,
   Divider,
   Container,
   Button,
+  MenuItem,
 } from "@mui/material";
 import {
   CCHAIN,
@@ -22,13 +22,9 @@ import {
   DISCORD,
   WALLET,
 } from "../../constants/route-paths";
-// import { ReactComponent as DarkLogo } from "./assets/LogoDark.svg";
-// import { ReactComponent as LightLogo } from "./assets/LogoLight.svg";
-// import { ReactComponent as Discord } from "./assets/Discord.svg";
-// import { ReactComponent as Logo } from "./assets/cam.svg";
+import { Link } from "react-router-dom";
 
 export default function Footer() {
-  // const { isTablet } = useWidth();
   const theme = useTheme();
   return (
     <footer style={{ position: "relative", marginTop: "auto" }}>
@@ -58,12 +54,10 @@ export default function Footer() {
               xs={12}
               xl={6}
               spacing={4}
-              // justifyContent={isTablet ? "center" : "left"}
               justifyContent={{ xs: "center", md: "left" }}
             >
               <Grid item>
                 {theme.palette.mode === "light" ? (
-                  // <DarkLogo style={{ height: "40px", width: "auto" }} />
                   <img
                     src="/assets/LogoDark.svg"
                     style={{ height: "40px", width: "auto" }}
@@ -75,7 +69,6 @@ export default function Footer() {
                     style={{ height: "40px", width: "auto" }}
                     alt="camino logo"
                   />
-                  // <LightLogo style={{ height: "40px", width: "auto" }} />
                 )}
               </Grid>
               <Grid item>
@@ -84,7 +77,7 @@ export default function Footer() {
                   component="p"
                   sx={{
                     color: "grey.500",
-                    // textAlign: isTablet ? "center" : "left",
+                    textAlign: { xs: "center", md: "left" },
                   }}
                 >
                   Camino is a fast, high-through put open-source consortium
@@ -97,12 +90,24 @@ export default function Footer() {
                 item
                 container
                 spacing={{ xs: 2, md: 1, lg: 2 }}
-                // justifyContent={!isTablet ? "left" : "center"}
+                justifyContent={{ xs: "center", md: "left" }}
               >
-                <Grid item xs={12} sm="auto">
+                <Grid
+                  item
+                  container
+                  xs={12}
+                  sm="auto"
+                  justifyContent={{ xs: "center", md: "left" }}
+                >
                   <SecondaryButton label="Camino Wallet" toLink={WALLET} />
                 </Grid>
-                <Grid item xs={12} sm="auto">
+                <Grid
+                  item
+                  container
+                  xs={12}
+                  sm="auto"
+                  justifyContent={{ xs: "center", md: "left" }}
+                >
                   <SecondaryButton
                     label="Join Discord"
                     toLink={DISCORD}
@@ -128,29 +133,31 @@ export default function Footer() {
                       marginBottom: ".5rem",
                       fontSize: "1.25rem",
                       justifyContent: { xs: "center", md: "left" },
-                      // justifyContent: isTablet ? "center" : "left",
                       display: "flex",
                     }}
                   >
                     {link.name}
                   </Typography>
-                  <ul
-                    style={{
-                      display: "grid",
-                      // justifyContent: isTablet ? "center" : "left",
-                      gap: "7px",
-                    }}
-                  >
+                  <ul style={{ display: "grid", gap: "7px" }}>
                     {link.links.map((l, i) => (
-                      <li
-                        style={{ textDecoration: "none", listStyle: "none" }}
+                      <MenuItem
+                        sx={{
+                          textDecoration: "none",
+                          listStyle: "none",
+                          p: 0,
+                          minHeight: "auto",
+                          justifyContent: { xs: "center", md: "left" },
+                          "&:hover": {
+                            backgroundColor: "transparent",
+                          },
+                        }}
+                        disableRipple
                         key={i}
                       >
-                        <Link
+                        <MuiLink
                           href={l.url}
                           style={{
                             color: "secondary.primary",
-                            // justifyContent: isTablet ? "center" : "left",
                             display: "flex",
                             textDecoration: "none",
                           }}
@@ -162,8 +169,8 @@ export default function Footer() {
                           >
                             {l.text}
                           </Typography>
-                        </Link>
-                      </li>
+                        </MuiLink>
+                      </MenuItem>
                     ))}
                   </ul>
                 </Grid>
@@ -185,24 +192,26 @@ const SecondaryButton = ({
   toLink: string;
   target?: string;
 }) => (
-  <Button
-    variant="contained"
-    href={toLink}
-    target={target}
-    sx={{
-      backgroundColor: "#2563eb",
-      p: ".5rem 1rem",
-      color: "white",
-      "&:hover": {
-        backgroundColor: "#b5e3fd",
-        color: "#0f172a",
-      },
-    }}
-  >
-    <Typography variant="body1" component="span" fontWeight="fontWeightBold">
-      {label}
-    </Typography>
-  </Button>
+  <Link to={toLink} target={target}>
+    <Button
+      variant="contained"
+      href={toLink}
+      target={target}
+      sx={{
+        backgroundColor: "#2563eb",
+        p: ".5rem 1rem",
+        color: "white",
+        "&:hover": {
+          backgroundColor: "#b5e3fd",
+          color: "#0f172a",
+        },
+      }}
+    >
+      <Typography variant="body1" component="span" fontWeight="fontWeightBold">
+        {label}
+      </Typography>
+    </Button>
+  </Link>
 );
 
 const FooterLinks = [

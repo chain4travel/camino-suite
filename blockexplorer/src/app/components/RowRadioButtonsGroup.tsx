@@ -63,7 +63,6 @@ export default function RowRadioButtonsGroup({
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (
       (getChainTypeFromUrl() === ChainType.C_CHAIN &&
-        event.target.value !== Timeframe.MONTHS_1 &&
         cGasFeesLoading !== Status.LOADING &&
         cTransactionsLoading !== Status.LOADING) ||
       (getChainTypeFromUrl() === ChainType.X_CHAIN &&

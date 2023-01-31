@@ -3,12 +3,16 @@ const common = require("./webpack.common.js");
 const ModuleFederationPlugin = require("webpack/lib/container/ModuleFederationPlugin.js");
 const deps = require("./package.json").dependencies;
 
+let timestamp = Date.now();
+
 module.exports = merge(common, {
   mode: "production",
   devtool: "source-map",
 
   output: {
     publicPath: "https://playground.suite.camino.foundation/",
+    filename: "js/[name].[fullhash:8]." + timestamp + ".js",
+    chunkFilename: "js/[name].[fullhash:8]." + timestamp + ".js",
   },
 
   plugins: [

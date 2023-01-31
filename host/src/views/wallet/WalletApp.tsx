@@ -3,9 +3,10 @@ import React, { useRef, useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../hooks/reduxHooks";
 import { updateAuthStatus, updateValues } from "../../redux/slices/app-config";
 import { Navigate } from "react-router-dom";
-
+import { updateAssets } from "../../helpers/walletStore";
 const LoadWallet = () => {
   const [updateStore, setUpdateStore] = useState(null);
+  const [fetch, setFetch] = useState(false);
   const [logOut, setLogOut] = useState(false);
   const dispatch = useAppDispatch();
   const ref = useRef(null);
@@ -13,11 +14,21 @@ const LoadWallet = () => {
     dispatch(updateValues(updateStore));
     if (updateStore) dispatch(updateAuthStatus(true));
   }, [updateStore]);
+
   useEffect(() => {
     dispatch(updateValues(updateStore));
   }, [logOut]);
+
+  const fetchUTXOs = async () => {
+    await updateAssets();
+    setFetch(true);
+  };
   useEffect(() => {
-    mount(ref.current, { setUpdateStore, setLogOut });
+    if (fetch) mount(ref.current, { setUpdateStore, setLogOut });
+  }, [fetch]);
+
+  useEffect(() => {
+    fetchUTXOs();
   }, []);
 
   return (
@@ -40,7 +51,7 @@ const Wallet = () => {
   if (!auth) return <Navigate to="/login"></Navigate>;
   return (
     <React.Suspense fallback={<div>Loading...</div>}>
-      <LoadWallet />
+      {<LoadWallet />}
     </React.Suspense>
   );
 };

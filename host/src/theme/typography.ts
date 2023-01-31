@@ -29,9 +29,10 @@ const FONT_SECONDARY = "Inter";
 
 const typography = {
   fontFamily: FONT_PRIMARY,
-  fontWeightSmall: 300,
+  fontWeightLight: 300,
   fontWeightRegular: 400,
-  fontWeightMedium: 600,
+  fontWeightMedium: 500,
+  fontWeightSemiBold: 600,
   fontWeightBold: 700,
   h1: {
     fontFamily: FONT_PRIMARY,

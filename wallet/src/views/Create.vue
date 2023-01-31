@@ -1,6 +1,6 @@
 <template>
     <div class="access_view">
-        <create-wallet :navigate="navigate" :setLogged="setLogged"></create-wallet>
+        <create-wallet></create-wallet>
     </div>
 </template>
 <script lang="ts">
@@ -38,10 +38,7 @@ import CreateWallet from '@/components/CreateWalletWorkflow/CreateWallet.vue'
         }
     },
 })
-export default class Create extends Vue {
-    @Prop() navigate: any
-    @Prop() setLogged: any
-}
+export default class Create extends Vue {}
 </script>
 
 <style scoped lang="scss">

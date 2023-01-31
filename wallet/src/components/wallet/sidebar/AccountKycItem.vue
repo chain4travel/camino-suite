@@ -1,5 +1,5 @@
 <template>
-    <div v-if="!isLedger && wallet">
+    <div v-if="!isLedger && wallet" style="width: 100%">
         <template v-if="kycStatus">
             <button class="success_button">
                 <v-icon>mdi-check-decagram</v-icon>
@@ -62,7 +62,8 @@ export default class AccountKycItem extends Vue {
     gap: 5px;
     width: 100%;
     justify-content: center;
-    max-width: 163px;
+    // max-width: 163px;
+    width: '100%';
 }
 
 .warning_button {

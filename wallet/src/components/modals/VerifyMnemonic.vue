@@ -1,6 +1,6 @@
 <template>
     <modal ref="modal" :title="title" class="modal_parent" icy>
-        <form class="mnemonic_body" v-on:submit.prevent="verify">
+        <div class="mnemonic_body">
             <h3>{{ $t('create.verify_desc') }}</h3>
             <div class="words">
                 <div v-for="i in 24" :key="i" class="mnemonic_in" tabindex="-1">
@@ -14,7 +14,7 @@
             </div>
             <p class="err">{{ err }}</p>
             <button class="but_primary ava_button button_primary" @click="verify">Verify</button>
-        </form>
+        </div>
     </modal>
 </template>
 

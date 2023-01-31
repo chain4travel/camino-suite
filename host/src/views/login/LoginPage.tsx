@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from "react";
-import { Box, Paper, Typography, Button, MenuItem } from "@mui/material";
-import { Grid, alpha } from "@mui/material";
+import { Box, Paper, Typography, Button } from "@mui/material";
+import { Grid } from "@mui/material";
 import {
   mdiShieldKeyOutline,
   mdiListBoxOutline,
@@ -9,7 +9,7 @@ import {
   mdiWalletOutline,
 } from "@mdi/js";
 import Icon from "@mdi/react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { styled } from "@mui/material/styles";
 import { mountAccounts } from "wallet/mountAccounts";
 
@@ -53,7 +53,7 @@ export default function LoginPage() {
           borderRadius: "18px",
           textAlign: "center",
           gap: "1rem",
-          m: ".75rem",
+          my: "2rem",
           "@media (max-width: 600px)": {
             p: "20px",
           },
@@ -62,10 +62,6 @@ export default function LoginPage() {
         <Typography variant="h2">Camino Application Suite</Typography>
         {/* Saved wallets section */}
         <LoadAccountMenu />
-        {/* <Box sx={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-          <Typography variant="subtitle1">Saved Camino Wallets</Typography>
-          <SavedWalletButton label="Daniel's Wallet" />
-        </Box> */}
         {/* Access wallet section */}
         <Box sx={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
           <Typography variant="subtitle1">
@@ -107,7 +103,9 @@ export default function LoginPage() {
           <Typography variant="subtitle1">Don't have a wallet yet ?</Typography>
           <StyledLink to="/create" style={{ textDecoration: "none" }}>
             <Button variant="contained" sx={{ p: ".75rem", width: "100%" }}>
-              <Typography variant="body1">Create a wallet</Typography>
+              <Typography variant="body1" color="white">
+                Create a wallet
+              </Typography>
             </Button>
           </StyledLink>
           <Typography variant="body2" color="text.secondary">

@@ -48,7 +48,7 @@
 </template>
 <script lang="ts">
 import 'reflect-metadata'
-import { Vue, Component } from 'vue-property-decorator'
+import { Vue, Component, Prop } from 'vue-property-decorator'
 
 import Modal from '../Modal.vue'
 import { SaveAccountInput } from '@/store/types'
@@ -62,6 +62,7 @@ import Identicon from '@/components/misc/Identicon.vue'
     },
 })
 export default class SaveAccountModal extends Vue {
+    @Prop() setAccount: any
     password: string = ''
     password_confirm: string = ''
     isLoading: boolean = false
@@ -100,7 +101,7 @@ export default class SaveAccountModal extends Vue {
             password: pass,
         }
         await this.$store.dispatch('Accounts/saveAccount', input)
-
+        this.setAccount(this.$store.getters['Accounts/account'])
         this.isLoading = false
         this.onsuccess()
     }

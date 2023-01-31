@@ -1,6 +1,5 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { Navigate } from "react-router-dom";
-import store from "wallet/store";
 import { useAppSelector } from "../hooks/reduxHooks";
 import { selectAuthStatus } from "../redux/slices/app-config";
 

@@ -40,7 +40,7 @@ const network_module: Module<NetworkState, RootState> = {
                     return
                 }
             }
-            state.networksCustom.push(net)
+            state.networksCustom = [...state.networksCustom, net]
             dispatch('save')
         },
 
@@ -179,7 +179,7 @@ const network_module: Module<NetworkState, RootState> = {
                 'https://columbus.camino.foundation',
                 1001,
                 'https://magellan.columbus.camino.foundation',
-                'https://explorer.camino.foundation',
+                'https://playground.suite.camino.foundation/explorer',
                 true
             )
 

@@ -12,13 +12,14 @@ export function NavBar() {
     <>
       <AppBar
         sx={{
-          top: 'auto',
           borderBottom: '1px solid',
           borderColor: 'card.border',
           backgroundColor: 'card.navBar',
           borderRadius: '0px',
           backgroundImage: 'none',
           boxShadow: 'none',
+          top: '65px',
+          [theme.breakpoints.up('md')]: { top: '69px' },
         }}
         position="fixed"
       >
@@ -51,13 +52,7 @@ export function NavBar() {
             }}
           >
             <Links />
-            <Box
-              sx={{
-                display: 'flex',
-                pr: '10px',
-                ml: !isDesktop ? 'auto' : '0',
-              }}
-            >
+            <Box sx={{ display: 'flex', ml: !isDesktop ? 'auto' : '0' }}>
               <SearchInput />
             </Box>
           </Toolbar>

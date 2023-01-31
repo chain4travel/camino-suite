@@ -1008,7 +1008,7 @@
 "@c4tplatform/camino-wallet-sdk@file:camino-wallet-sdk":
   version "0.0.2"
   dependencies:
-    "@c4tplatform/caminojs" "file:../../../../../.cache/yarn/v6/npm-@c4tplatform-camino-wallet-sdk-0.0.2-5f5c7c6c-4973-42f7-adcf-8f2523530f74-1674250261718/node_modules/@c4tplatform/camino-wallet-sdk/caminojs"
+    "@c4tplatform/caminojs" "file:../../../../../.cache/yarn/v6/npm-@c4tplatform-camino-wallet-sdk-0.0.2-a3d0a9d2-7dad-441e-b311-6b2290640a7b-1675174218823/node_modules/@c4tplatform/camino-wallet-sdk/caminojs"
     "@ethereumjs/tx" "3.4.0"
     "@ledgerhq/hw-app-eth" "6.12.2"
     "@ledgerhq/hw-transport" "^6.19.0"
@@ -15249,7 +15249,7 @@ terser-webpack-plugin@^1.4.3, terser-webpack-plugin@^1.4.4:
     webpack-sources "^1.4.0"
     worker-farm "^1.7.0"
 
-terser-webpack-plugin@^5.1.3, terser-webpack-plugin@^5.3.6:
+terser-webpack-plugin@^5.1.3:
   version "5.3.6"
   resolved "https://registry.yarnpkg.com/terser-webpack-plugin/-/terser-webpack-plugin-5.3.6.tgz#5590aec31aa3c6f771ce1b1acca60639eab3195c"
   integrity sha512-kfLFk+PoLUQIbLmB1+PZDMRSZS99Mp+/MHqDNmMA6tOItzRt+Npe3E+fsMs5mfcM0wCtrrdU387UnV+vnSffXQ==

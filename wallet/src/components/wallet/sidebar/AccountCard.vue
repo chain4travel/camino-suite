@@ -1,44 +1,23 @@
 <template>
     <div v-if="!isLedger && wallet" class="userItem">
-        <template v-if="account">
-            <button class="account_but" @click="openSettings">
-                <p>Manage Account</p>
-            </button>
-            <AccountSettingsModal ref="settings_modal"></AccountSettingsModal>
-        </template>
-        <template v-else>
-            <SaveAccountModal :setAccount="setAccount" ref="save_modal"></SaveAccountModal>
-            <button class="warning_button" @click="save">
-                <fa icon="exclamation-triangle" class="volatile_alert"></fa>
-                {{ $t('keys.save_account.title') }}
-            </button>
-        </template>
+        <div v-if="account" class="account_but">
+            <Identicon :value="account.baseAddresses.join('')" diameter="18"></Identicon>
+            <p>{{ account.name }}</p>
+        </div>
     </div>
 </template>
 <script lang="ts">
-import { Vue, Component, Prop } from 'vue-property-decorator'
+import { Vue, Component } from 'vue-property-decorator'
 import { iUserAccountEncrypted } from '@/store/types'
 import Identicon from '@/components/misc/Identicon.vue'
-import SaveAccountModal from '@/components/modals/SaveAccount/SaveAccountModal.vue'
-import AccountSettingsModal from '@/components/modals/AccountSettings/AccountSettingsModal.vue'
 import { WalletType } from '@/js/wallets/types'
 
 @Component({
     components: {
-        AccountSettingsModal,
-        SaveAccountModal,
         Identicon,
     },
 })
-export default class AccountUserItem extends Vue {
-    @Prop() type: any
-    @Prop() setAccount: any
-
-    $refs!: {
-        save_modal: SaveAccountModal
-        settings_modal: AccountSettingsModal
-    }
-
+export default class AccountCard extends Vue {
     get account(): iUserAccountEncrypted | null {
         return this.$store.getters['Accounts/account']
     }
@@ -51,13 +30,6 @@ export default class AccountUserItem extends Vue {
         let w = this.wallet
         if (!w) return false
         return w.type === 'ledger'
-    }
-    openSettings() {
-        this.$refs.settings_modal.open()
-    }
-
-    save() {
-        this.$refs.save_modal.open()
     }
 }
 </script>
@@ -85,6 +57,8 @@ export default class AccountUserItem extends Vue {
     width: 100%;
     p {
         text-align: left;
+        margin-left: 12px !important;
+        width: 80%;
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
