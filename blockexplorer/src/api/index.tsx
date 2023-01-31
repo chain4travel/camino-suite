@@ -13,6 +13,7 @@ import { CTransaction } from 'types/transaction';
 import { createTransaction } from 'utils/magellan';
 import { baseEndpoint } from 'utils/magellan-api-utils';
 import { getBaseUrl, getChainID, mapToTableData } from './utils';
+import { store } from "../App";
 
 export const getBlocksPage = async (startingBlock: number) => {
   const response = await axios.get(
@@ -193,3 +194,24 @@ export const fetchBlocksTransactionsCChain =
     }
     return r;
   };
+
+
+  export async function loadValidatorsInfo() {
+    return new Promise((resolve, reject) => {
+      const urlValidators = `${getBaseUrl()}${baseEndpoint}/validatorsInfo`;
+      var request = {
+        method: 'post',
+        url: urlValidators,
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      };
+  
+      axios(request).then(function (response: any) {
+        resolve(response.data.value);
+      }).catch(function (error) {
+        reject([]);
+        console.error(error,500);
+      });
+    });
+  }
