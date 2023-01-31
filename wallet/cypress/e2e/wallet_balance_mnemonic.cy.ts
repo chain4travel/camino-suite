@@ -9,7 +9,10 @@ describe('Wallet Balance Mnemonic', () => {
 
     it('open suite/open wallet using mnemonic', () => {
         changeNetwork(cy);
-        accessWallet(cy, true);
-        cy.get('.header > :nth-child(3) > .v-icon').click();
+        accessWallet(cy, "mnemonic");
     });
+
+    after(() => {
+        cy.get('.header > :nth-child(3) > .v-icon').click();
+    })
 })

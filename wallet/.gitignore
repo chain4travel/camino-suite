@@ -25,3 +25,5 @@ yarn-error.log*
 *.sw?
 /cypress/videos
 /cypress/screenshots
+/cypress/temp/private_keys/*
+/cypress/temp/wallets/*
