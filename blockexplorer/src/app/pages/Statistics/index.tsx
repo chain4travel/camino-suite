@@ -70,13 +70,14 @@ const Statistics: FC = () => {
       >
         <SubPageTitle
           title="Blockchain Data"
-          style={{ marginBottom: '20px' }}
+          style={{ marginBottom: '2rem', marginTop: '2rem', fontSize: '2rem' }}
           hiddenBackButton={true}
         />
         <Box sx={{ flexGrow: 1 }}>
           <Grid container spacing={2}>
             <Grid item md={6} xs={12}>
               <BlockchainCharts
+                tooltipTitle="This chart highlights the total number of transactions on the Camino blockchain with daily individual breakdown for estimated hash rate, average block time and size, total block and uncle block count and total new address seen."
                 darkMode={dark}
                 titleText={'Daily Transactions'}
                 utilSlice={() => loadDailyTransactionsStatistics()}
@@ -87,6 +88,7 @@ const Statistics: FC = () => {
             </Grid>
             <Grid item md={6} xs={12}>
               <BlockchainCharts
+                tooltipTitle="This chart highlights the total number of transactions on the Camino blockchain with daily individual breakdown for estimated hash rate, average block time and size, total block and uncle block count and total new address seen."
                 darkMode={dark}
                 titleText={'Unique Adresses'}
                 utilSlice={() => loadUniqueAddresses()}
@@ -97,6 +99,7 @@ const Statistics: FC = () => {
             </Grid>
             <Grid item md={6} xs={12}>
               <BlockchainCharts
+                tooltipTitle="This chart highlights the total number of transactions on the Camino blockchain with daily individual breakdown for estimated hash rate, average block time and size, total block and uncle block count and total new address seen."
                 darkMode={dark}
                 titleText={'Daily Token Transfer'}
                 utilSlice={() => loadDailyTokenTransfer()}
@@ -107,6 +110,7 @@ const Statistics: FC = () => {
             </Grid>
             <Grid item md={6} xs={12}>
               <BlockchainCharts
+                tooltipTitle="This chart highlights the total number of transactions on the Camino blockchain with daily individual breakdown for estimated hash rate, average block time and size, total block and uncle block count and total new address seen."
                 darkMode={dark}
                 titleText={'Gas Used'}
                 utilSlice={() => loadGasUsed()}
@@ -118,6 +122,7 @@ const Statistics: FC = () => {
 
             <Grid item md={6} xs={12}>
               <BlockchainCharts
+                tooltipTitle="This chart highlights the total number of transactions on the Camino blockchain with daily individual breakdown for estimated hash rate, average block time and size, total block and uncle block count and total new address seen."
                 darkMode={dark}
                 titleText={'Active Addresses'}
                 utilSlice={() => loadActiveAddresses()}
@@ -128,6 +133,7 @@ const Statistics: FC = () => {
             </Grid>
             <Grid item md={6} xs={12}>
               <BlockchainCharts
+                tooltipTitle="This chart highlights the total number of transactions on the Camino blockchain with daily individual breakdown for estimated hash rate, average block time and size, total block and uncle block count and total new address seen."
                 darkMode={dark}
                 titleText={'Gas Average Price'}
                 utilSlice={() => loadGasAveragePrice()}
@@ -139,6 +145,7 @@ const Statistics: FC = () => {
 
             <Grid item md={6} xs={12}>
               <BlockchainCharts
+                tooltipTitle="This chart highlights the total number of transactions on the Camino blockchain with daily individual breakdown for estimated hash rate, average block time and size, total block and uncle block count and total new address seen."
                 darkMode={dark}
                 titleText={'Gas Average Limit'}
                 utilSlice={() => loadGasAverageLimit()}
@@ -149,6 +156,7 @@ const Statistics: FC = () => {
             </Grid>
             <Grid item md={6} xs={12}>
               <BlockchainCharts
+                tooltipTitle="This chart highlights the total number of transactions on the Camino blockchain with daily individual breakdown for estimated hash rate, average block time and size, total block and uncle block count and total new address seen."
                 darkMode={dark}
                 titleText={'Average Block Limit'}
                 utilSlice={() => loadAverageBlockSize()}
@@ -190,6 +198,7 @@ const Statistics: FC = () => {
                 utilSlice={() => loadDailyEmissions()}
                 sliceGetter={getDailyEmissions}
                 sliceGetterLoader={getDailyEmissionsStatus}
+                titleText="Daily Emissions"
               />
             </Grid>
 
@@ -200,6 +209,7 @@ const Statistics: FC = () => {
                 utilSlice={() => loadNetworkEmissions()}
                 sliceGetter={getNetworkEmissions}
                 sliceGetterLoader={getNetworkEmissionsStatus}
+                titleText="Network Emissions"
               />
             </Grid>
 
@@ -210,6 +220,7 @@ const Statistics: FC = () => {
                 utilSlice={() => loadTransactionsEmissions()}
                 sliceGetter={getTransactionsEmissions}
                 sliceGetterLoader={getTransactionsEmissionsStatus}
+                titleText="Network Emissions Per Transaction"
               />
             </Grid>
           </Grid>

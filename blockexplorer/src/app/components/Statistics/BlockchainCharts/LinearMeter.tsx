@@ -2,12 +2,14 @@ import React from 'react';
 import Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
 import ConfigLinearMeter from './ConfigLinearMeter';
+import './style.css'
 
 const LinearMeter = ({ darkMode, titleText, data, typeStatistic }) => {
+ let config = new ConfigLinearMeter(typeStatistic, titleText, data)
 
-  let config = new ConfigLinearMeter(typeStatistic, titleText, data);
 
   if (config.data != undefined && config.data != null) {
+
     const options = {
       title: {
         text: "",
