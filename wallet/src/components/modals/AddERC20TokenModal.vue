@@ -67,7 +67,7 @@ export default class AddERC20TokenModal extends Vue {
         }
         try {
             //@ts-ignore
-            var tokenInst = new web3.eth.Contract(ERC20Abi.abi, val)
+            var tokenInst = new web3.eth.Contract(ERC20Abi, val)
             let name = await tokenInst.methods.name().call()
             let symbol = await tokenInst.methods.symbol().call()
             let decimals = await tokenInst.methods.decimals().call()
@@ -108,7 +108,7 @@ export default class AddERC20TokenModal extends Vue {
                 logoURI: '',
             }
 
-            // let token: Erc20Token = await this.$store.dispatch('Assets/addCustomErc20Token', data)
+            let token: Erc20Token = await this.$store.dispatch('Assets/addCustomErc20Token', data)
             this.close()
         } catch (e) {
             this.err = (e as Error).message

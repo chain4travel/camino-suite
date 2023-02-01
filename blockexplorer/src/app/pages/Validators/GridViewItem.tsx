@@ -4,6 +4,7 @@ import { Field } from 'app/components/DetailsField';
 import { ValidatorType } from 'types/store';
 import Chip from '@mui/material/Chip';
 import moment from 'utils/helpers/moment';
+import Tooltip from '@mui/material/Tooltip';
 
 export const GridViewItem = ({ validator }: { validator: ValidatorType }) => {
   return (
@@ -25,6 +26,7 @@ export const GridViewItem = ({ validator }: { validator: ValidatorType }) => {
         </Typography>
         <Chip
           label={validator.status}
+          style={{ width: 100, maxWidth: 100 }}
           sx={{
             borderRadius: '7px',
             color: 'grey.900',
@@ -43,19 +45,21 @@ export const GridViewItem = ({ validator }: { validator: ValidatorType }) => {
         <Typography variant="subtitle2" color="latestList.timestamp">
           StartTime
         </Typography>
-        {moment(validator.startTime).format('MMM D, YYYY')}
+        <Tooltip title={"Days since validator start:" + moment(validator.startTime).fromNow().replace(" ago", "")}>
+          <span style={{ cursor: 'pointer' }}>
+            {moment(validator.startTime).format('MMM D, YYYY')}
+          </span>
+        </Tooltip>
       </Grid>
       <Grid item xs={12} md zeroMinWidth order={{ xs: 3, md: 2 }}>
         <Typography variant="subtitle2" color="latestList.timestamp">
           EndTime
         </Typography>
-        {moment(validator.endTime).format('MMM D, YYYY')}
-      </Grid>
-      <Grid item xs={12} md zeroMinWidth order={{ xs: 3, md: 2 }}>
-        <Typography variant="subtitle2" color="latestList.timestamp">
-          Duration
-        </Typography>
-        {moment(validator.endTime).fromNow()}
+        <Tooltip title={"Days until validator stops:" + moment(validator.endTime).fromNow().replace("in ", "")}>
+          <span style={{ cursor: 'pointer' }}>
+            {moment(validator.endTime).format('MMM D, YYYY')}
+          </span>
+        </Tooltip>
       </Grid>
       <Grid item xs={12} md zeroMinWidth order={{ xs: 3, md: 2 }}>
         <Typography variant="subtitle2" color="latestList.timestamp">
