@@ -127,9 +127,15 @@ async function validateAllBalances() {
 function getTotalBalanceText(): Promise<number> {
     return new Promise((resolve, reject) => {
         let balanceNumber = "0";
-        cy.get('[data-cy="wallet_balance"]').invoke("text").then((data) => {
+        let balanceDecimals = ".0";
+        let balanceTotal = "0";
+        cy.get('[data-cy="wallet_balance"] > span').invoke("text").then((data) => {
             balanceNumber = data.toString();
-            resolve(parseFloat(balanceNumber));
+            cy.get('.smaller').invoke("text").then((decimals) => {
+                balanceDecimals = decimals;
+                balanceTotal = balanceNumber + balanceDecimals;
+                resolve(parseFloat(balanceTotal));
+            });
         });
     });
 }
