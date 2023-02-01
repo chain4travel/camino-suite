@@ -2,6 +2,7 @@ import { Status } from 'types';
 import { BlockDetail, BlockTableData } from './block';
 import { MagellanTransaction } from './magellan-types';
 import { CTransaction, TranscationDetails, XPTransaction } from './transaction';
+import {LocationNode, NodesPerCountry, NodesPerCity } from './locationNode';
 
 export interface Chain {
   chainID: string;
@@ -65,6 +66,9 @@ export interface initialValidatorsStateType {
   numberOfValidators: number;
   validatorsLoading: Status;
   validators: ValidatorType[];
+  locationNodes: LocationNode[],
+  nodesPerCountry: NodesPerCountry[],
+  nodesPerCity: NodesPerCity[]
 }
 
 export interface ValidatorType {

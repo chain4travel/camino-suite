@@ -41,6 +41,10 @@ module.exports = {
         issuer: /\.[jt]sx?$/,
         use: ['@svgr/webpack', 'url-loader'],
       },
+      {
+        test: /\.json$/,
+        loader: 'json-loader'
+      }
     ],
   },
 
