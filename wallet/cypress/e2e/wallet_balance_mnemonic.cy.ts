@@ -26,7 +26,7 @@ describe('Wallet Balance Mnemonic', () => {
 
 
 async function interceptXChainBalance() {
-    cy.intercept('POST', 'https://columbus.camino.foundation/ext/bc/X', (req) => {
+    cy.intercept('POST', '**/ext/bc/X', (req) => {
         if (req.body.method == "avm.getUTXOs") {
             req.reply({
                 statusCode: 200,
@@ -56,7 +56,7 @@ async function interceptXChainBalance() {
 
 async function interceptPChainBalance () 
 {
-    cy.intercept('POST', 'https://columbus.camino.foundation/ext/bc/P', (req) => {
+    cy.intercept('POST', '**/ext/bc/P', (req) => {
         if (req.body.method == "platform.getUTXOs") {
             req.reply({
                 statusCode: 200,
@@ -85,7 +85,7 @@ async function interceptPChainBalance ()
 
 async function interceptChainBalance () 
 {
-    cy.intercept('POST', 'https://columbus.camino.foundation/ext/bc/C/rpc', (req) => {
+    cy.intercept('POST', '**/ext/bc/C/rpc', (req) => {
         if (req.body.method == "eth_getBalance") {
             req.reply({
                 statusCode: 200,
