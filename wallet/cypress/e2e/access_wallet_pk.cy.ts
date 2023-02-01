@@ -7,6 +7,6 @@ describe('access wallet', () => {
     })
     it('Wallet access private key ', () => {
         changeNetwork(cy)
-        accessWallet(cy, 'mnemonic')
+        accessWallet(cy, 'privateKey')
     })
 })
