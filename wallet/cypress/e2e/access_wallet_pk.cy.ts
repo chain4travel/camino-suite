@@ -6,8 +6,7 @@ describe('access wallet', () => {
         cy.visit('/')
     })
     it('Wallet access private key ', () => {
-        changeNetwork(cy);
-        accessWallet(cy, "privateKey");
-       
+        changeNetwork(cy)
+        accessWallet(cy, 'privateKey')
     })
 })

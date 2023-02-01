@@ -27,7 +27,9 @@ export async function accessWallet(cy: Cypress.cy & CyEventEmitter, type: string
         ).click()
         cy.url().should('include', '/login')
         cy.get('#app > div > div.MuiBox-root.css-ymnp2l > div > div:nth-child(3) > div > div:nth-child(1) > div:nth-child(1)').click()
-        cy.get('#input-11').type('a40c8d19fe548f2471ef9f909c516632fa6f40c638c73348b4063baedfe59434')
+        cy.readFile('cypress/temp/wallets/private_key_wallet.json').then((privateKey) => {
+            cy.get('#input-11').type(privateKey.privateKey)
+        })
         cy.get('#app > div > div.MuiBox-root.css-ymnp2l > div > div > div > div > form > button').click()
         cy.get('#router_view > div.container.content > div.main_panel > div > div.header > h2')
     }
