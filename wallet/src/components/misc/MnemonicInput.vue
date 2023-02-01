@@ -56,7 +56,7 @@ export default class MnemonicDisplay extends Vue {
 }
 </script>
 <style scoped lang="scss">
-@use "../../styles/main";
+@use '../../styles/main';
 .mnemonic_input {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -88,7 +88,6 @@ export default class MnemonicDisplay extends Vue {
     white-space: nowrap;
     flex-grow: 1;
     color: var(--primary-color);
-    max-width: 125px;
 }
 .invalid_input {
     border: #ff2115 1px solid;
@@ -128,7 +127,7 @@ label {
 }
 @include main.medium-device {
     .mnemonic_input {
-        grid-template-columns: repeat(2, 1fr);
+        grid-template-columns: repeat(3, 1fr);
     }
 }
 </style>

@@ -10,6 +10,7 @@ import MeterCO2Data from './meterCO2data';
 import { GasAveragePrice } from './gasAveragePrice';
 import { GasAverageLimit } from './gasAverageLimit';
 import { AverageBlockSize } from './averageBlockSize';
+import {LocationNode, NodesPerCountry, NodesPerCity } from './locationNode';
 
 export interface Chain {
   chainID: string;
@@ -73,6 +74,9 @@ export interface initialValidatorsStateType {
   numberOfValidators: number;
   validatorsLoading: Status;
   validators: ValidatorType[];
+  locationNodes: LocationNode[],
+  nodesPerCountry: NodesPerCountry[],
+  nodesPerCity: NodesPerCity[]
 }
 
 export interface ValidatorType {

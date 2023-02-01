@@ -7,12 +7,12 @@ export default function MenuList(theme: Theme) {
         root: {
           display: "grid",
           padding: 0,
-          border: `1px solid ${theme.palette.divider}`,
           borderRadius: theme.shape.borderRadius,
           backgroundColor: theme.palette.background.paper,
           boxShadow: "none",
           maxWidth: "350px",
           "& .MuiMenuItem-root": {
+            whiteSpace: "normal",
             padding: ".8rem",
             "&.Mui-selected": {
               backgroundColor: `${theme.palette.action.selected} !important`,

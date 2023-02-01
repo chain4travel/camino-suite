@@ -33,7 +33,7 @@ import {
     UTXO,
     AVMConstants,
     NFTMintOutput,
-} from '@c4tplatform/camino/dist/apis/avm'
+} from '@c4tplatform/caminojs/dist/apis/avm'
 import { NftGroupDict } from '@/components/wallet/portfolio/types'
 import CollectibleFamilyGroup from '@/components/wallet/portfolio/CollectibleFamilyGroup.vue'
 @Component({
@@ -92,7 +92,7 @@ export default class CollectibleFamilyRow extends Vue {
         if (this.mintUtxos.length === 0) return ''
         let mintUtxo = this.mintUtxos[0]
 
-        return `/wallet/studio?utxo=${mintUtxo.getUTXOID()}`
+        return `/wallet/home/studio?utxo=${mintUtxo.getUTXOID()}`
     }
 
     get groupIds(): number[] {

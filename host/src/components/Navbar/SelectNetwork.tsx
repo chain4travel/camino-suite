@@ -1,8 +1,6 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { Box, Typography, Chip } from "@mui/material";
 import { useAppSelector } from "../../hooks/reduxHooks";
-// import { selectNetworkStatus } from "../../redux/slices/app-config";
-import { Status } from "../../@types";
 import {
   getActiveNetwork,
   selectNetworkStatus,
@@ -27,13 +25,7 @@ export default function SelectedNetwork() {
   const status = useAppSelector(selectNetworkStatus);
   const activeNetwork = useAppSelector(getActiveNetwork);
   return (
-    <Box
-      sx={{
-        display: "flex",
-        gap: 1,
-        alignItems: "center",
-      }}
-    >
+    <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
       <Chip
         sx={{
           width: "8px",
@@ -44,10 +36,7 @@ export default function SelectedNetwork() {
       <Typography
         variant="subtitle1"
         component="span"
-        sx={{
-          overflow: "hidden",
-          textOverflow: "ellipsis",
-        }}
+        sx={{ overflow: "hidden", textOverflow: "ellipsis" }}
       >
         {activeNetwork?.name}
       </Typography>

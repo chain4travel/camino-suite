@@ -23,11 +23,11 @@
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator'
 import { IWalletNftDict } from '@/store/types'
-import { NFTTransferOutput, UTXO } from '@c4tplatform/camino/dist/apis/avm'
+import { NFTTransferOutput, UTXO } from '@c4tplatform/caminojs/dist/apis/avm'
 import NftPayloadView from '@/components/misc/NftPayloadView/NftPayloadView.vue'
-import { PayloadBase } from '@c4tplatform/camino/dist/utils'
-import { Buffer } from '@c4tplatform/camino'
-import { PayloadTypes } from '@c4tplatform/camino/dist/utils'
+import { PayloadBase } from '@c4tplatform/caminojs/dist/utils'
+import { Buffer } from '@c4tplatform/caminojs'
+import { PayloadTypes } from '@c4tplatform/caminojs/dist/utils'
 import { bintools } from '@/AVA'
 import { ERCNftWalletBalance } from '@/store/modules/assets/modules/types'
 import ERCNftView from '@/components/misc/ERCNftView.vue'
@@ -66,7 +66,7 @@ export default class NftCol extends Vue {
             if (ids.includes(cacheId)) {
                 return false
             } else {
-                ids.push(cacheId)
+                ids = [...ids, cacheId]
                 return true
             }
         })
@@ -105,7 +105,7 @@ export default class NftCol extends Vue {
                     id,
                 }
             })
-            res.push(...tokens)
+            res = [...res, ...tokens]
         }
         return res.slice(0, NFT_COUNT - this.nftArray.length)
     }

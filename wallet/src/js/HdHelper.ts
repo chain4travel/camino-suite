@@ -2,16 +2,16 @@ import {
     KeyChain as AVMKeyChain,
     KeyPair as AVMKeyPair,
     UTXOSet as AVMUTXOSet,
-} from '@c4tplatform/camino/dist/apis/avm'
+} from '@c4tplatform/caminojs/dist/apis/avm'
 
-import { UTXOSet as PlatformUTXOSet } from '@c4tplatform/camino/dist/apis/platformvm'
+import { UTXOSet as PlatformUTXOSet } from '@c4tplatform/caminojs/dist/apis/platformvm'
 import { ava, bintools } from '@/AVA'
 import HDKey from 'hdkey'
-import { Buffer } from '@c4tplatform/camino'
+import { Buffer } from '@c4tplatform/caminojs'
 import {
     KeyChain as PlatformVMKeyChain,
     KeyPair as PlatformVMKeyPair,
-} from '@c4tplatform/camino/dist/apis/platformvm'
+} from '@c4tplatform/caminojs/dist/apis/platformvm'
 import store from '@/store'
 
 import { getAddressChains } from '@/explorer_api'
@@ -38,6 +38,8 @@ class HdHelper {
     }
     changePath: string
     masterKey: HDKey
+    ethKeyPair: AVMKeyPair | PlatformVMKeyPair | undefined
+    ethAddress: string
     hdIndex: number
     utxoSet: AVMUTXOSet | PlatformUTXOSet
     isPublic: boolean
@@ -47,6 +49,7 @@ class HdHelper {
     constructor(
         changePath: string,
         masterKey: HDKey,
+        ethKey?: HDKey,
         chainId: ChainAlias = 'X',
         isPublic: boolean = false
     ) {
@@ -70,6 +73,14 @@ class HdHelper {
         this.masterKey = masterKey
         this.hdIndex = 0
         this.isPublic = isPublic
+        this.ethKeyPair = undefined
+        this.ethAddress = ''
+
+        if (ethKey) {
+            let addrBuf = AVMKeyPair.addressFromPublicKey(Buffer.from(ethKey.publicKey))
+            this.ethAddress = bintools.addressToString(hrp, chainId, addrBuf)
+            this.ethKeyPair = this.keyChain.importKey(Buffer.from(ethKey.privateKey))
+        }
         // this.oninit()
     }
 
@@ -91,6 +102,8 @@ class HdHelper {
             this.utxoSet = new PlatformUTXOSet()
         }
         this.hdIndex = 0
+        this.addressCache = {}
+        this.keyCache = {}
         await this.oninit()
     }
 
@@ -195,6 +208,7 @@ class HdHelper {
         } else {
             keychain = new PlatformVMKeyChain(hrp, this.chainId)
         }
+        if (this.ethKeyPair) keychain.addKey(this.ethKeyPair)
 
         for (let i: number = 0; i <= this.hdIndex; i++) {
             let key: AVMKeyPair | PlatformVMKeyPair
@@ -216,7 +230,7 @@ class HdHelper {
 
     // Returns all key pairs up to hd index
     getAllDerivedKeys(upTo = this.hdIndex): AVMKeyPair[] | PlatformVMKeyPair[] {
-        let set: AVMKeyPair[] | PlatformVMKeyPair[] = []
+        let set: AVMKeyPair[] | PlatformVMKeyPair[] = this.ethKeyPair ? [this.ethKeyPair] : []
         for (var i = 0; i <= upTo; i++) {
             if (this.chainId === 'X') {
                 let key = this.getKeyForIndex(i) as AVMKeyPair
@@ -230,7 +244,7 @@ class HdHelper {
     }
 
     getAllDerivedAddresses(upTo = this.hdIndex, start = 0): string[] {
-        let res = []
+        let res = this.ethKeyPair ? [this.ethAddress] : []
         for (var i = start; i <= upTo; i++) {
             let addr = this.getAddressForIndex(i)
             res.push(addr)
@@ -427,7 +441,7 @@ class HdHelper {
 
         // No need for PlatformKeypair because addressToString uses chainID to decode
         let keypair = new AVMKeyPair(hrp, chainId)
-        let addrBuf = keypair.addressFromPublicKey(pkBuff)
+        let addrBuf = AVMKeyPair.addressFromPublicKey(pkBuff)
         let addr = bintools.addressToString(hrp, chainId, addrBuf)
 
         this.addressCache[index] = addr

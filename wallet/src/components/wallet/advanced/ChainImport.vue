@@ -43,14 +43,14 @@ import { Vue, Component } from 'vue-property-decorator'
 
 import Spinner from '@/components/misc/Spinner.vue'
 import { WalletType } from '@/js/wallets/types'
-import { BN } from '@c4tplatform/camino'
+import { BN } from '@c4tplatform/caminojs'
 import {
     ExportChainsC,
     ExportChainsP,
     ExportChainsX,
     GasHelper,
     avaxCtoX,
-} from '@c4tplatform/camino-wallet-sdk'
+} from '@c4tplatform/camino-wallet-sdk/dist'
 
 @Component({
     components: { Spinner },
@@ -143,12 +143,6 @@ export default class ChainImport extends Vue {
         this.err = ''
         this.isSuccess = true
         this.txId = txId
-
-        this.$store.dispatch('Notifications/add', {
-            type: 'success',
-            title: 'Import Success',
-            message: txId,
-        })
 
         setTimeout(() => {
             this.$store.dispatch('Assets/updateUTXOs')

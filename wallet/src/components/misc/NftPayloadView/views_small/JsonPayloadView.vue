@@ -6,7 +6,7 @@
 </template>
 <script lang="ts">
 import { Component, Prop, Vue, Watch } from 'vue-property-decorator'
-import { JSONPayload } from '@c4tplatform/camino/dist/utils'
+import { JSONPayload } from '@c4tplatform/caminojs/dist/utils'
 
 import GenericPayloadViewSmall from '@/components/misc/NftPayloadView/views_small/GenericPayloadView.vue'
 
@@ -41,7 +41,7 @@ export default class JsonPayloadView extends Vue {
         try {
             let obj = JSON.parse(data)
 
-            if (Object.prototype.hasOwnProperty.call(obj, 'avalanche')) {
+            if (obj.hasOwnProperty('avalanche')) {
                 return true
             } else {
                 return false

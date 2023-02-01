@@ -90,11 +90,11 @@ export default class Home extends Vue {
 </script>
 
 <style scoped lang="scss">
-@use "../styles/main";
+@use '../styles/main';
 .home {
     display: flex;
     justify-content: center;
-    min-height: calc(100vh - 80px);
+    min-height: calc(100vh - 89px);
     background-image: url('../assets/home_background.svg');
     background-size: cover;
     background-position: center;

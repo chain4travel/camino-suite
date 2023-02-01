@@ -13,6 +13,7 @@ import {
   STATISTICS
 } from 'utils/route-paths';
 import { ChainType } from 'utils/types/chain-type';
+import { getChainTypeFromUrl } from 'utils/route-utils';
 
 function a11yProps(index: number) {
   return {
@@ -36,9 +37,7 @@ const activeTab = (path: string): number => {
 
 export default function Links() {
   const location = useLocation();
-  const [value, setValue] = useState(
-    activeTab(location.pathname.split('/')[1]),
-  );
+  const [value, setValue] = useState(activeTab(getChainTypeFromUrl()));
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     if (location.pathname !== MAINNET) {
       if (newValue === 3) window.open(DOCS);
@@ -70,18 +69,36 @@ export default function Links() {
       }}
     >
       <Tabs
-        // variant="fullWidth"
         value={value}
         onChange={handleChange}
         textColor="secondary"
         // remove the underline
-        sx={{ maxWidth: '90%', '& .MuiTabs-indicator': { display: 'none' } }}
+        sx={{ '& .MuiTabs-indicator': { display: 'none' } }}
         scrollButtons="auto"
         variant="scrollable"
+        allowScrollButtonsMobile
       >
-        <Tab className="tab" disableRipple label="C-Chain" {...a11yProps(0)} />
-        <Tab className="tab" disableRipple label="X-Chain" {...a11yProps(1)} />
-        <Tab className="tab" disableRipple label="P-Chain" {...a11yProps(2)} />
+        <Tab
+          className="tab"
+          disableRipple
+          label="C-Chain"
+          {...a11yProps(0)}
+          sx={{ alignItems: { xs: 'center', sm: 'self-start' } }}
+        />
+        <Tab
+          className="tab"
+          disableRipple
+          label="X-Chain"
+          {...a11yProps(1)}
+          sx={{ alignItems: { xs: 'center', sm: 'self-start' } }}
+        />
+        <Tab
+          className="tab"
+          disableRipple
+          label="P-Chain"
+          {...a11yProps(2)}
+          sx={{ alignItems: { xs: 'center', sm: 'self-start' } }}
+        />
         <Tab className="tab" value={5} disableRipple label="Statistics" {...a11yProps(5)} />
       </Tabs>
     </Box>

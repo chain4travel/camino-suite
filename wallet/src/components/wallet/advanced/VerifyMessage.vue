@@ -32,9 +32,9 @@
 </template>
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
-import { KeyPair } from '@c4tplatform/camino/dist/apis/avm'
+import { KeyPair } from '@c4tplatform/caminojs/dist/apis/avm'
 import { ava, bintools } from '@/AVA'
-import { Buffer } from '@c4tplatform/camino'
+import { Buffer } from '@c4tplatform/caminojs'
 import { digestMessage } from '@/helpers/helper'
 
 @Component
@@ -65,7 +65,7 @@ export default class VerifyMessage extends Vue {
         let signedBuff = bintools.cb58Decode(this.signature)
 
         let pubKey = keypair.recover(digestBuff, signedBuff)
-        let addressBuff = keypair.addressFromPublicKey(pubKey)
+        let addressBuff = KeyPair.addressFromPublicKey(pubKey)
         this.addressX = bintools.addressToString(hrp, 'X', addressBuff)
         this.addressP = bintools.addressToString(hrp, 'P', addressBuff)
     }

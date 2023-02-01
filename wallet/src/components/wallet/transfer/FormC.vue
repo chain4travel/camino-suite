@@ -134,12 +134,12 @@ import {
     bnToAvaxC,
     bnToBigAvaxC,
     bnToBigAvaxX,
-} from '@c4tplatform/camino-wallet-sdk'
+} from '@c4tplatform/camino-wallet-sdk/dist'
 
 // @ts-ignore
 import { QrInput } from '@c4tplatform/vue_components'
 import Big from 'big.js'
-import { BN } from '@c4tplatform/camino'
+import { BN } from '@c4tplatform/caminojs'
 import { bnToBig } from '@/helpers/helper'
 import { web3 } from '@/evm'
 import EVMInputDropdown from '@/components/misc/EVMInputDropdown/EVMInputDropdown.vue'
@@ -301,14 +301,6 @@ export default class FormC extends Vue {
         return bnToAvaxC(this.maxFee)
     }
 
-    // balance - (gas * price)
-    // get maxAmt() {
-    //     // let priceWei = new BN(this.gasPrice).mul(new BN(Math.pow(10, 9)))
-    //     // let res = priceWei.mul(new BN(this.gasLimit))
-    //     let res = this.rawBalance.sub(this.maxFee)
-    //     return res.divRound(new BN(Math.pow(10, 9)))
-    // }
-
     async estimateGas() {
         if (!this.wallet) return
 
@@ -468,12 +460,6 @@ export default class FormC extends Vue {
         this.isSuccess = true
         this.txHash = txId
 
-        this.$store.dispatch('Notifications/add', {
-            title: this.$t('transfer.success_title'),
-            message: this.$t('transfer.success_msg'),
-            type: 'success',
-        })
-
         // Refresh UTXOs
         this.canSendAgain = false
         setTimeout(() => {
@@ -488,12 +474,6 @@ export default class FormC extends Vue {
         this.isLoading = false
 
         console.error(err)
-
-        this.$store.dispatch('Notifications/add', {
-            title: this.$t('transfer.error_title'),
-            message: this.$t('transfer.error_msg'),
-            type: 'error',
-        })
     }
 }
 </script>

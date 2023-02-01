@@ -8,7 +8,6 @@ import {
   loadNumberOfTransactions,
   loadTotalGasFess,
 } from 'store/cchainSlice/utils';
-import { useLocation } from 'react-router-dom';
 import {
   getPchainOverreview,
   getTimeFrameXchain,
@@ -24,18 +23,18 @@ import { loadValidators } from 'store/validatorsSlice/utils';
 import { ChainType } from 'utils/types/chain-type';
 import { getChainID } from 'api/utils';
 import { Status } from 'types';
+import { getChainTypeFromUrl } from 'utils/route-utils';
 
 export default function GlobalReloadButton({
   style,
 }: {
   style?: React.CSSProperties;
 }) {
-  const location = useLocation();
   const dispatch = useAppDispatch();
   const frameTime = useAppSelector(getTimeFrame);
   const timeFrameXPchain = useAppSelector(getTimeFrameXchain);
-  let chainAlias = location.pathname.split('/')[1][0];
-  let chainName = location.pathname.split('/')[1];
+  let chainAlias = getChainTypeFromUrl()[0];
+  let chainName = getChainTypeFromUrl();
   const { gasFeesLoading, transactionsLoading } = useAppSelector(
     chainName === ChainType.C_CHAIN ? getCchainOverreview : getXchainOverreview,
   );

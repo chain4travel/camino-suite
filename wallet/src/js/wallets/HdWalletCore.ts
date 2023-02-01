@@ -1,13 +1,13 @@
 import { ChainAlias } from '@/js/wallets/types'
-import { UTXO } from '@c4tplatform/camino/dist/apis/avm'
+import { UTXO } from '@c4tplatform/caminojs/dist/apis/avm'
 
-import { BN, Buffer } from '@c4tplatform/camino'
+import { BN, Buffer } from '@c4tplatform/caminojs'
 import { ITransaction } from '@/components/wallet/transfer/types'
 import { ava, bintools } from '@/AVA'
-import { UTXOSet as AVMUTXOSet } from '@c4tplatform/camino/dist/apis/avm/utxos'
+import { UTXOSet as AVMUTXOSet } from '@c4tplatform/caminojs/dist/apis/avm/utxos'
 import HDKey from 'hdkey'
 import { HdHelper } from '@/js/HdHelper'
-import { UTXOSet as PlatformUTXOSet } from '@c4tplatform/camino/dist/apis/platformvm/utxos'
+import { UTXOSet as PlatformUTXOSet } from '@c4tplatform/caminojs/dist/apis/platformvm/utxos'
 import { buildUnsignedTransaction } from '../TxHelper'
 import { WalletCore } from '@/js/wallets/WalletCore'
 import { updateFilterAddresses } from '../../providers'
@@ -29,9 +29,9 @@ abstract class HdWalletCore extends WalletCore {
         super()
         this.ethHdNode = ethHdNode
         this.chainId = ava.XChain().getBlockchainAlias() || ava.XChain().getBlockchainID()
-        this.externalHelper = new HdHelper('m/0', accountHdKey, undefined, isPublic)
-        this.internalHelper = new HdHelper('m/1', accountHdKey, undefined, isPublic)
-        this.platformHelper = new HdHelper('m/0', accountHdKey, 'P', isPublic)
+        this.externalHelper = new HdHelper('m/0', accountHdKey, ethHdNode, undefined, isPublic)
+        this.internalHelper = new HdHelper('m/1', accountHdKey, undefined, undefined, isPublic)
+        this.platformHelper = new HdHelper('m/0', accountHdKey, ethHdNode, 'P', isPublic)
 
         this.externalHelper.oninit().then((res) => {
             this.updateInitState()

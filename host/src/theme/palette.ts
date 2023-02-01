@@ -1,8 +1,14 @@
 import { alpha } from "@mui/material/styles";
 
 declare module "@mui/material/styles/createPalette" {
+  interface ColorTypes {
+    primary: string;
+  }
+  interface Palette {
+    logo: ColorTypes;
+  }
   interface TypeBackground {
-    neutral: string;
+    secondary: string;
   }
 }
 
@@ -26,7 +32,7 @@ const PRIMARY = {
   light: "#E2E8F0",
 };
 const SECONDARY = {
-  main: "#149EED",
+  main: "#0085ff",
   light: "#B440FC",
   dark: "#7E2DB0",
 };
@@ -50,7 +56,6 @@ const ERROR = {
   dark: "#B63831",
   main: "#DD5E56",
 };
-// #e2e8f0;
 const GREY = {
   0: "#FFFFFF",
   50: "#F8FAFC",
@@ -77,6 +82,20 @@ const GREY = {
   500_80: alpha("#919EAB", 0.8),
 };
 
+const BLUE = {
+  0: "#FFFFFF",
+  50: "#B5E3FD",
+  100: "#A0D9FC",
+  200: "#7BCFFB",
+  300: "#56C4FA",
+  400: "#0085FF",
+  500: "#0061D5",
+  600: "#0041A8",
+  700: "#00297C",
+  800: "#00144F",
+  900: "#000022",
+};
+
 const COMMON = {
   common: { black: "#000", white: "#fff" },
   primary: { ...PRIMARY, contrastText: "#fff" },
@@ -86,6 +105,7 @@ const COMMON = {
   warning: { ...WARNING, contrastText: GREY[800] },
   error: { ...ERROR, contrastText: "#fff" },
   grey: GREY,
+  blue: BLUE,
   divider: GREY[500_24],
   action: {
     hover: GREY[500_8],
@@ -102,14 +122,28 @@ const palette = {
   light: {
     ...COMMON,
     text: { primary: GREY[800], secondary: GREY[600], disabled: GREY[500] },
-    background: { paper: "#fff", default: GREY[200], neutral: GREY[200] },
+    background: {
+      paper: "#fff",
+      default: GREY[200],
+      neutral: GREY[200],
+      secondary: GREY[0],
+    },
     action: { active: GREY[600], ...COMMON.action },
+    button: { primary: GREY[200], secondary: GREY[100] },
+    logo: { primary: BLUE[400] },
   },
   dark: {
     ...COMMON,
     text: { primary: "#fff", secondary: GREY[500], disabled: GREY[600] },
-    background: { paper: GREY[900], default: GREY[900], neutral: GREY[500_16] },
+    background: {
+      paper: GREY[900],
+      default: GREY[900],
+      neutral: GREY[500_16],
+      secondary: GREY[800],
+    },
     action: { active: GREY[500], ...COMMON.action },
+    button: { primary: GREY[700], secondary: GREY[800] },
+    logo: { primary: BLUE[50] },
   },
 };
 

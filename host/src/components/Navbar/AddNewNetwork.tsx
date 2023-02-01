@@ -1,69 +1,84 @@
 import React from "react";
-import { useState } from "react";
+import * as Yup from "yup";
 import { Network } from "../../@types/store";
-import { useAppDispatch, useAppSelector } from "../../hooks/reduxHooks";
-import useWidth from "../../hooks/useWidth";
-import { getNetworks } from "../../redux/slices/app-config";
+import { useAppDispatch } from "../../hooks/reduxHooks";
 import {
-  Box,
-  Button,
-  FormControl,
-  MenuItem,
   Typography,
   TextField,
-  Modal,
+  DialogContent,
+  DialogActions,
 } from "@mui/material";
-import axios from "axios";
+import { useFormik, Form, FormikProvider } from "formik";
+import { Button } from "@mui/material";
 import { AvaNetwork } from "wallet/AvaNetwork";
 import store from "wallet/store";
 import { addNetworks } from "../../redux/slices/network";
+import { useStore } from "Explorer/useStore";
+import axios from "axios";
 
-export default function AddNewNetwork() {
-  const [open, setOpen] = useState(false);
-  const handleOpen = () => {
-    setOpen(true);
-  };
-  const handleClose = () => {
-    setOpen(false);
-  };
-
-  const { isDesktop } = useWidth();
-
-  const [NewNetwork, setNewNetwork] = useState({
-    id: "",
-    displayName: "My New Network",
-    protocol: "http",
-    host: "127.0.0.1",
-    magellanAddress: "http://127.0.0.1:8080" as string,
-    port: 9650,
-    predefined: false,
-  });
+export default function AddNewNetwork({
+  networks,
+  handleClose,
+  switchNetwork,
+}) {
+  const [error, setError] = React.useState("");
+  const [isLoading, setIsLoading] = React.useState(false);
+  const { updateNetworks } = useStore();
   const dispatch = useAppDispatch();
+  const getInitialValues = () => {
+    const _newNetwork = {
+      id: "",
+      displayName: "",
+      protocol: "https",
+      host: "",
+      magellanAddress: "",
+      port: 0,
+      predefined: false,
+    };
+    return _newNetwork;
+  };
 
-  // handle duplicate network id
+  const EventSchema = Yup.object().shape({
+    id: Yup.string(),
+    displayName: Yup.string()
+      .required("This field is required")
+      .min(3, "Too Short!"),
+    host: Yup.string().required("This field is required"),
+    protocol: Yup.string()
+      .required("This field is required")
+      .min(4, "Protocol must be at least 4 characters long")
+      .max(5, "Protocol must be no more than 5 characters long"),
+    magellanAddress: Yup.string()
+      .required("This field is required")
+      .min(10, "URL must be at least 10 characters")
+      .max(200, "URL must be no more than 200 characters")
+      .matches(/^https?:\/\/.+/, "URL must start with http:// or https://"),
+    port: Yup.number()
+      .positive()
+      .required("This field is required")
+      .integer()
+      .min(1)
+      .max(65535)
+      .typeError("Port should be a number and should not start with 0")
+      .required("This field is required"),
+    predefined: Yup.boolean(),
+  });
+
   const handleDuplicateNetworkId = (
     NewNetwork: Network,
     networks: Network[]
   ) => {
-    if (
-      networks.find(
-        (item) => item.id === NewNetwork.id && item.predefined === false
-      )
-    ) {
-      return true;
-    }
+    const _duplicate = networks.find(
+      (item) => item.id === NewNetwork.id && item.predefined === false
+    );
+    if (_duplicate) return true;
     return false;
   };
-
-  const networks = useAppSelector(getNetworks);
-  const [error, setError] = useState("");
-
-  const tryConnection = async (
+  async function tryConnection(
     url,
     credential = false
-  ): Promise<number | null> => {
+  ): Promise<number | null> {
     try {
-      console.log(url);
       let resp = await axios.post(
         url + "/ext/info",
         {
@@ -79,163 +94,130 @@ export default function AddNewNetwork() {
     } catch (err) {
       return null;
     }
-  };
+  }
+  const formik = useFormik({
+    initialValues: getInitialValues(),
+    validationSchema: EventSchema,
+    onSubmit: async (values, { resetForm, setSubmitting }) => {
+      try {
+        const newNetwork = {
+          id: values.displayName.replace(/\s/g, "-").toLowerCase(),
+          displayName: values.displayName,
+          protocol: values.protocol,
+          host: values.host,
+          magellanAddress: values.magellanAddress,
+          port: values.port,
+          predefined: values.predefined,
+        };
+        if (handleDuplicateNetworkId(newNetwork, networks)) {
+          setSubmitting(false);
+          setError("Network Name already exists");
+          return;
+        }
+        setIsLoading(true);
 
-  const handleSubmit = async () => {
-    // if (
-    //   NewNetwork.protocol !== "http://" &&
-    //   NewNetwork.protocol !== "https://"
-    // ) {
-    //   setError("URLs require the appropriate HTTP/HTTPS prefix.");
-    //   return;
-    // }
-    // NewNetwork.id = NewNetwork.displayName.replace(/\s/g, "-").toLowerCase();
-    // if (handleDuplicateNetworkId(NewNetwork, networks)) {
-    //   setError("Network Name already exists");
-    //   return;
-    // }
-    // if (NewNetwork.magellanAddress.length === 0)
-    //   NewNetwork.magellanAddress = `${NewNetwork.protocol}//${NewNetwork.host}:${NewNetwork.port}`;
-    // if (isNaN(NewNetwork.port)) {
-    //   setError("Invalid port.");
-    //   return;
-    // }
+        let url = `${newNetwork.protocol}://${newNetwork.host}:${newNetwork.port}`;
+        let net = new AvaNetwork(
+          newNetwork.displayName,
+          url,
+          newNetwork.id,
+          newNetwork.magellanAddress,
+          ""
+        );
+        let credNum = await tryConnection(url, true);
+        let noCredNum = await tryConnection(url);
 
-    let url = `${NewNetwork.protocol}://${NewNetwork.host}:${NewNetwork.port}`;
-    let credNum = await tryConnection(url, true);
-    let noCredNum = await tryConnection(url);
-    let validNetId = credNum || noCredNum;
-    if (!validNetId) {
-      setError("Camino Network Not Found");
-      return;
-    }
+        let validNetId = credNum || noCredNum;
 
-    setError("");
+        if (!validNetId) {
+          setError("Camino Network Not Found");
+          setIsLoading(false);
+          return;
+        }
+        store.dispatch("Network/addCustomNetwork", net);
+        let allNetworks = store.getters["Network/allNetworks"];
+        dispatch(addNetworks(allNetworks));
+        updateNetworks(allNetworks);
+        switchNetwork(net);
+        resetForm();
+        setIsLoading(false);
+        setSubmitting(false);
+        handleClose();
+      } catch (error) {
+        console.error(error);
+      }
+    },
+  });
 
-    let net = new AvaNetwork(
-      NewNetwork.displayName,
-      url,
-      validNetId,
-      NewNetwork.magellanAddress,
-      ""
-    );
-    store.dispatch("Network/addCustomNetwork", net);
-    let networks = store.getters["Network/allNetworks"];
-    dispatch(addNetworks(networks));
-    // const ll = localStorage.getItem("customNetworks") as string;
-    // const customNetworks = ll ? JSON.parse(ll) : [];
-    // customNetworks.push(NewNetwork);
-    // localStorage.setItem("customNetworks", JSON.stringify(customNetworks));
-    // dispatch(addCustomNetwork(NewNetwork));
-    // dispatch(changeNetwork(NewNetwork.displayName));
-    // dispatch(getChains());
-    setOpen(false);
-  };
-
+  const { errors, touched, handleSubmit, getFieldProps } = formik;
   return (
-    <>
-      <MenuItem onClick={handleOpen}>
-        <Typography variant="body1">Add New Network</Typography>
-      </MenuItem>
-      <Modal
-        open={open}
-        onClose={handleClose}
-        sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}
-      >
-        <Box
-          sx={{
-            backgroundColor: "primary.main",
-            borderRadius: "7px",
-            padding: "1.5rem",
-            minWidth: isDesktop ? "400px" : "0px",
-          }}
+    <FormikProvider value={formik}>
+      <Form autoComplete="off" noValidate onSubmit={handleSubmit}>
+        <DialogContent sx={{ pb: 0, overflowY: "unset" }}>
+          <TextField
+            fullWidth
+            label="Network Name"
+            {...getFieldProps("displayName")}
+            error={Boolean(touched.displayName && errors.displayName)}
+            helperText={touched.displayName && errors.displayName}
+            sx={{ mb: 3 }}
+          />
+
+          <TextField
+            fullWidth
+            label="Protocol"
+            {...getFieldProps("protocol")}
+            inputProps={{ maxLength: 4 }}
+            error={Boolean(touched.protocol && errors.protocol)}
+            helperText={touched.protocol && errors.protocol}
+            sx={{ mb: 3, "& fieldset": { borderRadius: "12px" } }}
+          />
+
+          <TextField
+            fullWidth
+            label="Host"
+            {...getFieldProps("host")}
+            error={Boolean(touched.host && errors.host)}
+            helperText={touched.host && errors.host}
+            sx={{ mb: 3, "& fieldset": { borderRadius: "12px" } }}
+          />
+
+          <TextField
+            fullWidth
+            label="Port"
+            type="number"
+            {...getFieldProps("port")}
+            error={Boolean(touched.port && errors.port)}
+            helperText={touched.port && errors.port}
+            sx={{ mb: 3, "& fieldset": { borderRadius: "12px" } }}
+          />
+
+          <TextField
+            fullWidth
+            label="Magellan Address"
+            {...getFieldProps("magellanAddress")}
+            error={Boolean(touched.magellanAddress && errors.magellanAddress)}
+            helperText={touched.magellanAddress && errors.magellanAddress}
+            sx={{ mb: 3, "& fieldset": { borderRadius: "12px" } }}
+          />
+          {error && (
+            <Typography variant="body2" color="error">
+              {error}
+            </Typography>
+          )}
+        </DialogContent>
+
+        <DialogActions
+          sx={{ display: "flex", justifyContent: "center", mb: 2, gap: 2 }}
         >
-          <FormControl fullWidth variant="filled" size="medium">
-            <TextField
-              id="displayName"
-              label="Display Name"
-              variant="outlined"
-              margin="normal"
-              defaultValue="My New Network"
-              color="secondary"
-              fullWidth
-              error={handleDuplicateNetworkId(NewNetwork, networks)}
-              helperText={error}
-              onChange={(e) =>
-                setNewNetwork({ ...NewNetwork, displayName: e.target.value })
-              }
-            />
-            <TextField
-              id="protocol"
-              label="Protocol"
-              variant="outlined"
-              margin="normal"
-              defaultValue="http"
-              color="secondary"
-              fullWidth
-              onChange={(e) =>
-                setNewNetwork({ ...NewNetwork, protocol: e.target.value })
-              }
-            />
-            <TextField
-              id="host"
-              label="Host"
-              variant="outlined"
-              margin="normal"
-              defaultValue="127.0.0.1"
-              color="secondary"
-              fullWidth
-              onChange={(e) =>
-                setNewNetwork({ ...NewNetwork, host: e.target.value })
-              }
-            />
-            <TextField
-              id="port"
-              label="Port"
-              variant="outlined"
-              margin="normal"
-              defaultValue="9650"
-              fullWidth
-              type="number"
-              color="secondary"
-              onChange={(e) =>
-                setNewNetwork({ ...NewNetwork, port: Number(e.target.value) })
-              }
-            />
-            <TextField
-              id="magellanAddress"
-              label="Magellan Address"
-              variant="outlined"
-              margin="normal"
-              color="secondary"
-              type="text"
-              fullWidth
-              onChange={(e) =>
-                setNewNetwork({
-                  ...NewNetwork,
-                  magellanAddress: e.target.value,
-                })
-              }
-            />
-            <Box
-              sx={{
-                display: "flex",
-                flexDirection: "row",
-                gap: "10px",
-                justifyContent: "space-between",
-                marginTop: "1rem",
-              }}
-            >
-              <Button variant="outlined" onClick={handleSubmit}>
-                Add Network
-              </Button>
-              <Button variant="contained" onClick={handleClose}>
-                Cancel
-              </Button>
-            </Box>
-          </FormControl>
-        </Box>
-      </Modal>
-    </>
+          <Button disabled={isLoading} variant="outlined" type="submit">
+            Add Network
+          </Button>
+          <Button variant="contained" onClick={handleClose}>
+            Cancel
+          </Button>
+        </DialogActions>
+      </Form>
+    </FormikProvider>
   );
 }

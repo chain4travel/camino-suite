@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { NavBar } from 'app/components/NavBar';
-import { Outlet, useNavigate } from 'react-router-dom';
+import { Outlet } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from 'store/configureStore';
 import { Typography, Box, CircularProgress, Container } from '@mui/material';
 import {
@@ -9,12 +9,10 @@ import {
   selectNetworkStatus,
   changeNetwork,
 } from 'store/app-config';
-import { Footer } from 'app/components/Footer';
 import { Status } from 'types';
 import { getChains } from 'api';
 import PageContainer from 'app/components/PageContainer';
 import MainButton from 'app/components/MainButton';
-import { useTheme } from '@mui/material';
 import { ColorModeContext } from '../../../styles/theme/ThemeProvider';
 import { selectedTheme } from '../../../store/app-config';
 
@@ -54,11 +52,8 @@ const Content: React.FC = () => {
           fontWeight="fontWeightBold"
           sx={{ color: 'error.light' }}
         >
-          Something went wrong, Please Again!
+          Something went wrong, Please Try Again!
         </Typography>
-        <MainButton variant="contained" onClick={handleClick}>
-          Switch to Columbus Network
-        </MainButton>
       </Box>
     </PageContainer>
   );
@@ -68,13 +63,7 @@ export default function MainLayout() {
   const activeNetwork = useAppSelector(getActiveNetwork);
   const dispatch = useAppDispatch();
   const themeContext = useContext(ColorModeContext);
-  const navigate = useNavigate();
-  const [load, setLoad] = useState(true);
   useEffect(() => {
-    if (load) setLoad(false);
-    else if (activeNetwork === 'mainnet-testnet')
-      navigate(`${BASE_PATH}/mainnet`);
-    else navigate('/');
     dispatch(getChains());
   }, [activeNetwork]); // eslint-disable-line
   const currentTheme = useAppSelector(selectedTheme);
@@ -87,7 +76,6 @@ export default function MainLayout() {
         <NavBar />
       </Box>
       <Content />
-      <Footer />
     </>
   );
 }

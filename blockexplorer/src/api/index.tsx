@@ -13,6 +13,7 @@ import { CTransaction } from 'types/transaction';
 import { createTransaction } from 'utils/magellan';
 import { baseEndpoint } from 'utils/magellan-api-utils';
 import { getBaseUrl, getChainID, mapToTableData } from './utils';
+import { store } from "../App";
 
 export const getBlocksPage = async (startingBlock: number) => {
   const response = await axios.get(
@@ -77,31 +78,41 @@ export async function loadTransactionFeesAggregates(
 }
 
 export async function loadBlocksAndTransactions({ address, offset }) {
-  return await axios.get(
-    `${getBaseUrl()}${baseEndpoint}/cblocks?address=${address}&limit=0&limit=${offset}`,
-  );
+  try {
+    let res = await axios.get(
+      `${getBaseUrl()}${baseEndpoint}/cblocks?address=${address}&limit=0&limit=${offset}`,
+    );
+    return res.data;
+  } catch (e) {
+    throw new Error(e.message);
+  }
 }
 
 export async function loadCAddressTransactions({ address, offset }) {
-  let res = (await loadBlocksAndTransactions({ address, offset })).data;
-  return res.transactions.map(transaction => {
-    return {
-      blockNumber: parseInt(transaction.block),
-      transactionIndex: parseInt(transaction.index),
-      from: transaction.from,
-      hash: transaction.hash,
-      status:
-        parseInt(transaction.status) === 1
-          ? 'Success'
-          : `Failed-${parseInt(transaction.status)}`,
-      timestamp: parseInt(transaction.timestamp) * 1000,
-      to: transaction.to,
-      value: parseInt(transaction.value),
-      transactionCost:
-        parseInt(transaction.gasUsed) * parseInt(transaction.effectiveGasPrice),
-      direction: transaction.from === address ? 'out' : 'in',
-    };
-  });
+  try {
+    let res = await loadBlocksAndTransactions({ address, offset });
+    return res.transactions.map(transaction => {
+      return {
+        blockNumber: parseInt(transaction.block),
+        transactionIndex: parseInt(transaction.index),
+        from: transaction.from,
+        hash: transaction.hash,
+        status:
+          parseInt(transaction.status) === 1
+            ? 'Success'
+            : `Failed-${parseInt(transaction.status)}`,
+        timestamp: parseInt(transaction.timestamp) * 1000,
+        to: transaction.to,
+        value: parseInt(transaction.value),
+        transactionCost:
+          parseInt(transaction.gasUsed) *
+          parseInt(transaction.effectiveGasPrice),
+        direction: transaction.from === address ? 'out' : 'in',
+      };
+    });
+  } catch (e) {
+    throw new Error(e.message);
+  }
 }
 
 export async function loadXPTransactions(offset: number, chainID: string) {
@@ -122,8 +133,14 @@ export async function getXPTransactions(offset: number, alias: string) {
 }
 
 export const getChains = createAsyncThunk('appConfig/chains', async () => {
-  const res = await axios.get(`${getBaseUrl()}${baseEndpoint}`);
-  return res.data;
+  try {
+    const res = await axios.get(`${getBaseUrl()}${baseEndpoint}`);
+    if (Object.keys(res.data.chains).length !== 3)
+      throw new Error('failed to load chains');
+    return res.data;
+  } catch (e) {
+    throw new Error('can not connect');
+  }
 });
 
 export interface loadBlocksTransactionstype {
@@ -243,3 +260,23 @@ export const fetchTransactionsEmissions = () => {
     });
   });
 }
+
+  export async function loadValidatorsInfo() {
+    return new Promise((resolve, reject) => {
+      const urlValidators = `${getBaseUrl()}${baseEndpoint}/validatorsInfo`;
+      var request = {
+        method: 'post',
+        url: urlValidators,
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      };
+  
+      axios(request).then(function (response: any) {
+        resolve(response.data.value);
+      }).catch(function (error) {
+        reject([]);
+        console.error(error,500);
+      });
+    });
+  }

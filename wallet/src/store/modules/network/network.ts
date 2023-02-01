@@ -5,12 +5,11 @@ import { NetworkState } from '@/store/modules/network/types'
 import { ava, infoApi } from '@/AVA'
 import { AvaNetwork } from '@/js/AvaNetwork'
 import { explorer_api } from '@/explorer_api'
-import { BN } from '@c4tplatform/camino'
+import { BN } from '@c4tplatform/caminojs'
 import router from '@/router'
 import { web3 } from '@/evm'
 import { setSocketNetwork } from '../../../providers'
-import { setAvalanche } from '@c4tplatform/camino-wallet-sdk'
-
+import { setAvalanche } from '@c4tplatform/camino-wallet-sdk/dist'
 const network_module: Module<NetworkState, RootState> = {
     namespaced: true,
     state: {
@@ -41,9 +40,10 @@ const network_module: Module<NetworkState, RootState> = {
                     return
                 }
             }
-            state.networksCustom.push(net)
+            state.networksCustom = [...state.networksCustom, net]
             dispatch('save')
         },
+
         async removeCustomNetwork({ state, dispatch }, net: AvaNetwork) {
             let index = state.networksCustom.indexOf(net)
             state.networksCustom.splice(index, 1)
@@ -135,8 +135,6 @@ const network_module: Module<NetworkState, RootState> = {
 
             // If authenticated
             if (rootState.isAuth) {
-                // Go back to wallet page
-                router.replace('/wallet/home')
                 for (var i = 0; i < rootState.wallets.length; i++) {
                     let w = rootState.wallets[i]
                     w.onnetworkchange()
@@ -144,13 +142,14 @@ const network_module: Module<NetworkState, RootState> = {
             }
 
             await dispatch('Assets/onNetworkChange', net, { root: true })
-            await dispatch('Launch/onNetworkChange', net, { root: true })
             dispatch('Assets/updateUTXOs', null, { root: true })
             dispatch('Platform/update', null, { root: true })
             dispatch('Platform/updateMinStakeAmount', null, { root: true })
             dispatch('updateTxFee')
             // Update tx history
             dispatch('History/updateTransactionHistory', null, { root: true })
+            if (ava.getNetwork().P.lockModeBondDeposit && ava.getNetwork().P.verifyNodeSignature)
+                dispatch('Assets/getPChainBalances')
 
             // Set the SDK Network
             setAvalanche(ava)
@@ -180,7 +179,7 @@ const network_module: Module<NetworkState, RootState> = {
                 'https://columbus.camino.foundation',
                 1001,
                 'https://magellan.columbus.camino.foundation',
-                'https://explorer.camino.foundation',
+                'https://playground.suite.camino.foundation/explorer',
                 true
             )
 
@@ -207,7 +206,7 @@ const network_module: Module<NetworkState, RootState> = {
             try {
                 let isSet = await dispatch('loadSelectedNetwork')
                 if (!isSet) {
-                    await dispatch('setNetwork', state.networks[1])
+                    await dispatch('setNetwork', state.networks[0])
                 }
                 return true
             } catch (e) {

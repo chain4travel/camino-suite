@@ -50,7 +50,7 @@ export default class Menu extends Vue {
 </script>
 
 <style scoped lang="scss">
-@use "../../styles/main";
+@use '../../styles/main';
 @use '/src/components/Access/menu';
 
 .access_card {
@@ -131,6 +131,12 @@ hr {
 
     .menus {
         width: 100%;
+    }
+}
+
+@media only screen and (max-width: main.$mobile_width) {
+    .access_card {
+        padding: main.$container-padding-mobile;
     }
 }
 </style>

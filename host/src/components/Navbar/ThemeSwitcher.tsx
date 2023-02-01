@@ -14,9 +14,6 @@ export default function ThemeSwitcher() {
   const theme = useTheme();
   const currentTheme = useAppSelector(getTheme);
   const { changeTheme } = useStore();
-  useEffect(() => {
-    document.documentElement.setAttribute("data-theme", "night");
-  }, []);
   return (
     <Button
       variant="text"

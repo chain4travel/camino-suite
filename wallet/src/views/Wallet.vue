@@ -24,6 +24,13 @@
                     >
                         {{ $t('wallet.sidebar.export') }}
                     </router-link>
+                    <router-link
+                        to="/wallet/home/validator"
+                        data-cy="wallet_validator"
+                        class="wallet_validator wallet_link"
+                    >
+                        {{ $t('wallet.sidebar.validator') }}
+                    </router-link>
                     <router-link to="/wallet/home/earn" data-cy="wallet_earn" class="wallet_link">
                         {{ $t('wallet.sidebar.earn') }}
                     </router-link>
@@ -101,6 +108,56 @@ export default class Wallet extends Vue {
     intervalId: NodeJS.Timeout | null = null
     logoutTimestamp = Date.now() + TIMEOUT_DUR_MS
     isLogOut = false
+    helper = this.globalHelper()
+
+    // define links
+    links = [
+        {
+            id: 1,
+            text: this.$t('wallet.sidebar.portfolio'),
+            path: '/wallet/home',
+        },
+        {
+            id: 2,
+            text: this.$t('wallet.sidebar.send'),
+            path: '/wallet/home/transfer',
+        },
+        {
+            id: 3,
+            text: this.$t('wallet.sidebar.export'),
+            path: '/wallet/home/cross_chain',
+        },
+        {
+            id: 4,
+            text: this.$t('wallet.sidebar.validator'),
+            path: '/wallet/home/validator',
+        },
+        {
+            id: 5,
+            text: this.$t('wallet.sidebar.earn'),
+            path: '/wallet/home/earn',
+        },
+        {
+            id: 6,
+            text: this.$t('wallet.sidebar.studio'),
+            path: '/wallet/home/studio',
+        },
+        {
+            id: 7,
+            text: this.$t('wallet.sidebar.activity'),
+            path: '/wallet/home/activity',
+        },
+        {
+            id: 8,
+            text: this.$t('wallet.sidebar.manage'),
+            path: '/wallet/home/keys',
+        },
+        {
+            id: 9,
+            text: this.$t('wallet.sidebar.advanced'),
+            path: '/wallet/home/advanced',
+        },
+    ]
 
     // Set the logout timestamp to now + TIMEOUT_DUR_MS
     resetTimer() {
@@ -114,6 +171,7 @@ export default class Wallet extends Vue {
         if (now >= this.logoutTimestamp && !this.isLogOut) {
             this.isLogOut = true
             this.$store.dispatch('timeoutLogout')
+            this.helper.updateSuiteStore(this.$store.state)
         }
     }
 
@@ -131,7 +189,7 @@ export default class Wallet extends Vue {
             event.preventDefault()
             this.isLogOut = false
             event.returnValue = ''
-            this.$router.push('/wallet/keys')
+            this.$router.push('/wallet/home/keys')
             this.resetTimer()
         }
     }
@@ -170,14 +228,16 @@ export default class Wallet extends Vue {
 }
 </script>
 <style scoped lang="scss">
-@use "../styles/main";
+@use '../styles/main';
 .content {
     width: 100%;
-    margin-top: 70px;
+    margin-top: 60px;
     display: grid;
     column-gap: 15px;
     background-color: var(--bg);
     grid-template-columns: 1fr 300px;
+    align-items: center;
+    padding: 12px 20px;
 }
 
 .top-bar {
@@ -189,6 +249,8 @@ export default class Wallet extends Vue {
     align-items: center;
     background-color: var(--bg);
     border-bottom: 1px solid rgba(145, 158, 171, 0.24);
+    left: 0;
+    justify-content: center;
     .links {
         display: flex;
         flex-direction: row;
@@ -213,16 +275,25 @@ export default class Wallet extends Vue {
             opacity: 1;
         }
     }
+    .container {
+        padding: 0px;
+        overflow: auto;
+    }
 }
 
 @media screen and (max-width: 900px) {
     .top-bar {
-        top: 66px;
+        top: 65px;
     }
 }
 @media screen and (max-width: 900px) {
     .content {
         grid-template-columns: 1fr;
+    }
+}
+@media screen and (max-width: 600px) {
+    .content {
+        padding: 12px 0px;
     }
 }
 </style>

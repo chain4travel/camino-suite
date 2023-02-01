@@ -2,16 +2,11 @@
   "name": "host-react",
   "version": "1.0.0",
   "scripts": {
-    "build": "webpack --mode production",
-    "build:dev": "webpack --mode development",
+    "build": "webpack --config webpack.prod.js",
+    "build:dev": "webpack --config webpack.dev.js",
     "build:start": "cd dist && PORT=3000 npx serve",
-    "start": "webpack serve --open --mode development",
-    "start:live": "webpack serve --open --mode development --live-reload --hot"
-  },
-  "license": "MIT",
-  "author": {
-    "name": "Jack Herrington",
-    "email": "jherr@pobox.com"
+    "start": "webpack-dev-server --config webpack.dev.js",
+    "start:live": "webpack-dev-server --open --config webpack.dev.js --live-reload"
   },
   "devDependencies": {
     "@babel/core": "^7.15.8",
@@ -43,6 +38,8 @@
     "babel-loader": "^8.2.2",
     "copy-webpack-plugin": "^11.0.0",
     "css-loader": "^6.3.0",
+    "formik": "^2.2.9",
+    "framer-motion": "^8.4.3",
     "html-webpack-plugin": "^5.3.2",
     "lodash": "^4.17.21",
     "path": "^0.12.7",
@@ -59,7 +56,9 @@
     "web-vitals": "^2.1.0",
     "webpack": "^5.57.1",
     "webpack-cli": "^5.0.0",
-    "webpack-dev-server": "^4.3.1"
+    "webpack-dev-server": "^4.3.1",
+    "webpack-merge": "^5.8.0",
+    "yup": "^0.32.11"
   },
   "dependencies": {
     "react": "^17.0.2",

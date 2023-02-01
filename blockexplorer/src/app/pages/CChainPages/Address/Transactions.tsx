@@ -9,6 +9,7 @@ import useWidth from 'app/hooks/useWidth';
 import LoadingWrapper from 'app/components/LoadingWrapper';
 import { Status } from 'types';
 import { queryClient } from '../../../../App.tsx';
+import { getAddressFromUrl } from 'utils/route-utils';
 
 const Transactions: FC = () => {
   const location = useLocation();
@@ -22,12 +23,12 @@ const Transactions: FC = () => {
     data,
     status,
     isLoading,
-    // error,
+    error,
   } = useInfiniteQuery(
     `/c-address}`,
-    ({ pageParam = 50 }) =>
-      loadCAddressTransactions({
-        address: location.pathname.split('/')[4],
+    async ({ pageParam = 50 }) =>
+      await loadCAddressTransactions({
+        address: getAddressFromUrl(),
         offset: pageParam,
       }),
     {
@@ -58,7 +59,6 @@ const Transactions: FC = () => {
       return <Address key={i} transaction={transaction} />;
     });
   });
-
   const { isDesktop, isWidescreen } = useWidth();
   return (
     <Grid
@@ -68,8 +68,14 @@ const Transactions: FC = () => {
       sx={{ width: 1, gap: '20px' }}
     >
       <LoadingWrapper
-        loading={isLoading === true ? Status.LOADING : Status.SUCCEEDED}
-        failedLoadingMsg="Failed to load blocks and transactions"
+        loading={
+          isLoading === true
+            ? Status.LOADING
+            : error
+            ? Status.FAILED
+            : Status.SUCCEEDED
+        }
+        failedLoadingMsg="Failed to load transactions"
         loadingBoxStyle={{ minHeight: '500px' }}
       >
         {status === 'success' && data && (

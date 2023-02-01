@@ -9,6 +9,7 @@ import Modal from "./Modal";
 import TextField from "./TextField";
 import CssBaseline from "./CssBaseline";
 import Paper from "./Paper";
+import Drawer from "./Drawer";
 
 export default function ComponentsOverrides(theme: Theme) {
   return merge(
@@ -20,6 +21,7 @@ export default function ComponentsOverrides(theme: Theme) {
     Modal(theme),
     TextField(theme),
     CssBaseline(theme),
-    Paper(theme)
+    Paper(theme),
+    Drawer(theme)
   );
 }

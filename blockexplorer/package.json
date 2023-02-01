@@ -2,16 +2,11 @@
   "name": "blockexplorer",
   "version": "1.0.0",
   "scripts": {
-    "build": "webpack --mode production",
-    "build:dev": "webpack --mode development",
+    "build": "webpack --config webpack.prod.js",
+    "build:dev": "webpack --config webpack.dev.js",
     "build:start": "cd dist && PORT=3001 npx serve",
-    "start": "webpack serve --open --mode development",
-    "start:live": "webpack serve --open --mode development --live-reload --hot"
-  },
-  "license": "MIT",
-  "author": {
-    "name": "Jack Herrington",
-    "email": "jherr@pobox.com"
+    "start": "webpack-dev-server --config webpack.dev.js",
+    "start:live": "webpack-dev-server --open --config webpack.dev.js --live-reload"
   },
   "devDependencies": {
     "@babel/core": "^7.15.8",
@@ -101,18 +96,18 @@
     "web-vitals": "2.1.2",
     "webpack": "^5.57.1",
     "webpack-cli": "^4.9.0",
-    "webpack-dev-server": "^4.3.1"
-  },
-  "dependencies": {
+    "webpack-dev-server": "^4.3.1",
+    "react-datepicker": "^4.8.0",
+    "react-simple-maps": "^3.0.0",
+    "webpack-merge": "^5.8.0",
     "@fortawesome/fontawesome-svg-core": "^6.2.1",
     "@fortawesome/free-solid-svg-icons": "^6.2.1",
     "@fortawesome/react-fontawesome": "^0.2.0",
     "highcharts": "^10.3.2",
     "highcharts-react-official": "^3.1.0",
-    "json-loader": "^0.5.7",
-    "path": "^0.12.7",
-    "react-datepicker": "^4.8.0",
-    "react-svg-loader": "^3.0.3",
-    "url-loader": "^4.1.1"
+    "json-loader": "^0.5.7"
+  },
+  "dependencies": {
+    "path": "^0.12.7"
   }
 }

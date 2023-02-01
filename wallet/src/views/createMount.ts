@@ -13,7 +13,23 @@ Vue.use(VueMeta)
 Vue.use(BootstrapVue)
 Vue.component('datetime', Datetime)
 
-export const mountCreateWallet = (el: string, props: any) => {
+export const mountCreateWallet = (el: string, appSuiteStore: any) => {
+    const { setUpdateStore, navigate } = appSuiteStore
+    const MyPlugin = {
+        install(Vue, options) {
+            Vue.prototype.globalHelper = () => {
+                return {
+                    updateSuiteStore: (store) => {
+                        setUpdateStore(store)
+                    },
+                    navigate: (to: string) => {
+                        navigate(to)
+                    },
+                }
+            }
+        },
+    }
+    Vue.use(MyPlugin)
     const app = new Vue({
         router,
         store,
@@ -21,8 +37,7 @@ export const mountCreateWallet = (el: string, props: any) => {
         i18n,
         data: {},
         render: (createElement) => {
-            const context = { props: props }
-            return createElement(Create, context)
+            return createElement(Create)
         },
     })
     app.$mount(el)

@@ -24,7 +24,7 @@
                     {{ $t('access.submit') }}
                 </v-btn>
             </form>
-            <div @click="navigate('/access')" class="link">Cancel</div>
+            <div @click="navigate('/login')" class="link">Cancel</div>
         </div>
     </div>
 </template>
@@ -34,7 +34,6 @@ import { Vue, Component, Prop } from 'vue-property-decorator'
 @Component
 export default class PrivateKey extends Vue {
     @Prop() navigate: any
-    @Prop() setLogged: any
     privatekey: string = ''
     isLoading: boolean = false
     error: string = ''
@@ -47,7 +46,9 @@ export default class PrivateKey extends Vue {
 
         try {
             await this.$store.dispatch('accessWalletSingleton', key)
-            this.setLogged(this.$store.state)
+            // this.setLogged(this.$store.state)
+            let { updateSuiteStore } = parent.globalHelper()
+            updateSuiteStore(this.$store.state)
             this.onsuccess()
         } catch (e) {
             this.onerror('Invalid Private Key.')
@@ -80,12 +81,10 @@ export default class PrivateKey extends Vue {
     margin-bottom: 22px;
 }
 .access_card {
-    /*max-width: 80vw;*/
+    max-width: 420px;
     background-color: var(--bg-light);
     padding: main.$container-padding;
     width: 100%;
-    /*max-width: 240px;*/
-    /*max-width: 1000px;*/
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -93,21 +92,26 @@ export default class PrivateKey extends Vue {
     border-radius: 6px;
 }
 .content {
+    display: flex;
+    flex-direction: column;
     width: 340px;
     max-width: 100%;
     margin: 0px auto;
+    align-items: center;
 }
 h1 {
     font-size: main.$m-size;
     font-weight: 400;
     margin-bottom: 30px;
 }
+form {
+    width: 100%;
+}
 .file_in {
     margin: 30px auto 10px;
     font-size: 13px;
     border: none !important;
     background-color: var(--bg) !important;
-    /*min-width: 200px*/
 }
 a {
     color: main.$primary-color-light !important;
@@ -131,6 +135,9 @@ a {
     }
     .but_primary {
         width: 100%;
+    }
+    .access_card {
+        padding: main.$container-padding-mobile;
     }
 }
 </style>

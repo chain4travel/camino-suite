@@ -1,5 +1,5 @@
-import { store } from "../App.tsx";
-import { XPTransaction, XPTransactionTableData } from "types/transaction";
+import { store } from '../App.tsx';
+import { XPTransaction, XPTransactionTableData } from 'types/transaction';
 
 function getValue(outputTotal?: object, inputTotal?: object): number {
   const output = outputTotal
@@ -16,7 +16,7 @@ function getValue(outputTotal?: object, inputTotal?: object): number {
 }
 
 export function mapToTableData(
-  transaction: XPTransaction
+  transaction: XPTransaction,
 ): XPTransactionTableData {
   return {
     from: transaction.from,
@@ -30,18 +30,15 @@ export function mapToTableData(
 }
 
 export const getBaseUrl = (): string | undefined => {
-  let networks = store.getState().appConfig;
-  let activeNetwork = networks.networks.find(
-    (element) => element.id === networks.activeNetwork
-  );
-  return activeNetwork?.magellanAddress;
+  let activeNetwork = store.getState().appConfig.activeNetwork;
+  return activeNetwork?.explorerUrl;
 };
 
 export const getChainID = (alias: string): string => {
   let chains = store.getState().appConfig.chains;
   let chainID: string | undefined;
   if (chains)
-    chainID = chains.find((element) => element.alias === alias)?.chainID;
+    chainID = chains.find(element => element.alias === alias)?.chainID;
   if (chainID) return chainID;
-  return "";
+  return '';
 };

@@ -32,7 +32,7 @@ import BalancePopup from '@/components/misc/BalancePopup/BalancePopup.vue'
 
 import 'reflect-metadata'
 import { Vue, Component, Prop } from 'vue-property-decorator'
-import { NFTTransferOutput, UTXO } from '@c4tplatform/camino/dist/apis/avm'
+import { NFTTransferOutput, UTXO } from '@c4tplatform/caminojs/dist/apis/avm'
 import { getPayloadFromUTXO } from '@/helpers/helper'
 import NftListItem from '@/components/wallet/transfer/NftListItem.vue'
 import { IGroupDict, IGroupQuantity } from '@/components/wallet/studio/mint/types'
@@ -73,7 +73,7 @@ export default class NftList extends Vue {
 
         for (var id in this.groupUtxos) {
             let gUtxos = this.groupUtxos[id]
-            utxos.push(...gUtxos)
+            utxos = [...utxos, ...gUtxos]
         }
 
         this.$emit('change', utxos)
@@ -120,7 +120,7 @@ export default class NftList extends Vue {
     }
 
     addNft(utxo: UTXO) {
-        this.addedNfts.push(utxo)
+        this.addedNfts = [...this.addedNfts, utxo]
     }
 
     remove(utxo: UTXO) {

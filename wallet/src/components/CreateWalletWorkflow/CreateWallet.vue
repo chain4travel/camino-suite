@@ -15,7 +15,7 @@
                                 <img v-else src="@/assets/diamond-secondary-night.svg" alt />
                             </div>
                             <h1>{{ $t('create.generate') }}</h1>
-                            <div @click="navigate('/access')" class="link">
+                            <div @click="navigate('/login')" class="link">
                                 {{ $t('create.but_have') }}
                             </div>
                             <div class="options">
@@ -163,13 +163,14 @@ import MnemonicPhrase from '@/js/wallets/MnemonicPhrase'
 })
 export default class CreateWallet extends Vue {
     // TODO: We do not need to create keyPair, only mnemonic is sufficient
-    @Prop() navigate: any
-    @Prop() setLogged: any
     isLoad: boolean = false
     keyPhrase: MnemonicPhrase | null = null
     isSecured: boolean = false
     isVerified: boolean = false
-
+    helpers = this.globalHelper()
+    navigate(to: string) {
+        this.helpers.navigate(to)
+    }
     get canVerify(): boolean {
         return this.isSecured ? true : false
     }
@@ -206,9 +207,8 @@ export default class CreateWallet extends Vue {
         if (!this.keyPhrase) return
 
         this.isLoad = true
-
         await this.$store.dispatch('accessWallet', this.keyPhrase!.getValue())
-        this.setLogged(this.$store.state)
+        this.helpers.updateSuiteStore(this.$store.state)
     }
 }
 </script>

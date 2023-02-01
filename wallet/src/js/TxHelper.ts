@@ -1,6 +1,6 @@
 import { ava, bintools } from '@/AVA'
 import { ITransaction } from '@/components/wallet/transfer/types'
-import { BN, Buffer } from '@c4tplatform/camino'
+import { BN, Buffer } from '@c4tplatform/caminojs'
 import {
     AssetAmountDestination,
     BaseTx,
@@ -13,13 +13,13 @@ import {
     UTXOSet,
     UTXOSet as AVMUTXOSet,
     AVMConstants,
-} from '@c4tplatform/camino/dist/apis/avm'
+} from '@c4tplatform/caminojs/dist/apis/avm'
 
-import { PayloadBase } from '@c4tplatform/camino/dist/utils'
-import { OutputOwners } from '@c4tplatform/camino/dist/common'
-import { PlatformVMConstants } from '@c4tplatform/camino/dist/apis/platformvm'
+import { PayloadBase } from '@c4tplatform/caminojs/dist/utils'
+import { OutputOwners } from '@c4tplatform/caminojs/dist/common'
+import { PlatformVMConstants } from '@c4tplatform/caminojs/dist/apis/platformvm'
 
-import { EVMConstants } from '@c4tplatform/camino/dist/apis/evm'
+import { EVMConstants } from '@c4tplatform/caminojs/dist/apis/evm'
 
 import { web3 } from '@/evm'
 import ERCNftToken from '@/js/ERCNftToken'
@@ -50,9 +50,13 @@ export async function buildUnsignedTransaction(
     const AVAX_ID_STR = AVAX_ID_BUF.toString('hex')
     const TO_BUF = bintools.stringToAddress(addr)
 
-    const aad: AssetAmountDestination = new AssetAmountDestination([TO_BUF], fromAddrs, [
-        changeAddr,
-    ])
+    const aad: AssetAmountDestination = new AssetAmountDestination(
+        [TO_BUF],
+        1,
+        fromAddrs,
+        [changeAddr],
+        1
+    )
     const ZERO = new BN(0)
     let isFeeAdded = false
 
@@ -228,11 +232,9 @@ export async function buildEvmTransferNativeTx(
     let tx = new Transaction(
         {
             nonce: nonce,
-            // @ts-ignore
             gasPrice: gasPrice,
             gasLimit: gasLimit,
             to: to,
-            // @ts-ignore
             value: amount,
             data: '0x',
         },
@@ -261,7 +263,6 @@ export async function buildEvmTransferErc20Tx(
     let tx = new Transaction(
         {
             nonce: nonce,
-            // @ts-ignore
             gasPrice: gasPrice,
             gasLimit: gasLimit,
             value: '0x0',
@@ -293,7 +294,6 @@ export async function buildEvmTransferERCNftTx(
     let tx = new Transaction(
         {
             nonce: nonce,
-            // @ts-ignore
             gasPrice: gasPrice,
             gasLimit: gasLimit,
             value: '0x0',

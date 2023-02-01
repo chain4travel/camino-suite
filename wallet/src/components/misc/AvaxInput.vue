@@ -10,6 +10,7 @@
                 :max="max"
                 placeholder="0.00"
                 @change="amount_in"
+                :readonly="readonly"
             ></BigNumInput>
         </div>
         <p class="ticker">{{ nativeAssetSymbol }}</p>
@@ -17,7 +18,7 @@
             <div>
                 <p>
                     <b>{{ $t('misc.balance') }}:</b>
-                    {{ balance.toLocaleString() }}
+                    {{ balanceBig }}
                 </p>
                 <p>
                     <b>$</b>
@@ -31,10 +32,10 @@
 <script lang="ts">
 import 'reflect-metadata'
 import { Vue, Component, Prop, Model } from 'vue-property-decorator'
-import { bnToBig, Big } from '@c4tplatform/camino-wallet-sdk'
+import { bnToBig, Big } from '@c4tplatform/camino-wallet-sdk/dist'
 //@ts-ignore
 import { BigNumInput } from '@c4tplatform/vue_components'
-import { BN } from '@c4tplatform/camino'
+import { BN } from '@c4tplatform/caminojs'
 import { priceDict } from '../../store/types'
 
 @Component({
@@ -52,6 +53,7 @@ export default class AvaxInput extends Vue {
 
     @Prop() balance?: Big | null
     @Prop() alias?: string
+    @Prop() readonly?: boolean
 
     maxOut(ev: MouseEvent) {
         ev.preventDefault()
@@ -62,6 +64,33 @@ export default class AvaxInput extends Vue {
 
     amount_in(val: BN) {
         this.$emit('change', val)
+    }
+
+    get balanceBig(): string {
+        if (!this.balance) return ''
+
+        let fixedStr = this.balance?.toFixed(9)
+        let split = fixedStr?.split('.')
+        let wholeStr = parseInt(split[0])
+            .toString()
+            .replace(/\B(?=(\d{3})+(?!\d))/g, '\u200A')
+
+        if (split.length === 1) {
+            return wholeStr
+        } else {
+            let remainderStr = split[1]
+
+            // remove trailing 0s
+            let lastChar = remainderStr.charAt(remainderStr.length - 1)
+            while (lastChar === '0') {
+                remainderStr = remainderStr.substring(0, remainderStr.length - 1)
+                lastChar = remainderStr.charAt(remainderStr.length - 1)
+            }
+
+            let trimmed = remainderStr.substring(0, 9)
+            if (!trimmed) return wholeStr
+            return `${wholeStr}.${trimmed}`
+        }
     }
 
     get amountUSD(): Big {

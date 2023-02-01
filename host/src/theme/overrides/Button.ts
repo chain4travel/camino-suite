@@ -7,6 +7,7 @@ export default function Button(theme: Theme) {
         root: {
           color: theme.palette.text.primary,
           borderWidth: "1.5px",
+          borderRadius: theme.shape.borderRadiusSm,
           "&:hover": {
             borderWidth: "1.5px",
           },
@@ -27,6 +28,9 @@ export default function Button(theme: Theme) {
             borderColor: theme.palette.secondary.main,
             backgroundColor: alpha(theme.palette.secondary.main, 0.1),
           },
+        },
+        "&.Mui-disabled": {
+          cursor: "not-allowed",
         },
       },
     },

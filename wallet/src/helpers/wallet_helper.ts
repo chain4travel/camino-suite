@@ -2,11 +2,11 @@ import { ava } from '@/AVA'
 import {
     UTXOSet as PlatformUTXOSet,
     UTXO as PlatformUTXO,
-} from '@c4tplatform/camino/dist/apis/platformvm/utxos'
-import { UTXO as AVMUTXO } from '@c4tplatform/camino/dist/apis/avm/utxos'
+} from '@c4tplatform/caminojs/dist/apis/platformvm/utxos'
+import { UTXO as AVMUTXO } from '@c4tplatform/caminojs/dist/apis/avm/utxos'
 import { WalletType } from '@/js/wallets/types'
 
-import { BN, Buffer } from '@c4tplatform/camino'
+import { BN, Buffer } from '@c4tplatform/caminojs'
 import {
     buildCreateNftFamilyTx,
     buildEvmTransferErc20Tx,
@@ -14,7 +14,7 @@ import {
     buildEvmTransferNativeTx,
     buildMintNftTx,
 } from '@/js/TxHelper'
-import { PayloadBase } from '@c4tplatform/camino/dist/utils'
+import { PayloadBase } from '@c4tplatform/caminojs/dist/utils'
 import { ITransaction } from '@/components/wallet/transfer/types'
 
 import { web3 } from '@/evm'
@@ -193,6 +193,49 @@ class WalletHelper {
         )
 
         const tx = await wallet.signP(unsignedTx)
+        return await ava.PChain().issueTx(tx)
+    }
+
+    // Single sig in this first implementation
+    // For MultiSig extend consortiumMemberAuthCredentials
+    static async registerNodeTx(
+        wallet: WalletType,
+        nodePrivateKey: string,
+        oldNodeID: string | undefined,
+        newNodeID: string | undefined,
+        address: string,
+        utxos?: PlatformUTXO[]
+    ): Promise<string> {
+        let utxoSet = wallet.getPlatformUTXOSet()
+
+        // If given custom UTXO set use that
+        if (utxos) {
+            utxoSet = new PlatformUTXOSet()
+            utxoSet.addArray(utxos)
+        }
+
+        let pAddressStrings = wallet.getAllAddressesP()
+        // For change address use first available on the platform chain
+        // ToDo: In case ethAddr is msig alias, return undefined
+        let changeAddress = wallet.getFirstAvailableAddressPlatform()
+        const consortiumMemberAuthCredentials: [number, Buffer | string][] = [
+            [0, pAddressStrings[0]],
+        ]
+
+        const unsignedTx = await ava.PChain().buildRegisterNodeTx(
+            utxoSet,
+            pAddressStrings, // from
+            [changeAddress], // change
+            oldNodeID,
+            newNodeID,
+            ava.PChain().parseAddress(address),
+            consortiumMemberAuthCredentials,
+            undefined, // memo
+            undefined, // asOf
+            1 // changeThreshold
+        )
+
+        let tx = await wallet.signP(unsignedTx, [nodePrivateKey])
         return await ava.PChain().issueTx(tx)
     }
 
