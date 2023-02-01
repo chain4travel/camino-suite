@@ -4,18 +4,24 @@ import HighchartsReact from 'highcharts-react-official';
 import sortBy from 'lodash/sortBy';
 
 const BarMeter = ({ dataSeries, darkMode, titleText }) => {
-
     const sortByAndLoadBar = (data) => {
-        let sortedData = sortBy(data, o => -o.value);
-        let dataChart = sortedData.map((dat, index) => {
-            return {
-                name: dat.chain,
-                y: dat.value,
-                drilldown: dat.chain,
-                color: `hsl(221, 48%, ${(index + 1) * (80/sortedData.length)}%)`
-            }
-        });
-        return dataChart;
+        try
+        {
+            let sortedData = sortBy(data, o => -o.value);
+            let dataChart = sortedData.map((dat, index) => {
+                return {
+                    name: dat.chain,
+                    y: dat.value,
+                    drilldown: dat.chain,
+                    color: `hsl(221, 48%, ${(index + 1) * (80/sortedData.length)}%)`
+                }
+            });
+            return dataChart;
+        }
+        catch(e)
+        {
+            return [];
+        }
     }
 
    const options = {
@@ -25,17 +31,11 @@ const BarMeter = ({ dataSeries, darkMode, titleText }) => {
         },
         title: {
             align: 'center',
-            text: titleText,
+            text: "",
             style: {
                 color: darkMode ? 'white' : 'black'
             }
         },
-        /*
-        subtitle: {
-            align: 'left',
-            text: 'Click the columns to view versions. Source: <a href="http://statcounter.com" target="_blank">statcounter.com</a>'
-        },
-        */
         xAxis: {
             type: 'category',
             labels: {

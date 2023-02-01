@@ -1,10 +1,19 @@
-.react-datepicker__month-container{
+.picker-container .react-datepicker__month-container{
     background-color:#2A4379 !important;
-    color:white !important
+    color:white !important;
 }
-.react-datepicker__header {
+.picker-container .react-datepicker__header {
     background-color: #7793CF !important;
+    color: white;
 }
-.react-datepicker__day {
+.picker-container .react-datepicker__day {
+    color: white;
+}
+
+.picker-container .react-datepicker__current-month {
+    color: white;
+}
+
+.picker-container .react-datepicker__day-name {
     color: white;
 }

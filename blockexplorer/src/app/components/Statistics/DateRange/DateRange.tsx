@@ -5,6 +5,7 @@ import styled from 'styled-components';
 import moment from 'moment';
 import TextField from '@mui/material/TextField';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
+import { Button } from '@mui/material';
 
 
 const PickerContainer = styled.div`
@@ -18,8 +19,11 @@ const Container = styled.div`
 const FilterContainer = styled.div`
   display: flex;
 `;
-const StyledButton = styled.button`
-  margin: 1rem;
+const StyledButton = styled(Button)`
+  margin-top: 0rem;
+  margin-bottom: 1rem;
+  margin-right: 1rem;
+  margin-left: 1rem;
 `;
 const NewTextField = styled(TextField)`
   margin: 1rem;
@@ -37,6 +41,7 @@ const DateRange = ({
   InitianEndDate,
   setEndDate,
   setStartDate,
+  darkMode
 }) => {
   const changeDate = date => {
     setEndDate(new Date());
@@ -44,7 +49,6 @@ const DateRange = ({
   };
   console.log({
     day: moment().subtract(1, 'days'),
-    month: moment().subtract(1, 'months'),
     year: moment().subtract(1, 'years'),
     all: moment('01/01/2000'),
   });
@@ -60,24 +64,25 @@ const DateRange = ({
         color="secondary"
         style={{ cursor: 'default' }}
         variant="outlined"
-        style={{width: 250}}
+        style={{ width: 250 }}
       />
       <CalendarMonthIcon
         onClick={onClick}
-        style={{ cursor: 'default', position:'relative', top: 10 }}
+        style={{ cursor: 'default', position: 'relative', top: 10 }}
       />
     </CustomInputContainer>
   ));
   return (
     <Container>
 
-      <div style={{position:'relative', right: '12%'}}>
+      <div style={{ position: 'relative', right: '12%' }}>
         <FilterContainer>
           <StyledButton
             onClick={() =>
               changeDate(moment().subtract(1, 'days').format('YYYY-MM-DD'))
             }
             style={{ cursor: 'default' }}
+            variant="contained"
           >
             1 Day
           </StyledButton>
@@ -87,6 +92,7 @@ const DateRange = ({
               changeDate(moment().subtract(1, 'months').format('YYYY-MM-DD'))
             }
             style={{ cursor: 'default' }}
+            variant="contained"
           >
             1 Month
           </StyledButton>
@@ -95,6 +101,7 @@ const DateRange = ({
               changeDate(moment().subtract(1, 'years').format('YYYY-MM-DD'))
             }
             style={{ cursor: 'default' }}
+            variant="contained"
           >
             1 year
           </StyledButton>
@@ -104,34 +111,33 @@ const DateRange = ({
               changeDate(moment('01/01/2000', 'DD/MM/YYYY').format('YYYY-MM-DD'))
             }
             style={{ cursor: 'default' }}
+            variant="contained"
           >
             All
           </StyledButton>
         </FilterContainer>
       </div>
 
-
-
-      <PickerContainer style={{position:'relative', right: '30%', top: -25}}>
-        <DatePicker
-          selected={initialStartDate}
-          onChange={date => setStartDate(date)}
-          selectsStart
-          startDate={initialStartDate}
-          endDate={InitianEndDate}
-          customInput={<CustomInput label="Initial Date" />}
-        // readOnly
-        />
-        <DatePicker
-          selected={InitianEndDate}
-          onChange={date => setEndDate(date)}
-          selectsEnd
-          startDate={initialStartDate}
-          endDate={InitianEndDate}
-          minDate={initialStartDate}
-          customInput={<CustomInput label="End Date" />}
-        // readOnly
-        />
+      <PickerContainer className={darkMode ? 'picker-container' : ''} style={{ position: 'relative', right: '6%', top: -25 }}>
+          <DatePicker
+            selected={initialStartDate}
+            onChange={date => setStartDate(date)}
+            selectsStart
+            startDate={initialStartDate}
+            endDate={InitianEndDate}
+            customInput={<CustomInput label="Initial Date" />}
+          // readOnly
+          />
+          <DatePicker
+            selected={InitianEndDate}
+            onChange={date => setEndDate(date)}
+            selectsEnd
+            startDate={initialStartDate}
+            endDate={InitianEndDate}
+            minDate={initialStartDate}
+            customInput={<CustomInput label="End Date" />}
+          // readOnly
+          />
       </PickerContainer>
 
 

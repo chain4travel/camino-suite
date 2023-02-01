@@ -32,7 +32,13 @@ export const loadTransactionsEmissions = createAsyncThunk("co2statistics/transac
 });
 
 //Pending of Fetch
-export const loadDailyTransactionsStatistics = createAsyncThunk("transactionsStatistics/transactionsPerDay", async () => {
+export const loadDailyTransactionsStatistics = createAsyncThunk("transactionsStatistics/transactionsPerDay", async (startDate, endDate) => {
+
+    console.log("dataDates", {
+        startDate : startDate,
+        endDate: endDate
+    })
+
     let data = transactionsData;  
     return data;
 });

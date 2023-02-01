@@ -5,13 +5,32 @@ import moment from 'moment';
 
 const TimeSeriesMeter = ({ dataSeries, darkMode, titleText }) => {
 
+    const validateMappedSeries = (series) => {
+        return series.map((dat) => {
+            if(dat != null && dat != undefined)
+            {
+                return {
+                    name: dat.time,
+                    y: dat.value
+                }
+            }
+            else
+            {
+                return {
+                    name: "",
+                    y: null
+                }
+            }
+        });
+    }
+
     const options = {
         chart: {
             zoomType: 'x',
             backgroundColor: 'rgba(0,0,0,0)'
         },
         title: {
-            text: titleText,
+            text: "",
             style: {
                 color: darkMode ? 'white' : 'black'
             }
@@ -83,12 +102,7 @@ const TimeSeriesMeter = ({ dataSeries, darkMode, titleText }) => {
         series: [{
             type: 'area',
             name: 'CO2',
-            data: dataSeries.map((dat) => {
-                return {
-                    name: dat.time,
-                    y: dat.value
-                }
-            })
+            data: dataSeries != null && dataSeries != undefined ? validateMappedSeries(dataSeries) : []
         }]
     }
 

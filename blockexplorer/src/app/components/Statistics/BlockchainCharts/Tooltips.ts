@@ -111,11 +111,13 @@ export const averageGasLimitTooltip = (data: GasAverageLimit) => {
         <br/>`;
   return header;
 };
+
+//Gas Average Size
 export const averageBlockSizeTooltip = (data: AverageBlockSize) => {
   const header = `<span>
     ${moment(new Date(data.Date)).format('MMMM Do YYYY')}
         <br/>
-        [<label style="color: blue">average gas limit:</label> <b>${
+        [<label style="color: blue">Gas (gWei):</label> <b>${
           data.BlockSize
         }</b>]
         <br/>`;
