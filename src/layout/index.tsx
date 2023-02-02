@@ -1,8 +1,8 @@
-import { BrowserRouter } from 'react-router-dom'
-import MainLayout from './MainLayout'
 import React from 'react'
-import RoutesSuite from './RoutesSuite'
+import { BrowserRouter } from 'react-router-dom'
 import ScrollToTop from '../components/ScrollToTop'
+import MainLayout from './MainLayout'
+import RoutesSuite from './RoutesSuite'
 
 export default function Layout() {
     return (

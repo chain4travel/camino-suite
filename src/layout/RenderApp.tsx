@@ -1,8 +1,8 @@
-import ExplorerApp from './ExplorerApp'
 import React from 'react'
-import { RootState } from '../redux/store'
-import Wallet from './WalletApp'
 import { useAppSelector } from '../hooks/reduxHooks'
+import { RootState } from '../redux/store'
+import ExplorerApp from './ExplorerApp'
+import Wallet from './WalletApp'
 
 const RenderApp = () => {
     const activeApp = useAppSelector((state: RootState) => state.appConfig.activeApp)
