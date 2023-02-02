@@ -12,9 +12,10 @@ import { Vue, Component, Prop } from 'vue-property-decorator'
     name: 'tos',
 })
 export default class ToS extends Vue {
-    @Prop() navigate: any
-    click(string: string) {
-        this.navigate(string)
+    helpers = this.globalHelper()
+
+    click(to: string) {
+        this.helpers.navigate(to)
     }
 }
 </script>
