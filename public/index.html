@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="night">
+    <head>
+        <meta charset="utf-8" />
+        <link rel="icon" href="/favicon.ico" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="theme-color" content="#000000" />
+        <meta name="description" content="Camino Suite for everything Camino by Chain4Travel." />
+        <link rel="manifest" href="manifest.json" />
+        <title>Camino Suite</title>
+        <link rel="preconnect" href="https://cdn.jsdelivr.net" />
+        <link
+            rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/@mdi/font@7.0.96/css/materialdesignicons.min.css"
+        />
+        <link rel="stylesheet" type="text/css" href="/fonts/index.css" />
+    </head>
+    <body>
+        <noscript>
+            <strong>
+                We're sorry but application suite doesn't work properly without JavaScript enabled.
+                Please enable it to continue.
+            </strong>
+        </noscript>
+        <div id="app_loading">
+            <img rel="preload" src="/gif/loading_0.gif" />
+        </div>
+        <div id="app"></div>
+    </body>
+    <style>
+        body {
+            background-color: #fff;
+            overflow-x: hidden !important;
+            overflow: initial;
+        }
+        #app_loading {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #fff;
+            z-index: 9999;
+            display: none;
+            justify-content: center;
+            align-items: center;
+        }
+        #app_loading img {
+            width: 10vw;
+            max-width: 220px;
+        }
+    </style>
+    <script>
+        let intervalId
+
+        function checkAppLoading() {
+            const app = document.getElementById('app')
+            const appLoading = document.getElementById('app_loading')
+            if (app.childElementCount === 0) {
+                appLoading.style.display = 'flex'
+            } else {
+                appLoading.style.display = 'none'
+                clearInterval(intervalId)
+            }
+        }
+
+        intervalId = setInterval(checkAppLoading, 1000)
+    </script>
+</html>
