@@ -1,26 +1,25 @@
+import { mdiDeleteOutline, mdiPencilOutline, mdiPlus } from '@mdi/js'
 import {
     Box,
     Button,
     Chip,
-    CircularProgress,
     DialogTitle,
     MenuItem,
     MenuList,
     Select,
     Stack,
     Typography,
-    useTheme,
+    useTheme
 } from '@mui/material'
-import { mdiDeleteOutline, mdiPencilOutline, mdiPlus } from '@mdi/js'
 import { networkStatusColor, networkStatusName } from '../../utils/networkUtils'
 
-import AddNewNetwork from './AddNewNetwork'
-import DialogAnimate from '../Animate/DialogAnimate'
 import Icon from '@mdi/react'
-import MHidden from '../@material-extend/MHidden'
 import React from 'react'
-import SelectedNetwork from './SelectNetwork'
 import useNetwork from '../../hooks/useNetwork'
+import MHidden from '../@material-extend/MHidden'
+import DialogAnimate from '../Animate/DialogAnimate'
+import AddNewNetwork from './AddNewNetwork'
+import SelectedNetwork from './SelectNetwork'
 
 interface NetworkSwitcherProps {
     handleCloseSidebar?: () => void
