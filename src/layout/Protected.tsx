@@ -1,8 +1,8 @@
 import React, { useState } from 'react'
 import { Navigate, Outlet } from 'react-router-dom'
+import store from 'wallet/store'
 import { updateAssets } from '../helpers/walletStore'
 import { useEffectOnce } from '../hooks/useEffectOnce'
-import store from 'wallet/store'
 
 const OutletWrraper = () => {
     const [fetch, setFetch] = useState(false)

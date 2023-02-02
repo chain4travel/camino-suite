@@ -1,3 +1,4 @@
+import { mdiClose, mdiMenu, mdiWalletOutline } from '@mdi/js'
 import {
     AppBar,
     Box,
@@ -8,26 +9,25 @@ import {
     Typography,
     useTheme,
 } from '@mui/material'
-import { DRAWER_WIDTH, TIMEOUT_DURATION } from '../../constants/apps-consts'
 import React, { useState } from 'react'
-import { mdiClose, mdiMenu, mdiWalletOutline } from '@mdi/js'
+import { DRAWER_WIDTH, TIMEOUT_DURATION } from '../../constants/apps-consts'
 import { useAppDispatch, useAppSelector } from '../../hooks/reduxHooks'
 
-import Account from './Account'
 import Icon from '@mdi/react'
-import LoggedInAccount from './LoggedInAccount'
+import { getActiveNetwork } from '../../redux/slices/network'
 import MHidden from '../@material-extend/MHidden'
 import MIconButton from '../@material-extend/MIconButton'
-import NetworkSwitcher from './NetworkSwitcher'
 import PlatformSwitcher from '../PlatformSwitcher'
+import Account from './Account'
+import LoggedInAccount from './LoggedInAccount'
+import NetworkSwitcher from './NetworkSwitcher'
 import ThemeSwitcher from './ThemeSwitcher'
-import { getActiveNetwork } from '../../redux/slices/network'
 // @ts-ignore
+import { useIdleTimer } from 'react-idle-timer'
+import { useNavigate } from 'react-router-dom'
 import store from 'wallet/store'
 import { updateAccount } from '../../redux/slices/app-config'
 import { updateAuthStatus } from '../../redux/slices/utils'
-import { useIdleTimer } from 'react-idle-timer'
-import { useNavigate } from 'react-router-dom'
 
 export default function Navbar() {
     const theme = useTheme()

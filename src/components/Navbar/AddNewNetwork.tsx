@@ -9,15 +9,15 @@ import {
 } from '@mui/material'
 import { Form, FormikProvider, useFormik } from 'formik'
 
-import { AvaNetwork } from 'wallet/AvaNetwork'
 import { Button } from '@mui/material'
-import { Network } from '../../@types/store'
-import React from 'react'
-import { addNetworks } from '../../redux/slices/network'
-import axios from 'axios'
-import store from 'wallet/store'
-import { useAppDispatch } from '../../hooks/reduxHooks'
 import { useStore } from 'Explorer/useStore'
+import axios from 'axios'
+import React from 'react'
+import { AvaNetwork } from 'wallet/AvaNetwork'
+import store from 'wallet/store'
+import { Network } from '../../@types/store'
+import { useAppDispatch } from '../../hooks/reduxHooks'
+import { addNetworks } from '../../redux/slices/network'
 
 export default function AddNewNetwork({
     networks,
