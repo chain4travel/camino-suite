@@ -26,13 +26,13 @@ import { Status } from 'types';
 import { getChainTypeFromUrl } from 'utils/route-utils';
 
 export default function GlobalReloadButton({
+  timeFrame,
   style,
 }: {
+  timeFrame: string;
   style?: React.CSSProperties;
 }) {
   const dispatch = useAppDispatch();
-  const frameTime = useAppSelector(getTimeFrame);
-  const timeFrameXPchain = useAppSelector(getTimeFrameXchain);
   let chainAlias = getChainTypeFromUrl()[0];
   let chainName = getChainTypeFromUrl();
   const { gasFeesLoading, transactionsLoading } = useAppSelector(
@@ -54,8 +54,8 @@ export default function GlobalReloadButton({
     ) {
       dispatch(fetchBlocksTransactions());
       dispatch(loadValidators());
-      dispatch(loadNumberOfTransactions(frameTime));
-      dispatch(loadTotalGasFess(frameTime));
+      dispatch(loadNumberOfTransactions(timeFrame));
+      dispatch(loadTotalGasFess(timeFrame));
     } else if (
       (chainName === ChainType.X_CHAIN &&
         xGasFeesLoading !== Status.LOADING &&
@@ -70,14 +70,14 @@ export default function GlobalReloadButton({
           : getChainID(chainAlias);
       dispatch(
         loadNumberOfPXTransactions({
-          timeframe: timeFrameXPchain,
+          timeframe: timeFrame,
           chainId,
           chainAlias: chainAlias,
         }),
       );
       dispatch(
         loadTotalPXGasFess({
-          timeframe: timeFrameXPchain,
+          timeframe: timeFrame,
           chainId,
           chainAlias: chainAlias,
         }),
