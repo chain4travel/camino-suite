@@ -77,7 +77,7 @@ export default class UTXORow extends Vue {
         let net: AvaNetwork = this.$store.state.Network.selectedNetwork
         let explorer = net.explorerSiteUrl
         if (!explorer) return null
-        return explorer + '/tx/' + bintools.cb58Encode(this.utxo.getTxID())
+        return explorer + '/x-chain/transactions/' + bintools.cb58Encode(this.utxo.getTxID())
     }
 
     get locktime() {
