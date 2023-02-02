@@ -218,6 +218,7 @@ const assets_module: Module<AssetsState, RootState> = {
             for (var i = 0; i < tokens.length; i++) {
                 let t = tokens[i]
                 if (token.address === t.data.address && token.chainId === t.data.chainId) {
+                    console.log('ERC20 Token already added.')
                     return
                 }
             }

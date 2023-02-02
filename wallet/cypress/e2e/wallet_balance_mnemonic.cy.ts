@@ -10,21 +10,23 @@ describe('Wallet Balance Mnemonic', () => {
     it('open suite/open wallet using mnemonic', () => {
         changeNetwork(cy);
         accessWallet(cy, "mnemonic");
+        interceptXChainBalance();
+        interceptPChainBalance();
+        interceptChainBalance();
     });
 
     after(async () => {
-
-        await interceptXChainBalance();
         cy.get('.header > :nth-child(3) > .v-icon').click();
+        cy.get('.refresh > button > .v-icon').click();
+
+        cy.wait(5000);
         await validateAllBalances();
     });
 });
 
 
 async function interceptXChainBalance() {
-    cy.intercept('POST', 'https://columbus.camino.foundation/ext/bc/X', (req) => {
-
-        //Interceptor in X Chain
+    cy.intercept('POST', '**/ext/bc/X', (req) => {
         if (req.body.method == "avm.getUTXOs") {
             req.reply({
                 statusCode: 200,
@@ -52,9 +54,51 @@ async function interceptXChainBalance() {
     });
 }
 
+async function interceptPChainBalance () 
+{
+    cy.intercept('POST', '**/ext/bc/P', (req) => {
+        if (req.body.method == "platform.getUTXOs") {
+            req.reply({
+                statusCode: 200,
+                body: {
+                    "jsonrpc": "2.0",
+                    "result": {
+                        "numFetched": "1",
+                        "utxos": [
+                            "0x000032a1ac50fac22a8df8b7f13ef31f29d80bd12401bd0363589e8e6d43d7447ef30000000068c1c17ef684ee4260d1c7ab95fe5222dfd7fa60f3363051dae558072101df9b0000000700000002540be40000000000000000000000000100000001fa04f66120aa872cb36b6a43eb3e8aecec46c7d4944987f7"
+                        ],
+                        "endIndex": {
+                            "address": "P-columbus1lgz0vcfq42rjevmtdfp7k052ankyd375puqjpl",
+                            "utxo": "77aytswYfTmMwaPXcV82C3EDicLyHZ11bkdMTsXjixFvyGYVz"
+                        },
+                        "encoding": "hex"
+                    },
+                    "id": 106
+                }
+            });
+        }
+        else {
+            console.log("Other query in P Chain");
+        }
+    });
+}
+
+async function interceptChainBalance () 
+{
+    cy.intercept('POST', '**/ext/bc/C/rpc', (req) => {
+        if (req.body.method == "eth_getBalance") {
+            req.reply({
+                statusCode: 200,
+                body: {"jsonrpc":"2.0","id":8,"result":"0x115883a306cfc4200"}
+            });
+        }
+        else {
+            console.log("Other query in C Chain");
+        }
+    });
+}
 
 async function validateAllBalances() {
-    cy.wait(10000);
     let xFunds: number = await getBalanceText("X");
     let cFunds: number = await getBalanceText("C");
     let pFunds: number = await getBalanceText("P");

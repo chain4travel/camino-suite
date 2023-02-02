@@ -14,8 +14,7 @@ const CYPRESS_CONFIG_PROD = {
 
 const CYPRESS_CONFIG_LOCAL = {
     ...CYPRESS_BASE_CONFIG,
-    //baseUrl: `${!process.env.USE_HTTP ? 'https' : 'http'}://localhost:3000/`,
-    baseUrl: `https://playground.suite.camino.foundation/`,
+    baseUrl: `${!process.env.USE_HTTP ? 'https' : 'http'}://localhost:5000/`,
 }
 
 /**
