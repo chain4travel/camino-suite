@@ -995,9 +995,9 @@
         <p style="text-indent: 0pt; text-align: left"><br /></p>
         <p style="padding-left: 5pt; text-indent: 0pt; text-align: left">Chain4Travel AG</p>
         <p style="padding-left: 5pt; text-indent: 0pt; text-align: left">
-            Arbachstrasse 2
+            Dammstrasse 19
             <br />
-            6340 Baar
+            6300 Zug
             <br />
             Switzerland
             <br />
