@@ -28,7 +28,6 @@ describe('access wallet', () => {
             cy.wrap(oldBalance).as('FirstBalance')
             cy.log(oldBalance)
         })
-        cy.log('chao')
         cy.get(
             '#wallet_router > div > div.new_order_Form > div:nth-child(2) > div.checkout > button'
         ).click()
@@ -51,8 +50,6 @@ describe('access wallet', () => {
         })
     })
     it('change balance', function() {
-        cy.log(this.SecondBalance)
-        cy.log(this.FirstBalance)
         expect(this.SecondBalance).to.not.eq(this.FirstBalance)
     })
 })
