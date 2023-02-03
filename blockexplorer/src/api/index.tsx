@@ -280,3 +280,22 @@ export const fetchTransactionsEmissions = () => {
       });
     });
   }
+
+  export async function loadDailyTransactions(startDate, endDate) {
+    return new Promise((resolve, reject) => {
+      const url = `${getBaseUrl()}${baseEndpoint}/dailyTransactions?startTime=${startDate}&endTime=${endDate}`;
+      var request = {
+        method: 'GET',
+        url: url,
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      };
+      axios(request).then(function (response: any) {
+        resolve(response.data);
+      }).catch(function (error) {
+        reject(null);
+        console.error(error,500);
+      });
+    });
+  }

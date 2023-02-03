@@ -71,7 +71,13 @@ const BlockchainCharts = ({
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    dispatch(utilSlice(startDate, endDate));
+    if(startDate != undefined && endDate != undefined)
+    {
+      dispatch(utilSlice({
+        startDate: moment(startDate).toISOString(),
+        endDate: moment(endDate).toISOString()
+      }));
+    }
   },[startDate, endDate])
 
   useEffect(() => {

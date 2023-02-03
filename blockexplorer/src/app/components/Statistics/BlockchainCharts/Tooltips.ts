@@ -1,5 +1,5 @@
 import moment from 'moment';
-import { TransactionsInfo } from '../../../../types/transaction';
+import { DailyTransactionsInfo } from '../../../../types/transaction';
 import { AddressInfo } from '../../../../types/uniqueAddresses';
 import { DailyTokenTransfer } from '../../../../types/dailyTokenTransfer';
 import { GasUsed } from '../../../../types/gasUsed';
@@ -9,21 +9,21 @@ import { GasAverageLimit } from '../../../../types/gasAverageLimit';
 import { AverageBlockSize } from '../../../../types/averageBlockSize';
 
 //Transactions
-export const dailyTransactionsTooltip = (data: TransactionsInfo) => {
+export const dailyTransactionsTooltip = (data: DailyTransactionsInfo) => {
   const header = `<span>
-        ${moment(new Date(data.Date)).format('MMMM Do YYYY')}
+        ${moment(new Date(data.date)).format('MMMM Do YYYY')}
         <br/>
         [<label style="color: blue">Total Transactions:</label> <b>${
-          data.TotalTransactions
+          data.totalTransactions
         }</b>]
         <br/>
         <br/>
 
-        <b>Avg Block Time:</b>${data.AvgBlockTime} TH<br/>
-        <b>Avg Block Size:</b>${data.AvgBlockSize} GH<br/>
-        <b>Total Block Count:</b>${data.TotalBlockCount} <br/>
-        <b>Total Uncles Count:</b>${data.TotalUnclesCount} <br/>
-        <b>New Adress Seen:</b>${data.NewAddressSeen}
+        <b>Avg Block Time:</b>${data.avgBlockTime} TH<br/>
+        <b>Avg Block Size:</b>${data.avgBlockSize} GH<br/>
+        <b>Total Block Count:</b>${data.totalBlockCount} <br/>
+        <b>Total Uncles Count:</b>${data.totalUnclesCount} <br/>
+        <b>New Adress Seen:</b>${data.newAddressSeen}
         
         </span><br/>`;
   return header;

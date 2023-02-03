@@ -5,6 +5,8 @@ import ConfigLinearMeter from './ConfigLinearMeter';
 import './style.css'
 
 const LinearMeter = ({ darkMode, titleText, data, typeStatistic }) => {
+
+  console.log("dataInfoDailyTransactions", data);
  let config = new ConfigLinearMeter(typeStatistic, titleText, data)
 
 

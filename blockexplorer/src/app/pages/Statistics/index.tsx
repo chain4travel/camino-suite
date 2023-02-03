@@ -80,7 +80,7 @@ const Statistics: FC = () => {
                 tooltipTitle="This chart highlights the total number of transactions on the Camino blockchain with daily individual breakdown for estimated hash rate, average block time and size, total block and uncle block count and total new address seen."
                 darkMode={dark}
                 titleText={'Daily Transactions'}
-                utilSlice={(startDate, endDate) => loadDailyTransactionsStatistics(startDate, endDate)}
+                utilSlice={(dates) => loadDailyTransactionsStatistics(dates)}
                 sliceGetter={getTransactionsPerDay}
                 sliceGetterLoader={getTransactionsPerDayStatus}
                 typeStatistic={typesStatistic.DAILY_TRANSACTIONS}

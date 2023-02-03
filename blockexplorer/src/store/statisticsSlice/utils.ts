@@ -5,6 +5,9 @@ import {
     fetchTransactionsEmissions
 } from '../../api';
 
+//API
+import {loadDailyTransactions} from '../../api/index'; 
+
 //Temporally JSON Test
 import transactionsData from '../../app/components/Statistics/json/transactionsData.json';
 import uniqueAddresesData from '../../app/components/Statistics/json/uniqueAddresesData.json';
@@ -14,6 +17,13 @@ import activeAddressesData from '../../app/components/Statistics/json/activeAddr
 import gasAveragePriceData from '../../app/components/Statistics/json/gasAveragePrice.json';
 import gasAverageLimitData from '../../app/components/Statistics/json/gasAverageLimit.json';
 import averageBlockSizeData from '../../app/components/Statistics/json/averageBlockSize.json';
+
+//Pending of Fetch
+export const loadDailyTransactionsStatistics = createAsyncThunk("transactionsStatistics/transactionsPerDay", async (dates: any, thunk) => {
+    let data = await loadDailyTransactions(dates.startDate, dates.endDate);
+    return data;
+});
+
 
 export const loadDailyEmissions = createAsyncThunk("co2statistics/dailyEmissions", async () => {
     let response = await fetchDailyEmissions();
@@ -31,17 +41,7 @@ export const loadTransactionsEmissions = createAsyncThunk("co2statistics/transac
     return response;
 });
 
-//Pending of Fetch
-export const loadDailyTransactionsStatistics = createAsyncThunk("transactionsStatistics/transactionsPerDay", async (startDate, endDate) => {
 
-    console.log("dataDates", {
-        startDate : startDate,
-        endDate: endDate
-    })
-
-    let data = transactionsData;  
-    return data;
-});
 
 export const loadUniqueAddresses = createAsyncThunk("transactionsStatistics/uniqueAddressesInfo", async () => {
     let data = uniqueAddresesData;  

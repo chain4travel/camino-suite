@@ -22,7 +22,7 @@ class ConfigLinearMeter {
     this.title = title;
     switch (this.typeStatistic) {
       case typesStatistic.DAILY_TRANSACTIONS:
-        this.data = dataChart.TxInfo;
+        this.data = dataChart.txInfo;
         break;
       case typesStatistic.UNIQUE_ADRESSES:
         this.data = dataChart.AddressInfo;
@@ -79,7 +79,7 @@ class ConfigLinearMeter {
     switch (this.typeStatistic) {
       case typesStatistic.DAILY_TRANSACTIONS:
         return this.data.map((value, index) => {
-          return { y: value.TotalTransactions, name: value.Date };
+          return { y: value.totalTransactions, name: value.date };
         });
       case typesStatistic.UNIQUE_ADRESSES:
         return this.data.map((value, index) => {
