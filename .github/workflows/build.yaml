@@ -1,0 +1,19 @@
+name: build
+on: [push]
+jobs:
+  yarn-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: recursive
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+
+      - name: install yarn dependencies - host
+        working-directory: ./host
+        run: yarn install
+      - name: build - host
+        working-directory: ./host
+        run: yarn build

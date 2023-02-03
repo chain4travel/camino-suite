@@ -1,0 +1,73 @@
+name: update-gcs-bucket
+
+on:
+  workflow_dispatch:
+    inputs:        
+      update_production:
+        required: true
+        default: false
+        type: boolean
+        description: "flag to to push to production"
+  push:
+    branches:
+        - c4t
+        - dev
+        - suite
+
+env:
+  node_version: 16
+
+jobs:
+  build_deploy_scrape:    
+    name: Build and Deploy
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: recursive
+
+      - name: Prepare variables
+        id: prepareVariables
+        run: |
+          DOMAIN="suite.camino.network"
+          echo "prodBucket=$DOMAIN" >> $GITHUB_OUTPUT
+          if [[ "${{ github.ref }}" == "refs/heads/c4t" ]]; then
+              echo "bucket=stage.$DOMAIN" >> $GITHUB_OUTPUT
+          elif [[ "${{ github.ref }}" == "refs/heads/dev" ]]; then
+              echo "bucket=dev.$DOMAIN" >> $GITHUB_OUTPUT
+          elif [[ "${{ github.ref }}" == "refs/heads/suite" ]]; then
+              echo "bucket=dev.$DOMAIN" >> $GITHUB_OUTPUT
+          fi
+
+      - uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.node_version }}
+          
+      - name: Install yarn dependencies
+        working-directory: ./host        
+        run: yarn install
+
+      - name: Build
+        working-directory: ./host
+        run: yarn build
+
+      - name: Cloud authentication
+        id: auth
+        uses: 'google-github-actions/auth@v1'
+        with:
+          credentials_json: '${{ secrets.GOOGLE_CREDENTIALS }}'
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v1
+
+      - name: Update Bucket
+        working-directory: ./host
+        if: ${{ github.ref == 'refs/heads/c4t' || github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/suite' }}
+        run: |
+          gsutil -m rsync -R -J -d dist gs://${{ steps.prepareVariables.outputs.bucket }}
+
+      - name: Update Production Bucket
+        working-directory: ./host
+        if: ${{ github.ref == 'refs/heads/c4t' && inputs.update_production }}
+        run: |
+          gsutil -m rsync -R -J -d dist gs://${{ steps.prepareVariables.outputs.prodBucket }}
