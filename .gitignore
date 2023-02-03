@@ -83,6 +83,9 @@ out
 # Nuxt.js build / generate output
 .nuxt
 dist
+dist_prod
+dist_dev
+dist_stage
 
 # Gatsby files
 .cache/
@@ -114,3 +117,5 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+
+.DS_Store

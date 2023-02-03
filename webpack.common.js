@@ -1,6 +1,7 @@
 const HtmlWebPackPlugin = require('html-webpack-plugin')
 const path = require('path')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
+const dist = process.env.DIST
 module.exports = {
     resolve: {
         extensions: ['.vue', '.tsx', '.ts', '.jsx', '.js', '.json'],
@@ -38,23 +39,23 @@ module.exports = {
             patterns: [
                 {
                     from: path.resolve(__dirname, 'public/manifest.json'),
-                    to: path.resolve(__dirname, 'dist/manifest.json'),
+                    to: path.resolve(__dirname, dist + '/manifest.json'),
                 },
                 {
                     from: path.resolve(__dirname, 'public/assets'),
-                    to: path.resolve(__dirname, 'dist/assets'),
+                    to: path.resolve(__dirname, dist + '/assets'),
                 },
                 {
                     from: path.resolve(__dirname, 'public/fonts'),
-                    to: path.resolve(__dirname, 'dist/fonts'),
+                    to: path.resolve(__dirname, dist + '/fonts'),
                 },
                 {
                     from: 'public/img',
-                    to: path.resolve(__dirname, 'dist/img'),
+                    to: path.resolve(__dirname, dist + '/img'),
                 },
                 {
                     from: 'public/gif',
-                    to: path.resolve(__dirname, 'dist/gif'),
+                    to: path.resolve(__dirname, dist + '/gif'),
                 },
             ],
         }),

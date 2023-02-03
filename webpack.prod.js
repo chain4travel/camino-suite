@@ -7,6 +7,7 @@ let timestamp = Date.now()
 const publicPath = process.env.PUBLIC_PATH
 const explorerPath = process.env.EXPLORER_PATH
 const walletPath = process.env.WALLET_PATH
+const dist = process.env.DIST
 
 module.exports = merge(common, {
     mode: 'production',
@@ -16,6 +17,8 @@ module.exports = merge(common, {
         publicPath: publicPath,
         filename: 'js/[name].[fullhash:8].' + timestamp + '.js',
         chunkFilename: 'js/[name].[fullhash:8].' + timestamp + '.js',
+        path: __dirname + '/' + dist,
+        clean: true,
     },
 
     plugins: [
