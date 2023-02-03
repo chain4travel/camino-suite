@@ -12,7 +12,7 @@ export default function DataControllers() {
   const timeFrame = useAppSelector(getTimeFrame);
   const timeFrameXchain = useAppSelector(getTimeFrameXchain);
   const timeFramePchain = useAppSelector(getTimeFramePchain);
-  function t() {
+  function timeFrameForSelectedChain() {
     if (getChainTypeFromUrl() === ChainType.C_CHAIN) return timeFrame;
     else if (getChainTypeFromUrl() === ChainType.X_CHAIN)
       return timeFrameXchain;
@@ -21,10 +21,13 @@ export default function DataControllers() {
   return (
     <Grid container spacing={{ xs: 1, md: 1 }}>
       <Grid item xs>
-        <RowRadioButtonsGroup timeFrame={t()} />
+        <RowRadioButtonsGroup timeFrame={timeFrameForSelectedChain()} />
       </Grid>
       <Grid container item xs="auto" sm={3} alignContent="center">
-        <GlobalReloadButton style={{ display: 'flex', marginLeft: 'auto' }} />
+        <GlobalReloadButton
+          timeFrame={timeFrameForSelectedChain()}
+          style={{ display: 'flex', marginLeft: 'auto' }}
+        />
       </Grid>
     </Grid>
   );
