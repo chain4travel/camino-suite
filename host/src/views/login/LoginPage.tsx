@@ -102,7 +102,7 @@ export default function LoginPage() {
         <Box sx={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
           <Typography variant="subtitle1">Don't have a wallet yet ?</Typography>
           <StyledLink to="/create" style={{ textDecoration: "none" }}>
-            <Button variant="contained" sx={{ p: ".75rem", width: "100%" }}>
+            <Button variant="contained" sx={{ p: ".75rem", width: "100%" }} data-cy="btn-redirect-create-wallet">
               <Typography variant="body1" color="white">
                 Create a wallet
               </Typography>

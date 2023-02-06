@@ -1,7 +1,31 @@
 
 export function changeNetwork(cy: Cypress.cy & CyEventEmitter, network = 'Columbus') {
-    cy.get('.css-1nt3z7i > .MuiInputBase-root > .MuiSelect-select').click(); //Network Switcher
-    cy.get(`[data-value="${network}"] > .MuiTypography-root`).click(); //Select Columbus Network
+    cy.get('[data-cy="network-selector"]').click(); //Network Switcher
+    cy.get(`[data-cy="network-name-${network}"]`).click(); //Select Columbus Network
+}
+
+export function addLocalNetwork(cy: Cypress.cy & CyEventEmitter)
+{
+    cy.get('[data-cy="network-selector"]').click();
+    cy.get('[data-cy="add-custom-network"]').click();
+
+    cy.get('[data-cy="add-network-field-network-name"]').clear();
+    cy.get('[data-cy="add-network-field-network-name"]').type("Localhost");
+
+    cy.get('[data-cy="add-network-field-protocol"]').clear();
+    cy.get('[data-cy="add-network-field-protocol"]').type("http");
+
+    cy.get('[data-cy="add-network-field-host"]').clear();
+    cy.get('[data-cy="add-network-field-host"]').type("localhost");
+
+    cy.get('[data-cy="add-network-field-port"]').clear();
+    cy.get('[data-cy="add-network-field-port"]').type("9650");
+
+    cy.get('[data-cy="add-network-field-magellan-address"]').clear();
+    cy.get('[data-cy="add-network-field-magellan-address"]').type("http://localhost:8080/v2/");
+    cy.get('[data-cy="btn-add-network"]').click();
+
+    cy.get('[data-cy="network-name-Localhost"]').click();
 }
 
 export async function accessWallet(cy: Cypress.cy & CyEventEmitter, type: string) {

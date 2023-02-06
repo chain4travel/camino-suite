@@ -14,7 +14,8 @@ const CYPRESS_CONFIG_PROD = {
 
 const CYPRESS_CONFIG_LOCAL = {
     ...CYPRESS_BASE_CONFIG,
-    baseUrl: `${!process.env.USE_HTTP ? 'https' : 'http'}://localhost:5000/`,
+    //baseUrl: `${!process.env.USE_HTTP ? 'https' : 'http'}://localhost:5000/`,
+    baseUrl: `http://localhost:3000/`,
 }
 
 /**
