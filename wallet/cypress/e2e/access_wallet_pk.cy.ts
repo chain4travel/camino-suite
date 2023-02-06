@@ -1,12 +1,13 @@
 import { expect } from 'chai'
-import { accessWallet, changeNetwork } from '../utils/utils'
+import { accessWallet, changeNetwork, addLocalNetwork } from '../utils/utils'
 
 describe('access wallet', () => {
     before(() => {
         cy.visit('/')
     })
     it('Wallet access private key ', () => {
-        changeNetwork(cy)
+        //changeNetwork(cy);
+        addLocalNetwork(cy);
         accessWallet(cy, 'privateKey')
     })
 })

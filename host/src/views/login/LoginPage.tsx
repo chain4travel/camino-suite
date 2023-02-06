@@ -70,13 +70,13 @@ export default function LoginPage() {
           <Grid container rowSpacing={2}>
             <Grid container item xs={12} justifyContent="center" spacing={2}>
               <Grid item xs={12} sm={6}>
-                <AccessActionButton to="/access/privateKey">
+                <AccessActionButton data-cy="btn-wallet-access-private-key" to="/access/privateKey">
                   <Typography variant="body1">Private Key</Typography>
                   <Icon path={mdiShieldKeyOutline} size={1} />
                 </AccessActionButton>
               </Grid>
               <Grid item xs={12} sm={6}>
-                <AccessActionButton to="/access/mnemonic">
+                <AccessActionButton data-cy="btn-wallet-access-mnemonic" to="/access/mnemonic">
                   <Typography variant="body1">Mnemonic Key Phrase</Typography>
                   <Icon path={mdiListBoxOutline} size={1} />
                 </AccessActionButton>
