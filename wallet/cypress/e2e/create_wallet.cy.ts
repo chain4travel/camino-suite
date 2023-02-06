@@ -9,8 +9,8 @@ describe('Wallet Creation', () => {
     })
 
     it('open suite/create wallet', () => {
-        addLocalNetwork(cy);
-        //changeNetwork(cy);
+        //addLocalNetwork(cy);
+        changeNetwork(cy);
         cy.wait(2000);
         cy.get('[data-cy="app-selector-menu"]').click();
         cy.get('[data-cy="app-selector-Wallet"]').click();
