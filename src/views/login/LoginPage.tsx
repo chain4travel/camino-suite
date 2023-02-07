@@ -103,7 +103,7 @@ export default function LoginPage() {
                     <Typography variant="body2" color="text.secondary">
                         By using this application, you agree to the&nbsp;
                         <StyledLink to="/legal" style={{ textDecoration: 'none' }}>
-                            Terms of Service
+                            Terms of Use
                         </StyledLink>
                     </Typography>
                 </Box>
