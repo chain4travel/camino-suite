@@ -144,6 +144,7 @@ export default function AddNewNetwork({ networks, handleClose, switchNetwork }) 
                         error={Boolean(touched.displayName && errors.displayName)}
                         helperText={touched.displayName && errors.displayName}
                         sx={{ mb: 3 }}
+                        data-cy="add-network-field-network-name"
                     />
 
                     <TextField
@@ -154,6 +155,7 @@ export default function AddNewNetwork({ networks, handleClose, switchNetwork }) 
                         error={Boolean(touched.protocol && errors.protocol)}
                         helperText={touched.protocol && errors.protocol}
                         sx={{ mb: 3, '& fieldset': { borderRadius: '12px' } }}
+                        data-cy="add-network-field-protocol"
                     />
 
                     <TextField
@@ -163,6 +165,7 @@ export default function AddNewNetwork({ networks, handleClose, switchNetwork }) 
                         error={Boolean(touched.host && errors.host)}
                         helperText={touched.host && errors.host}
                         sx={{ mb: 3, '& fieldset': { borderRadius: '12px' } }}
+                        data-cy="add-network-field-host"
                     />
 
                     <TextField
@@ -173,6 +176,7 @@ export default function AddNewNetwork({ networks, handleClose, switchNetwork }) 
                         error={Boolean(touched.port && errors.port)}
                         helperText={touched.port && errors.port}
                         sx={{ mb: 3, '& fieldset': { borderRadius: '12px' } }}
+                        data-cy="add-network-field-port"
                     />
 
                     <TextField
@@ -182,6 +186,7 @@ export default function AddNewNetwork({ networks, handleClose, switchNetwork }) 
                         error={Boolean(touched.magellanAddress && errors.magellanAddress)}
                         helperText={touched.magellanAddress && errors.magellanAddress}
                         sx={{ mb: 3, '& fieldset': { borderRadius: '12px' } }}
+                        data-cy="add-network-field-magellan-address"
                     />
                     {error && (
                         <Typography variant="body2" color="error">
@@ -191,7 +196,7 @@ export default function AddNewNetwork({ networks, handleClose, switchNetwork }) 
                 </DialogContent>
 
                 <DialogActions sx={{ display: 'flex', justifyContent: 'center', mb: 2, gap: 2 }}>
-                    <Button disabled={isLoading} variant="outlined" type="submit">
+                    <Button disabled={isLoading} variant="outlined" type="submit" data-cy="btn-add-network">
                         Add Network
                     </Button>
                     <Button variant="contained" onClick={handleClose}>
