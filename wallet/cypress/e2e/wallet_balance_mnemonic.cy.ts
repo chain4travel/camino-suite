@@ -1,6 +1,6 @@
 import { expect } from 'chai'
 import '@cypress/xpath';
-import { changeNetwork, accessWallet } from '../utils/utils';
+import { changeNetwork, accessWallet, addLocalNetwork } from '../utils/utils';
 
 describe('Wallet Balance Mnemonic', () => {
     before(() => {
@@ -8,20 +8,23 @@ describe('Wallet Balance Mnemonic', () => {
     });
 
     it('open suite/open wallet using mnemonic', () => {
-        changeNetwork(cy);
+        addLocalNetwork(cy);
+        //changeNetwork(cy);
         accessWallet(cy, "mnemonic");
-        interceptXChainBalance();
-        interceptPChainBalance();
-        interceptChainBalance();
+        //interceptXChainBalance();
+        //interceptPChainBalance();
+        //interceptChainBalance();
+
+        cy.get('[data-cy="btn-show-breakdown"]', { timeout: 10000 }).should('be.visible');
+        cy.get('[data-cy="btn-show-breakdown"]').click();
     });
 
     after(async () => {
-        cy.get('.header > :nth-child(3) > .v-icon').click();
-        cy.get('.refresh > button > .v-icon').click();
-
-        cy.wait(5000);
+        cy.get('[data-cy="btn-refresh-balance"]', { timeout: 10000 }).should('be.visible');
+        cy.get('[data-cy="btn-refresh-balance"]').click();
         await validateAllBalances();
     });
+
 });
 
 
@@ -54,8 +57,7 @@ async function interceptXChainBalance() {
     });
 }
 
-async function interceptPChainBalance () 
-{
+async function interceptPChainBalance() {
     cy.intercept('POST', '**/ext/bc/P', (req) => {
         if (req.body.method == "platform.getUTXOs") {
             req.reply({
@@ -83,13 +85,12 @@ async function interceptPChainBalance ()
     });
 }
 
-async function interceptChainBalance () 
-{
+async function interceptChainBalance() {
     cy.intercept('POST', '**/ext/bc/C/rpc', (req) => {
         if (req.body.method == "eth_getBalance") {
             req.reply({
                 statusCode: 200,
-                body: {"jsonrpc":"2.0","id":8,"result":"0x115883a306cfc4200"}
+                body: { "jsonrpc": "2.0", "id": 8, "result": "0x115883a306cfc4200" }
             });
         }
         else {
@@ -100,9 +101,9 @@ async function interceptChainBalance ()
 
 async function validateAllBalances() {
     let xFunds: number = await getBalanceText("X");
+
     let cFunds: number = await getBalanceText("C");
     let pFunds: number = await getBalanceText("P");
-
     let totalFunds: number = await getTotalBalanceText();
 
     console.log("fundsData", {
@@ -114,7 +115,7 @@ async function validateAllBalances() {
 
     let comparativeFunds = xFunds + cFunds + pFunds;
 
-    console.log("totalFunds", {
+    cy.log("totalFunds", {
         totalFundSum: comparativeFunds.toFixed(9),
         totalFundsHTML: totalFunds.toFixed(9)
     });
@@ -129,7 +130,7 @@ function getTotalBalanceText(): Promise<number> {
         let balanceNumber = "0";
         let balanceDecimals = ".0";
         let balanceTotal = "0";
-        cy.get('[data-cy="wallet_balance"] > span').invoke("text").then((data) => {
+        cy.get('[data-cy="wallet_balance"]').invoke("text").then((data) => {
             balanceNumber = data.toString();
             cy.get('.smaller').invoke("text").then((decimals) => {
                 balanceDecimals = decimals;
@@ -145,7 +146,7 @@ function getBalanceText(chain: string): Promise<number> {
         let attributeFind = "";
         switch (chain) {
             case "X":
-                attributeFind = '.alt_breakdown > :nth-child(1) > :nth-child(2)';
+                attributeFind = '[data-cy="top-balance-available-X"]';
                 break;
             case "C":
                 attributeFind = '.alt_breakdown > :nth-child(1) > :nth-child(4)';
