@@ -30,7 +30,7 @@ const MainLayout = ({ children }) => {
         dispatch(addNetworks(networks))
         let selectedNetwork = store.state.Network.selectedNetwork
             ? store.state.Network.selectedNetwork
-            : networks[0]
+            : networks[1]
         dispatch(changeActiveNetwork(selectedNetwork))
         dispatch(changeNetworkStatus(matchNetworkStatus(store.state.Network.status)))
         updateNetworks(networks)

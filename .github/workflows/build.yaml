@@ -6,6 +6,7 @@ on:
     branches:
         - c4t
         - dev
+        - suite
 jobs:
   yarn-build:
     runs-on: ubuntu-latest
@@ -17,9 +18,9 @@ jobs:
         with:
           node-version: '16'
 
-      - name: install yarn dependencies - host
-        working-directory: ./host
+      - name: install yarn dependencies
         run: yarn install
-      - name: build - host
-        working-directory: ./host
+      - name: lint
+        run: yarn lint
+      - name: build
         run: yarn build

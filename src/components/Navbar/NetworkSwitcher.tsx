@@ -49,10 +49,10 @@ export default function NetworkSwitcher() {
     const handleRemoveCustomNetwork = async () => {
         store.dispatch('Network/removeCustomNetwork', activeNetwork)
         let networks = store.getters['Network/allNetworks']
-        await switchNetwork(networks[0])
+        await switchNetwork(networks[1])
         dispatch(addNetworks(networks))
-        dispatch(changeActiveNetwork(networks[0]))
-        changeNetworkExplorer(networks[0])
+        dispatch(changeActiveNetwork(networks[1]))
+        changeNetworkExplorer(networks[1])
     }
 
     const switchNetwork = async network => {
