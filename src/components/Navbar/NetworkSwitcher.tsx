@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import Icon from '@mdi/react'
 import { useAppDispatch, useAppSelector } from '../../hooks/reduxHooks'
 import {
@@ -14,7 +14,7 @@ import {
     Chip,
     IconButton,
 } from '@mui/material'
-import { mdiDeleteOutline, mdiPlus } from '@mdi/js'
+import { mdiDeleteOutline, mdiPencilOutline, mdiPlus } from '@mdi/js'
 import store from 'wallet/store'
 import {
     addNetworks,
@@ -39,6 +39,8 @@ export default function NetworkSwitcher() {
     const activeNetwork = useAppSelector(getActiveNetwork)
     const status = useAppSelector(selectNetworkStatus)
     const theme = useTheme()
+    const [selectedEvent, setSelectedEvent] = React.useState('')
+    const [selectedNetwork, setSelectedNetwork] = React.useState(null)
 
     const {
         changeNetworkExplorer,
@@ -46,14 +48,6 @@ export default function NetworkSwitcher() {
         resetValidatorsReducer,
         resetXPChainReducer,
     } = useStore()
-    const handleRemoveCustomNetwork = async () => {
-        store.dispatch('Network/removeCustomNetwork', activeNetwork)
-        let networks = store.getters['Network/allNetworks']
-        await switchNetwork(networks[1])
-        dispatch(addNetworks(networks))
-        dispatch(changeActiveNetwork(networks[1]))
-        changeNetworkExplorer(networks[1])
-    }
 
     const switchNetwork = async network => {
         try {
@@ -74,9 +68,54 @@ export default function NetworkSwitcher() {
         }
     }
     const handleChangeNetwork = (selected: string) => {
-        let selectedNetwork = networks.find(net => net.name === selected)
-        switchNetwork(selectedNetwork)
+        setSelectedNetwork(selected)
     }
+    const handleEditCustomNetwork = network => {
+        setSelectedEvent('editNetwork')
+        // setSelectedNetwork(network)
+        // setSelectedNetwork(network)
+        // setSelectedEvent('editNetwork')
+        // console.log('clicked on edit network', network)
+        // setSelectedEvent('edit')
+        // setSelectedNetwork(network.id)
+        // setOpen(true)
+    }
+
+    const handleRemoveCustomNetwork = async network => {
+        setSelectedEvent('removeNetwork')
+    }
+    async function changeNet(net) {
+        let selectedN = networks.find(network => network.name === net)
+        await switchNetwork(selectedN)
+    }
+    async function editNet(net) {
+        console.log('edit network', net)
+    }
+    async function removeNet(net) {
+        let selectedN = networks.find(network => network.name === net)
+        store.dispatch('Network/removeCustomNetwork', selectedN)
+        let nks = store.getters['Network/allNetworks']
+        if (selectedN.name === activeNetwork.name) {
+            await switchNetwork(networks[1])
+            dispatch(changeActiveNetwork(networks[1]))
+            changeNetworkExplorer(networks[1])
+        }
+        dispatch(addNetworks(nks))
+    }
+
+    const handleChangeEvent = async () => {
+        if (selectedEvent === 'editNetwork') await editNet(selectedNetwork)
+        else if (selectedEvent === 'removeNetwork') await removeNet(selectedNetwork)
+        else if (!selectedEvent) await changeNet(selectedNetwork)
+        setSelectedEvent('')
+        setSelectedNetwork('')
+    }
+    useEffect(() => {
+        if (selectedNetwork) {
+            handleChangeEvent()
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [selectedNetwork])
 
     const [network, setNetwork] = React.useState('')
 
@@ -206,9 +245,6 @@ export default function NetworkSwitcher() {
             <MHidden width="smDown">
                 <Select
                     value={network}
-                    onChange={e => {
-                        handleChangeNetwork(e.target.value)
-                    }}
                     renderValue={() => <SelectedNetwork />}
                     sx={{
                         maxWidth: '13rem',
@@ -221,30 +257,55 @@ export default function NetworkSwitcher() {
                             key={network.id}
                             value={network.name}
                             divider
+                            onClick={() => {
+                                handleChangeNetwork(network.name)
+                            }}
                             sx={{ gap: '.6rem', justifyContent: 'space-between' }}
                         >
                             <Typography variant="subtitle1" component="span" noWrap>
                                 {network.name}
                             </Typography>
                             {!network.readonly && (
-                                <Button
-                                    sx={{
-                                        width: '30px',
-                                        height: '30px',
-                                        bgcolor: 'secondary.main',
-                                        borderRadius: '7px',
-                                        display: 'flex',
-                                        justifyContent: 'center',
-                                        alignItems: 'center',
-                                        minWidth: 'auto',
-                                        '&:hover': {
+                                <Box sx={{ display: 'flex', gap: 1, ml: 1 }}>
+                                    <Button
+                                        sx={{
+                                            width: '30px',
+                                            height: '30px',
+                                            borderRadius: '7px',
+                                            display: 'flex',
+                                            justifyContent: 'center',
+                                            alignItems: 'center',
+                                            minWidth: 'auto',
+                                            border: '1px solid',
+                                            borderColor: 'secondary.main',
+                                            color: 'secondary.main',
+                                            '&:hover': {
+                                                backgroundColor: 'secondary.main',
+                                            },
+                                        }}
+                                        onClick={() => handleEditCustomNetwork(network.name)}
+                                    >
+                                        <Icon path={mdiPencilOutline} size={0.7} />
+                                    </Button>
+                                    <Button
+                                        sx={{
+                                            width: '30px',
+                                            height: '30px',
                                             bgcolor: 'secondary.main',
-                                        },
-                                    }}
-                                    onClick={() => handleRemoveCustomNetwork()}
-                                >
-                                    <Icon path={mdiDeleteOutline} size={0.7} color="white" />
-                                </Button>
+                                            borderRadius: '7px',
+                                            display: 'flex',
+                                            justifyContent: 'center',
+                                            alignItems: 'center',
+                                            minWidth: 'auto',
+                                            '&:hover': {
+                                                bgcolor: 'secondary.main',
+                                            },
+                                        }}
+                                        onClick={() => handleRemoveCustomNetwork(network.name)}
+                                    >
+                                        <Icon path={mdiDeleteOutline} size={0.7} color="white" />
+                                    </Button>
+                                </Box>
                             )}
                         </MenuItem>
                     ))}
