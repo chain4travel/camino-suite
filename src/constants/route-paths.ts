@@ -1,4 +1,4 @@
-export const DOCS = 'https://docs.camino.foundation/'
+export const DOCS = 'https://docs.camino.network/'
 
 export const DISCORD = 'https://discord.gg/K5THjAweFB/'
 

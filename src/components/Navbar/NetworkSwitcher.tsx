@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import Icon from '@mdi/react'
 import { useAppDispatch, useAppSelector } from '../../hooks/reduxHooks'
 import {
@@ -14,7 +14,7 @@ import {
     Chip,
     IconButton,
 } from '@mui/material'
-import { mdiDeleteOutline, mdiPlus } from '@mdi/js'
+import { mdiDeleteOutline, mdiPencilOutline, mdiPlus } from '@mdi/js'
 import store from 'wallet/store'
 import {
     addNetworks,
@@ -39,6 +39,11 @@ export default function NetworkSwitcher() {
     const activeNetwork = useAppSelector(getActiveNetwork)
     const status = useAppSelector(selectNetworkStatus)
     const theme = useTheme()
+    const [selectedEvent, setSelectedEvent] = React.useState('')
+    const [selectedNetwork, setSelectedNetwork] = React.useState(null)
+    const [open, setOpen] = React.useState(false)
+    const [edit, setEdit] = React.useState(false)
+    const [networkToEdit, setNetworkToEdit] = React.useState()
 
     const {
         changeNetworkExplorer,
@@ -46,14 +51,6 @@ export default function NetworkSwitcher() {
         resetValidatorsReducer,
         resetXPChainReducer,
     } = useStore()
-    const handleRemoveCustomNetwork = async () => {
-        store.dispatch('Network/removeCustomNetwork', activeNetwork)
-        let networks = store.getters['Network/allNetworks']
-        await switchNetwork(networks[0])
-        dispatch(addNetworks(networks))
-        dispatch(changeActiveNetwork(networks[0]))
-        changeNetworkExplorer(networks[0])
-    }
 
     const switchNetwork = async network => {
         try {
@@ -74,10 +71,49 @@ export default function NetworkSwitcher() {
         }
     }
     const handleChangeNetwork = (selected: string) => {
-        let selectedNetwork = networks.find(net => net.name === selected)
-        switchNetwork(selectedNetwork)
+        setSelectedNetwork(selected)
+    }
+    const handleEditCustomNetwork = () => {
+        setSelectedEvent('editNetwork')
     }
 
+    const handleRemoveCustomNetwork = () => {
+        setSelectedEvent('removeNetwork')
+    }
+    async function changeNetworkEvent(net) {
+        let selectedN = networks.find(network => network.name === net)
+        await switchNetwork(selectedN)
+    }
+    async function editNetworkEvent(net) {
+        setNetworkToEdit(net)
+        setEdit(true)
+        setOpen(true)
+    }
+    async function removeNetworkEvent(net) {
+        let selectedN = networks.find(network => network.name === net)
+        store.dispatch('Network/removeCustomNetwork', selectedN)
+        let nks = store.getters['Network/allNetworks']
+        if (selectedN.name === activeNetwork.name) {
+            await switchNetwork(networks[1])
+            dispatch(changeActiveNetwork(networks[1]))
+            changeNetworkExplorer(networks[1])
+        }
+        dispatch(addNetworks(nks))
+    }
+
+    const handleChangeEvent = async () => {
+        if (selectedEvent === 'editNetwork') await editNetworkEvent(selectedNetwork)
+        else if (selectedEvent === 'removeNetwork') await removeNetworkEvent(selectedNetwork)
+        else if (!selectedEvent) await changeNetworkEvent(selectedNetwork)
+        setSelectedEvent('')
+        setSelectedNetwork('')
+    }
+    useEffect(() => {
+        if (selectedNetwork) {
+            handleChangeEvent()
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [selectedNetwork])
     const [network, setNetwork] = React.useState('')
 
     React.useEffect(() => {
@@ -87,9 +123,9 @@ export default function NetworkSwitcher() {
         if (activeNetwork.name) setNetwork(activeNetwork.name)
     }, [activeNetwork]) // eslint-disable-line
 
-    const [open, setOpen] = React.useState(false)
-
     const handleCloseModal = () => {
+        setNetworkToEdit('')
+        setEdit(false)
         setOpen(false)
     }
 
@@ -199,6 +235,8 @@ export default function NetworkSwitcher() {
                         networks={networks}
                         handleClose={handleCloseModal}
                         switchNetwork={switchNetwork}
+                        edit={edit}
+                        networkToEdit={networkToEdit}
                     />
                 </DialogAnimate>
             </MHidden>
@@ -206,9 +244,6 @@ export default function NetworkSwitcher() {
             <MHidden width="smDown">
                 <Select
                     value={network}
-                    onChange={e => {
-                        handleChangeNetwork(e.target.value)
-                    }}
                     renderValue={() => <SelectedNetwork />}
                     sx={{
                         maxWidth: '13rem',
@@ -221,30 +256,55 @@ export default function NetworkSwitcher() {
                             key={network.id}
                             value={network.name}
                             divider
+                            onClick={() => {
+                                handleChangeNetwork(network.name)
+                            }}
                             sx={{ gap: '.6rem', justifyContent: 'space-between' }}
                         >
                             <Typography variant="subtitle1" component="span" noWrap>
                                 {network.name}
                             </Typography>
                             {!network.readonly && (
-                                <Button
-                                    sx={{
-                                        width: '30px',
-                                        height: '30px',
-                                        bgcolor: 'secondary.main',
-                                        borderRadius: '7px',
-                                        display: 'flex',
-                                        justifyContent: 'center',
-                                        alignItems: 'center',
-                                        minWidth: 'auto',
-                                        '&:hover': {
+                                <Box sx={{ display: 'flex', gap: 1, ml: 1 }}>
+                                    <Button
+                                        sx={{
+                                            width: '30px',
+                                            height: '30px',
+                                            borderRadius: '7px',
+                                            display: 'flex',
+                                            justifyContent: 'center',
+                                            alignItems: 'center',
+                                            minWidth: 'auto',
+                                            border: '1px solid',
+                                            borderColor: 'secondary.main',
+                                            color: 'secondary.main',
+                                            '&:hover': {
+                                                backgroundColor: 'secondary.main',
+                                            },
+                                        }}
+                                        onClick={() => handleEditCustomNetwork()}
+                                    >
+                                        <Icon path={mdiPencilOutline} size={0.7} />
+                                    </Button>
+                                    <Button
+                                        sx={{
+                                            width: '30px',
+                                            height: '30px',
                                             bgcolor: 'secondary.main',
-                                        },
-                                    }}
-                                    onClick={() => handleRemoveCustomNetwork()}
-                                >
-                                    <Icon path={mdiDeleteOutline} size={0.7} color="white" />
-                                </Button>
+                                            borderRadius: '7px',
+                                            display: 'flex',
+                                            justifyContent: 'center',
+                                            alignItems: 'center',
+                                            minWidth: 'auto',
+                                            '&:hover': {
+                                                bgcolor: 'secondary.main',
+                                            },
+                                        }}
+                                        onClick={() => handleRemoveCustomNetwork()}
+                                    >
+                                        <Icon path={mdiDeleteOutline} size={0.7} color="white" />
+                                    </Button>
+                                </Box>
                             )}
                         </MenuItem>
                     ))}
@@ -261,6 +321,8 @@ export default function NetworkSwitcher() {
                         networks={networks}
                         handleClose={handleCloseModal}
                         switchNetwork={switchNetwork}
+                        edit={edit}
+                        networkToEdit={networkToEdit}
                     />
                 </DialogAnimate>
             </MHidden>

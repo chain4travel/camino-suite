@@ -28,8 +28,14 @@
         <div id="app"></div>
     </body>
     <style>
+        html[data-theme='day'] {
+            --background-color: #fff;
+        }
+        html[data-theme='night'] {
+            --background-color: #0f172a;
+        }
         body {
-            background-color: #fff;
+            background-color: var(--background-color);
             overflow-x: hidden !important;
             overflow: initial;
         }
@@ -39,7 +45,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: #fff;
+            background-color: var(--background-color);
             z-index: 9999;
             display: none;
             justify-content: center;

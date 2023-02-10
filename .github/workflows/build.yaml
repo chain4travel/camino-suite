@@ -1,0 +1,26 @@
+name: build suite
+on:
+  workflow_dispatch:
+  push:    
+  pull_request:
+    branches:
+        - c4t
+        - dev
+        - suite
+jobs:
+  yarn-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: recursive
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+
+      - name: install yarn dependencies
+        run: yarn install
+      - name: lint
+        run: yarn lint
+      - name: build
+        run: yarn build
