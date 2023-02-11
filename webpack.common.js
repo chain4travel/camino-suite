@@ -6,6 +6,8 @@ module.exports = {
         extensions: ['.vue', '.tsx', '.ts', '.jsx', '.js', '.json'],
     },
 
+    cache: false,
+
     module: {
         rules: [
             {

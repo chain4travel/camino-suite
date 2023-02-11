@@ -22,8 +22,8 @@ module.exports = merge(common, {
             name: 'host_react',
             filename: 'remoteEntry.js',
             remotes: {
-                Explorer: 'Explorer@http://localhost:3001/remoteEntry.js',
-                wallet: 'wallet@http://localhost:3003/remoteEntry.js',
+                Explorer: 'Explorer@http://localhost:3000/explorer/remoteEntry.js',
+                wallet: 'wallet@http://localhost:3000/wallet/remoteEntry.js',
             },
             exposes: {},
             shared: {
