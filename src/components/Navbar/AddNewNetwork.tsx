@@ -11,21 +11,40 @@ import { addNetworks } from '../../redux/slices/network'
 import { useStore } from 'Explorer/useStore'
 import axios from 'axios'
 
-export default function AddNewNetwork({ networks, handleClose, switchNetwork }) {
+export default function AddNewNetwork({
+    networks,
+    handleClose,
+    switchNetwork,
+    edit,
+    networkToEdit,
+}) {
     const [error, setError] = React.useState('')
     const [isLoading, setIsLoading] = React.useState(false)
     const { updateNetworks } = useStore()
     const dispatch = useAppDispatch()
+    const selectedNetwork = networks.find(net => net.name === networkToEdit)
     const getInitialValues = () => {
-        const _newNetwork = {
-            id: '',
-            displayName: '',
-            protocol: 'https',
-            host: '',
-            magellanAddress: '',
-            port: 0,
-            predefined: false,
-        }
+        let _newNetwork
+        if (edit && selectedNetwork)
+            _newNetwork = {
+                id: selectedNetwork.id,
+                displayName: selectedNetwork.name,
+                protocol: selectedNetwork.protocol,
+                host: selectedNetwork.url.split('/')[2].split(':')[0],
+                magellanAddress: selectedNetwork.explorerUrl,
+                port: selectedNetwork.port,
+                predefined: selectedNetwork.readonly,
+            }
+        else
+            _newNetwork = {
+                id: '',
+                displayName: '',
+                protocol: 'https',
+                host: '',
+                magellanAddress: '',
+                port: 0,
+                predefined: false,
+            }
         return _newNetwork
     }
 
@@ -38,7 +57,6 @@ export default function AddNewNetwork({ networks, handleClose, switchNetwork }) 
             .min(4, 'Protocol must be at least 4 characters long')
             .max(5, 'Protocol must be no more than 5 characters long'),
         magellanAddress: Yup.string()
-            .required('This field is required')
             .min(10, 'URL must be at least 10 characters')
             .max(200, 'URL must be no more than 200 characters')
             .matches(/^https?:\/\/.+/, 'URL must start with http:// or https://'),
@@ -100,6 +118,9 @@ export default function AddNewNetwork({ networks, handleClose, switchNetwork }) 
                 setIsLoading(true)
 
                 let url = `${newNetwork.protocol}://${newNetwork.host}:${newNetwork.port}`
+                let findNetwork = store.state.Network.networksCustom?.findIndex(
+                    network => network.id === selectedNetwork?.id,
+                )
                 let net = new AvaNetwork(
                     newNetwork.displayName,
                     url,
@@ -107,6 +128,11 @@ export default function AddNewNetwork({ networks, handleClose, switchNetwork }) 
                     newNetwork.magellanAddress,
                     '',
                 )
+                if (edit === 'edit')
+                    net = {
+                        ...net,
+                        id: store.state.Network.networksCustom[findNetwork].id,
+                    } as AvaNetwork
                 let credNum = await tryConnection(url, true)
                 let noCredNum = await tryConnection(url)
 
@@ -116,6 +142,11 @@ export default function AddNewNetwork({ networks, handleClose, switchNetwork }) 
                     setError('Camino Network Not Found')
                     setIsLoading(false)
                     return
+                }
+                if (edit && findNetwork !== -1) {
+                    store.dispatch('Network/editNetwork', { net, findNetwork })
+                } else {
+                    store.dispatch('Network/addCustomNetwork', net)
                 }
                 store.dispatch('Network/addCustomNetwork', net)
                 let allNetworks = store.getters['Network/allNetworks']
@@ -151,7 +182,7 @@ export default function AddNewNetwork({ networks, handleClose, switchNetwork }) 
                         fullWidth
                         label="Protocol"
                         {...getFieldProps('protocol')}
-                        inputProps={{ maxLength: 4 }}
+                        inputProps={{ maxLength: 5 }}
                         error={Boolean(touched.protocol && errors.protocol)}
                         helperText={touched.protocol && errors.protocol}
                         sx={{ mb: 3, '& fieldset': { borderRadius: '12px' } }}
@@ -197,7 +228,7 @@ export default function AddNewNetwork({ networks, handleClose, switchNetwork }) 
 
                 <DialogActions sx={{ display: 'flex', justifyContent: 'center', mb: 2, gap: 2 }}>
                     <Button disabled={isLoading} variant="outlined" type="submit" data-cy="btn-add-network">
-                        Add Network
+                        {!edit ? <>Add Network</> : <>Edit Network</>}
                     </Button>
                     <Button variant="contained" onClick={handleClose}>
                         Cancel

@@ -1,27 +1,6 @@
 import React from 'react'
-import {
-    Box,
-    Grid,
-    Typography,
-    Link as MuiLink,
-    useTheme,
-    Divider,
-    Container,
-    Button,
-    MenuItem,
-} from '@mui/material'
-import {
-    CCHAIN,
-    XCHAIN,
-    PCHAIN,
-    DOCS,
-    TWITTER,
-    TELEGRAM,
-    MEDIUM,
-    GITHUB,
-    DISCORD,
-    WALLET,
-} from '../../constants/route-paths'
+import { Box, Grid, Typography, useTheme, Divider, Container, MenuItem } from '@mui/material'
+import { DOCS, TWITTER, TELEGRAM, MEDIUM, GITHUB, DISCORD } from '../../constants/route-paths'
 import { Link } from 'react-router-dom'
 
 export default function Footer() {
@@ -85,35 +64,6 @@ export default function Footer() {
                                     speed, security and reliability within the network.
                                 </Typography>
                             </Grid>
-                            <Grid
-                                item
-                                container
-                                spacing={{ xs: 2, md: 1, lg: 2 }}
-                                justifyContent={{ xs: 'center', md: 'left' }}
-                            >
-                                <Grid
-                                    item
-                                    container
-                                    xs={12}
-                                    sm="auto"
-                                    justifyContent={{ xs: 'center', md: 'left' }}
-                                >
-                                    <SecondaryButton label="Camino Wallet" toLink={WALLET} />
-                                </Grid>
-                                <Grid
-                                    item
-                                    container
-                                    xs={12}
-                                    sm="auto"
-                                    justifyContent={{ xs: 'center', md: 'left' }}
-                                >
-                                    <SecondaryButton
-                                        label="Join Discord"
-                                        toLink={DISCORD}
-                                        target="_blank"
-                                    />
-                                </Grid>
-                            </Grid>
                         </Grid>
                         <Grid container item xs={12} xl={6} spacing={2}>
                             {FooterLinks.map((link, index) => (
@@ -153,14 +103,11 @@ export default function Footer() {
                                                 disableRipple
                                                 key={i}
                                             >
-                                                <MuiLink
-                                                    href={l.url}
+                                                <Link
+                                                    to={l.url}
                                                     rel="noopener noreferrer"
-                                                    style={{
-                                                        color: 'secondary.primary',
-                                                        display: 'flex',
-                                                        textDecoration: 'none',
-                                                    }}
+                                                    target="_blank"
+                                                    style={{ textDecoration: 'none' }}
                                                 >
                                                     <Typography
                                                         variant="body1"
@@ -169,7 +116,7 @@ export default function Footer() {
                                                     >
                                                         {l.text}
                                                     </Typography>
-                                                </MuiLink>
+                                                </Link>
                                             </MenuItem>
                                         ))}
                                     </ul>
@@ -183,60 +130,7 @@ export default function Footer() {
     )
 }
 
-const SecondaryButton = ({
-    label,
-    toLink,
-    target,
-}: {
-    label: string
-    toLink: string
-    target?: string
-}) => (
-    <Link to={toLink} target={target} rel="noopener noreferrer">
-        <Button
-            variant="contained"
-            href={toLink}
-            target={target}
-            component="span"
-            sx={{
-                backgroundColor: '#2563eb',
-                p: '.5rem 1rem',
-                color: 'white',
-                '&:hover': {
-                    backgroundColor: '#b5e3fd',
-                    color: '#0f172a',
-                },
-            }}
-        >
-            <Typography variant="body1" component="span" fontWeight="fontWeightBold">
-                {label}
-            </Typography>
-        </Button>
-    </Link>
-)
-
 const FooterLinks = [
-    {
-        name: 'Platform',
-        links: [
-            {
-                text: 'C-Chain',
-                url: CCHAIN,
-            },
-            {
-                text: 'X-Chain',
-                url: XCHAIN,
-            },
-            {
-                text: 'P-Chain',
-                url: PCHAIN,
-            },
-            {
-                text: 'Documentation',
-                url: DOCS,
-            },
-        ],
-    },
     {
         name: 'Community',
         links: [
@@ -264,6 +158,10 @@ const FooterLinks = [
             {
                 text: 'Medium',
                 url: MEDIUM,
+            },
+            {
+                text: 'Documentation',
+                url: DOCS,
             },
         ],
     },

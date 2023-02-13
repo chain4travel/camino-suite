@@ -21,7 +21,7 @@ const StyledBox = styled(Box)(({ theme }) => ({
     },
 }))
 
-const LoadAccountMenu = (props: { type: string }) => {
+export const LoadAccountMenu = (props: { type: string }) => {
     const ref = useRef(null)
     const dispatch = useAppDispatch()
     const setAccount = account => dispatch(updateAccount(account))

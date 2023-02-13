@@ -33,7 +33,7 @@ const appConfigSlice = createSlice({
     initialState,
     reducers: {
         addNetworks: (state, { payload }) => {
-            state.networks = payload
+            state.networks = [...payload]
         },
         changeNetworkStatus: (state, { payload }) => {
             state.status = payload

@@ -1,7 +1,15 @@
 import React, { useState } from 'react'
 import Icon from '@mdi/react'
-import { AppBar, Box, Typography, Drawer, Stack, useTheme, IconButton } from '@mui/material'
-import { Toolbar } from '@mui/material'
+import {
+    AppBar,
+    Box,
+    Drawer,
+    IconButton,
+    Stack,
+    Toolbar,
+    Typography,
+    useTheme,
+} from '@mui/material'
 import { mdiClose, mdiMenu, mdiWalletOutline } from '@mdi/js'
 import { useNavigate } from 'react-router-dom'
 import { useAppSelector } from '../../hooks/reduxHooks'
@@ -9,7 +17,7 @@ import { getActiveNetwork } from '../../redux/slices/network'
 import PlatformSwitcher from '../PlatformSwitcher'
 import NetworkSwitcher from './NetworkSwitcher'
 import ThemeSwitcher from './ThemeSwitcher'
-import LoginButton from './LoginButton'
+import LoginButton, { LoadAccountMenu } from './LoginButton'
 import MHidden from '../@material-extend/MHidden'
 import MIconButton from '../@material-extend/MIconButton'
 
@@ -105,9 +113,10 @@ export default function Navbar() {
                                 {activeNetwork && <NetworkSwitcher />}
                             </Box>
                             {auth && (
-                                <Box>
+                                <>
+                                    <LoadAccountMenu type="alias" />
                                     <LoginButton />
-                                </Box>
+                                </>
                             )}
                         </Drawer>
                         <MIconButton onClick={handleOpenSidebar}>
@@ -135,7 +144,12 @@ export default function Navbar() {
                                     </Typography>
                                 </Box>
                             )}
-                            {auth && <LoginButton />}
+                            {auth && (
+                                <>
+                                    <LoadAccountMenu type="alias" />
+                                    <LoginButton />
+                                </>
+                            )}
                         </>
                     </MHidden>
                 </Box>
