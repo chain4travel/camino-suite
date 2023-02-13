@@ -14,7 +14,6 @@ import breakpoints from './breakpoints'
 import componentsOverrides from './overrides'
 import { useAppSelector } from '../hooks/reduxHooks'
 import { getTheme } from '../redux/slices/theme'
-import './fonts.css'
 import shadow, { customShadows } from './shadows'
 
 type ThemeConfigProps = {
