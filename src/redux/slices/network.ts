@@ -2,12 +2,13 @@ import { createSlice } from '@reduxjs/toolkit'
 import { RootState } from '../store'
 import { Status } from '../../@types'
 
-interface networkType {
+interface NetworkType {
     withCredentials: boolean
     id: number
     name: string
     explorerUrl: string
     explorerSiteUrl: string
+    signavaultUrl: string
     protocol: string
     port: number
     ip: string
@@ -16,13 +17,13 @@ interface networkType {
     readonly: boolean
 }
 
-interface initialStateNetworkSlice {
-    activeNetwork?: networkType
-    networks: networkType[]
+interface InitialStateNetworkSlice {
+    activeNetwork?: NetworkType
+    networks: NetworkType[]
     status: Status
 }
 
-let initialState: initialStateNetworkSlice = {
+let initialState: InitialStateNetworkSlice = {
     activeNetwork: undefined,
     networks: [],
     status: Status.IDLE,
