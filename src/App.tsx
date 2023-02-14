@@ -1,5 +1,5 @@
 import React from 'react'
-import ReactDOM from 'react-dom'
+import ReactDOM from 'react-dom/client'
 import Root from './layout/index'
 import { HelmetProvider } from 'react-helmet-async'
 import ThemeConfig from './theme'
@@ -10,15 +10,17 @@ import { ExplorerStoreProvider } from 'Explorer/useStore'
 
 export const store = configureAppStore()
 
-ReactDOM.render(
-    <HelmetProvider>
-        <ExplorerStoreProvider>
-            <ReduxProvider store={store}>
-                <ThemeConfig>
-                    <Root />
-                </ThemeConfig>
-            </ReduxProvider>
-        </ExplorerStoreProvider>
-    </HelmetProvider>,
-    document.getElementById('app'),
+const root = ReactDOM.createRoot(document.getElementById('app') as HTMLElement)
+root.render(
+    <React.StrictMode>
+        <HelmetProvider>
+            <ExplorerStoreProvider>
+                <ReduxProvider store={store}>
+                    <ThemeConfig>
+                        <Root />
+                    </ThemeConfig>
+                </ReduxProvider>
+            </ExplorerStoreProvider>
+        </HelmetProvider>
+    </React.StrictMode>,
 )

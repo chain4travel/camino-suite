@@ -25,12 +25,12 @@ export default function Footer() {
                         my: '0px !important',
                     }}
                 >
-                    <Grid container spacing={4}>
+                    <Grid container spacing={4} justifyContent="space-between">
                         <Grid
                             container
                             item
                             xs={12}
-                            xl={6}
+                            md={6}
                             spacing={4}
                             justifyContent={{ xs: 'center', md: 'left' }}
                         >
@@ -65,12 +65,20 @@ export default function Footer() {
                                 </Typography>
                             </Grid>
                         </Grid>
-                        <Grid container item xs={12} xl={6} spacing={2}>
+                        <Grid
+                            container
+                            item
+                            xs={12}
+                            md={6}
+                            spacing={2}
+                            justifyContent={{ xs: 'space-around', md: 'left' }}
+                        >
                             {FooterLinks.map((link, index) => (
                                 <Grid
                                     item
                                     xs={12}
-                                    sm={4}
+                                    sm={6}
+                                    xl={4}
                                     key={index}
                                     sx={{ display: 'flex', flexDirection: 'column' }}
                                 >
@@ -96,9 +104,7 @@ export default function Footer() {
                                                     p: 0,
                                                     minHeight: 'auto',
                                                     justifyContent: { xs: 'center', md: 'left' },
-                                                    '&:hover': {
-                                                        backgroundColor: 'transparent',
-                                                    },
+                                                    '&:hover': { backgroundColor: 'transparent' },
                                                 }}
                                                 disableRipple
                                                 key={i}

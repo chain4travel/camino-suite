@@ -11,12 +11,14 @@ import Menu from '../views/menu/Menu'
 import AccessLayout from '../views/access'
 import MountAccessComponent from '../views/access/MountAccessComponent'
 import { useAppSelector } from '../hooks/reduxHooks'
+import ScrollToTop from '../components/ScrollToTop'
 
 export default function Layout() {
     const activeApp = useAppSelector(getActiveApp)
 
     return (
         <BrowserRouter>
+            <ScrollToTop />
             <MainLayout>
                 <Routes>
                     <Route path="/" element={<Navigate to={`/${activeApp}`} />} />
