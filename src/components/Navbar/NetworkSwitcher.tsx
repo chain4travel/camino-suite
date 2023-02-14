@@ -250,6 +250,7 @@ export default function NetworkSwitcher() {
                         '.MuiOutlinedInput-notchedOutline': { border: 'none' },
                         '.MuiSvgIcon-root': { color: theme.palette.text.primary },
                     }}
+                    data-cy="network-selector"
                 >
                     {networks?.map(network => (
                         <MenuItem
@@ -260,6 +261,7 @@ export default function NetworkSwitcher() {
                                 handleChangeNetwork(network.name)
                             }}
                             sx={{ gap: '.6rem', justifyContent: 'space-between' }}
+                            data-cy={`network-name-${network.name}`}
                         >
                             <Typography variant="subtitle1" component="span" noWrap>
                                 {network.name}
@@ -311,6 +313,7 @@ export default function NetworkSwitcher() {
                     <MenuItem
                         onClick={handleOpenModal}
                         sx={{ typography: 'body1', width: '100%', maxWidth: '326px' }}
+                        data-cy="add-custom-network"
                     >
                         Add Custom Network
                     </MenuItem>
