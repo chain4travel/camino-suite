@@ -14,4 +14,5 @@ export interface Network {
     port: number
     predefined?: boolean
     magellanAddress: string
+    signavaultAddress: string
 }
