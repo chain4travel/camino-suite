@@ -32,6 +32,7 @@ import SelectedNetwork from './SelectNetwork'
 import { Status } from '../../@types'
 import { useStore } from 'Explorer/useStore'
 import { updateAssets } from '../../helpers/walletStore'
+import { updateNotificationStatus } from '../../redux/slices/app-config'
 
 export default function NetworkSwitcher() {
     const dispatch = useAppDispatch()
@@ -58,8 +59,15 @@ export default function NetworkSwitcher() {
             await store.dispatch('Network/setNetwork', network)
             dispatch(changeNetworkStatus(Status.SUCCEEDED))
             await updateAssets()
+            dispatch(
+                updateNotificationStatus({
+                    message: `Connected to ${network.name}`,
+                    severity: 'success',
+                }),
+            )
         } catch (e) {
             store.state.Network.selectedNetwork = null
+            dispatch(updateNotificationStatus({ message: 'disconnected', severity: 'error' }))
             store.state.Network.status = 'disconnected'
             dispatch(changeNetworkStatus(Status.FAILED))
         } finally {
@@ -98,6 +106,12 @@ export default function NetworkSwitcher() {
             dispatch(changeActiveNetwork(networks[1]))
             changeNetworkExplorer(networks[1])
         }
+        dispatch(
+            updateNotificationStatus({
+                message: `Removed custom network.`,
+                severity: 'success',
+            }),
+        )
         dispatch(addNetworks(nks))
     }
 
