@@ -62,13 +62,13 @@ export default function LoginPage() {
                     <Grid container rowSpacing={2}>
                         <Grid container item xs={12} justifyContent="center" spacing={2}>
                             <Grid item xs={12} sm={6}>
-                                <AccessActionButton to="/access/privateKey">
+                                <AccessActionButton data-cy="btn-wallet-access-private-key" to="/access/privateKey">
                                     <Typography variant="body1">Private Key</Typography>
                                     <Icon path={mdiShieldKeyOutline} size={1} />
                                 </AccessActionButton>
                             </Grid>
                             <Grid item xs={12} sm={6}>
-                                <AccessActionButton to="/access/mnemonic">
+                                <AccessActionButton data-cy="btn-wallet-access-mnemonic" to="/access/mnemonic">
                                     <Typography variant="body1">Mnemonic Key Phrase</Typography>
                                     <Icon path={mdiListBoxOutline} size={1} />
                                 </AccessActionButton>
@@ -94,7 +94,7 @@ export default function LoginPage() {
                 <Box sx={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                     <Typography variant="subtitle1">Don't have a wallet yet ?</Typography>
                     <StyledLink to="/create" style={{ textDecoration: 'none' }}>
-                        <Button variant="contained" sx={{ p: '.75rem', width: '100%' }}>
+                        <Button variant="contained" sx={{ p: '.75rem', width: '100%' }} data-cy="btn-redirect-create-wallet">
                             <Typography variant="body1" color="white">
                                 Create a wallet
                             </Typography>
