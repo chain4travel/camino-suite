@@ -243,7 +243,12 @@ export default function AddNewNetwork({
                 </DialogContent>
 
                 <DialogActions sx={{ display: 'flex', justifyContent: 'center', mb: 2, gap: 2 }}>
-                    <Button disabled={isLoading} variant="outlined" type="submit" data-cy="btn-add-network">
+                    <Button
+                        disabled={isLoading}
+                        variant="outlined"
+                        type="submit"
+                        data-cy="btn-add-network"
+                    >
                         {!edit ? <>Add Network</> : <>Edit Network</>}
                     </Button>
                     <Button variant="contained" onClick={handleClose}>

@@ -10,6 +10,7 @@ import { Box, Toolbar, useTheme } from '@mui/material'
 import { useLocation } from 'react-router-dom'
 import { changeActiveApp } from '../redux/slices/app-config'
 import { useStore } from 'Explorer/useStore'
+import Notifications from '../components/Notification'
 
 const MainLayout = ({ children }) => {
     const [loadNetworks, setLoadNetworks] = useState(true)
@@ -43,6 +44,7 @@ const MainLayout = ({ children }) => {
     return (
         <Box sx={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
             <Navbar />
+            <Notifications />
             <Toolbar
                 sx={{
                     minHeight: '65px !important',
