@@ -39,24 +39,11 @@ module.exports = {
         new CopyWebpackPlugin({
             patterns: [
                 {
-                    from: path.resolve(__dirname, 'public/manifest.json'),
-                    to: path.resolve(__dirname, 'dist/manifest.json'),
-                },
-                {
-                    from: path.resolve(__dirname, 'public/assets'),
-                    to: path.resolve(__dirname, 'dist/assets'),
-                },
-                {
-                    from: path.resolve(__dirname, 'public/fonts'),
-                    to: path.resolve(__dirname, 'dist/fonts'),
-                },
-                {
-                    from: 'public/img',
-                    to: path.resolve(__dirname, 'dist/img'),
-                },
-                {
-                    from: 'public/gif',
-                    to: path.resolve(__dirname, 'dist/gif'),
+                    from: 'public',
+                    to: path.resolve(__dirname, 'dist'),
+                    globOptions: {
+                        ignore: ['**/index.html', '**/favicon.ico'],
+                    },
                 },
             ],
         }),
