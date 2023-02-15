@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
 import store from 'wallet/store'
@@ -11,6 +11,7 @@ import { useLocation } from 'react-router-dom'
 import { changeActiveApp } from '../redux/slices/app-config'
 import { useStore } from 'Explorer/useStore'
 import Notifications from '../components/Notification'
+import { useEffectOnce } from '../hooks/useEffectOnce'
 
 const MainLayout = ({ children }) => {
     const [loadNetworks, setLoadNetworks] = useState(true)
@@ -38,9 +39,9 @@ const MainLayout = ({ children }) => {
         changeNetworkExplorer(selectedNetwork)
         setLoadNetworks(false)
     }
-    useEffect(() => {
+    useEffectOnce(() => {
         init()
-    }, []) // eslint-disable-line react-hooks/exhaustive-deps
+    })
     return (
         <Box sx={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
             <Navbar />
