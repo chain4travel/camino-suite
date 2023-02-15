@@ -1,0 +1,47 @@
+name: update-gcs-bucket
+
+on:
+  push:
+    branches:
+        - cloudrun
+
+env:
+  node_version: 16
+
+jobs:
+  build_deploy_scrape:    
+    name: Build and Deploy
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Prepare Image Tag
+        id: setDefaults
+        run: |
+          DOCKER_IMAGE_NAME="camino-suite"
+          if [[ "${{ github.ref }}" == "refs/heads/c4t" ]]; then
+              echo "docker_image=$DOCKER_IMAGE_NAME:stage" >> $GITHUB_OUTPUT
+              echo "build_env=stage" >> $GITHUB_OUTPUT
+          elif [[ "${{ github.ref }}" == "refs/heads/dev" ]]; then
+              echo "docker_image=$DOCKER_IMAGE_NAME:dev" >> $GITHUB_OUTPUT
+              echo "build_env=dev" >> $GITHUB_OUTPUT
+          elif [[ "${{ github.ref }}" == "refs/heads/suite" ]]; then
+              echo "docker_image=$DOCKER_IMAGE_NAME:dev" >> $GITHUB_OUTPUT
+              echo "build_env=dev" >> $GITHUB_OUTPUT
+          elif [[ "${{ github.ref }}" == "refs/heads/cloudrun" ]]; then
+              echo "docker_image=$DOCKER_IMAGE_NAME:stage" >> $GITHUB_OUTPUT
+              echo "build_env=dev" >> $GITHUB_OUTPUT
+          fi
+
+
+      - name: 'gcloud authentication'
+        id: 'auth'
+        uses: 'google-github-actions/auth@v1'
+        with:
+            credentials_json: '${{ secrets.GOOGLE_CREDENTIALS_TERRAFORM }}'
+
+      - name: create docker image
+        run: |
+          gcloud auth configure-docker --quiet europe-west3-docker.pkg.dev
+          docker build . -t ${{ steps.setDefaults.outputs.docker_image }}
+          docker push ${{ steps.setDefaults.outputs.docker_image }}
