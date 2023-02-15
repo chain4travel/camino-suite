@@ -18,7 +18,7 @@ jobs:
       - name: Prepare Image Tag
         id: setDefaults
         run: |
-          DOCKER_IMAGE_NAME="camino-suite"
+          DOCKER_IMAGE_NAME="europe-west3-docker.pkg.dev/pwk-c4t-dev/internal-camino-dev/camino-suite"
           if [[ "${{ github.ref }}" == "refs/heads/c4t" ]]; then
               echo "docker_image=$DOCKER_IMAGE_NAME:stage" >> $GITHUB_OUTPUT
               echo "build_env=stage" >> $GITHUB_OUTPUT
