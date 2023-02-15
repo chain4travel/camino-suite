@@ -3,6 +3,9 @@ name: build-docker-image
 on:
   push:
     branches:
+        - c4t
+        - dev
+        - suite
         - cloudrun
 
 env:
@@ -29,8 +32,8 @@ jobs:
               echo "docker_image=$DOCKER_IMAGE_NAME:dev" >> $GITHUB_OUTPUT
               echo "build_env=dev" >> $GITHUB_OUTPUT
           elif [[ "${{ github.ref }}" == "refs/heads/cloudrun" ]]; then
-              echo "docker_image=$DOCKER_IMAGE_NAME:stage" >> $GITHUB_OUTPUT
-              echo "build_env=stage" >> $GITHUB_OUTPUT
+              echo "docker_image=$DOCKER_IMAGE_NAME:dev" >> $GITHUB_OUTPUT
+              echo "build_env=dev" >> $GITHUB_OUTPUT
           fi
 
 
@@ -40,9 +43,11 @@ jobs:
         with:
           credentials_json: '${{ secrets.GOOGLE_CREDENTIALS }}'
 
-      - name: create docker image
+      - name: create and push docker image to gcloud AR
         run: |
           gcloud auth configure-docker --quiet europe-west3-docker.pkg.dev
           docker build . -t ${{ steps.setDefaults.outputs.docker_image }} --build-arg BUILD_ENV=${{ steps.setDefaults.outputs.build_env }}
           docker push ${{ steps.setDefaults.outputs.docker_image }}
-          gcloud run deploy camino-suite-${{ steps.setDefaults.outputs.build_env }} --image ${{ steps.setDefaults.outputs.docker_image }} --region=europe-west1
+      
+      - name: deploy new revision on cloud run
+        run: gcloud run deploy camino-suite-${{ steps.setDefaults.outputs.build_env }} --image ${{ steps.setDefaults.outputs.docker_image }} --region=europe-west1
