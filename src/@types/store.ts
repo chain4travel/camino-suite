@@ -8,10 +8,8 @@ export interface Chain {
 
 export interface Network {
     id: string
+    url: string
     displayName: string
-    protocol: string
-    host: string
-    port: number
     predefined?: boolean
     magellanAddress: string
     signavaultAddress: string
