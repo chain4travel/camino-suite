@@ -19,7 +19,7 @@ FROM node:16 as build-stage-wallet
 
 WORKDIR /app
 ARG WALLET_BRANCH=suite
-RUN git clone -b $EXPLORER_BRANCH https://github.com/chain4travel/camino-wallet.git
+RUN git clone -b $WALLET_BRANCH https://github.com/chain4travel/camino-wallet.git
 RUN cd camino-wallet && yarn install && yarn build:stage
 
 # Stage 1, based on Nginx, to have only the compiled app, ready for production with Nginx

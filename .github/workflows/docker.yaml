@@ -9,7 +9,7 @@ env:
   node_version: 16
 
 jobs:
-  build_deploy_scrape:    
+  build_docker:    
     name: Build Docker
     runs-on: ubuntu-latest
     steps:
