@@ -26,6 +26,7 @@ jobs:
         id: setDefaults
         run: |
           DOCKER_IMAGE_NAME="europe-west3-docker.pkg.dev/pwk-c4t-dev/internal-camino-dev/camino-suite"
+          echo "docker_base_name=$DOCKER_IMAGE_NAME" >> $GITHUB_OUTPUT
           if [[ "${{ github.ref }}" == "refs/heads/c4t" ]]; then
               echo "docker_image=$DOCKER_IMAGE_NAME:stage" >> $GITHUB_OUTPUT
               echo "build_env=stage" >> $GITHUB_OUTPUT
@@ -47,7 +48,7 @@ jobs:
       - name: create docker image
         run: |
           if [[ "${{ github.event_name }}" == "pull_request" ]]; then
-            docker build . -t ${{ steps.setDefaults.outputs.docker_image }} --build-arg BUILD_ENV=${{ steps.setDefaults.outputs.build_env }} --build-arg WALLET_BRANCH=${{ github.base_ref }} --build-arg EXPLORER_BRANCH=${{ github.base_ref }}
+            docker build . -t ${{ steps.setDefaults.outputs.docker_base_name }}:temp --build-arg BUILD_ENV=${{ steps.setDefaults.outputs.build_env }} --build-arg WALLET_BRANCH=${{ github.base_ref }} --build-arg EXPLORER_BRANCH=${{ github.base_ref }}
           else
             docker build . -t ${{ steps.setDefaults.outputs.docker_image }} --build-arg BUILD_ENV=${{ steps.setDefaults.outputs.build_env }} --build-arg WALLET_BRANCH=${{ github.ref_name }} --build-arg EXPLORER_BRANCH=${{ github.ref_name }}
           fi
