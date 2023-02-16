@@ -11,7 +11,6 @@ on:
         - c4t
         - dev
         - suite
-        - cloudrun
 
 env:
   node_version: 16
@@ -35,10 +34,7 @@ jobs:
               echo "build_env=dev" >> $GITHUB_OUTPUT
           elif [[ "${{ github.ref }}" == "refs/heads/suite" ]]; then
               echo "docker_image=$DOCKER_IMAGE_NAME:dev" >> $GITHUB_OUTPUT
-              echo "build_env=dev" >> $GITHUB_OUTPUT
-          elif [[ "${{ github.ref }}" == "refs/heads/cloudrun" ]]; then
-              echo "docker_image=$DOCKER_IMAGE_NAME:stage" >> $GITHUB_OUTPUT
-              echo "build_env=stage" >> $GITHUB_OUTPUT
+              echo "build_env=dev" >> $GITHUB_OUTPUT   
           fi
 
 
@@ -50,7 +46,12 @@ jobs:
 
       - name: create docker image
         run: |
-          docker build . -t ${{ steps.setDefaults.outputs.docker_image }} --build-arg BUILD_ENV=${{ steps.setDefaults.outputs.build_env }}
+          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+            docker build . -t ${{ steps.setDefaults.outputs.docker_image }} --build-arg BUILD_ENV=${{ steps.setDefaults.outputs.build_env }} --build-arg WALLET_BRANCH=${{ github.base_ref }} --build-arg EXPLORER_BRANCH=${{ github.base_ref }}
+          else
+            docker build . -t ${{ steps.setDefaults.outputs.docker_image }} --build-arg BUILD_ENV=${{ steps.setDefaults.outputs.build_env }} --build-arg WALLET_BRANCH=${{ github.ref_name }} --build-arg EXPLORER_BRANCH=${{ github.ref_name }}
+          fi
+          
           
       
       - name: push and deploy docker
