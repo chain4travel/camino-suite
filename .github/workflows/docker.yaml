@@ -54,7 +54,7 @@ jobs:
           
       
       - name: push and deploy docker
-        if: {{ github.event_name == 'push' }}
+        if: github.event_name == 'push'
         run: |
           gcloud auth configure-docker --quiet europe-west3-docker.pkg.dev
           docker push ${{ steps.setDefaults.outputs.docker_image }}
