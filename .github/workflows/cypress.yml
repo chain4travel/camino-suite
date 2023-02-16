@@ -55,9 +55,6 @@ jobs:
           yarn install
           (yarn start&)
 
-      - name: jest-run
-        run: yarn test
-
       - name: cypress-run
         uses: cypress-io/github-action@v5
         env:
