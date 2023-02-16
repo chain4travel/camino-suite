@@ -1,0 +1,106 @@
+#termsfeed-com---nb {
+    visibility: hidden;
+}
+
+.cc-pc-container {
+    display: flex !important;
+    flex-direction: column;
+    line-height: 1.5;
+    font-size: 1rem;
+    color: #fff;
+}
+
+/* ------------------------------------------------------ */
+
+.termsfeed-com---palette-dark.termsfeed-com---nb {
+    border-top-left-radius: 1.5rem;
+    background-color: #b5e3fd !important;
+}
+
+.cc-nb-title,
+.cc-nb-text {
+    color: #000 !important;
+}
+
+.cc-nb-buttons-container button:not(.cc-nb-okagree) {
+    border-radius: 12px !important;
+    padding: 0.75rem 1.5rem !important;
+    background-color: #a4cee7 !important;
+}
+
+.cc-nb-okagree {
+    background-color: #0f172a !important;
+    color: #fff !important;
+    border-radius: 12px !important;
+    padding: 0.75rem 1.5rem !important;
+}
+
+/* ------------------------------------------------------ */
+
+.cc-pc-head,
+.cc-cp-foot {
+    background: var(--secondary-background-color) !important;
+}
+
+.cc-cp-body,
+.cc-pc-container,
+.termsfeed-com---palette-dark .cc-cp-body .cc-cp-body-content {
+    background: var(--background-color) !important;
+}
+
+.termsfeed-com---palette-dark .cc-cp-body-tabs-item {
+    border-color: #334155 !important;
+}
+
+.termsfeed-com---palette-dark .cc-cp-body-tabs-item[active='true'] button {
+    color: #ffffff !important;
+    background: #0085ff !important;
+}
+
+.termsfeed-com---palette-dark .cc-cp-body-tabs .cc-cp-body-tabs-item,
+.termsfeed-com---palette-dark .cc-cp-body-tabs {
+    background: var(--secondary-background-color) !important;
+}
+
+.termsfeed-com---palette-dark .cc-cp-body-tabs .cc-cp-body-tabs-item {
+    color: #94a3b8;
+    background: var(--secondary-background-color) !important;
+}
+
+.termsfeed-com---palette-dark .cc-cp-body-tabs-item-link {
+    color: #94a3b8 !important;
+}
+
+.cc-pc-container {
+    border-radius: 1rem;
+    overflow: hidden;
+}
+
+/* -------------------------------------------------------- */
+
+.termsfeed-com---palette-dark .cc-pc-head-lang select,
+.termsfeed-com---palette-dark .cc-pc-head-lang select:focus {
+    border-color: #0085ff !important;
+    color: var(--text-color) !important;
+    padding: 0.2rem 1rem !important;
+    box-shadow: 0 0 0 2px #0085ff !important;
+}
+
+.termsfeed-com---palette-dark .cc-cp-foot-save {
+    background: #0085ff !important;
+    border-radius: 12px !important;
+}
+
+/* -------------------------------------------------------- */
+
+.termsfeed-com---reset p:not(.cc-pc-head-title-text, .cc-pc-head-title-headline) {
+    margin-top: 0 !important;
+    margin-bottom: 1rem !important;
+}
+
+.cc-pc-head-close,
+.cc-cp-foot-byline,
+.termsfeed-com---reset p:not(.cc-nb-title, .cc-nb-text),
+.termsfeed-com---pc-dialog input[type='checkbox'].cc-custom-checkbox + label {
+    color: var(--text-color) !important;
+}

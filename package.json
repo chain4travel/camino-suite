@@ -9,11 +9,12 @@
         "start": "webpack-dev-server --config webpack.dev.js",
         "start:live": "webpack-dev-server --open --config webpack.dev.js --live-reload",
         "checkTs": "tsc --noEmit",
-        "eslint": "eslint --ext js,ts,tsx",
+        "eslint": "eslint --ext js,ts,tsx src",
+        "eslint:fix": "eslint --ext js,ts,tsx --fix src",
         "lint": "yarn run eslint src",
         "lint:fix": "yarn run eslint --fix src",
-        "format-check": "prettier --check '{*.js, src/**/*.{js,jsx,ts,tsx}, .github/workflows/*.yml}'",
-        "format": "prettier --write '{*.js, src/**/*.{js,jsx,ts,tsx}, .github/workflows/*.yml}'"
+        "format-check": "prettier --check '**/*.{js,jsx,ts,tsx}'",
+        "format": "prettier --write '**/*.{js,jsx,ts,tsx}'"
     },
     "devDependencies": {
         "@babel/core": "^7.15.8",
