@@ -12,8 +12,8 @@
         "eslint": "eslint --ext js,ts,tsx",
         "lint": "yarn run eslint src",
         "lint:fix": "yarn run eslint --fix src",
-        "format-check": "prettier --check '{*.js, src/**/*.{js,jsx,ts,tsx}, .github/workflows/*.yml}'",
-        "format": "prettier --write '{*.js, src/**/*.{js,jsx,ts,tsx}, .github/workflows/*.yml}'"
+        "format-check": "prettier --check '{*.js, src/**/*.{js,jsx,ts,tsx}, .github/workflows/*.{yml,yaml}}'",
+        "format": "prettier --write '{*.js, src/**/*.{js,jsx,ts,tsx}, .github/workflows/*.{yml,yaml}}'"
     },
     "devDependencies": {
         "@babel/core": "^7.15.8",
