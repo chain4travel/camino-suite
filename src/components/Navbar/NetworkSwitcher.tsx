@@ -67,7 +67,7 @@ export default function NetworkSwitcher() {
             )
         } catch (e) {
             store.state.Network.selectedNetwork = null
-            dispatch(updateNotificationStatus({ message: 'disconnected', severity: 'error' }))
+            dispatch(updateNotificationStatus({ message: 'Disconnected', severity: 'error' }))
             store.state.Network.status = 'disconnected'
             dispatch(changeNetworkStatus(Status.FAILED))
         } finally {
