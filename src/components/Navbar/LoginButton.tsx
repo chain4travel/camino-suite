@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react'
 import { useAppDispatch, useAppSelector } from '../../hooks/reduxHooks'
-import { Box, MenuItem, Select, IconButton, useTheme } from '@mui/material'
+import { Box, MenuItem, MenuList, Select, IconButton, useTheme } from '@mui/material'
 import store from 'wallet/store'
 import { mountAccountMenu } from 'wallet/mountAccountMenu'
 import { useNavigate } from 'react-router-dom'
@@ -55,72 +55,81 @@ export default function LoginIcon() {
     return (
         <>
             <MHidden width="smUp">
-                <MenuItem>
-                    <LoadAccountMenu type="user" />
-                </MenuItem>
-                <MenuItem>
-                    <LoadAccountMenu type="kyc" />
-                </MenuItem>
-                <MenuItem
-                    onClick={logout}
-                    sx={{ display: 'flex', justifyContent: 'space-between' }}
-                >
-                    Logout
-                    <IconButton>
-                        <Icon path={mdiLogout} size={0.8} />
-                    </IconButton>
-                </MenuItem>
+                <MenuList sx={{ backgroundColor: 'transparent' }}>
+                    <MenuItem>
+                        <LoadAccountMenu type="user" />
+                    </MenuItem>
+                    <MenuItem>
+                        <LoadAccountMenu type="alias" />
+                    </MenuItem>
+                    <MenuItem>
+                        <LoadAccountMenu type="kyc" />
+                    </MenuItem>
+                    <MenuItem
+                        onClick={logout}
+                        sx={{ display: 'flex', justifyContent: 'space-between' }}
+                    >
+                        Logout
+                        <IconButton>
+                            <Icon path={mdiLogout} size={0.8} />
+                        </IconButton>
+                    </MenuItem>
+                </MenuList>
             </MHidden>
             <MHidden width="smDown">
-                {cAddress && (
-                    <Select
-                        value={!account ? cAddress : <LoadAccountMenu type="" />}
-                        renderValue={() =>
-                            account ? <LoadAccountMenu type="" /> : `0x${cAddress}`
-                        }
-                        sx={{
-                            maxWidth: '13rem',
-                            '.MuiOutlinedInput-notchedOutline': { border: 'none' },
-                            '.MuiSvgIcon-root': { color: theme.palette.text.primary },
-                        }}
-                        onKeyDown={e => {
-                            handleKeyDown(e)
-                        }}
-                    >
-                        <MenuItem
-                            onKeyDown={e => {
-                                handleKeyDown(e)
-                            }}
-                            sx={{ typography: 'body1', width: '100%', maxWidth: '326px' }}
-                        >
-                            <LoadAccountMenu type="user" />
-                        </MenuItem>
-                        <MenuItem
-                            onKeyDown={e => {
-                                handleKeyDown(e)
-                            }}
-                            sx={{ typography: 'body1', width: '100%', maxWidth: '326px' }}
-                        >
-                            <LoadAccountMenu type="kyc" />
-                        </MenuItem>
-                        <MenuItem
-                            onKeyDown={e => {
-                                handleKeyDown(e)
-                            }}
-                            onClick={logout}
+                <>
+                    <LoadAccountMenu type="alias" />
+                    {cAddress && (
+                        <Select
+                            value={!account ? cAddress : <LoadAccountMenu type="" />}
+                            renderValue={() =>
+                                account ? <LoadAccountMenu type="" /> : `0x${cAddress}`
+                            }
                             sx={{
-                                typography: 'body1',
-                                width: '100%',
-                                maxWidth: '326px',
-                                display: 'flex',
-                                justifyContent: { xs: 'flex-end', sm: 'center' },
+                                maxWidth: '13rem',
+                                '.MuiOutlinedInput-notchedOutline': { border: 'none' },
+                                '.MuiSvgIcon-root': { color: theme.palette.text.primary },
+                            }}
+                            onKeyDown={e => {
+                                handleKeyDown(e)
                             }}
                         >
-                            <Icon path={mdiLogout} size={0.7} />
-                            logout
-                        </MenuItem>
-                    </Select>
-                )}
+                            <MenuItem
+                                onKeyDown={e => {
+                                    handleKeyDown(e)
+                                }}
+                                sx={{ typography: 'body1', width: '100%', maxWidth: '326px' }}
+                            >
+                                <LoadAccountMenu type="user" />
+                            </MenuItem>
+                            <MenuItem
+                                onKeyDown={e => {
+                                    handleKeyDown(e)
+                                }}
+                                sx={{ typography: 'body1', width: '100%', maxWidth: '326px' }}
+                            >
+                                <LoadAccountMenu type="kyc" />
+                            </MenuItem>
+                            <MenuItem
+                                onKeyDown={e => {
+                                    handleKeyDown(e)
+                                }}
+                                onClick={logout}
+                                sx={{
+                                    typography: 'body1',
+                                    width: '100%',
+                                    maxWidth: '326px',
+                                    display: 'flex',
+                                    justifyContent: { xs: 'flex-end', sm: 'center' },
+                                    gap: '0.3rem',
+                                }}
+                            >
+                                <Icon path={mdiLogout} size={0.7} />
+                                logout
+                            </MenuItem>
+                        </Select>
+                    )}
+                </>
             </MHidden>
         </>
     )

@@ -6,7 +6,6 @@ export default function TextField(theme: Theme) {
             styleOverrides: {
                 root: {
                     '& .MuiInputBase-root': {
-                        border: `1px solid ${theme.palette.divider}`,
                         fontWeight: theme.typography.fontWeightBold,
                     },
                 },
@@ -17,7 +16,9 @@ export default function TextField(theme: Theme) {
                 root: {
                     color: theme.palette.text.primary,
                     fontWeight: theme.typography.fontWeightRegular,
-                    // border: `1px solid ${theme.palette.divider}`,
+                    '&.Mui-focused': {
+                        color: theme.palette.text.primary,
+                    },
                 },
             },
         },

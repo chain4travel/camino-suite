@@ -17,7 +17,7 @@ import { getActiveNetwork } from '../../redux/slices/network'
 import PlatformSwitcher from '../PlatformSwitcher'
 import NetworkSwitcher from './NetworkSwitcher'
 import ThemeSwitcher from './ThemeSwitcher'
-import LoginButton, { LoadAccountMenu } from './LoginButton'
+import LoginButton from './LoginButton'
 import MHidden from '../@material-extend/MHidden'
 import MIconButton from '../@material-extend/MIconButton'
 
@@ -112,12 +112,7 @@ export default function Navbar() {
                                 </Stack>
                                 {activeNetwork && <NetworkSwitcher />}
                             </Box>
-                            {auth && (
-                                <>
-                                    <LoadAccountMenu type="alias" />
-                                    <LoginButton />
-                                </>
-                            )}
+                            {auth && <LoginButton />}
                         </Drawer>
                         <MIconButton onClick={handleOpenSidebar}>
                             <Icon path={mdiMenu} size={1} />
@@ -144,12 +139,7 @@ export default function Navbar() {
                                     </Typography>
                                 </Box>
                             )}
-                            {auth && (
-                                <>
-                                    <LoadAccountMenu type="alias" />
-                                    <LoginButton />
-                                </>
-                            )}
+                            {auth && <LoginButton />}
                         </>
                     </MHidden>
                 </Box>

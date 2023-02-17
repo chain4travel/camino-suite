@@ -190,19 +190,21 @@ export default function NetworkSwitcher() {
                                                     : '#64748B',
                                         }}
                                     />
-                                    <Typography variant="subtitle1" component="span" noWrap>
+                                    <Typography
+                                        variant="subtitle1"
+                                        component="span"
+                                        noWrap
+                                        sx={{ maxWidth: '180px' }}
+                                    >
                                         {network.name}
                                     </Typography>
                                 </Box>
                                 <Box sx={{ flexGrow: 1 }} />
                                 {!network.readonly && (
-                                    <Box
-                                        sx={{
-                                            display: 'flex',
-                                            justifyContent: 'flex-end',
-                                            flexBasis: '50%',
-                                        }}
-                                    >
+                                    <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+                                        <IconButton onClick={() => handleEditCustomNetwork()}>
+                                            <Icon path={mdiPencilOutline} size={0.8} />
+                                        </IconButton>
                                         <IconButton onClick={() => handleRemoveCustomNetwork()}>
                                             <Icon path={mdiDeleteOutline} size={0.8} />
                                         </IconButton>
