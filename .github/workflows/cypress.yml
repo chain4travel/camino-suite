@@ -56,6 +56,10 @@ jobs:
           cd ..
           (yarn start&)
 
+
+      - name: jest-run
+        run: yarn test
+
       - name: cypress-run
         uses: cypress-io/github-action@v5
         env:
@@ -69,6 +73,7 @@ jobs:
           browser: chrome
           headless: true
           config-file: cypress.config.ts
+
       # These extract all artifacts out from the container to git so they can be previewed
       - name: extract screenshots to git
         uses: actions/upload-artifact@v3
@@ -83,3 +88,4 @@ jobs:
         with:
           name: cypress-videos
           path: camino-wallet/cypress/videos
+
