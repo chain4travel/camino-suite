@@ -50,9 +50,10 @@ jobs:
           git clone -b ${{ steps.setBranch.outputs.branch }} https://github.com/chain4travel/camino-block-explorer.git
           cd camino-wallet
           yarn install
-          (yarn start&)
           cd ../camino-block-explorer
           yarn install
+          (yarn start&)
+          cd ..
           (yarn start&)
 
       - name: cypress-run
@@ -61,23 +62,24 @@ jobs:
           USE_HTTP: true
         with:
           wait-on: 'http://localhost:5001/'
+          working-directory: camino-wallet
           start: yarn start
           # wait for 3 minutes for the server to respond
           wait-on-timeout: 180
           browser: chrome
           headless: true
-          config-file: ./camino-wallet/cypress.config.ts
+          config-file: cypress.config.ts
       # These extract all artifacts out from the container to git so they can be previewed
       - name: extract screenshots to git
         uses: actions/upload-artifact@v3
         if: failure()
         with:
           name: cypress-screenshots
-          path: cypress/screenshots
+          path: camino-wallet/cypress/screenshots
       # Test run video was always captured, so this action uses "always()" condition
       - name: extract videos to git
         uses: actions/upload-artifact@v3
         if: always()
         with:
           name: cypress-videos
-          path: cypress/videos
+          path: camino-wallet/cypress/videos
