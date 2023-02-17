@@ -13,8 +13,8 @@
         "eslint:fix": "eslint --ext js,ts,tsx --fix src",
         "lint": "yarn run eslint src",
         "lint:fix": "yarn run eslint --fix src",
-        "format-check": "prettier --check '**/*.{js,jsx,ts,tsx}'",
-        "format": "prettier --write '**/*.{js,jsx,ts,tsx}'"
+        "format-check": "prettier --check '{*.js, src/**/*.{js,jsx,ts,tsx}, .github/workflows/*.{yml,yaml}}'",
+        "format": "prettier --write '{*.js, src/**/*.{js,jsx,ts,tsx}, .github/workflows/*.{yml,yaml}}'"
     },
     "devDependencies": {
         "@babel/core": "^7.15.8",
