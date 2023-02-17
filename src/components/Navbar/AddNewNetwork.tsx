@@ -228,7 +228,7 @@ export default function AddNewNetwork({
                         error={Boolean(touched.explorerSiteUrl && errors.explorerSiteUrl)}
                         helperText={touched.explorerSiteUrl && errors.explorerSiteUrl}
                         sx={{ mb: 3, '& fieldset': { borderRadius: '12px' } }}
-                        data-cy="add-network-field-magellan-address"
+                        data-cy="add-network-field-explorerSiteUrl-address"
                     />
                     <TextField
                         fullWidth
