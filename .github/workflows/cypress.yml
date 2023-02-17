@@ -61,7 +61,7 @@ jobs:
         env:
           USE_HTTP: true
         with:
-          wait-on: 'http://localhost:5001/'
+          wait-on: 'http://localhost:5003/'
           working-directory: camino-wallet
           start: yarn start
           # wait for 3 minutes for the server to respond
