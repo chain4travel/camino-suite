@@ -10,3 +10,5 @@ export const APPS_CONSTS = [
         url: '/wallet',
     },
 ]
+
+export const TIMEOUT_DURATION = 60 * 20 // in seconds

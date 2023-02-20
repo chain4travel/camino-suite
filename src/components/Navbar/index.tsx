@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Icon from '@mdi/react'
 import {
     AppBar,
@@ -12,7 +12,7 @@ import {
 } from '@mui/material'
 import { mdiClose, mdiMenu, mdiWalletOutline } from '@mdi/js'
 import { useNavigate } from 'react-router-dom'
-import { useAppSelector } from '../../hooks/reduxHooks'
+import { useAppDispatch, useAppSelector } from '../../hooks/reduxHooks'
 import { getActiveNetwork } from '../../redux/slices/network'
 import PlatformSwitcher from '../PlatformSwitcher'
 import NetworkSwitcher from './NetworkSwitcher'
@@ -20,7 +20,10 @@ import ThemeSwitcher from './ThemeSwitcher'
 import LoginButton from './LoginButton'
 import MHidden from '../@material-extend/MHidden'
 import MIconButton from '../@material-extend/MIconButton'
-
+import IdleTimer from '../../layout/IdleTimer'
+import { updateAccount, updateAuthStatus } from '../../redux/slices/app-config'
+import store from 'wallet/store'
+import { TIMEOUT_DURATION } from '../../constants/apps-consts'
 const DRAWER_WIDTH = 300
 
 export default function Navbar() {
@@ -36,6 +39,24 @@ export default function Navbar() {
     const handleOpenSidebar = () => {
         setOpenSidebar(true)
     }
+    const dispatch = useAppDispatch()
+    useEffect(() => {
+        let timer
+        if (auth && window.location.hostname !== 'localhost')
+            timer = new IdleTimer({
+                timeout: TIMEOUT_DURATION,
+                onTimeout: async () => {
+                    await store.dispatch('logout')
+                    dispatch(updateAccount(null))
+                    dispatch(updateAuthStatus(false))
+                },
+            })
+        else if (!auth && timer) timer.cleanUp()
+        return () => {
+            if (timer) timer.cleanUp()
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [auth])
 
     return (
         <AppBar
