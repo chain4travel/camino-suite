@@ -8,11 +8,11 @@ module.exports = merge(common, {
     devtool: 'inline-source-map',
 
     output: {
-        publicPath: 'http://localhost:3000/',
+        publicPath: 'http://localhost:5001/',
     },
 
     devServer: {
-        port: 3000,
+        port: 5001,
         historyApiFallback: true,
         static: './dist',
     },
@@ -22,8 +22,8 @@ module.exports = merge(common, {
             name: 'host_react',
             filename: 'remoteEntry.js',
             remotes: {
-                Explorer: 'Explorer@http://localhost:3001/remoteEntry.js',
-                wallet: 'wallet@http://localhost:3003/remoteEntry.js',
+                Explorer: 'Explorer@http://localhost:5002/remoteEntry.js',
+                wallet: 'wallet@http://localhost:5003/remoteEntry.js',
             },
             exposes: {},
             shared: {

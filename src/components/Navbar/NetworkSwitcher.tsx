@@ -32,6 +32,7 @@ import SelectedNetwork from './SelectNetwork'
 import { Status } from '../../@types'
 import { useStore } from 'Explorer/useStore'
 import { updateAssets } from '../../helpers/walletStore'
+import { updateNotificationStatus } from '../../redux/slices/app-config'
 
 export default function NetworkSwitcher() {
     const dispatch = useAppDispatch()
@@ -58,8 +59,15 @@ export default function NetworkSwitcher() {
             await store.dispatch('Network/setNetwork', network)
             dispatch(changeNetworkStatus(Status.SUCCEEDED))
             await updateAssets()
+            dispatch(
+                updateNotificationStatus({
+                    message: `Connected to ${network.name}`,
+                    severity: 'success',
+                }),
+            )
         } catch (e) {
             store.state.Network.selectedNetwork = null
+            dispatch(updateNotificationStatus({ message: 'Disconnected', severity: 'error' }))
             store.state.Network.status = 'disconnected'
             dispatch(changeNetworkStatus(Status.FAILED))
         } finally {
@@ -98,6 +106,12 @@ export default function NetworkSwitcher() {
             dispatch(changeActiveNetwork(networks[1]))
             changeNetworkExplorer(networks[1])
         }
+        dispatch(
+            updateNotificationStatus({
+                message: `Removed custom network.`,
+                severity: 'success',
+            }),
+        )
         dispatch(addNetworks(nks))
     }
 
@@ -176,19 +190,21 @@ export default function NetworkSwitcher() {
                                                     : '#64748B',
                                         }}
                                     />
-                                    <Typography variant="subtitle1" component="span" noWrap>
+                                    <Typography
+                                        variant="subtitle1"
+                                        component="span"
+                                        noWrap
+                                        sx={{ maxWidth: '180px' }}
+                                    >
                                         {network.name}
                                     </Typography>
                                 </Box>
                                 <Box sx={{ flexGrow: 1 }} />
                                 {!network.readonly && (
-                                    <Box
-                                        sx={{
-                                            display: 'flex',
-                                            justifyContent: 'flex-end',
-                                            flexBasis: '50%',
-                                        }}
-                                    >
+                                    <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+                                        <IconButton onClick={() => handleEditCustomNetwork()}>
+                                            <Icon path={mdiPencilOutline} size={0.8} />
+                                        </IconButton>
                                         <IconButton onClick={() => handleRemoveCustomNetwork()}>
                                             <Icon path={mdiDeleteOutline} size={0.8} />
                                         </IconButton>
@@ -250,6 +266,7 @@ export default function NetworkSwitcher() {
                         '.MuiOutlinedInput-notchedOutline': { border: 'none' },
                         '.MuiSvgIcon-root': { color: theme.palette.text.primary },
                     }}
+                    data-cy="network-selector"
                 >
                     {networks?.map(network => (
                         <MenuItem
@@ -260,6 +277,7 @@ export default function NetworkSwitcher() {
                                 handleChangeNetwork(network.name)
                             }}
                             sx={{ gap: '.6rem', justifyContent: 'space-between' }}
+                            data-cy={`network-name-${network.name}`}
                         >
                             <Typography variant="subtitle1" component="span" noWrap>
                                 {network.name}
@@ -311,6 +329,7 @@ export default function NetworkSwitcher() {
                     <MenuItem
                         onClick={handleOpenModal}
                         sx={{ typography: 'body1', width: '100%', maxWidth: '326px' }}
+                        data-cy="add-custom-network"
                     >
                         Add Custom Network
                     </MenuItem>

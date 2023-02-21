@@ -14,6 +14,7 @@
             href="https://cdn.jsdelivr.net/npm/@mdi/font@7.0.96/css/materialdesignicons.min.css"
         />
         <link rel="stylesheet" type="text/css" href="/fonts/index.css" />
+        <link rel="stylesheet" type="text/css" href="/index.css" />
     </head>
     <body>
         <noscript>
@@ -22,7 +23,16 @@
                 Please enable it to continue.
             </strong>
         </noscript>
-        <div id="app_loading">
+        <div
+            id="app_loading"
+            style="
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                min-width: 100vw;
+                min-height: 100vh;
+            "
+        >
             <img rel="preload" src="/gif/loading_0.gif" />
         </div>
         <div id="app"></div>
@@ -30,13 +40,16 @@
     <style>
         html[data-theme='day'] {
             --background-color: #fff;
+            --secondary-background-color: #f1f5f9;
+            --text-color: #0f172a;
         }
         html[data-theme='night'] {
             --background-color: #0f172a;
+            --secondary-background-color: #1e293b;
+            --text-color: #ffffff;
         }
         body {
             background-color: var(--background-color);
-            overflow-x: hidden !important;
             overflow: initial;
         }
         #app_loading {
@@ -50,22 +63,56 @@
             display: none;
             justify-content: center;
             align-items: center;
+            min-width: 100vw;
+            min-height: 100vh;
         }
         #app_loading img {
             width: 10vw;
-            max-width: 220px;
+            max-width: 300px;
+            min-width: 200px;
         }
     </style>
+    <script
+        type="text/javascript"
+        prefetch="true"
+        src="https://www.termsfeed.com/public/cookie-consent/4.1.0/cookie-consent.js"
+        charset="UTF-8"
+    ></script>
+    <script type="text/javascript" charset="UTF-8">
+        document.addEventListener('DOMContentLoaded', function () {
+            cookieconsent.run({
+                notice_banner_type: 'simple',
+                consent_type: 'express',
+                palette: 'dark',
+                language: 'en',
+                page_load_consent_levels: ['strictly-necessary'],
+                notice_banner_reject_button_hide: false,
+                preferences_center_close_button_hide: false,
+                page_refresh_confirmation_buttons: false,
+                website_name: 'Camino Suite',
+            })
+        })
+    </script>
+
+    <noscript
+        >Free cookie consent management tool by
+        <a href="https://www.termsfeed.com/privacy-policy-generator/"
+            >TermsFeed Free Privacy Policy Generator</a
+        ></noscript
+    >
     <script>
         let intervalId
 
         function checkAppLoading() {
             const app = document.getElementById('app')
             const appLoading = document.getElementById('app_loading')
+            const gdprBanner = document.getElementById('termsfeed-com---nb')
             if (app.childElementCount === 0) {
                 appLoading.style.display = 'flex'
+                if (gdprBanner) gdprBanner.style.visibility = 'hidden'
             } else {
                 appLoading.style.display = 'none'
+                if (gdprBanner) gdprBanner.style.visibility = 'visible'
                 clearInterval(intervalId)
             }
         }

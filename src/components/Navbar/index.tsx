@@ -1,7 +1,15 @@
 import React, { useState } from 'react'
 import Icon from '@mdi/react'
-import { AppBar, Box, Typography, Drawer, Stack, useTheme, IconButton } from '@mui/material'
-import { Toolbar } from '@mui/material'
+import {
+    AppBar,
+    Box,
+    Drawer,
+    IconButton,
+    Stack,
+    Toolbar,
+    Typography,
+    useTheme,
+} from '@mui/material'
 import { mdiClose, mdiMenu, mdiWalletOutline } from '@mdi/js'
 import { useNavigate } from 'react-router-dom'
 import { useAppSelector } from '../../hooks/reduxHooks'
@@ -104,11 +112,7 @@ export default function Navbar() {
                                 </Stack>
                                 {activeNetwork && <NetworkSwitcher />}
                             </Box>
-                            {auth && (
-                                <Box>
-                                    <LoginButton />
-                                </Box>
-                            )}
+                            {auth && <LoginButton />}
                         </Drawer>
                         <MIconButton onClick={handleOpenSidebar}>
                             <Icon path={mdiMenu} size={1} />

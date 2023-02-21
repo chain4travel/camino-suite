@@ -80,6 +80,7 @@ export default function PlatformSwitcher() {
                         </Typography>
                     </Box>
                 )}
+                data-cy="app-selector-menu"
             >
                 {APPS_CONSTS.map((app, index) => (
                     <MenuItem
@@ -87,6 +88,7 @@ export default function PlatformSwitcher() {
                         value={app.name}
                         divider
                         onClick={() => navigate(app.url)}
+                        data-cy={`app-selector-${app.name}`}
                     >
                         <Box sx={{ width: '100%' }}>
                             <Box

@@ -28,21 +28,21 @@ export default function AddNewNetwork({
         if (edit && selectedNetwork)
             _newNetwork = {
                 id: selectedNetwork.id,
+                url: selectedNetwork.url,
                 displayName: selectedNetwork.name,
-                protocol: selectedNetwork.protocol,
-                host: selectedNetwork.url.split('/')[2].split(':')[0],
                 magellanAddress: selectedNetwork.explorerUrl,
-                port: selectedNetwork.port,
+                explorerSiteUrl: selectedNetwork.explorerSiteUrl,
+                signavaultAddress: selectedNetwork.signavaultUrl,
                 predefined: selectedNetwork.readonly,
             }
         else
             _newNetwork = {
                 id: '',
+                url: '',
                 displayName: '',
-                protocol: 'https',
-                host: '',
                 magellanAddress: '',
-                port: 0,
+                explorerSiteUrl: '',
+                signavaultAddress: '',
                 predefined: false,
             }
         return _newNetwork
@@ -51,23 +51,48 @@ export default function AddNewNetwork({
     const EventSchema = Yup.object().shape({
         id: Yup.string(),
         displayName: Yup.string().required('This field is required').min(3, 'Too Short!'),
-        host: Yup.string().required('This field is required'),
-        protocol: Yup.string()
-            .required('This field is required')
-            .min(4, 'Protocol must be at least 4 characters long')
-            .max(5, 'Protocol must be no more than 5 characters long'),
+        url: Yup.string()
+            .min(10, 'URL must be at least 10 characters')
+            .max(200, 'URL must be no more than 200 characters')
+            .test(
+                'validate http / https prefix',
+                'URLs require the appropriate HTTP/HTTPS prefix.',
+                function (value) {
+                    if (
+                        !value ||
+                        (value.substring(0, 7) !== 'http://' &&
+                            value.substring(0, 8) !== 'https://')
+                    ) {
+                        return false
+                    }
+                    return true
+                },
+            )
+            .test('validate base ip', 'Invalid URL.', function (value) {
+                let rest = value?.split('://')[1]
+                if (!rest || rest.length === 0) {
+                    return false
+                }
+                return true
+            })
+            .test('validate port', 'You must specify a valid port of the url.', function (value) {
+                let rest = value?.split('://')[1]
+                if (!rest || !rest.includes(':') || isNaN(parseInt(rest.split(':')[1])))
+                    return false
+                return true
+            }),
         magellanAddress: Yup.string()
             .min(10, 'URL must be at least 10 characters')
             .max(200, 'URL must be no more than 200 characters')
             .matches(/^https?:\/\/.+/, 'URL must start with http:// or https://'),
-        port: Yup.number()
-            .positive()
-            .required('This field is required')
-            .integer()
-            .min(1)
-            .max(65535)
-            .typeError('Port should be a number and should not start with 0')
-            .required('This field is required'),
+        explorerSiteUrl: Yup.string()
+            .min(10, 'URL must be at least 10 characters')
+            .max(200, 'URL must be no more than 200 characters')
+            .matches(/^https?:\/\/.+/, 'URL must start with http:// or https://'),
+        signavaultAddress: Yup.string()
+            .min(10, 'URL must be at least 10 characters')
+            .max(200, 'URL must be no more than 200 characters')
+            .matches(/^https?:\/\/.+/, 'URL must start with http:// or https://'),
         predefined: Yup.boolean(),
     })
 
@@ -104,10 +129,10 @@ export default function AddNewNetwork({
                 const newNetwork = {
                     id: values.displayName.replace(/\s/g, '-').toLowerCase(),
                     displayName: values.displayName,
-                    protocol: values.protocol,
-                    host: values.host,
+                    url: values.url,
                     magellanAddress: values.magellanAddress,
-                    port: values.port,
+                    explorerSiteUrl: values.explorerSiteUrl,
+                    signavaultAddress: values.signavaultAddress,
                     predefined: values.predefined,
                 }
                 if (handleDuplicateNetworkId(newNetwork, networks)) {
@@ -117,7 +142,7 @@ export default function AddNewNetwork({
                 }
                 setIsLoading(true)
 
-                let url = `${newNetwork.protocol}://${newNetwork.host}:${newNetwork.port}`
+                let url = newNetwork.url
                 let findNetwork = store.state.Network.networksCustom?.findIndex(
                     network => network.id === selectedNetwork?.id,
                 )
@@ -126,7 +151,8 @@ export default function AddNewNetwork({
                     url,
                     newNetwork.id,
                     newNetwork.magellanAddress,
-                    '',
+                    newNetwork.explorerSiteUrl,
+                    newNetwork.signavaultAddress,
                 )
                 if (edit === 'edit')
                     net = {
@@ -175,43 +201,41 @@ export default function AddNewNetwork({
                         error={Boolean(touched.displayName && errors.displayName)}
                         helperText={touched.displayName && errors.displayName}
                         sx={{ mb: 3 }}
+                        data-cy="add-network-field-network-name"
                     />
-
                     <TextField
                         fullWidth
-                        label="Protocol"
-                        {...getFieldProps('protocol')}
-                        inputProps={{ maxLength: 5 }}
-                        error={Boolean(touched.protocol && errors.protocol)}
-                        helperText={touched.protocol && errors.protocol}
+                        label="URL"
+                        {...getFieldProps('url')}
+                        error={Boolean(touched.url && errors.url)}
+                        helperText={touched.url && errors.url}
                         sx={{ mb: 3, '& fieldset': { borderRadius: '12px' } }}
+                        data-cy="add-network-field-url"
                     />
-
-                    <TextField
-                        fullWidth
-                        label="Host"
-                        {...getFieldProps('host')}
-                        error={Boolean(touched.host && errors.host)}
-                        helperText={touched.host && errors.host}
-                        sx={{ mb: 3, '& fieldset': { borderRadius: '12px' } }}
-                    />
-
-                    <TextField
-                        fullWidth
-                        label="Port"
-                        type="number"
-                        {...getFieldProps('port')}
-                        error={Boolean(touched.port && errors.port)}
-                        helperText={touched.port && errors.port}
-                        sx={{ mb: 3, '& fieldset': { borderRadius: '12px' } }}
-                    />
-
                     <TextField
                         fullWidth
                         label="Magellan Address"
                         {...getFieldProps('magellanAddress')}
                         error={Boolean(touched.magellanAddress && errors.magellanAddress)}
                         helperText={touched.magellanAddress && errors.magellanAddress}
+                        sx={{ mb: 3, '& fieldset': { borderRadius: '12px' } }}
+                        data-cy="add-network-field-magellan-address"
+                    />
+                    <TextField
+                        fullWidth
+                        label="Explorer URL"
+                        {...getFieldProps('explorerSiteUrl')}
+                        error={Boolean(touched.explorerSiteUrl && errors.explorerSiteUrl)}
+                        helperText={touched.explorerSiteUrl && errors.explorerSiteUrl}
+                        sx={{ mb: 3, '& fieldset': { borderRadius: '12px' } }}
+                        data-cy="add-network-field-explorerSiteUrl-address"
+                    />
+                    <TextField
+                        fullWidth
+                        label="Signavault Address"
+                        {...getFieldProps('signavaultAddress')}
+                        error={Boolean(touched.signavaultAddress && errors.signavaultAddress)}
+                        helperText={touched.signavaultAddress && errors.signavaultAddress}
                         sx={{ mb: 3, '& fieldset': { borderRadius: '12px' } }}
                     />
                     {error && (
@@ -222,7 +246,12 @@ export default function AddNewNetwork({
                 </DialogContent>
 
                 <DialogActions sx={{ display: 'flex', justifyContent: 'center', mb: 2, gap: 2 }}>
-                    <Button disabled={isLoading} variant="outlined" type="submit">
+                    <Button
+                        disabled={isLoading}
+                        variant="outlined"
+                        type="submit"
+                        data-cy="btn-add-network"
+                    >
                         {!edit ? <>Add Network</> : <>Edit Network</>}
                     </Button>
                     <Button variant="contained" onClick={handleClose}>

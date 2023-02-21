@@ -10,6 +10,7 @@ import TextField from './TextField'
 import CssBaseline from './CssBaseline'
 import Paper from './Paper'
 import Drawer from './Drawer'
+import Input from './Input'
 
 export default function ComponentsOverrides(theme: Theme) {
     return merge(
@@ -23,5 +24,6 @@ export default function ComponentsOverrides(theme: Theme) {
         CssBaseline(theme),
         Paper(theme),
         Drawer(theme),
+        Input(theme),
     )
 }

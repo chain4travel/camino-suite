@@ -1,7 +1,12 @@
 import React, { useRef, useEffect, useState } from 'react'
 import { mount } from 'wallet/mountApp'
 import { useAppDispatch, useAppSelector } from '../../hooks/reduxHooks'
-import { updateAuthStatus, updateValues } from '../../redux/slices/app-config'
+import {
+    updateAccount,
+    updateAuthStatus,
+    updateNotificationStatus,
+    updateValues,
+} from '../../redux/slices/app-config'
 import { Navigate } from 'react-router-dom'
 import { updateAssets } from '../../helpers/walletStore'
 const LoadWallet = () => {
@@ -10,6 +15,10 @@ const LoadWallet = () => {
     const [logOut, setLogOut] = useState(false)
     const dispatch = useAppDispatch()
     const ref = useRef(null)
+
+    const dispatchNotification = ({ message, type }) =>
+        dispatch(updateNotificationStatus({ message, severity: type }))
+    const setAccount = account => dispatch(updateAccount(account))
     useEffect(() => {
         dispatch(updateValues(updateStore))
         if (updateStore) dispatch(updateAuthStatus(true))
@@ -24,7 +33,9 @@ const LoadWallet = () => {
         setFetch(true)
     }
     useEffect(() => {
-        if (fetch) mount(ref.current, { setUpdateStore, setLogOut })
+        if (fetch)
+            mount(ref.current, { setUpdateStore, setLogOut, setAccount, dispatchNotification })
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [fetch])
 
     useEffect(() => {

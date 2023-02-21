@@ -2,18 +2,19 @@
     "name": "host-react",
     "version": "1.0.0",
     "scripts": {
-        "build": "PUBLIC_PATH=https://suite.camino.network/ EXPLORER_PATH=https://suite-explorer.camino.network/ WALLET_PATH=https://suite-wallet.camino.network/ webpack --config webpack.prod.js",
-        "build:dev": "PUBLIC_PATH=https://dev.suite.camino.network/ EXPLORER_PATH=https://dev.suite-explorer.camino.network/ WALLET_PATH=https://dev.suite-wallet.camino.network/ webpack --config webpack.prod.js",
-        "build:stage": "PUBLIC_PATH=https://stage.suite.camino.network/ EXPLORER_PATH=https://stage.suite-explorer.camino.network/ WALLET_PATH=https://stage.suite-wallet.camino.network/ webpack --config webpack.prod.js",
-        "build:start": "cd dist && PORT=3000 npx serve",
+        "build": "PUBLIC_PATH=https://suite.camino.network/ EXPLORER_PATH=https://suite.camino.network/explorer/ WALLET_PATH=https://suite.camino.network/wallet/ webpack --config webpack.prod.js",
+        "build:dev": "PUBLIC_PATH=https://dev.suite.camino.network/ EXPLORER_PATH=https://dev.suite.camino.network/explorer/ WALLET_PATH=https://dev.suite.camino.network/wallet/ webpack --config webpack.prod.js",
+        "build:stage": "PUBLIC_PATH=https://stage.suite.camino.network/ EXPLORER_PATH=https://stage.suite.camino.network/explorer/ WALLET_PATH=https://stage.suite.camino.network/wallet/ webpack --config webpack.prod.js",
+        "build:start": "cd dist && PORT=5001 npx serve",
         "start": "webpack-dev-server --config webpack.dev.js",
         "start:live": "webpack-dev-server --open --config webpack.dev.js --live-reload",
         "checkTs": "tsc --noEmit",
-        "eslint": "eslint --ext js,ts,tsx",
+        "eslint": "eslint --ext js,ts,tsx src",
+        "eslint:fix": "eslint --ext js,ts,tsx --fix src",
         "lint": "yarn run eslint src",
         "lint:fix": "yarn run eslint --fix src",
-        "format-check": "prettier --check '{*.js, src/**/*.{js,jsx,ts,tsx}, .github/workflows/*.yml}'",
-        "format": "prettier --write '{*.js, src/**/*.{js,jsx,ts,tsx}, .github/workflows/*.yml}'"
+        "format-check": "prettier --check '{*.js, src/**/*.{js,jsx,ts,tsx}, .github/workflows/*.{yml,yaml}}'",
+        "format": "prettier --write '{*.js, src/**/*.{js,jsx,ts,tsx}, .github/workflows/*.{yml,yaml}}'"
     },
     "devDependencies": {
         "@babel/core": "^7.15.8",
@@ -38,14 +39,16 @@
         "@types/jest": "^27.4.1",
         "@types/lodash": "^4.14.189",
         "@types/node": "^17.0.25",
-        "@types/react": "^17.0.2",
+        "@types/react": "^18.0.28",
         "@types/react-dom": "^17.0.2",
+        "@types/react-helmet": "^6.1.6",
         "autoprefixer": "^10.1.0",
         "axios": "^1.1.3",
         "babel-loader": "^8.2.2",
         "copy-webpack-plugin": "^11.0.0",
-        "css-loader": "^6.3.0",
+        "eslint": "^8.34.0",
         "eslint-config-prettier": "^8.6.0",
+        "eslint-config-react-app": "^7.0.1",
         "eslint-plugin-prettier": "^4.2.1",
         "eslint-plugin-react-hooks": "^4.6.0",
         "formik": "^2.2.9",
@@ -58,7 +61,8 @@
         "prettier": "^2.8.3",
         "react-helmet-async": "^1.3.0",
         "react-redux": "^8.0.1",
-        "react-router-dom": "^6.4.3",
+        "react-router": "^6.8.1",
+        "react-router-dom": "^6.8.1",
         "react-scripts": "5.0.1",
         "style-loader": "^3.3.0",
         "typescript": "^4.5.2",
@@ -70,7 +74,7 @@
         "yup": "^0.32.11"
     },
     "dependencies": {
-        "react": "^17.0.2",
-        "react-dom": "^17.0.2"
+        "react": "^18.2.0",
+        "react-dom": "^18.2.0"
     }
 }
