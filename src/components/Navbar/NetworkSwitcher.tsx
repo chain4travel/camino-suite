@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react'
 import Icon from '@mdi/react'
-import { useAppDispatch, useAppSelector } from '../../hooks/reduxHooks'
 import {
     Button,
     MenuItem,
@@ -15,137 +14,29 @@ import {
     IconButton,
 } from '@mui/material'
 import { mdiDeleteOutline, mdiPencilOutline, mdiPlus } from '@mdi/js'
-import store from 'wallet/store'
-import {
-    addNetworks,
-    changeActiveNetwork,
-    changeNetworkStatus,
-    getActiveNetwork,
-    getNetworks,
-    selectNetworkStatus,
-} from '../../redux/slices/network'
-import { networkStatusColor, networkStatusName } from '../../utils/networkUtils'
+import { networkStatusColor, networkStatusName } from '@/utils/networkUtils'
 import DialogAnimate from '../Animate/DialogAnimate'
 import MHidden from '../@material-extend/MHidden'
 import AddNewNetwork from './AddNewNetwork'
 import SelectedNetwork from './SelectNetwork'
-import { Status } from '../../@types'
-import { useStore } from 'Explorer/useStore'
-import { updateAssets } from '../../helpers/walletStore'
-import { updateNotificationStatus } from '../../redux/slices/app-config'
+import useNetwork from '../../hooks/useNetwork'
 
 export default function NetworkSwitcher() {
-    const dispatch = useAppDispatch()
-    const networks = useAppSelector(getNetworks)
-    const activeNetwork = useAppSelector(getActiveNetwork)
-    const status = useAppSelector(selectNetworkStatus)
-    const theme = useTheme()
-    const [selectedEvent, setSelectedEvent] = React.useState('')
-    const [selectedNetwork, setSelectedNetwork] = React.useState(null)
-    const [open, setOpen] = React.useState(false)
-    const [edit, setEdit] = React.useState(false)
-    const [networkToEdit, setNetworkToEdit] = React.useState()
-
     const {
-        changeNetworkExplorer,
-        resetCChainReducer,
-        resetValidatorsReducer,
-        resetXPChainReducer,
-    } = useStore()
-
-    const switchNetwork = async network => {
-        try {
-            dispatch(changeNetworkStatus(Status.LOADING))
-            await store.dispatch('Network/setNetwork', network)
-            dispatch(changeNetworkStatus(Status.SUCCEEDED))
-            await updateAssets()
-            dispatch(
-                updateNotificationStatus({
-                    message: `Connected to ${network.name}`,
-                    severity: 'success',
-                }),
-            )
-        } catch (e) {
-            store.state.Network.selectedNetwork = null
-            dispatch(updateNotificationStatus({ message: 'Disconnected', severity: 'error' }))
-            store.state.Network.status = 'disconnected'
-            dispatch(changeNetworkStatus(Status.FAILED))
-        } finally {
-            let newSelectedNetwork = store.state.Network.selectedNetwork
-                ? store.state.Network.selectedNetwork
-                : network
-            dispatch(changeActiveNetwork(newSelectedNetwork))
-            changeNetworkExplorer(newSelectedNetwork)
-        }
-    }
-    const handleChangeNetwork = (selected: string) => {
-        setSelectedNetwork(selected)
-    }
-    const handleEditCustomNetwork = () => {
-        setSelectedEvent('editNetwork')
-    }
-
-    const handleRemoveCustomNetwork = () => {
-        setSelectedEvent('removeNetwork')
-    }
-    async function changeNetworkEvent(net) {
-        let selectedN = networks.find(network => network.name === net)
-        await switchNetwork(selectedN)
-    }
-    async function editNetworkEvent(net) {
-        setNetworkToEdit(net)
-        setEdit(true)
-        setOpen(true)
-    }
-    async function removeNetworkEvent(net) {
-        let selectedN = networks.find(network => network.name === net)
-        store.dispatch('Network/removeCustomNetwork', selectedN)
-        let nks = store.getters['Network/allNetworks']
-        if (selectedN.name === activeNetwork.name) {
-            await switchNetwork(networks[1])
-            dispatch(changeActiveNetwork(networks[1]))
-            changeNetworkExplorer(networks[1])
-        }
-        dispatch(
-            updateNotificationStatus({
-                message: `Removed custom network.`,
-                severity: 'success',
-            }),
-        )
-        dispatch(addNetworks(nks))
-    }
-
-    const handleChangeEvent = async () => {
-        if (selectedEvent === 'editNetwork') await editNetworkEvent(selectedNetwork)
-        else if (selectedEvent === 'removeNetwork') await removeNetworkEvent(selectedNetwork)
-        else if (!selectedEvent) await changeNetworkEvent(selectedNetwork)
-        setSelectedEvent('')
-        setSelectedNetwork('')
-    }
-    useEffect(() => {
-        if (selectedNetwork) {
-            handleChangeEvent()
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [selectedNetwork])
-    const [network, setNetwork] = React.useState('')
-
-    React.useEffect(() => {
-        resetCChainReducer()
-        resetValidatorsReducer()
-        resetXPChainReducer()
-        if (activeNetwork.name) setNetwork(activeNetwork.name)
-    }, [activeNetwork]) // eslint-disable-line
-
-    const handleCloseModal = () => {
-        setNetworkToEdit('')
-        setEdit(false)
-        setOpen(false)
-    }
-
-    const handleOpenModal = () => {
-        setOpen(true)
-    }
+        handleChangeNetwork,
+        handleEditCustomNetwork,
+        handleRemoveCustomNetwork,
+        handleOpenModal,
+        handleCloseModal,
+        switchNetwork,
+        status,
+        networks,
+        open,
+        edit,
+        networkToEdit,
+        activeNetwork,
+    } = useNetwork()
+    const theme = useTheme()
 
     return (
         <>
@@ -259,7 +150,7 @@ export default function NetworkSwitcher() {
             {/* Desktop */}
             <MHidden width="smDown">
                 <Select
-                    value={network}
+                    value={activeNetwork?.name ? activeNetwork?.name : ''}
                     renderValue={() => <SelectedNetwork />}
                     sx={{
                         maxWidth: '13rem',

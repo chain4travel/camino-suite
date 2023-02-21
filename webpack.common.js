@@ -4,6 +4,9 @@ const CopyWebpackPlugin = require('copy-webpack-plugin')
 module.exports = {
     resolve: {
         extensions: ['.vue', '.tsx', '.ts', '.jsx', '.js', '.json'],
+        alias: {
+            '@': path.resolve(__dirname, 'src'),
+        },
     },
 
     cache: false,
