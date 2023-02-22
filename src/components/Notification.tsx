@@ -45,7 +45,7 @@ export default function Notifications() {
                     onClose={handleClose}
                     TransitionComponent={transition}
                     key={transition ? transition.name : ''}
-                    autoHideDuration={1500}
+                    autoHideDuration={5000}
                 >
                     <Alert
                         severity={notificationSeverity}
