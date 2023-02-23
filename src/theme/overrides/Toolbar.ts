@@ -9,8 +9,8 @@ export default function Toolbar(theme: Theme) {
                     minHeight: '64px',
                     [theme.breakpoints.down('sm')]: {
                         minHeight: '54px',
-                        paddingLeft: '.5rem',
-                        paddingRight: '.5rem',
+                        paddingLeft: '1.5rem',
+                        paddingRight: '1.5rem',
                     },
                 },
             },

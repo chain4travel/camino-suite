@@ -32,7 +32,7 @@ export default function PlatformSwitcher() {
                 display: 'flex',
                 alignItems: 'center',
                 pr: '1rem',
-                [theme.breakpoints.down('sm')]: { pr: '.5rem' },
+                [theme.breakpoints.down('xs')]: { pr: '.5rem' },
             }}
         >
             <Select
@@ -45,8 +45,8 @@ export default function PlatformSwitcher() {
                     minWidth: 'auto',
                     pl: '0rem !important',
                     border: 'none',
+                    '.MuiSelect-select': { pl: '0rem !important' },
                     '.MuiOutlinedInput-input': { pr: '42px !important' },
-                    '.MuiSelect-select': { pl: '0rem' },
                     '.MuiOutlinedInput-notchedOutline': { border: 'none' },
                     '.MuiSvgIcon-root': {
                         color: theme.palette.text.primary,
