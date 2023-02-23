@@ -65,6 +65,7 @@ export default function Navbar() {
                 display: 'flex',
                 alignItems: 'center',
                 minHeight: '65px',
+                px: '1.5rem',
             }}
             position="fixed"
         >
@@ -76,6 +77,7 @@ export default function Navbar() {
                     height: 'auto',
                     p: '0',
                     gap: '1rem',
+                    px: '0px !important',
                     alignItems: 'normal',
                     justifyContent: 'space-between',
                 }}
