@@ -2,6 +2,7 @@ import { mountAccessComponents } from 'wallet/mountAccessComponents'
 import React, { useRef, useEffect, useState } from 'react'
 import { updateAccount, updateAuthStatus, updateValues } from '../../redux/slices/app-config'
 import { useAppDispatch } from '../../hooks/reduxHooks'
+import { useEffectOnce } from '../../hooks/useEffectOnce'
 
 const LoadComponent = ({ type, props }) => {
     const ref = useRef(null)
@@ -15,14 +16,13 @@ const LoadComponent = ({ type, props }) => {
         }
     }, [updateStore]) // eslint-disable-line react-hooks/exhaustive-deps
 
-    useEffect(() => {
+    useEffectOnce(() => {
         mountAccessComponents(ref.current, type, {
             ...props,
             setUpdateStore,
             setAccount,
         })
-    }, []) // eslint-disable-line react-hooks/exhaustive-deps
-
+    }) // eslint-disable-line react-hooks/exhaustive-deps
     return (
         <div
             style={{
