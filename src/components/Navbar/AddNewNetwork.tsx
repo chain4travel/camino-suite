@@ -31,7 +31,6 @@ export default function AddNewNetwork({
                 url: selectedNetwork.url,
                 displayName: selectedNetwork.name,
                 magellanAddress: selectedNetwork.explorerUrl,
-                explorerSiteUrl: selectedNetwork.explorerSiteUrl,
                 signavaultAddress: selectedNetwork.signavaultUrl,
                 predefined: selectedNetwork.readonly,
             }
@@ -41,7 +40,6 @@ export default function AddNewNetwork({
                 url: '',
                 displayName: '',
                 magellanAddress: '',
-                explorerSiteUrl: '',
                 signavaultAddress: '',
                 predefined: false,
             }
@@ -82,10 +80,6 @@ export default function AddNewNetwork({
                 return true
             }),
         magellanAddress: Yup.string()
-            .min(10, 'URL must be at least 10 characters')
-            .max(200, 'URL must be no more than 200 characters')
-            .matches(/^https?:\/\/.+/, 'URL must start with http:// or https://'),
-        explorerSiteUrl: Yup.string()
             .min(10, 'URL must be at least 10 characters')
             .max(200, 'URL must be no more than 200 characters')
             .matches(/^https?:\/\/.+/, 'URL must start with http:// or https://'),
@@ -131,7 +125,6 @@ export default function AddNewNetwork({
                     displayName: values.displayName,
                     url: values.url,
                     magellanAddress: values.magellanAddress,
-                    explorerSiteUrl: values.explorerSiteUrl,
                     signavaultAddress: values.signavaultAddress,
                     predefined: values.predefined,
                 }
@@ -151,7 +144,7 @@ export default function AddNewNetwork({
                     url,
                     newNetwork.id,
                     newNetwork.magellanAddress,
-                    newNetwork.explorerSiteUrl,
+                    '',
                     newNetwork.signavaultAddress,
                 )
                 if (edit === 'edit')
@@ -220,15 +213,6 @@ export default function AddNewNetwork({
                         helperText={touched.magellanAddress && errors.magellanAddress}
                         sx={{ mb: 3, '& fieldset': { borderRadius: '12px' } }}
                         data-cy="add-network-field-magellan-address"
-                    />
-                    <TextField
-                        fullWidth
-                        label="Explorer URL"
-                        {...getFieldProps('explorerSiteUrl')}
-                        error={Boolean(touched.explorerSiteUrl && errors.explorerSiteUrl)}
-                        helperText={touched.explorerSiteUrl && errors.explorerSiteUrl}
-                        sx={{ mb: 3, '& fieldset': { borderRadius: '12px' } }}
-                        data-cy="add-network-field-explorerSiteUrl-address"
                     />
                     <TextField
                         fullWidth

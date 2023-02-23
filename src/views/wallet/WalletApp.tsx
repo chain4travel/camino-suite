@@ -7,7 +7,7 @@ import {
     updateNotificationStatus,
     updateValues,
 } from '../../redux/slices/app-config'
-import { Navigate } from 'react-router-dom'
+import { Navigate, useNavigate } from 'react-router-dom'
 import { updateAssets } from '../../helpers/walletStore'
 const LoadWallet = () => {
     const [updateStore, setUpdateStore] = useState(null)
@@ -15,6 +15,7 @@ const LoadWallet = () => {
     const [logOut, setLogOut] = useState(false)
     const dispatch = useAppDispatch()
     const ref = useRef(null)
+    const navigate = useNavigate()
 
     const dispatchNotification = ({ message, type }) =>
         dispatch(updateNotificationStatus({ message, severity: type }))
@@ -34,7 +35,13 @@ const LoadWallet = () => {
     }
     useEffect(() => {
         if (fetch)
-            mount(ref.current, { setUpdateStore, setLogOut, setAccount, dispatchNotification })
+            mount(ref.current, {
+                setUpdateStore,
+                setLogOut,
+                setAccount,
+                dispatchNotification,
+                navigate: location => navigate(location),
+            })
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [fetch])
 
