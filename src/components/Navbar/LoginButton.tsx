@@ -1,40 +1,15 @@
-import React, { useEffect, useRef } from 'react'
+import React from 'react'
 import { useAppDispatch, useAppSelector } from '../../hooks/reduxHooks'
-import { Box, MenuItem, MenuList, Select, IconButton, useTheme } from '@mui/material'
+import { MenuItem, MenuList, Select, IconButton, useTheme } from '@mui/material'
 import store from 'wallet/store'
-import { mountAccountMenu } from 'wallet/mountAccountMenu'
 import { useNavigate } from 'react-router-dom'
 import { getAccount, updateAuthStatus, updateAccount } from '../../redux/slices/app-config'
 import { mdiLogout } from '@mdi/js'
-import { styled } from '@mui/material/styles'
 import Icon from '@mdi/react'
 import MHidden from '../@material-extend/MHidden'
+import { LoadAccountMenu } from '../LoadAccountMenu'
+import AliasPicker from '../AliasPicker'
 
-const StyledBox = styled(Box)(({ theme }) => ({
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    width: '100%',
-    height: '100%',
-    '@media (max-width: 600px)': {
-        justifyContent: 'flex-start',
-    },
-}))
-
-export const LoadAccountMenu = (props: { type: string }) => {
-    const ref = useRef(null)
-    const dispatch = useAppDispatch()
-    const setAccount = account => dispatch(updateAccount(account))
-    useEffect(() => {
-        mountAccountMenu(ref.current, { ...props, setAccount })
-    }, []) // eslint-disable-line react-hooks/exhaustive-deps
-
-    return (
-        <StyledBox>
-            <div ref={ref} />
-        </StyledBox>
-    )
-}
 export default function LoginIcon() {
     const cAddress = useAppSelector(state => state.appConfig.walletStore?.activeWallet?.ethAddress)
     const dispatch = useAppDispatch()
@@ -60,7 +35,7 @@ export default function LoginIcon() {
                         <LoadAccountMenu type="user" />
                     </MenuItem>
                     <MenuItem>
-                        <LoadAccountMenu type="alias" />
+                        <AliasPicker />
                     </MenuItem>
                     <MenuItem>
                         <LoadAccountMenu type="kyc" />
@@ -78,7 +53,7 @@ export default function LoginIcon() {
             </MHidden>
             <MHidden width="smDown">
                 <>
-                    <LoadAccountMenu type="alias" />
+                    <AliasPicker />
                     {cAddress && (
                         <Select
                             value={!account ? cAddress : <LoadAccountMenu type="" />}

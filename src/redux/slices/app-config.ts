@@ -12,6 +12,7 @@ interface InitialStateAppConfigType {
     isAuth: boolean
     walletStore: any
     account: any
+    selectedAlias?: string
 }
 
 let initialState: InitialStateAppConfigType = {
@@ -50,6 +51,9 @@ const appConfigSlice = createSlice({
                 state.notificationMessage = state.notificationStatus ? payload.message : ''
             }
         },
+        updateSelectedAlias(state, { payload }) {
+            state.selectedAlias = payload
+        },
     },
 })
 
@@ -74,11 +78,15 @@ export const getNotificationMessage = (state: RootState) => state.appConfig.noti
 //select notification severity
 export const getNotificationSeverity = (state: RootState) => state.appConfig.notificationSeverity
 
+// get selectedAlias
+export const getSelectedAlias = (state: RootState) => state.appConfig.selectedAlias
+
 export const {
     changeActiveApp,
     updateValues,
     updateAuthStatus,
     updateAccount,
     updateNotificationStatus,
+    updateSelectedAlias,
 } = appConfigSlice.actions
 export default appConfigSlice.reducer

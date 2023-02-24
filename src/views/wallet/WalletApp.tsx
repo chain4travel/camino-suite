@@ -9,6 +9,7 @@ import {
 } from '../../redux/slices/app-config'
 import { Navigate, useNavigate } from 'react-router-dom'
 import { updateAssets } from '../../helpers/walletStore'
+import { useEffectOnce } from '../../hooks/useEffectOnce'
 const LoadWallet = () => {
     const [updateStore, setUpdateStore] = useState(null)
     const [fetch, setFetch] = useState(false)
@@ -45,9 +46,9 @@ const LoadWallet = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [fetch])
 
-    useEffect(() => {
+    useEffectOnce(() => {
         fetchUTXOs()
-    }, [])
+    })
 
     return (
         <div
