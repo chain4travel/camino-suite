@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import Icon from '@mdi/react'
 import {
     AppBar,
@@ -10,6 +10,7 @@ import {
     Typography,
     useTheme,
 } from '@mui/material'
+import { useIdleTimer } from 'react-idle-timer'
 import { mdiClose, mdiMenu, mdiWalletOutline } from '@mdi/js'
 import { useNavigate } from 'react-router-dom'
 import { useAppDispatch, useAppSelector } from '../../hooks/reduxHooks'
@@ -20,11 +21,9 @@ import ThemeSwitcher from './ThemeSwitcher'
 import LoginButton from './LoginButton'
 import MHidden from '../@material-extend/MHidden'
 import MIconButton from '../@material-extend/MIconButton'
-import IdleTimer from '../../layout/IdleTimer'
 import { updateAccount, updateAuthStatus } from '../../redux/slices/app-config'
 import store from 'wallet/store'
-import { TIMEOUT_DURATION } from '../../constants/apps-consts'
-const DRAWER_WIDTH = 300
+import { TIMEOUT_DURATION, DRAWER_WIDTH } from '../../constants/apps-consts'
 
 export default function Navbar() {
     const theme = useTheme()
@@ -40,23 +39,19 @@ export default function Navbar() {
         setOpenSidebar(true)
     }
     const dispatch = useAppDispatch()
-    useEffect(() => {
-        let timer
-        if (auth && window.location.hostname !== 'localhost')
-            timer = new IdleTimer({
-                timeout: TIMEOUT_DURATION,
-                onTimeout: async () => {
-                    await store.dispatch('logout')
-                    dispatch(updateAccount(null))
-                    dispatch(updateAuthStatus(false))
-                },
-            })
-        else if (!auth && timer) timer.cleanUp()
-        return () => {
-            if (timer) timer.cleanUp()
+
+    const onIdle = async () => {
+        if (auth && window.location.hostname !== 'localhost') {
+            await store.dispatch('logout')
+            dispatch(updateAccount(null))
+            dispatch(updateAuthStatus(false))
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [auth])
+    }
+
+    useIdleTimer({
+        onIdle,
+        timeout: TIMEOUT_DURATION,
+    })
 
     return (
         <AppBar
