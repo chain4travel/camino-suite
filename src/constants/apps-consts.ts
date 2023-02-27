@@ -11,4 +11,6 @@ export const APPS_CONSTS = [
     },
 ]
 
-export const TIMEOUT_DURATION = 60 * 20 // in seconds
+export const TIMEOUT_DURATION = 60000 * 20 // in milliseconde
+
+export const DRAWER_WIDTH = 300
