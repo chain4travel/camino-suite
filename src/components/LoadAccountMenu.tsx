@@ -1,6 +1,6 @@
 import React, { useRef } from 'react'
 import { useAppDispatch } from '../hooks/reduxHooks'
-import { updateAccount } from '../redux/slices/app-config'
+import { updateAccount, updateNotificationStatus } from '../redux/slices/app-config'
 import { mountAccountMenu } from 'wallet/mountAccountMenu'
 import { styled } from '@mui/material/styles'
 import { Box } from '@mui/material'
@@ -24,8 +24,10 @@ export const LoadAccountMenu = (props: {
     const ref = useRef(null)
     const dispatch = useAppDispatch()
     const setAccount = account => dispatch(updateAccount(account))
+    const dispatchNotification = ({ message, type }) =>
+        dispatch(updateNotificationStatus({ message, severity: type }))
     useEffectOnce(() => {
-        mountAccountMenu(ref.current, { ...props, setAccount })
+        mountAccountMenu(ref.current, { ...props, setAccount, dispatchNotification })
     }) // eslint-disable-line react-hooks/exhaustive-deps
 
     return (
