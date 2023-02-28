@@ -101,22 +101,26 @@ const useNetwork = (): {
         setEdit(true)
         setOpen(true)
     }
-    async function removeNetworkEvent(net) {
-        let selectedN = networks.find(network => network.name === net)
-        store.dispatch('Network/removeCustomNetwork', selectedN)
-        let nks = store.getters['Network/allNetworks']
-        if (selectedN.name === activeNetwork.name) {
-            await switchNetwork(networks[1])
-            dispatch(changeActiveNetwork(networks[1]))
-            changeNetworkExplorer(networks[1])
-        }
-        dispatch(
-            updateNotificationStatus({
-                message: `Removed custom network.`,
-                severity: 'success',
-            }),
+    async function removeNetworkEvent(net: AvaNetwork) {
+        let networkToRemove = store.getters['Network/allNetworks'].find(
+            (network: AvaNetwork) => network.name === net,
         )
-        dispatch(addNetworks(nks))
+        if (networkToRemove) {
+            store.dispatch('Network/removeCustomNetwork', networkToRemove)
+            let updatedNetworks: AvaNetwork[] = store.getters['Network/allNetworks']
+            if (networkToRemove.name === activeNetwork.name) {
+                await switchNetwork(updatedNetworks[1])
+                dispatch(changeActiveNetwork(updatedNetworks[1]))
+                changeNetworkExplorer(updatedNetworks[1])
+            }
+            dispatch(
+                updateNotificationStatus({
+                    message: `Removed custom network.`,
+                    severity: 'success',
+                }),
+            )
+            dispatch(addNetworks(updatedNetworks))
+        }
     }
     const handleChangeEvent = async () => {
         if (selectedEvent === 'editNetwork') await editNetworkEvent(selectedNetwork)
