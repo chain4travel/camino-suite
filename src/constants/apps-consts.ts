@@ -10,3 +10,7 @@ export const APPS_CONSTS = [
         url: '/wallet',
     },
 ]
+
+export const TIMEOUT_DURATION = 60000 * 20 // in milliseconde
+
+export const DRAWER_WIDTH = 300

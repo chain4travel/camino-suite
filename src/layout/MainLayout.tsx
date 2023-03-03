@@ -61,7 +61,7 @@ const MainLayout = ({ children }) => {
                     justifyContent: 'center',
                     alignItems: 'center',
                     minHeight: 'calc(80vh - 69px)',
-                    padding: '0 .75rem',
+                    padding: '0 1.5rem',
                 }}
             >
                 {!loadNetworks && <>{children}</>}

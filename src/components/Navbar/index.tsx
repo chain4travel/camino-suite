@@ -10,9 +10,10 @@ import {
     Typography,
     useTheme,
 } from '@mui/material'
+import { useIdleTimer } from 'react-idle-timer'
 import { mdiClose, mdiMenu, mdiWalletOutline } from '@mdi/js'
 import { useNavigate } from 'react-router-dom'
-import { useAppSelector } from '../../hooks/reduxHooks'
+import { useAppDispatch, useAppSelector } from '../../hooks/reduxHooks'
 import { getActiveNetwork } from '../../redux/slices/network'
 import PlatformSwitcher from '../PlatformSwitcher'
 import NetworkSwitcher from './NetworkSwitcher'
@@ -20,8 +21,9 @@ import ThemeSwitcher from './ThemeSwitcher'
 import LoginButton from './LoginButton'
 import MHidden from '../@material-extend/MHidden'
 import MIconButton from '../@material-extend/MIconButton'
-
-const DRAWER_WIDTH = 300
+import { updateAccount, updateAuthStatus } from '../../redux/slices/app-config'
+import store from 'wallet/store'
+import { TIMEOUT_DURATION, DRAWER_WIDTH } from '../../constants/apps-consts'
 
 export default function Navbar() {
     const theme = useTheme()
@@ -36,6 +38,20 @@ export default function Navbar() {
     const handleOpenSidebar = () => {
         setOpenSidebar(true)
     }
+    const dispatch = useAppDispatch()
+
+    const onIdle = async () => {
+        if (auth && window.location.hostname !== 'localhost') {
+            await store.dispatch('logout')
+            dispatch(updateAccount(null))
+            dispatch(updateAuthStatus(false))
+        }
+    }
+
+    useIdleTimer({
+        onIdle,
+        timeout: TIMEOUT_DURATION,
+    })
 
     return (
         <AppBar
@@ -44,6 +60,7 @@ export default function Navbar() {
                 display: 'flex',
                 alignItems: 'center',
                 minHeight: '65px',
+                px: '1.5rem',
             }}
             position="fixed"
         >
@@ -55,6 +72,7 @@ export default function Navbar() {
                     height: 'auto',
                     p: '0',
                     gap: '1rem',
+                    px: '0px !important',
                     alignItems: 'normal',
                     justifyContent: 'space-between',
                 }}
