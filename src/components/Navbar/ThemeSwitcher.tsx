@@ -7,6 +7,7 @@ import Icon from '@mdi/react'
 import useWidth from '../../hooks/useWidth'
 import { useStore } from 'Explorer/useStore'
 import { getTheme } from '../../redux/slices/theme'
+import store from 'wallet/store'
 
 export default function ThemeSwitcher() {
     const { isDesktop } = useWidth()
@@ -22,6 +23,7 @@ export default function ThemeSwitcher() {
                     document.documentElement.setAttribute('data-theme', 'night')
                 else document.documentElement.setAttribute('data-theme', 'day')
                 changeTheme(currentTheme === 'light' ? 'dark' : 'light')
+                store.commit('updateTheme')
                 dispatch(toggleTheme())
             }}
             startIcon={<Icon path={mdiWeatherSunny} size={1} />}
