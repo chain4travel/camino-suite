@@ -45,6 +45,7 @@ export default function Navbar() {
             await store.dispatch('logout')
             dispatch(updateAccount(null))
             dispatch(updateAuthStatus(false))
+            navigate('/login')
         }
     }
 
