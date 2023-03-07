@@ -67,7 +67,7 @@ export default function PlatformSwitcher() {
                             style={
                                 !isDesktop
                                     ? { width: '30px', height: '30px' }
-                                    : { width: '120px', height: '34px' }
+                                    : { width: '120px', height: '36px' }
                             }
                         />
                         <Typography
