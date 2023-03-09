@@ -2,7 +2,13 @@ import React from 'react'
 import * as Yup from 'yup'
 import { Network } from '../../@types/store'
 import { useAppDispatch } from '../../hooks/reduxHooks'
-import { Typography, TextField, DialogContent, DialogActions } from '@mui/material'
+import {
+    Typography,
+    TextField,
+    DialogContent,
+    DialogActions,
+    CircularProgress,
+} from '@mui/material'
 import { useFormik, Form, FormikProvider } from 'formik'
 import { Button } from '@mui/material'
 import { AvaNetwork } from 'wallet/AvaNetwork'
@@ -242,23 +248,7 @@ export default function AddNewNetwork({
                         pb: 0,
                     }}
                 >
-                    <Button
-                        disabled={isLoading}
-                        variant="outlined"
-                        type="submit"
-                        data-cy="btn-add-network"
-                        sx={{ py: '.75rem', width: '100%' }}
-                    >
-                        {!edit ? (
-                            <Typography variant="body1" color="primary">
-                                Add Network
-                            </Typography>
-                        ) : (
-                            <Typography variant="body1" color="primary">
-                                Edit Network
-                            </Typography>
-                        )}
-                    </Button>
+                    <NetworkButton isLoading={isLoading} edit={edit} />
                     <Button
                         variant="contained"
                         onClick={handleClose}
@@ -272,4 +262,52 @@ export default function AddNewNetwork({
             </Form>
         </FormikProvider>
     )
+}
+
+const AddNetworkButton = () => (
+    <Button
+        variant="outlined"
+        type="submit"
+        data-cy="btn-add-network"
+        sx={{ py: '.75rem', width: '100%' }}
+    >
+        <Typography variant="body1" color="primary">
+            Add Network
+        </Typography>
+    </Button>
+)
+
+const EditNetworkButton = () => (
+    <Button
+        variant="outlined"
+        type="submit"
+        data-cy="btn-edit-network"
+        sx={{ py: '.75rem', width: '100%' }}
+    >
+        <Typography variant="body1" color="primary">
+            Edit Network
+        </Typography>
+    </Button>
+)
+
+const LoadingButton = () => (
+    <Button
+        variant="outlined"
+        type="submit"
+        data-cy="btn-loading"
+        disabled
+        sx={{ py: '.75rem', width: '100%' }}
+    >
+        <CircularProgress size={20} />
+    </Button>
+)
+
+const NetworkButton = ({ isLoading, edit }) => {
+    if (isLoading) {
+        return <LoadingButton />
+    } else if (edit) {
+        return <EditNetworkButton />
+    } else {
+        return <AddNetworkButton />
+    }
 }
