@@ -97,22 +97,20 @@ export default function AddNewNetwork({
         if (_duplicate) return true
         return false
     }
-    async function tryConnection(url, credential = false): Promise<number | null> {
+    async function tryConnection(url, credential = false): Promise<number | string | null> {
         try {
             let resp = await axios.post(
                 url + '/ext/info',
-                {
-                    jsonrpc: '2.0',
-                    id: 1,
-                    method: 'info.getNetworkID',
-                },
-                {
-                    withCredentials: credential,
-                },
+                { jsonrpc: '2.0', id: 1, method: 'info.getNetworkID' },
+                { withCredentials: credential, timeout: 60000 },
             )
             return parseInt(resp.data.result.networkID)
         } catch (err) {
-            return null
+            if (axios.isAxiosError(err) && err.code === 'ECONNABORTED') {
+                return 'timeout'
+            } else {
+                return null
+            }
         }
     }
     const formik = useFormik({
@@ -157,6 +155,11 @@ export default function AddNewNetwork({
 
                 let validNetId = credNum || noCredNum
 
+                if (validNetId === 'timeout') {
+                    setError('Connection attempt timed out. Please retry.')
+                    setIsLoading(false)
+                    return
+                }
                 if (!validNetId) {
                     setError('Camino Network Not Found')
                     setIsLoading(false)
@@ -229,17 +232,41 @@ export default function AddNewNetwork({
                     )}
                 </DialogContent>
 
-                <DialogActions sx={{ display: 'flex', justifyContent: 'center', mb: 2, gap: 2 }}>
+                <DialogActions
+                    sx={{
+                        display: 'flex',
+                        justifyContent: 'center',
+                        flexDirection: { xs: 'column', sm: 'row' },
+                        mb: 2,
+                        gap: 2,
+                        pb: 0,
+                    }}
+                >
                     <Button
                         disabled={isLoading}
                         variant="outlined"
                         type="submit"
                         data-cy="btn-add-network"
+                        sx={{ py: '.75rem', width: '100%' }}
                     >
-                        {!edit ? <>Add Network</> : <>Edit Network</>}
+                        {!edit ? (
+                            <Typography variant="body1" color="primary">
+                                Add Network
+                            </Typography>
+                        ) : (
+                            <Typography variant="body1" color="primary">
+                                Edit Network
+                            </Typography>
+                        )}
                     </Button>
-                    <Button variant="contained" onClick={handleClose}>
-                        Cancel
+                    <Button
+                        variant="contained"
+                        onClick={handleClose}
+                        sx={{ py: '.75rem', width: '100%' }}
+                    >
+                        <Typography variant="body1" color="primary">
+                            Cancel
+                        </Typography>
                     </Button>
                 </DialogActions>
             </Form>
