@@ -11,6 +11,7 @@ import CssBaseline from './CssBaseline'
 import Paper from './Paper'
 import Drawer from './Drawer'
 import Input from './Input'
+import DialogActions from './DialogActions'
 
 export default function ComponentsOverrides(theme: Theme) {
     return merge(
@@ -25,5 +26,6 @@ export default function ComponentsOverrides(theme: Theme) {
         Paper(theme),
         Drawer(theme),
         Input(theme),
+        DialogActions(theme),
     )
 }
