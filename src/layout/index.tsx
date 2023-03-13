@@ -7,7 +7,6 @@ import Wallet from '../views/wallet/WalletApp'
 import LoginPage from '../views/login/LoginPage'
 import Create from '../views/create/Create'
 import Legal from '../views/legal/Legal'
-import Menu from '../views/menu/Menu'
 import AccessLayout from '../views/access'
 import MountAccessComponent from '../views/access/MountAccessComponent'
 import { useAppSelector } from '../hooks/reduxHooks'
@@ -28,7 +27,6 @@ export default function Layout() {
                     <Route path="/create" element={<Create />} />
                     <Route path="/legal" element={<Legal />} />
                     <Route path="/access" element={<AccessLayout />}>
-                        <Route index element={<Menu />} />
                         <Route path="keystore" element={<MountAccessComponent type="Keystore" />} />
                         <Route path="mnemonic" element={<MountAccessComponent type="Mnemonic" />} />
                         <Route

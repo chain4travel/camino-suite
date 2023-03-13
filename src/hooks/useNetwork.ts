@@ -39,12 +39,7 @@ const useNetwork = (): {
     const activeNetwork = useAppSelector<AvaNetwork>(getActiveNetwork)
     const status: Status = useAppSelector(selectNetworkStatus)
 
-    const {
-        changeNetworkExplorer,
-        resetCChainReducer,
-        resetValidatorsReducer,
-        resetXPChainReducer,
-    } = useStore()
+    const { changeNetworkExplorer } = useStore()
 
     useEffect(() => {
         if (selectedNetwork) {
@@ -52,11 +47,6 @@ const useNetwork = (): {
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [selectedNetwork])
-
-    useEffect(() => {
-        resetExplorerSlices()
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [activeNetwork])
 
     const switchNetwork = async (network: AvaNetwork) => {
         try {
@@ -137,11 +127,6 @@ const useNetwork = (): {
 
     const handleOpenModal = () => {
         setOpen(true)
-    }
-    const resetExplorerSlices = () => {
-        resetCChainReducer()
-        resetValidatorsReducer()
-        resetXPChainReducer()
     }
     return {
         handleChangeNetwork,
