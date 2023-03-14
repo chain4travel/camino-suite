@@ -14,7 +14,7 @@ import {
     IconButton,
 } from '@mui/material'
 import { mdiDeleteOutline, mdiPencilOutline, mdiPlus } from '@mdi/js'
-import { networkStatusColor, networkStatusName } from '@/utils/networkUtils'
+import { networkStatusColor, networkStatusName } from '../../utils/networkUtils'
 import DialogAnimate from '../Animate/DialogAnimate'
 import MHidden from '../@material-extend/MHidden'
 import AddNewNetwork from './AddNewNetwork'
@@ -226,7 +226,7 @@ export default function NetworkSwitcher() {
                     </MenuItem>
                 </Select>
                 <DialogAnimate open={open} onClose={handleCloseModal}>
-                    <DialogTitle>Add New Network</DialogTitle>
+                    <DialogTitle>{!edit ? <>Add New Network</> : <>Edit Network</>}</DialogTitle>
                     <AddNewNetwork
                         networks={networks}
                         handleClose={handleCloseModal}

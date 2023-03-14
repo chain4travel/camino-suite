@@ -45,6 +45,7 @@ export default function Navbar() {
             await store.dispatch('logout')
             dispatch(updateAccount(null))
             dispatch(updateAuthStatus(false))
+            navigate('/login')
         }
     }
 
@@ -153,7 +154,7 @@ export default function Navbar() {
                                 >
                                     <Icon path={mdiWalletOutline} size={1} />
                                     <Typography variant="subtitle1" component="span">
-                                        Wallet
+                                        Login
                                     </Typography>
                                 </Box>
                             )}
