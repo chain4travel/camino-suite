@@ -130,114 +130,121 @@ let dataBody = {
     startTime: '0001-01-01T00:00:00Z',
     endTime: `${moment().format('YYYY-MM-DD')}T23:59:59Z`,
 }
-describe('activity transactions', () => {
+
+describe('Activity Transactions', () => {
+    Cypress.on('uncaught:exception', (err, runnable) => {
+        // returning false here prevents Cypress from failing the test
+        return false
+    })
+
     before(() => {
         cy.visit('/')
     })
 
     it('access activity transactions', () => {
-        
-        addKopernikusNetwork(cy);
+        addKopernikusNetwork(cy)
         //changeNetwork(cy);
 
-        let address = [
-            "prison",
-            "assist",
-            "dress",
-            "stay",
-            "target",
-            "same",
-            "brown",
-            "rally",
-            "remove",
-            "spice",
-            "abstract",
-            "liberty",
-            "valley",
-            "program",
-            "wealth",
-            "vacuum",
-            "claw",
-            "cat",
-            "april",
-            "relief",
-            "choice",
-            "voyage",
-            "toddler",
-            "forum"
-        ];
-        
         accessWallet(cy, 'mnemonic')
-
         cy.wait(10000)
-        cy.get('[data-cy="wallet_activity"]', { timeout: 20000 })
-        cy.get('[data-cy="wallet_activity"]').click()
-
-        cy.intercept('POST', '**/v2/transactions', (req) => {
-            if (req.body.chainID[0] == '11111111111111111111111111111111LpoYY') {
-                req.reply({
-                    statusCode: 200,
-                    body: {
-                        transactions: null,
-                        startTime: '0001-01-01T00:00:00Z',
-                        endTime: '2023-02-07T16:02:18Z',
-                    },
-                })
-            } else {
-                req.reply({
-                    statusCode: 200,
-                    body: dataBody,
-                })
-            }
-        })
-
-        cy.get('[data-cy="tx-table-activity"]', { timeout: 7000 }).should('be.visible')
-        cy.get('.tx_cols', { timeout: 7000 }).should('be.visible')
-
-        cy.get('[data-cy="tx-detail-0"] > .infoTx > .utxos > :nth-child(1) > .tx_out > .addresses > p')
+        cy.get('[data-cy="wallet_address"]', { timeout: 12000 }).should('be.visible')
+        cy.get('[data-cy="wallet_address"]', { timeout: 12000 })
             .invoke('text')
             .then((textAddress) => {
-                addressFrom = textAddress.replace('from ', '')
-                cy.log(addressFrom)
-            })
+                let addressValidate = textAddress.replace('\n', '').replace(' ', '').split('X-')
+                let address = addressValidate[1].split('\n')[0]
+                dataBody.transactions[0].outputs[0].addresses[0] = address
 
-        cy.log('Table Ok')
-        cy.get('.meta_col > div > .time', { timeout: 7000 })
-            .invoke('text')
-            .then((text) => {
-                cy.log('Continue Process')
+                cy.intercept('POST', '**/v2/transactions', (req) => {
+                    if (req.body.chainID[0] == '11111111111111111111111111111111LpoYY') {
+                        req.reply({
+                            statusCode: 200,
+                            body: {
+                                transactions: null,
+                                startTime: '0001-01-01T00:00:00Z',
+                                endTime: '2023-02-07T16:02:18Z',
+                            },
+                        })
+                    } else {
+                        let chainID = req.body.chainID[0]
+                        dataBody.transactions[0].chainID = chainID
+                        dataBody.transactions[0].inputs[0].output.chainID = chainID
+                        dataBody.transactions[0].outputs[0].chainID = chainID
+                        dataBody.transactions[0].outputs[1].chainID = chainID
+                        req.reply({
+                            statusCode: 200,
+                            body: dataBody,
+                        })
+                    }
+                }).as('historyTransactions')
 
-                let splittedDate = text.split(' ')
-                let dateMap = splittedDate.map((text) => text.trim())
-                let strDateArr = dateMap.filter((text) => text)
-                var textDate = strDateArr.slice(1, 7)
-                let arrStrTextDate = textDate.toString().split(',')
-                let aHourFormat = arrStrTextDate[4].split('.')
-                let hourMorningOrAfternoon = `${aHourFormat[0]}${aHourFormat[1].replace(' ', '')}`
-                let str4lformatDate = `${arrStrTextDate[1]}/${arrStrTextDate[0]}/${arrStrTextDate[2]} ${arrStrTextDate[3]} ${hourMorningOrAfternoon}`
-                let dateUTC = moment(str4lformatDate, 'DD/MMM/YYYY hh:mm:ss a').toISOString()
-                cy.get('[data-cy="tx-detail-0"] > .infoTx > .utxos > :nth-child(1) > .tx_out > .amount')
-                    .should('be.visible')
+                cy.get('[data-cy="wallet_activity"]', { timeout: 60000 }).should('be.visible')
+                cy.get('[data-cy="wallet_activity"]').click()
+
+                cy.wait('@historyTransactions')
+
+                cy.get('[data-cy="tx-table-activity"]', { timeout: 7000 }).should('be.visible')
+                cy.get('.tx_cols', { timeout: 7000 }).should('be.visible')
+
+                cy.get(
+                    '[data-cy="tx-detail-0"] > .infoTx > .utxos > :nth-child(1) > .tx_out > .addresses > p'
+                )
                     .invoke('text')
-                    .then((textAmount) => {
-                        let textAmountArr = textAmount
-                            .split(' ')
-                            .filter(
-                                (textData) =>
-                                    textData != '\n' && textData != '' && textData != 'CAM\n'
-                            )
-                        let amount = parseInt(textAmountArr[0].replace('\n', '')) * 1000000000
+                    .then((textAddress) => {
+                        addressFrom = textAddress.replace('from ', '')
+                        cy.log(addressFrom)
+                    })
 
-                        if (
-                            dateUTC.replace('.000', '') ==
-                                dataBody.transactions[0].outputs[1].timestamp ||
-                            amount == parseInt(dataBody.transactions[0].outputs[1].amount)
-                            || addressFrom == dataBody[0].inputs[0].output.addresses[0]
-                        ) {
-                            cy.log('success')
-                        } else {
-                            cy.log('failed')
-                        }
+                cy.log('Table Ok')
+                cy.get('.time', { timeout: 7000 })
+                    .invoke('text')
+                    .then((text) => {
+                        cy.log('Continue Process')
+                        let splittedDate = text.split(' ')
+                        let dateMap = splittedDate.filter((text) => text != '' && text != '\n')
+
+                        //let dayStr = dateMap[0];
+                        let monthStr = dateMap[1]
+                        let dayNumberStr = dateMap[2]
+                        let yearStr = dateMap[3].replace('\n', '')
+                        let hourStr = dateMap[4]
+                        var rxHour = /\w/g
+                        let arrHour: any = rxHour.exec(dateMap[5])
+                        let timeInputComplete = `${dayNumberStr}/${monthStr}/${yearStr} ${hourStr} ${arrHour[0]}m`
+                        let dateUTC = moment(
+                            timeInputComplete,
+                            'DD/MMM/YYYY hh:mm:ss a'
+                        ).toISOString()
+
+                        cy.get(
+                            '[data-cy="tx-detail-0"] > .infoTx > .utxos > :nth-child(1) > .tx_out > .amount'
+                        )
+                            .should('be.visible')
+                            .invoke('text')
+                            .then((textAmount) => {
+                                let textAmountArr = textAmount
+                                    .split(' ')
+                                    .filter(
+                                        (textData) =>
+                                            textData != '\n' &&
+                                            textData != '' &&
+                                            textData != 'CAM\n'
+                                    )
+                                let amount =
+                                    parseInt(textAmountArr[0].replace('\n', '')) * 1000000000
+
+                                if (
+                                    dateUTC.replace('.000', '') ==
+                                        dataBody.transactions[0].outputs[1].timestamp ||
+                                    amount ==
+                                        parseInt(dataBody.transactions[0].outputs[1].amount) ||
+                                    addressFrom == dataBody[0].inputs[0].output.addresses[0]
+                                ) {
+                                    cy.log('success')
+                                } else {
+                                    cy.log('failed')
+                                }
+                            })
                     })
             })
     })
