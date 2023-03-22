@@ -8,7 +8,6 @@ import { mdiLogout } from '@mdi/js'
 import Icon from '@mdi/react'
 import MHidden from '../@material-extend/MHidden'
 import { LoadAccountMenu } from '../LoadAccountMenu'
-import AliasPicker from '../AliasPicker'
 
 export default function LoginIcon() {
     const cAddress = useAppSelector(state => state.appConfig.walletStore?.activeWallet?.ethAddress)
@@ -35,9 +34,6 @@ export default function LoginIcon() {
                         <LoadAccountMenu type="user" />
                     </MenuItem>
                     <MenuItem>
-                        <AliasPicker />
-                    </MenuItem>
-                    <MenuItem>
                         <LoadAccountMenu type="kyc" />
                     </MenuItem>
                     <MenuItem
@@ -53,7 +49,6 @@ export default function LoginIcon() {
             </MHidden>
             <MHidden width="smDown">
                 <>
-                    <AliasPicker />
                     {cAddress && (
                         <Select
                             value={!account ? cAddress : <LoadAccountMenu type="" />}
