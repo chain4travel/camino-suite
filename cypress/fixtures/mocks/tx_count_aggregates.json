@@ -1,0 +1,14 @@
+{
+    "aggregates": {
+        "AggregateMerge": null,
+        "startTime": "2023-03-01T19:36:39Z",
+        "endTime": "2023-03-02T19:36:39Z",
+        "transactionVolume": "",
+        "transactionCount": 1,
+        "addressCount": 0,
+        "outputCount": 0,
+        "assetCount": 0
+    },
+    "startTime": "2023-03-01T19:36:39Z",
+    "endTime": "2023-03-02T19:36:39Z"
+}

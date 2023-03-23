@@ -6,9 +6,13 @@ declare global {
     namespace Cypress {
         interface Chainable {
             changeNetwork(network?: string): Chainable<Element>
-            accessWallet(type: WalletAccessType, keyName?: string): Chainable<Element>
+            accessWallet(type: WalletAccessType, keyName?: string,networkName?:string): Chainable<Element>
             switchToWalletApp(): Chainable<Element>
             switchToWalletFunctionTab(func: string): Chainable<Element>
+            entryExplorer(network?: string): Chainable<Element>
+            checkValidatorsTxsGasFee(): Chainable<Element>
+            addKopernikusNetwork():Chainable<Element>
+            acceptCookies():Chainable<Element>
             /**
              * combo of commands in sequence:
              * - cy.visit('/')

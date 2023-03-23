@@ -1,5 +1,4 @@
 import { expect } from 'chai'
-import { changeNetwork, accessWallet, addKopernikusNetwork } from '../utils/utils'
 import moment from 'moment'
 import '@cypress/xpath'
 
@@ -142,10 +141,9 @@ describe('Activity Transactions', () => {
     })
 
     it('access activity transactions', () => {
-        addKopernikusNetwork(cy)
-        //changeNetwork(cy);
+        cy.addKopernikusNetwork()
 
-        accessWallet(cy, 'mnemonic')
+        cy.accessWallet('mnemonic')
         cy.wait(10000)
         cy.get('[data-cy="wallet_address"]', { timeout: 12000 }).should('be.visible')
         cy.get('[data-cy="wallet_address"]', { timeout: 12000 })
@@ -203,7 +201,6 @@ describe('Activity Transactions', () => {
                         let splittedDate = text.split(' ')
                         let dateMap = splittedDate.filter((text) => text != '' && text != '\n')
 
-                        //let dayStr = dateMap[0];
                         let monthStr = dateMap[1]
                         let dayNumberStr = dateMap[2]
                         let yearStr = dateMap[3].replace('\n', '')

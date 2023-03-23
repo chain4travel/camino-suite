@@ -7,8 +7,7 @@ describe('Wallet Creation', () => {
     })
 
     it('open suite/create wallet', () => {
-        addKopernikusNetwork(cy)
-        //changeNetwork(cy)
+        cy.addKopernikusNetwork()
         cy.wait(2000)
         cy.get('[data-cy="app-selector-menu"]').click()
         cy.get('[data-cy="app-selector-Wallet"]').click()
@@ -39,7 +38,6 @@ describe('Wallet Creation', () => {
 
             cy.get('[data-cy="app-selector-menu"]').click()
             cy.get('[data-cy="app-selector-Wallet"]').click()
-            //cy.writeFile(`cypress/temp/wallets/temp_wallet_${moment().format("YYYY_MM_DD__HH_mm_ss")}.json`, wordsPhrase);
         })
     })
 })

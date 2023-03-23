@@ -1,5 +1,4 @@
 import { expect } from 'chai'
-import { accessWallet, changeNetwork, addKopernikusNetwork } from '../utils/utils'
 
 let transactionsBody= {
     "transactions": [
@@ -246,7 +245,7 @@ describe('latest transaction list Xchainet', () => {
         }).as('txfee')
     })
     it('latest transaction list Xchain', () => {    
-        addKopernikusNetwork(cy)
+        cy.addKopernikusNetwork()
         cy.get('[data-cy="app-selector-menu"] > .MuiSelect-select').should('be.visible')
         cy.get('[data-cy="app-selector-menu"] > .MuiSelect-select').click()
         cy.get('[data-cy="app-selector-Explorer"] > .css-8atqhb > .MuiBox-root').should('be.visible')

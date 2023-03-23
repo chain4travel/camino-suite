@@ -1,4 +1,3 @@
-import { addKopernikusNetwork } from '../utils/utils'
 import moment from 'moment'
 
 describe('Display validators', () => {
@@ -14,7 +13,7 @@ describe('Display validators', () => {
                 body: data,
             })
         }).as('getValidatorsInfo')
-        addKopernikusNetwork(cy)
+        cy.addKopernikusNetwork()
 
         cy.get('[data-cy="activeValidators"]')
             .invoke('text')

@@ -1,5 +1,4 @@
 import { expect } from 'chai'
-import { changeNetwork, accessWallet, addKopernikusNetwork } from '../utils/utils'
 import '@cypress/xpath'
 
 const NETWORK_SWITCHER_BUTTON = '[data-cy="network-switcher"]'
@@ -17,9 +16,8 @@ describe('activity transactions', () => {
         cy.visit('/')
     })
     it('has access/add erc20', async () => {
-        addKopernikusNetwork(cy)
-        //changeNetwork(cy);
-        accessWallet(cy, 'mnemonic')
+        cy.addKopernikusNetwork()
+        cy.accessWallet('mnemonic')
 
         cy.wait(6000)
         cy.get('.scrollable > :nth-child(1) > .add_token_row > :nth-child(1)', {

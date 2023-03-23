@@ -1,5 +1,4 @@
 import { addKopernikusNetwork } from '../utils/utils'
-// import dataBody from '../fixtures/block_data/data.json'
 
 describe('Display block details', () => {
     before(() => {
@@ -7,7 +6,7 @@ describe('Display block details', () => {
     })
 
     it('display block details', () => {
-        addKopernikusNetwork(cy)
+        cy.addKopernikusNetwork()
         cy.intercept('GET', '**/v2/ctxdata/**', req => {
             console.log(dataBody)
             req.reply({
