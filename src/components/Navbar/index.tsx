@@ -24,6 +24,7 @@ import MIconButton from '../@material-extend/MIconButton'
 import { updateAccount, updateAuthStatus } from '../../redux/slices/app-config'
 import store from 'wallet/store'
 import { TIMEOUT_DURATION, DRAWER_WIDTH } from '../../constants/apps-consts'
+import AliasPicker from './AliasPicker'
 
 export default function Navbar() {
     const theme = useTheme()
@@ -130,7 +131,12 @@ export default function Navbar() {
                                 </Stack>
                                 {activeNetwork && <NetworkSwitcher />}
                             </Box>
-                            {auth && <LoginButton />}
+                            {auth && (
+                                <>
+                                    <AliasPicker />
+                                    <LoginButton />
+                                </>
+                            )}
                         </Drawer>
                         <MIconButton onClick={handleOpenSidebar}>
                             <Icon path={mdiMenu} size={1} />
@@ -157,7 +163,12 @@ export default function Navbar() {
                                     </Typography>
                                 </Box>
                             )}
-                            {auth && <LoginButton />}
+                            {auth && (
+                                <>
+                                    <AliasPicker />
+                                    <LoginButton />
+                                </>
+                            )}
                         </>
                     </MHidden>
                 </Box>
