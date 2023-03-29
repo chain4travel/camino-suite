@@ -131,12 +131,7 @@ export default function Navbar() {
                                 </Stack>
                                 {activeNetwork && <NetworkSwitcher />}
                             </Box>
-                            {auth && (
-                                <>
-                                    <AliasPicker />
-                                    <LoginButton />
-                                </>
-                            )}
+                            {auth && <LoginButton />}
                         </Drawer>
                         <MIconButton onClick={handleOpenSidebar}>
                             <Icon path={mdiMenu} size={1} />
