@@ -73,7 +73,7 @@ export default function LoginIcon() {
                                 onKeyDown={e => {
                                     handleKeyDown(e)
                                 }}
-                                sx={{ typography: 'body1', width: '100%', maxWidth: '326px' }}
+                                sx={{ typography: 'body2', width: '100%', maxWidth: '326px' }}
                             >
                                 <LoadAccountMenu type="user" />
                             </MenuItem>
@@ -81,7 +81,7 @@ export default function LoginIcon() {
                                 onKeyDown={e => {
                                     handleKeyDown(e)
                                 }}
-                                sx={{ typography: 'body1', width: '100%', maxWidth: '326px' }}
+                                sx={{ typography: 'body2', width: '100%', maxWidth: '326px' }}
                             >
                                 <LoadAccountMenu type="kyc" />
                             </MenuItem>
@@ -91,7 +91,7 @@ export default function LoginIcon() {
                                 }}
                                 onClick={logout}
                                 sx={{
-                                    typography: 'body1',
+                                    typography: 'body2',
                                     width: '100%',
                                     maxWidth: '326px',
                                     display: 'flex',
