@@ -34,7 +34,7 @@ export default function ThemeSwitcher() {
                 '.MuiButton-startIcon': { mr: isDesktop ? '0.5rem' : '0rem' },
             }}
         >
-            {isDesktop && <Typography variant="subtitle1">{theme.palette.mode}</Typography>}
+            {isDesktop && <Typography variant="body2">{theme.palette.mode}</Typography>}
         </Button>
     )
 }

@@ -31,7 +31,7 @@ export default function SelectedNetwork() {
                 }}
             />
             <Typography
-                variant="subtitle1"
+                variant="body2"
                 component="span"
                 sx={{ overflow: 'hidden', textOverflow: 'ellipsis' }}
             >

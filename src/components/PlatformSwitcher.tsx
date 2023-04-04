@@ -80,9 +80,9 @@ export default function PlatformSwitcher() {
                             }
                         />
                         <Typography
-                            variant="h4"
+                            variant={!isDesktop ? 'h6' : 'h4'}
                             component="span"
-                            fontWeight="400"
+                            fontWeight="500"
                             sx={{ ml: '.5rem', color: theme.palette.logo.primary }}
                         >
                             {app}
@@ -108,7 +108,7 @@ export default function PlatformSwitcher() {
                                 }}
                             >
                                 <Typography
-                                    variant="h5"
+                                    variant="subtitle2"
                                     component="span"
                                     noWrap
                                     fontWeight="500"
@@ -118,7 +118,7 @@ export default function PlatformSwitcher() {
                                 </Typography>
                                 <Icon path={mdiChevronRight} size={0.9} />
                             </Box>
-                            <Typography variant="subtitle2" component="span" fontWeight="300">
+                            <Typography variant="caption" component="span" fontWeight="300">
                                 {app.subText}
                             </Typography>
                         </Box>

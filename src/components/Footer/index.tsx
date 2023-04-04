@@ -60,7 +60,7 @@ export default function Footer() {
                             </Grid>
                             <Grid item>
                                 <Typography
-                                    variant="body1"
+                                    variant="caption"
                                     component="p"
                                     sx={{
                                         color: 'grey.500',
@@ -92,7 +92,7 @@ export default function Footer() {
                                     sx={{ display: 'flex', flexDirection: 'column' }}
                                 >
                                     <Typography
-                                        variant="subtitle1"
+                                        variant="body1"
                                         component="span"
                                         fontWeight="fontWeightBold"
                                         sx={{
@@ -125,7 +125,7 @@ export default function Footer() {
                                                     style={{ textDecoration: 'none' }}
                                                 >
                                                     <Typography
-                                                        variant="body1"
+                                                        variant="caption"
                                                         component="span"
                                                         sx={{ color: 'grey.500' }}
                                                     >
