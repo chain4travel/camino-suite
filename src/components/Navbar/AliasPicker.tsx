@@ -22,7 +22,7 @@ const AliasPicker = () => {
                 onClick={handleOpenModal}
                 style={{ width: '100%', whiteSpace: 'nowrap', padding: '0.5rem 1rem' }}
             >
-                Choose Alias
+                Switch Wallet
             </MainButton>
             <DialogAnimate open={open} onClose={handleCloseModal}>
                 <DialogTitle
