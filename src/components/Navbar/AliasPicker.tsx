@@ -6,15 +6,28 @@ import { mdiClose } from '@mdi/js'
 import MainButton from '../MainButton'
 import LoadMyKeysComponent from './LoadMyKeysComponent'
 import LoadSaveKeysComponent from './LoadSaveKeysComponent'
+import store from 'wallet/store'
+import { useEffectOnce } from '../../hooks/useEffectOnce'
+import { getMultisigAliases } from '../../api'
 
 const AliasPicker = () => {
     const [open, setOpen] = useState(false)
+    const [load, setLoad] = useState(false)
     const handleOpenModal = () => {
         setOpen(true)
+    }
+
+    async function showButton() {
+        let aliases = await getMultisigAliases(store.getters['staticAddresses']('P'))
+        if ((aliases && aliases.length > 0) || store.state.wallets.length > 1) setLoad(true)
     }
     const handleCloseModal = () => {
         setOpen(false)
     }
+    useEffectOnce(() => {
+        showButton()
+    })
+    if (!load) return <></>
     return (
         <>
             <MainButton
