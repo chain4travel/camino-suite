@@ -5,6 +5,7 @@ import {
     updateAccount,
     updateAuthStatus,
     updateNotificationStatus,
+    updateShowButton,
     updateValues,
 } from '../../redux/slices/app-config'
 import { Navigate, useNavigate } from 'react-router-dom'
@@ -29,7 +30,7 @@ const LoadWallet = () => {
     useEffect(() => {
         dispatch(updateValues(updateStore))
     }, [logOut]) // eslint-disable-line react-hooks/exhaustive-deps
-
+    const updateShowAlias = () => dispatch(updateShowButton())
     const fetchUTXOs = async () => {
         await updateAssets()
         setFetch(true)
@@ -41,6 +42,7 @@ const LoadWallet = () => {
                 setLogOut,
                 setAccount,
                 dispatchNotification,
+                updateShowAlias,
                 navigate: location => navigate(location),
             })
         // eslint-disable-next-line react-hooks/exhaustive-deps

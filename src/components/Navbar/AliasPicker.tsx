@@ -1,5 +1,5 @@
 import { Box, DialogContent, DialogTitle, Typography, Divider } from '@mui/material'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import DialogAnimate from '../Animate/DialogAnimate'
 import Icon from '@mdi/react'
 import { mdiClose } from '@mdi/js'
@@ -7,8 +7,9 @@ import MainButton from '../MainButton'
 import LoadMyKeysComponent from './LoadMyKeysComponent'
 import LoadSaveKeysComponent from './LoadSaveKeysComponent'
 import store from 'wallet/store'
-import { useEffectOnce } from '../../hooks/useEffectOnce'
 import { getMultisigAliases } from '../../api'
+import { useAppSelector } from '../../hooks/reduxHooks'
+import { getShowButton } from '../../redux/slices/app-config'
 
 const AliasPicker = () => {
     const [open, setOpen] = useState(false)
@@ -16,7 +17,7 @@ const AliasPicker = () => {
     const handleOpenModal = () => {
         setOpen(true)
     }
-
+    const showButtonState = useAppSelector(getShowButton)
     async function showButton() {
         let aliases = await getMultisigAliases(store.getters['staticAddresses']('P'))
         if ((aliases && aliases.length > 0) || store.state.wallets.length > 1) setLoad(true)
@@ -24,9 +25,9 @@ const AliasPicker = () => {
     const handleCloseModal = () => {
         setOpen(false)
     }
-    useEffectOnce(() => {
+    useEffect(() => {
         showButton()
-    })
+    }, [showButtonState])
     if (!load) return <></>
     return (
         <>

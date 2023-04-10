@@ -10,7 +10,7 @@ import {
 import { useStore } from 'Explorer/useStore'
 import { Status } from '../@types'
 import store from 'wallet/store'
-import { updateNotificationStatus } from '../redux/slices/app-config'
+import { updateNotificationStatus, updateShowButton } from '../redux/slices/app-config'
 import { useAppDispatch, useAppSelector } from './reduxHooks'
 import { AvaNetwork } from 'wallet/AvaNetwork'
 
@@ -53,6 +53,7 @@ const useNetwork = (): {
             dispatch(changeNetworkStatus(Status.LOADING))
             await store.dispatch('Network/setNetwork', network)
             dispatch(changeNetworkStatus(Status.SUCCEEDED))
+            dispatch(updateShowButton())
             dispatch(
                 updateNotificationStatus({
                     message: `Connected to ${network.name}`,
