@@ -2,9 +2,13 @@ name: cypress-tests
 
 on:
   push:
-    branches: [c4t, dev, suite]
+    branches: [c4t, dev, suite, workflow-optimize]
   pull_request:
     branches: [c4t, dev, suite]
+
+env:
+  wallet_image: 'europe-west3-docker.pkg.dev/pwk-c4t-dev/internal-camino-dev/camino-suite-wallet'
+  explorer_image: 'europe-west3-docker.pkg.dev/pwk-c4t-dev/internal-camino-dev/camino-suite-explorer'
 
 jobs:
   build:
@@ -44,17 +48,9 @@ jobs:
       - name: prettier
         run: yarn run format-check
 
-      - name: start suite
+      - name: build local image
         run: |
-          git clone -b ${{ steps.setBranch.outputs.branch }} https://github.com/chain4travel/camino-wallet.git
-          git clone -b ${{ steps.setBranch.outputs.branch }} https://github.com/chain4travel/camino-block-explorer.git
-          cd camino-wallet
-          yarn install
-          cd ../camino-block-explorer
-          yarn install
-          (yarn start&)
-          cd ..
-          (yarn start&)
+          docker-compose build --build-arg EXPLORER_BRANCH=${{ env.explorer_image }}:${{ steps.setBranch.outputs.branch }} --build-arg WALLET_BRANCH=${{ env.wallet_image }}:${{ steps.setBranch.outputs.branch }}
 
       - name: cypress-run
         uses: cypress-io/github-action@v5
@@ -63,7 +59,7 @@ jobs:
         with:
           wait-on: 'http://localhost:5003/'
           working-directory: camino-wallet
-          start: yarn start
+          start: docker-compose up
           # wait for 3 minutes for the server to respond
           wait-on-timeout: 180
           browser: chrome

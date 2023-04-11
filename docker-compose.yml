@@ -1,0 +1,24 @@
+version: '3.5'
+
+services:
+
+  wallet:
+    image: ${WALLET_IMAGE}
+    entrypoint: ["yarn", "start"]
+    ports:
+      - 5003:5003
+  explorer:
+    image: ${EXPLORER_IMAGE}
+    entrypoint: ["yarn", "start"]
+    ports:
+      - 5002:5002
+  suite:
+    build:
+      context: .
+      args: 
+        BUILD_ENV: ${BUILD_ENV}
+    image: ${SUITE_IMAGE}
+    entrypoint: ["yarn", "start"]
+    ports:
+      - 5001:5001
+
