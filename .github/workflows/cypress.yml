@@ -48,8 +48,16 @@ jobs:
       - name: prettier
         run: yarn run format-check
 
+      - name: Cloud authentication
+        if: github.event_name == 'push'
+        id: auth
+        uses: 'google-github-actions/auth@v1'
+        with:
+          credentials_json: '${{ secrets.GOOGLE_CREDENTIALS }}'
+
       - name: build local image
         run: |
+          gcloud auth configure-docker --quiet europe-west3-docker.pkg.dev
           docker-compose build --build-arg EXPLORER_BRANCH=${{ env.explorer_image }}:${{ steps.setBranch.outputs.branch }} --build-arg WALLET_BRANCH=${{ env.wallet_image }}:${{ steps.setBranch.outputs.branch }}
 
       - name: cypress-run
