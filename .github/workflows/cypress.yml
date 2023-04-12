@@ -62,6 +62,8 @@ jobs:
           export EXPLORER_IMAGE=${{ env.explorer_image }}:${{ steps.setBranch.outputs.branch }}
           export WALLET_IMAGE=${{ env.wallet_image }}:${{ steps.setBranch.outputs.branch }}
           docker-compose up -d
+          ls -la
+          ls -la camino-wallet
 
       - name: cypress-run
         uses: cypress-io/github-action@v5
