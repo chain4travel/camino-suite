@@ -8,8 +8,9 @@ import {
     numberToBNAvaxC,
 } from '@c4tplatform/camino-wallet-sdk'
 
-describe('Cross chain: C to X', { tags: ['@cross-chain'] }, () => {
-    context('normal cases: ', { tags: ['@columbus', '@kopernikus'] }, () => {
+describe('Cross chain: C to X', () => {
+
+    // context('normal cases: ', { tags: ['@columbus', '@kopernikus'] }, () => {
         beforeEach(() => {
             cy.loginWalletWith('privateKey', 'privateKeyCrossChain')
             // Switch to cross chain
@@ -247,5 +248,5 @@ describe('Cross chain: C to X', { tags: ['@cross-chain'] }, () => {
                         .should('have.text', expectedBalance.toString())
                 })
         })
-    })
+    // })
 })

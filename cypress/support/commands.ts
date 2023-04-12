@@ -125,7 +125,6 @@ Cypress.Commands.add(
     'loginWalletWith',
     (walletAccessType: WalletAccessType, keyName?: string, network: string = 'Columbus') => {
         cy.visit('/')
-
         // header - app(left) menu aliases
         cy.get('header > .MuiToolbar-root > .MuiBox-root:nth-child(1)').as('elAppMenu')
 

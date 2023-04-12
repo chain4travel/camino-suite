@@ -8,8 +8,8 @@ import {
     Big,
 } from '@c4tplatform/camino-wallet-sdk'
 
-describe('Cross chain: X to C', { tags: ['@cross-chain'] }, () => {
-    context('normal cases: ', { tags: ['@columbus', '@kopernikus'] }, () => {
+describe('Cross chain: X to C', () => {
+    // context('normal cases: ', { tags: ['@columbus', '@kopernikus'] }, () => {
         beforeEach(() => {
             cy.loginWalletWith('privateKey', 'privateKeyCrossChain')
             // Switch to cross chain
@@ -224,5 +224,5 @@ describe('Cross chain: X to C', { tags: ['@cross-chain'] }, () => {
                     })
             })
         })
-    })
+    // })
 })
