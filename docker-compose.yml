@@ -7,8 +7,7 @@ services:
     entrypoint: ["yarn", "start"]
     ports:
       - 5003:5003
-    volumes:
-      - ./camino-wallet:/app/camino-wallet
+    container_name: camino-suite-wallet-container
   explorer:
     image: ${EXPLORER_IMAGE}
     entrypoint: ["yarn", "start"]
