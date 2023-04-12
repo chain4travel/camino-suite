@@ -63,6 +63,8 @@ jobs:
           export WALLET_IMAGE=${{ env.wallet_image }}:${{ steps.setBranch.outputs.branch }}
           docker-compose up -d
           docker cp camino-suite-wallet-container:/app/camino-wallet ./
+          cd camino-wallet
+          yarn install
 
       - name: cypress-run
         uses: cypress-io/github-action@v5
