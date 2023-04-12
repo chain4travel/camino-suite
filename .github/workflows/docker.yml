@@ -48,7 +48,7 @@ jobs:
           if [[ "${{ github.event_name }}" == "pull_request" ]]; then
             docker build . -f Dockerfile_SUITE -t ${{ steps.setDefaults.outputs.docker_image }} --build-arg BUILD_ENV=build:${{ steps.setDefaults.outputs.build_env }} --build-arg SUITE_BRANCH=${{ github.base_ref }} --build-arg WALLET_BRANCH=${{ github.base_ref }}
           else
-            # docker build . -f Dockerfile_SUITE -t ${{ steps.setDefaults.outputs.docker_image }} --build-arg BUILD_ENV=build:${{ steps.setDefaults.outputs.build_env }} --build-arg SUITE_BRANCH=${{ github.ref_name }} --build-arg WALLET_BRANCH=${{ github.ref_name }}
+            docker build . -f Dockerfile_SUITE -t ${{ steps.setDefaults.outputs.docker_image }} --build-arg BUILD_ENV=build:${{ steps.setDefaults.outputs.build_env }} --build-arg SUITE_BRANCH=${{ github.ref_name }} --build-arg WALLET_BRANCH=${{ github.ref_name }}
             docker build . -t ${{ env.module_docker_image }}:${{ github.ref_name }} --build-arg BUILD_ENV=build:${{ steps.setDefaults.outputs.build_env }}
           fi
 
@@ -64,6 +64,6 @@ jobs:
         if: github.event_name == 'push'
         run: |
           gcloud auth configure-docker --quiet europe-west3-docker.pkg.dev
-          # docker push ${{ steps.setDefaults.outputs.docker_image }}
+          docker push ${{ steps.setDefaults.outputs.docker_image }}
           docker push ${{ env.module_docker_image }}:${{ github.ref_name }}
           # gcloud run deploy camino-suite-${{ steps.setDefaults.outputs.build_env }} --image ${{ steps.setDefaults.outputs.docker_image }} --region=europe-west1
