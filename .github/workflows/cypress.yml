@@ -34,11 +34,6 @@ jobs:
             echo "branch=${{ github.ref_name }}" >> $GITHUB_OUTPUT
           fi
 
-      - name: linting
-        run: yarn run lint
-      - name: prettier
-        run: yarn run format-check
-
       - name: Cloud authentication
         if: github.event_name == 'push'
         id: auth
