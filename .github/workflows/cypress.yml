@@ -50,6 +50,8 @@ jobs:
           docker-compose up -d
           docker cp camino-suite-wallet-container:/app/camino-wallet ./
           docker cp camino-suite-wallet-container:/root/.cache/Cypress  /home/runner/.cache/
+          ls -la /home/runner/.cache
+          ls -la /home/runner/.cache/Cypress
 
       - name: cypress-run
         uses: cypress-io/github-action@v5
