@@ -2,7 +2,7 @@ name: cypress-tests
 
 on:
   push:
-    branches: [c4t, dev, suite, workflow-optimize]
+    branches: [c4t, dev, suite]
   pull_request:
     branches: [c4t, dev, suite]
 
