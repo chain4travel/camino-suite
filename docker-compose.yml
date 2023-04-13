@@ -13,6 +13,7 @@ services:
     entrypoint: ["yarn", "start"]
     ports:
       - 5002:5002
+    container_name: camino-suite-explorer-container
   suite:
     build:
       context: .
@@ -22,4 +23,5 @@ services:
     entrypoint: ["yarn", "start"]
     ports:
       - 5001:5001
+    container_name: camino-suite-host-container
 
