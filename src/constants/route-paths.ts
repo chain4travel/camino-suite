@@ -1,10 +1,12 @@
 export const DOCS = 'https://docs.camino.network/'
 
-export const DISCORD = 'https://discord.gg/K5THjAweFB/'
+export const DISCORD = 'https://discord.gg/camino/'
 
 export const TWITTER = 'https://twitter.com/camino_network/'
 
-export const TELEGRAM = 'https://t.me/caminochain/'
+export const TELEGRAM_CAMINO = 'https://t.me/camino_network'
+
+export const TELEGRAM_ANNOUNCEMENTS = 'https://t.me/+sSOOZn1tLqQzOWMy'
 
 export const MEDIUM = 'https://medium.com/@caminonetwork/'
 

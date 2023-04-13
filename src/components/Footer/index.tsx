@@ -1,6 +1,14 @@
 import React from 'react'
 import { Box, Grid, Typography, useTheme, Divider, Container, MenuItem } from '@mui/material'
-import { DOCS, TWITTER, TELEGRAM, MEDIUM, GITHUB, DISCORD } from '../../constants/route-paths'
+import {
+    DOCS,
+    TWITTER,
+    TELEGRAM_CAMINO,
+    TELEGRAM_ANNOUNCEMENTS,
+    MEDIUM,
+    GITHUB,
+    DISCORD,
+} from '../../constants/route-paths'
 import { Link } from 'react-router-dom'
 
 export default function Footer() {
@@ -149,8 +157,12 @@ const FooterLinks = [
                 url: TWITTER,
             },
             {
-                text: 'Telegram',
-                url: TELEGRAM,
+                text: 'Telegram Camino Network',
+                url: TELEGRAM_CAMINO,
+            },
+            {
+                text: 'Telegram Announcements',
+                url: TELEGRAM_ANNOUNCEMENTS,
             },
         ],
     },
