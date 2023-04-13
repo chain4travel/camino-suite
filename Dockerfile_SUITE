@@ -11,10 +11,10 @@ RUN yarn install
 RUN yarn $BUILD_ENV
 
 
-FROM europe-west3-docker.pkg.dev/pwk-c4t-dev/internal-camino-dev/camino-suite-explorer:$EXPLORER_BRANCH as stage-explorer
+FROM europe-west3-docker.pkg.dev/pwk-c4t-dev/camino-suite-apps/camino-suite-explorer:$EXPLORER_BRANCH as stage-explorer
 
 
-FROM europe-west3-docker.pkg.dev/pwk-c4t-dev/internal-camino-dev/camino-suite-wallet:$WALLET_BRANCH  as stage-wallet
+FROM europe-west3-docker.pkg.dev/pwk-c4t-dev/camino-suite-apps/camino-suite-wallet:$WALLET_BRANCH  as stage-wallet
 
 
 

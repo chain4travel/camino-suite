@@ -14,7 +14,7 @@ on:
 
 env:
   node_version: 16
-  module_docker_image: "europe-west3-docker.pkg.dev/pwk-c4t-dev/internal-camino-dev/camino-suite-host"
+  module_docker_image: "europe-west3-docker.pkg.dev/pwk-c4t-dev/camino-suite-apps/camino-suite-host"
 
 jobs:
   build_docker:    
@@ -43,6 +43,7 @@ jobs:
           fi
 
       - name: Cloud authentication
+        if: github.event_name == 'push'
         id: auth
         uses: 'google-github-actions/auth@v1'
         with:
