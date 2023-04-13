@@ -35,7 +35,6 @@ jobs:
           fi
 
       - name: Cloud authentication
-        if: github.event_name == 'push'
         id: auth
         uses: 'google-github-actions/auth@v1'
         with:
