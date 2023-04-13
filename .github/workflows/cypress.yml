@@ -48,10 +48,9 @@ jobs:
           export EXPLORER_IMAGE=${{ env.explorer_image }}:${{ steps.setBranch.outputs.branch }}
           export WALLET_IMAGE=${{ env.wallet_image }}:${{ steps.setBranch.outputs.branch }}
           docker-compose up -d
+          docker cp camino-suite-wallet-container:/app/camino-wallet ./
           mkdir -p /home/runner/.cache
           docker cp camino-suite-wallet-container:/root/.cache/Cypress  /home/runner/.cache/
-          ls -la /home/runner/.cache
-          ls -la /home/runner/.cache/Cypress
 
       - name: cypress-run
         uses: cypress-io/github-action@v5
