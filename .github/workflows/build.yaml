@@ -1,7 +1,11 @@
 name: build suite
 on:
   workflow_dispatch:
-  push:    
+  push:
+    branches:
+        - c4t
+        - dev
+        - suite    
   pull_request:
     branches:
         - c4t
@@ -22,5 +26,7 @@ jobs:
         run: yarn install
       - name: lint
         run: yarn lint
+      - name: prettier
+        run: yarn run format-check
       - name: build
         run: yarn build
