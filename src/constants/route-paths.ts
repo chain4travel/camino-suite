@@ -8,7 +8,7 @@ export const TELEGRAM_CAMINO = 'https://t.me/camino_network'
 
 export const TELEGRAM_ANNOUNCEMENTS = 'https://t.me/+sSOOZn1tLqQzOWMy'
 
-export const MEDIUM = 'https://medium.com/@caminonetwork/'
+export const MEDIUM = 'https://blog.camino.network/'
 
 export const GITHUB = 'https://github.com/chain4travel/'
 
