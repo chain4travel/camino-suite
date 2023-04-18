@@ -4,7 +4,7 @@ import {
     getDisplayAmount 
 } from '../../src/utils/currency-utils'
 
-describe('Explorer: Latest block list and transaction list in C chain', () => {
+describe('Explorer: Latest block list and transaction list in C chain', {tags:'@explorer'},() => {
     beforeEach(() => {
         cy.entryExplorer()
         cy.log('entre al explorer')

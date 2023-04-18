@@ -1,7 +1,7 @@
 import { expect } from 'chai'
 import { changeNetwork, addKopernikusNetwork } from '../utils/utils'
 
-describe('Wallet Creation', () => {
+describe('Wallet Creation', {tags:'@wallet'},() => {
     before(() => {
         cy.visit('/')
     })

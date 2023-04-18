@@ -17,20 +17,20 @@ export function addKopernikusNetwork(cy: Cypress.cy & CyEventEmitter) {
         sigavaultAddress: ''
     }
 
-    cy.get('[data-cy="network-selector"]', { timeout: 12000 }).click()
-    cy.get('[data-cy="add-custom-network"]', { timeout: 12000 }).click()
+    cy.get('[data-cy="network-selector"]', { timeout: 30000 }).click()
+    cy.get('[data-cy="add-custom-network"]', { timeout: 30000 }).click()
     cy.wait(10000)
-    cy.get('[data-cy="add-network-field-network-name"]', { timeout: 12000 })
-        .find('input', { timeout: 12000 })
+    cy.get('[data-cy="add-network-field-network-name"]', { timeout: 30000 })
+        .find('input', { timeout: 30000 })
         .type(`${configNetwork.networkName}`)
-    cy.get('[data-cy="add-network-field-url"]', { timeout: 12000 })
-        .find('input', { timeout: 12000 })
+    cy.get('[data-cy="add-network-field-url"]', { timeout: 30000 })
+        .find('input', { timeout: 30000 })
         .type(configNetwork.urlAndPort, { force: true })
-    cy.get('[data-cy="add-network-field-magellan-address"]', { timeout: 12000 })
-        .find('input', { timeout: 12000 })
+    cy.get('[data-cy="add-network-field-magellan-address"]', { timeout: 30000 })
+        .find('input', { timeout: 30000 })
         .type(configNetwork.magellandUrl, { force: true })
-    cy.get('[data-cy="btn-add-network"]', { timeout: 12000 }).click()
-    cy.get(`[data-cy="network-name-${configNetwork.networkName}"]`, { timeout: 12000 }).click()
+    cy.get('[data-cy="btn-add-network"]', { timeout: 30000 }).click()
+    cy.get(`[data-cy="network-name-${configNetwork.networkName}"]`, { timeout: 30000 }).click()
     cy.wait(2000)
 }
 

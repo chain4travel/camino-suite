@@ -4,7 +4,7 @@ describe('access wallet', () => {
     before(() => {
         cy.visit('/')
     })
-    it('Wallet access private key ', () => {
+    it('Wallet access private key ',{tags:'@wallet'}, () => {
         cy.addKopernikusNetwork()
         cy.accessWallet('privateKey')
         cy.get('.router-link-exact-active', {timeout:20000}).should('be.visible')

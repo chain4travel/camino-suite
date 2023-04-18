@@ -1,6 +1,6 @@
 import { addKopernikusNetwork } from '../utils/utils'
 
-describe('Display block details', () => {
+describe('Display block details', {tags:'@explorer'},() => {
     before(() => {
         cy.visit('/')
     })
