@@ -8,7 +8,7 @@ import {
     numberToBNAvaxC,
 } from '@c4tplatform/camino-wallet-sdk'
 
-describe('Cross chain: C to X', () => {
+describe('Cross chain: C to X',{tags:'@wallet'}, () => {
 
     // context('normal cases: ', { tags: ['@columbus', '@kopernikus'] }, () => {
         beforeEach(() => {
