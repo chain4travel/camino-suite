@@ -11,6 +11,7 @@
 //
 
 import { Interception } from 'cypress/types/net-stubbing'
+import { getDisplayValueForGewi } from '../../src/utils/currency-utils'
 
 // -- This is a parent command --
 Cypress.Commands.add('addCustomNetwork', (networkConfig: NetworkConfig) => {
@@ -103,7 +104,7 @@ Cypress.Commands.add('accessWallet', (type, keyName, networkName:string = 'koper
             {
                 cy.get('@elPrivateKeyOption').click()
                 cy.fixture(`${networkName}/private_key_wallet`).then((privateKeys) => {
-                    cy.get('input[type="password"]').type(privateKeys[keyName || 'privateKey'])
+                    cy.get('[data-cy="field-private-key"]').type(privateKeys[keyName || 'privateKey'])
                 })
                 cy.get('button[type="button"]').contains('Access Wallet').click()
             }
@@ -405,7 +406,7 @@ Cypress.Commands.add('addKopernikusNetwork', () => {
     cy.wait(2000);
   });
 
-Cypress.Commands.add(
+  Cypress.Commands.add(
     'waitUntil',
     (alias: string, untilFunc: (intercept: Interception) => boolean) => {
         cy.wait(alias).then((intercept) => {

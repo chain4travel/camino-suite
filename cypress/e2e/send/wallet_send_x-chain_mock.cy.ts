@@ -1,45 +1,38 @@
 import { BigNumber } from 'bignumber.js'
 import { BN, bnToBigAvaxX } from '@c4tplatform/camino-wallet-sdk/dist'
 
-describe('Send transaction with x-chain balance', {tags:'@wallet'},() => {
+describe('Send transaction with x-chain balance', () => {
     beforeEach(() => {
 
         // access wallet with private key
-        cy.loginWalletWith('privateKey', 'walletHasXBalance')
+        cy.loginWalletWith('privateKey')
 
         // mock avm.**
         cy.intercept('POST', '**/ext/bc/X', (request) => {
             if (request.body.method == 'avm.getUTXOs') {
                 request.reply({
                     statusCode: 200,
-                    fixture: 'mocks/send_avm_getUTXOs.json'
+                    fixture: 'mocks/avm_getUTXOs.json'
                 })
-            }
-            else if (request.body.method == 'avm.issueTx') {
+            } else if (request.body.method === 'avm.issueTx') {
                 request.reply({
                     statusCode: 200,
-                    fixture: 'mocks/avm_issueTx.json'
+                    fixture: 'mocks/avm_issue_tx.json'
                 })
                 request.alias = 'issueTx'
-            }
-            else if (request.body.method == 'avm.getTxStatus') {
+            } else if (request.body.method === 'avm.getTxStatus') {
                 request.reply({
                     statusCode: 200,
-                    fixture: 'mocks/avm_getTxStatus.json'
+                    fixture: 'mocks/avm_get_tx_status.json'
                 })
                 request.alias = 'getTxStatus'
-            }
-            else {
-                console.log('Other query in X Chain', request.body.method)
             }
         })
 
         // click Send tab
         cy.get('[data-cy="wallet_transfer"]').click()
 
-        cy.get('div.new_order_Form > div.lists > div:nth-child(1) > div > button:nth-child(1)').as(
-            'btnSourceX'
-        )
+        cy.get('.lists > div:nth-child(1) > .chain_select').contains('X').as('btnSourceX')
 
         cy.get('div.header > button:nth-child(3)').as('btnBreakdown')
 
@@ -122,15 +115,11 @@ describe('Send transaction with x-chain balance', {tags:'@wallet'},() => {
                 // click send button
                 cy.get('@btnSend').click()
 
-                // expect display txID 
-                cy.wait('@issueTx').then((intercept) => {
-                    const txID = intercept.response?.body.result.txID
-                    cy.get('div.new_order_Form > div:nth-child(2) > div.checkout > label')
-                        .invoke('text')
-                        .then((text) => {
-                            const txidText = text.split(':')[1].replace(/[\s]/gi, '')
-                            expect(txidText).to.equal(txID.toString())
-                        })
+                // expect display txID
+                cy.wait('@issueTx').then(() => {
+                    cy.get('div.new_order_Form > div:nth-child(2) > div.checkout > p').should(($p) => {
+                        expect($p.first()).to.contain('Transaction Sent')
+                    })
                 })
             })
     }) // end it

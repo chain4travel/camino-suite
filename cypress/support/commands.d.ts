@@ -3,6 +3,12 @@ import { Interception } from 'cypress/types/net-stubbing'
 
 declare global {
     type WalletAccessType = 'privateKey' | 'mnemonic'
+    type NetworkConfig = {
+        networkName: string
+        rpcUrl: string
+        magellanUrl?: string
+        explorerUrl?: string
+    }
     namespace Cypress {
         interface Chainable {
             changeNetwork(network?: string): Chainable<Element>
@@ -13,6 +19,13 @@ declare global {
             checkValidatorsTxsGasFee(): Chainable<Element>
             addKopernikusNetwork():Chainable<Element>
             acceptCookies():Chainable<Element>
+            addCustomNetwork(networkConfig: NetworkConfig): Chainable<Element>
+            getMockResponseData(
+                payloadMethod: string,
+                requestUrl: string,
+                mockPath: string,
+                aliasName: string
+            ): Chainable<Element>
             /**
              * combo of commands in sequence:
              * - cy.visit('/')

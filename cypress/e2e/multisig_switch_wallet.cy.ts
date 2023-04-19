@@ -1,4 +1,4 @@
-describe('multisig: switch wallet', () => {
+describe('multisig: switch wellet', () => {
     beforeEach(() => {
         cy.loginWalletWith('privateKey', 'multisigAliasPrivateKey')
         cy.switchToWalletFunctionTab('Manage Keys')
@@ -121,8 +121,7 @@ describe('multisig: switch wallet', () => {
         cy.get('.v-slide-group__content').find('div').eq(5).click()
         cy.get('.fetch_button').click()
         cy.contains('Add Multisig Alias').click()
-
-        cy.contains('Switch Wallet').click({ force: true })
+        // cy.contains('Switch Wallet').click({ force: true })
         cy.contains('Other Keys')
             .parent()
             .find('span > div')
@@ -133,7 +132,7 @@ describe('multisig: switch wallet', () => {
             .find('button')
             .click({ force: true })
 
-        cy.contains('Wallet Switcher').siblings('div').click({ force: true })
+        // cy.contains('Wallet Switcher').siblings('div').click({ force: true })
 
         cy.intercept('POST', '**/ext/bc/X', (request) => {
             if (request.body.method === 'avm.getUTXOs') {

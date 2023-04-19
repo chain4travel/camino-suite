@@ -2,13 +2,11 @@ import {
     BN,
     bnToAvaxX,
     bnToBigAvaxC,
-    bnToBigAvaxX,
     GasHelper,
-    Big,
     numberToBNAvaxC,
 } from '@c4tplatform/camino-wallet-sdk/dist'
 
-describe('Cross chain: C to X', {tags:'@wallet'},() => {
+describe('Cross chain: C to X', () => {
     beforeEach(() => {
         cy.loginWalletWith('privateKey')
 
@@ -40,7 +38,7 @@ describe('Cross chain: C to X', {tags:'@wallet'},() => {
                 })
                 request.alias = 'apiImportX'
             }
-            
+
             if (request.body.method === 'avm.getTxStatus') {
                 request.reply({
                     statusCode: 200,
@@ -55,7 +53,7 @@ describe('Cross chain: C to X', {tags:'@wallet'},() => {
                     fixture: 'mocks/avm_getUTXOs.json'
                 })
             }
-            
+
         })
         cy.intercept('POST', '**/ext/bc/C/avax', (request) => {
             if (request.body.method === 'avax.getUTXOs') {
@@ -112,13 +110,7 @@ describe('Cross chain: C to X', {tags:'@wallet'},() => {
                     cy.get('@selectDestination').select('X')
                 }
             })
-        const amount = '0.001'
-        cy.get('.swap_form .avax_input input[type="number"]').then(($el) => {
-            if($el.val()) {
-                cy.wrap($el).click().invoke('val', '').type(amount)
-            }
-        })
-
+        cy.get('.max_but').click()
         // initial balances
         // WARNING: .invoke('text').as() will return reference, not only value, so we need to get the value under 'then' and then wrapping it into alias
         cy.get('.chain_card .balance')
@@ -153,7 +145,7 @@ describe('Cross chain: C to X', {tags:'@wallet'},() => {
             .then(({ fromAddress, toAddress }) => {
                 const exportTxFee = GasHelper.estimateExportGasFeeFromMockTx(
                     'X',
-                    numberToBNAvaxC(amount),
+                    numberToBNAvaxC('0.001'),
                     fromAddress,
                     toAddress
                 )

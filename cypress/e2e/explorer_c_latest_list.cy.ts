@@ -4,10 +4,9 @@ import {
     getDisplayAmount 
 } from '../../src/utils/currency-utils'
 
-describe('Explorer: Latest block list and transaction list in C chain', {tags:'@explorer'},() => {
+describe('Explorer: Latest block list and transaction list in C chain', () => {
     beforeEach(() => {
         cy.entryExplorer()
-        cy.log('entre al explorer')
         cy.checkValidatorsTxsGasFee()
         
         // Latest Blocks
@@ -30,7 +29,7 @@ describe('Explorer: Latest block list and transaction list in C chain', {tags:'@
 
     it('verify latest block list and transaction list', () => {
 
-        cy.fixture('mocks/c_blocks.json', {timeout:50000}).then((cBlocks) => {
+        cy.fixture('mocks/c_blocks.json').then((cBlocks) => {
             cy.intercept('GET', '**/v2/cblocks*', request => {
                 request.reply({
                     statusCode: 200,
