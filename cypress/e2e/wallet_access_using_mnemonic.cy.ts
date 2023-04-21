@@ -1,3 +1,4 @@
+
 import { expect } from 'chai'
 
 describe('Wallet Access Mnemonic', () => {
@@ -5,7 +6,7 @@ describe('Wallet Access Mnemonic', () => {
         cy.visit('/')
     })
 
-    it('open suite/open wallet using mnemonic', () => {
+    it('open suite/open wallet using mnemonic', {tags:'@wallet'}, () => {
         cy.addKopernikusNetwork()
         cy.accessWallet('mnemonic')
     })

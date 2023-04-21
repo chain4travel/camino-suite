@@ -130,7 +130,7 @@ let dataBody = {
     endTime: `${moment().format('YYYY-MM-DD')}T23:59:59Z`,
 }
 
-describe('Activity Transactions', () => {
+describe('Activity Transactions', {tags: '@wallet'}, () => {
     Cypress.on('uncaught:exception', (err, runnable) => {
         // returning false here prevents Cypress from failing the test
         return false
