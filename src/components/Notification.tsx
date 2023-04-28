@@ -51,6 +51,7 @@ export default function Notifications() {
                         severity={notificationSeverity}
                         sx={{
                             borderRadius: '12px',
+                            marginTop: '45px',
                         }}
                     >
                         {notificationMessage}
