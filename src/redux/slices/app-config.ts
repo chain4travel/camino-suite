@@ -16,7 +16,7 @@ interface InitialStateAppConfigType {
 }
 
 let initialState: InitialStateAppConfigType = {
-    activeApp: 'explorer',
+    activeApp: null,
     status: Status.IDLE,
     walletStore: null,
     isAuth: false,
