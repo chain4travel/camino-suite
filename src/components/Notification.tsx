@@ -46,14 +46,9 @@ export default function Notifications() {
                     TransitionComponent={transition}
                     key={transition ? transition.name : ''}
                     autoHideDuration={5000}
+                    sx={{ top: { xs: '69px !important', md: '72px !important' } }}
                 >
-                    <Alert
-                        severity={notificationSeverity}
-                        sx={{
-                            borderRadius: '12px',
-                            marginTop: '45px',
-                        }}
-                    >
+                    <Alert severity={notificationSeverity} sx={{ borderRadius: '12px' }}>
                         {notificationMessage}
                     </Alert>
                 </Snackbar>

@@ -32,9 +32,9 @@
         "@emotion/styled": "^11.10.5",
         "@mdi/js": "^7.0.96",
         "@mdi/react": "^1.6.1",
-        "@mui/icons-material": "^5.10.14",
-        "@mui/material": "^5.10.14",
-        "@mui/system": "^5.10.14",
+        "@mui/icons-material": "^5.11.0",
+        "@mui/material": "^5.11.11",
+        "@mui/system": "^5.11.11",
         "@reduxjs/toolkit": "^1.8.1",
         "@testing-library/dom": "^8.19.0",
         "@testing-library/jest-dom": "^5.16.4",
@@ -79,7 +79,6 @@
         "webpack-merge": "^5.8.0",
         "yup": "^0.32.11",
         "cypress": "12.5.1"
-
     },
     "dependencies": {
         "react": "^18.2.0",
