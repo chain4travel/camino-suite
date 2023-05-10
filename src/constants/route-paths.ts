@@ -12,6 +12,8 @@ export const MEDIUM = 'https://blog.camino.network/'
 
 export const GITHUB = 'https://github.com/chain4travel/'
 
+export const CAMINO = 'https://camino.network/'
+
 export const WALLET = '/wallet'
 
 export const BASE_PATH = '/explorer'
