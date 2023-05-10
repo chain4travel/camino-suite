@@ -2,7 +2,7 @@ import React, { useEffect } from 'react'
 import { useState } from 'react'
 import { Box, MenuItem, Select, useTheme, Typography } from '@mui/material'
 import { mdiChevronRight } from '@mdi/js'
-import { APPS_CONSTS } from '../constants/apps-consts'
+import { APPS_CONSTS, DEFAULT_PLATFORM_SELECTION_ITEM } from '../constants/apps-consts'
 import useWidth from '../hooks/useWidth'
 import Icon from '@mdi/react'
 import { useDispatch } from 'react-redux'
@@ -10,12 +10,6 @@ import { changeActiveApp, getActiveApp } from '../redux/slices/app-config'
 import { useNavigate } from 'react-router-dom'
 import { useAppSelector } from '../hooks/reduxHooks'
 import { capitalize } from 'lodash'
-
-const DEFAULT_SELECTION_ITEM = {
-    name: 'Network',
-    subText: 'Camino network',
-    url: '/',
-}
 
 export default function PlatformSwitcher() {
     const theme = useTheme()
@@ -26,14 +20,15 @@ export default function PlatformSwitcher() {
     const location = window.location.pathname.split('/')[1]
     const dispatch = useDispatch()
     const [app, setApp] = useState(
-        location.charAt(0).toUpperCase() + location.slice(1) || DEFAULT_SELECTION_ITEM.name,
+        location.charAt(0).toUpperCase() + location.slice(1) ||
+            DEFAULT_PLATFORM_SELECTION_ITEM.name,
     )
 
     useEffect(() => {
         if (activeApp) {
             setApp(capitalize(activeApp))
         } else {
-            if (!APPS_CONSTS.find(a => a.name === app)) setApp(DEFAULT_SELECTION_ITEM.name)
+            if (!APPS_CONSTS.find(a => a.name === app)) setApp(DEFAULT_PLATFORM_SELECTION_ITEM.name)
         }
     }, [app, activeApp])
 
