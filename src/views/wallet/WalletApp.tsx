@@ -69,7 +69,7 @@ const LoadWallet = () => {
 
 const Wallet = () => {
     const auth = useAppSelector(state => state.appConfig.isAuth)
-    if (!auth) return <Navigate to="/login"></Navigate>
+    if (!auth) return <Navigate to="/login" replace></Navigate>
     return <React.Suspense fallback={<div>Loading...</div>}>{<LoadWallet />}</React.Suspense>
 }
 
