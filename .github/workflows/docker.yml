@@ -6,11 +6,13 @@ on:
         - c4t
         - dev
         - suite
+        - suite-c4t
   push:
     branches:
         - c4t
         - dev
         - suite
+        - suite-c4t
 
 env:
   node_version: 16
@@ -29,6 +31,9 @@ jobs:
           DOCKER_IMAGE_NAME="europe-west3-docker.pkg.dev/pwk-c4t-dev/internal-camino-dev/camino-suite"
           
           if [[ "${{ github.ref }}" == "refs/heads/c4t" ]]; then
+              echo "docker_image=$DOCKER_IMAGE_NAME:stage" >> $GITHUB_OUTPUT
+              echo "build_env=stage" >> $GITHUB_OUTPUT
+          elif [[ "${{ github.ref }}" == "refs/heads/suite-c4t" ]]; then
               echo "docker_image=$DOCKER_IMAGE_NAME:stage" >> $GITHUB_OUTPUT
               echo "build_env=stage" >> $GITHUB_OUTPUT
           elif [[ "${{ github.ref }}" == "refs/heads/dev" ]]; then
