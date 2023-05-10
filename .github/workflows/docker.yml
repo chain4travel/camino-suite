@@ -6,11 +6,13 @@ on:
         - c4t
         - dev
         - suite
+        - suite-c4t
   push:
     branches:
         - c4t
         - dev
         - suite
+        - suite-c4t
 
 env:
   node_version: 16
