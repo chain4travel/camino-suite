@@ -183,7 +183,7 @@ const FooterLinks = [
                 url: DOCS,
             },
             {
-                text: 'Camino Website',
+                text: 'Camino Network Website',
                 url: CAMINO,
             },
         ],
