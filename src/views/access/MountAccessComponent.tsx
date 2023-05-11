@@ -10,9 +10,15 @@ const MountAccessComponent = ({ type }) => {
     const location = useLocation()
     useEffect(() => {
         if (auth) {
-            if (app === 'wallet') {
-                navigate('/wallet')
-            } else navigate('/explorer')
+            console.log(auth)
+            console.log(app)
+            if (app) {
+                if (app === 'wallet') {
+                    navigate('/wallet')
+                } else navigate('/explorer')
+            } else {
+                navigate('/')
+            }
         }
     }, [auth]) // eslint-disable-line react-hooks/exhaustive-deps
 
