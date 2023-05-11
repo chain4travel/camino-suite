@@ -19,8 +19,14 @@ export default function LandingPageAppWidget({ name, description, onClick }) {
                 <Typography>{description}</Typography>
             </Box>
 
-            <Button sx={{ marginTop: 'auto' }} variant="contained" onClick={onClick}>
-                {`Go to ${name}`}
+            <Button
+                sx={{ marginTop: 'auto', textTransform: 'none' }}
+                variant="contained"
+                onClick={onClick}
+            >
+                <Typography variant="body1" color="white">
+                    {`Go to ${name}`}
+                </Typography>
             </Button>
         </Paper>
     )
