@@ -10,8 +10,6 @@ const MountAccessComponent = ({ type }) => {
     const location = useLocation()
     useEffect(() => {
         if (auth) {
-            console.log(auth)
-            console.log(app)
             if (app) {
                 if (app === 'wallet') {
                     navigate('/wallet')
