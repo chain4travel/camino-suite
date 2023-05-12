@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Navigate, Route, Routes, useLocation, useHistory } from 'react-router-dom'
-import MainLayout from './MainLayout'
+import { Navigate, Route, Routes, useNavigate } from 'react-router-dom'
 import ExplorerApp from '../views/explorer/ExplorerApp'
 import Wallet from '../views/wallet/WalletApp'
 import LoginPage from '../views/login/LoginPage'
@@ -8,25 +7,22 @@ import Create from '../views/create/Create'
 import Legal from '../views/legal/Legal'
 import AccessLayout from '../views/access'
 import MountAccessComponent from '../views/access/MountAccessComponent'
-import ScrollToTop from '../components/ScrollToTop'
 import LandingPage from '../views/landing/LandingPage'
 import { getActiveNetwork } from '../redux/slices/network'
 import { useAppSelector } from '../hooks/reduxHooks'
 
 export default function RoutesSuite() {
-    const location = useLocation()
-    const history = useHistory()
     const activeNetwork = useAppSelector(getActiveNetwork)
+    const navigate = useNavigate()
 
     const [networkAliasToUrl, setNetworkAliasToUrl] = useState<string>("''")
 
     useEffect(() => {
         if (activeNetwork) {
-            //setNetworkAliasToUrl(activeNetwork.name.toLowerCase())
+            navigate(activeNetwork.name.toLowerCase())
+            setNetworkAliasToUrl(activeNetwork.name.toLowerCase())
         }
     }, [activeNetwork])
-
-    console.log('location', location.pathname)
 
     return (
         <>
@@ -56,10 +52,10 @@ export default function RoutesSuite() {
                             element={<MountAccessComponent type="Account" />}
                         />
                     </Route>
-                    <Route
+                    {/* <Route
                         path={`${networkAliasToUrl}/*`}
                         element={<Navigate to={`${networkAliasToUrl}`} />}
-                    />
+                    /> */}
                 </Routes>
             ) : null}
         </>

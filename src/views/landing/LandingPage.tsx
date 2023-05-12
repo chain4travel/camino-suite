@@ -12,7 +12,7 @@ export default function LandingPage() {
 
     const handleWidgetClick = app => {
         dispatch(changeActiveApp(app?.name))
-        navigate(app?.url)
+        navigate(app?.url.replace('/', ''))
     }
 
     return (

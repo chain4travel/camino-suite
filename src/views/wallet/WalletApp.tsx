@@ -11,6 +11,8 @@ import {
 import { Navigate, useNavigate } from 'react-router-dom'
 import { updateAssets } from '../../helpers/walletStore'
 import { useEffectOnce } from '../../hooks/useEffectOnce'
+import { getActiveNetwork } from '../../redux/slices/network'
+
 const LoadWallet = () => {
     const [updateStore, setUpdateStore] = useState(null)
     const [fetch, setFetch] = useState(false)
@@ -68,8 +70,10 @@ const LoadWallet = () => {
 }
 
 const Wallet = () => {
+    const activeNetwork = useAppSelector(getActiveNetwork)
     const auth = useAppSelector(state => state.appConfig.isAuth)
-    if (!auth) return <Navigate to="/login" replace></Navigate>
+    if (!auth)
+        return <Navigate to={`/${activeNetwork.name.toLowerCase()}/login`} replace></Navigate>
     return <React.Suspense fallback={<div>Loading...</div>}>{<LoadWallet />}</React.Suspense>
 }
 

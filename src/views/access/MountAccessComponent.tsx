@@ -22,7 +22,8 @@ const MountAccessComponent = ({ type }) => {
                 type={type}
                 props={{
                     navigate: location => navigate(location),
-                    index: location.pathname.split('/')[3],
+                    //index: location.pathname.split('/')[3],
+                    index: location.pathname.split('/')[4],
                 }}
             />
         </React.Suspense>
