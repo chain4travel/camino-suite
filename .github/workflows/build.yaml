@@ -6,11 +6,14 @@ on:
         - c4t
         - dev
         - suite    
+        - suite-c4t
+
   pull_request:
     branches:
         - c4t
         - dev
         - suite
+        - suite-c4t
 jobs:
   yarn-build:
     runs-on: ubuntu-latest

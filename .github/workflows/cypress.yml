@@ -2,9 +2,9 @@ name: cypress-tests
 
 on:
   push:
-    branches: [c4t, dev, suite]
+    branches: [c4t, dev, suite, suite-c4t]
   pull_request:
-    branches: [c4t, dev, suite]
+    branches: [c4t, dev, suite, suite-c4t]
 
 env:
   wallet_image: 'europe-west3-docker.pkg.dev/pwk-c4t-dev/camino-suite-apps/camino-suite-wallet'
