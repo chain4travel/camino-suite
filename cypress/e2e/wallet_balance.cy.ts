@@ -1,7 +1,7 @@
 import { expect } from 'chai'
 import '@cypress/xpath'
 
-describe('Wallet Balance Mnemonic', {tags:'@wallet'}, () => {
+describe('Wallet Balance Mnemonic', () => {
     before(() => {
         cy.visit('/')
     })

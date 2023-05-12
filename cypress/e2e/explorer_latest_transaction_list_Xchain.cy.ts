@@ -209,7 +209,7 @@ let validators =  {
     ]
 } 
 
-describe('latest transaction list Xchainet', {tags:'@explorer'},() => {
+describe('latest transaction list Xchainet',() => {
     before(() => {
         cy.visit('/')
     })

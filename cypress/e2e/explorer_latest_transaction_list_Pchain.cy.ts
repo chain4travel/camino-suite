@@ -184,7 +184,7 @@ let validators =  {
     ]
 } 
 
-describe('latest transaction list Pchainet',{tags:'@explorer'}, () => {
+describe('latest transaction list Pchainet', () => {
     before(() => {
         cy.visit('/')
     })

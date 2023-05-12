@@ -6,7 +6,7 @@ describe('Wallet Access Mnemonic', () => {
         cy.visit('/')
     })
 
-    it('open suite/open wallet using mnemonic', {tags:'@wallet'}, () => {
+    it('open suite/open wallet using mnemonic', () => {
         cy.addKopernikusNetwork()
         cy.accessWallet('mnemonic')
     })

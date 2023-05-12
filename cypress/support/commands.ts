@@ -27,7 +27,6 @@ Cypress.Commands.add('addCustomNetwork', (networkConfig: NetworkConfig) => {
     // Wait to connecting network
     cy.wait(5000)
     // Click backdrop to close menu
-    cy.get(`body > div[role="presentation"].MuiPopover-root`, { timeout: 12000 }).click()
 })
 
 Cypress.Commands.add('addCustomNetworkByName', (network: string) => {
@@ -89,9 +88,13 @@ Cypress.Commands.add('changeNetwork', (network: string = 'Kopernikus') => {
         })
 })
 Cypress.Commands.add('accessWallet', (type, keyName, networkName:string = 'kopernikus' ) => {
-    cy.get('header > .MuiToolbar-root > .MuiBox-root:nth-child(2)').as('elPreferenceMenu')
-    cy.get('@elPreferenceMenu').find('> .MuiBox-root').as('btnWallet')
-    cy.get('@btnWallet').click()
+    //cy.get('header > .MuiToolbar-root > .MuiBox-root:nth-child(2)').as('elPreferenceMenu')
+    // cy.get('@elPreferenceMenu').find('> .MuiBox-root').as('btnWallet')
+    // cy.get('@btnWallet').click()
+    
+    
+    cy.selectWalletApp()
+    cy.wait(5000)
     cy.get('h6 + .MuiGrid-container').as('elWalletOptions')
     cy.get('@elWalletOptions')
         .find('> .MuiGrid-container:nth-child(1) > :nth-child(1)')
@@ -123,8 +126,6 @@ Cypress.Commands.add('accessWallet', (type, keyName, networkName:string = 'koper
         default:
             break
     }
-    cy.get('[data-cy="app-selector-menu"] > .MuiSelect-select').click()
-    cy.get('[data-cy="app-selector-Wallet"]').click()
     cy.get('[data-cy="btn-show-breakdown"]', { timeout: 20000 }).should('be.visible')
     // cy.intercept('GET', '**/api/v1/verified/*').as('apiVerifiedAddress')
     // cy.wait('@apiVerifiedAddress').then((intercept) => {
@@ -262,7 +263,6 @@ Cypress.Commands.add('addCustomNetwork', (networkConfig: NetworkConfig) => {
     // Wait to connecting network
     cy.wait(5000)
     // Click backdrop to close menu
-    cy.get(`body > div[role="presentation"].MuiPopover-root`, {timeout: 12000}).click()
 })
 
 Cypress.Commands.add('entryExplorer', (network: string = 'Kopernikus') => {
@@ -321,6 +321,10 @@ Cypress.Commands.add('entryExplorer', (network: string = 'Kopernikus') => {
     cy.changeNetwork(network)
 
     cy.get('@txtSelectedNetwork').should('have.text', network)
+
+    cy.selectExplorerApp()
+
+    cy.wait(6000)
 })
 
 Cypress.Commands.add('checkValidatorsTxsGasFee', () => {
@@ -402,7 +406,7 @@ Cypress.Commands.add('addKopernikusNetwork', () => {
       .find('input', { timeout: 12000 })
       .type(configNetwork.magellandUrl, { force: true });
     cy.get('[data-cy="btn-add-network"]', { timeout: 20000 }).click();
-    cy.get(`[data-cy="network-name-${configNetwork.networkName}"]`, { timeout: 20000 }).click();
+    //cy.get(`[data-cy="network-name-${configNetwork.networkName}"]`, { timeout: 20000 }).click();
     cy.wait(2000);
   });
 
@@ -481,6 +485,13 @@ Cypress.Commands.add(
     }
 )
 
+Cypress.Commands.add('selectWalletApp', func => {
+    cy.get(':nth-child(1) > .MuiPaper-root > .MuiButtonBase-root > .MuiTypography-root').click()
+})
+
+Cypress.Commands.add('selectExplorerApp', func => {
+    cy.get(':nth-child(2) > .MuiPaper-root > .MuiButtonBase-root > .MuiTypography-root').click()
+})
 //
 //
 // -- This is a child command --
