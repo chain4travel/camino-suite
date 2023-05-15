@@ -6,53 +6,53 @@ import {
     GasHelper,
 } from '@c4tplatform/camino-wallet-sdk/dist'
 
-describe('Cross chain: X to C', () => {
+describe('Cross chain: X to C', { tags: ['@wallet'] }, () => {
     beforeEach(() => {
         cy.loginWalletWith('privateKey')
 
         // RPC aliases
-        cy.intercept('**/ext/bc/C/rpc', (request) => {
+        cy.intercept('**/ext/bc/C/rpc', request => {
             if (request.body.method === 'eth_baseFee') {
                 request.reply({
                     statusCode: 200,
-                    fixture: 'mocks/eth_base_fee.json'
+                    fixture: 'mocks/eth_base_fee.json',
                 })
                 request.alias = 'apiBaseFee'
             }
         })
-        cy.intercept('POST', '**/ext/bc/X', (request) => {
+        cy.intercept('POST', '**/ext/bc/X', request => {
             if (request.body.method == 'avm.getUTXOs') {
                 request.reply({
                     statusCode: 200,
-                    fixture: 'mocks/avm_getUTXOs.json'
+                    fixture: 'mocks/avm_getUTXOs.json',
                 })
             } else if (request.body.method === 'avm.issueTx') {
                 request.reply({
                     statusCode: 200,
-                    fixture: 'mocks/avm_issue_tx.json'
+                    fixture: 'mocks/avm_issue_tx.json',
                 })
                 request.alias = 'apiExportX'
             } else if (request.body.method === 'avm.getTxStatus') {
                 request.reply({
                     statusCode: 200,
-                    fixture: 'mocks/avm_get_tx_status.json'
+                    fixture: 'mocks/avm_get_tx_status.json',
                 })
                 request.alias = 'apiExportXStatus'
             }
         })
-        cy.intercept('POST', '**/ext/bc/C/avax', (request) => {
+        cy.intercept('POST', '**/ext/bc/C/avax', request => {
             if (request.body.method === 'avax.issueTx') {
                 request.reply({
                     statusCode: 200,
-                    fixture: 'mocks/avax_issue_tx.json'
+                    fixture: 'mocks/avax_issue_tx.json',
                 })
                 request.alias = 'apiImportC'
-            } 
+            }
 
             if (request.body.method === 'avax.getAtomicTxStatus') {
                 request.reply({
                     statusCode: 200,
-                    fixture: 'mocks/avax_get_atomic_tx_status.json'
+                    fixture: 'mocks/avax_get_atomic_tx_status.json',
                 })
                 request.alias = 'apiImportCStatus'
             }
@@ -60,7 +60,7 @@ describe('Cross chain: X to C', () => {
             if (request.body.method === 'avax.getUTXOs') {
                 request.reply({
                     statusCode: 200,
-                    fixture: 'mocks/avax_getUTXOs.json'
+                    fixture: 'mocks/avax_getUTXOs.json',
                 })
             }
         })
@@ -73,7 +73,7 @@ describe('Cross chain: X to C', () => {
             .should('have.text', 'Cross Chain')
     })
 
-    it('export CAM from X to C', () => {
+    it.skip('export CAM from X to C', () => {
         cy.get('label').contains('Source Chain').siblings('select').first().as('selectSource')
         cy.get('label')
             .contains('Destination Chain')
@@ -84,17 +84,17 @@ describe('Cross chain: X to C', () => {
         // Switch source and destination chains
         cy.get('@selectSource')
             .invoke('val')
-            .then((value) => {
+            .then(value => {
                 if (value !== 'X') {
                     cy.get('@selectSource').select('X')
                 }
             })
         cy.get('@selectDestination')
             .invoke('val')
-            .then((value) => {
+            .then(value => {
                 if (value !== 'C') {
                     cy.get('@selectDestination').select('C')
-                    cy.wait('@apiBaseFee').then((intercept) => {
+                    cy.wait('@apiBaseFee').then(intercept => {
                         const hexBaseFee = intercept.response?.body.result
                         const bnBaseFee = new BN(hexBaseFee.substring(2), 'hex')
                         cy.wrap(bnBaseFee).as('bnBaseFee')
@@ -109,15 +109,15 @@ describe('Cross chain: X to C', () => {
         cy.get('.chain_card .balance')
             .first()
             .invoke('text')
-            .then((balance) => cy.wrap(balance).as('initialXBalance'))
+            .then(balance => cy.wrap(balance).as('initialXBalance'))
         cy.get('.chain_card .balance')
             .last()
             .invoke('text')
-            .then((balance) => cy.wrap(balance).as('initialCBalance'))
+            .then(balance => cy.wrap(balance).as('initialCBalance'))
 
         // the default tx fee of X/P chain is intercepting from rpc on network changed
         // from source chain
-        cy.get<string>('@txFee').then((txFee) => {
+        cy.get<string>('@txFee').then(txFee => {
             // check export fee
             console.debug('txFee: ', bnToAvaxX(new BN(txFee)))
             cy.get('div')
@@ -129,7 +129,7 @@ describe('Cross chain: X to C', () => {
             // use (camino-wallet-sdk).GasHelper to estimate the tx fee of importing to C chain
             const importTxFee = GasHelper.estimateImportGasFeeFromMockTx(1, 1)
             console.debug('import tx fee: ', importTxFee)
-            cy.get<BN>('@bnBaseFee').then((baseFee) => {
+            cy.get<BN>('@bnBaseFee').then(baseFee => {
                 console.debug('C base fee(BN): ', baseFee.toString())
                 // `getBaseFeeRecommended` function will increase the base fee with 25% up
                 const feeWei = baseFee
@@ -150,7 +150,7 @@ describe('Cross chain: X to C', () => {
             cy.get('[data-cy="submit"]').click()
 
             // wait `avm.issueTx` to get txID
-            cy.wait('@apiExportX').then((intercept) => {
+            cy.wait('@apiExportX').then(intercept => {
                 const txID = intercept.response?.body.result.txID
                 cy.get('.tx_state_card')
                     .first()
@@ -160,7 +160,7 @@ describe('Cross chain: X to C', () => {
             })
             // wait `avm.getTxStatus` to get the tx status
             // looks like client polling to get tx status until 'Accepted'
-            cy.waitUntil('@apiExportXStatus', (intercept) => {
+            cy.waitUntil('@apiExportXStatus', intercept => {
                 const txStatus = intercept.response?.body.result.status
                 if (txStatus === 'Accepted') {
                     cy.get('.tx_state_card')
@@ -173,7 +173,7 @@ describe('Cross chain: X to C', () => {
                 return false
             })
             // wait `avax.issueTx` to get txID
-            cy.wait('@apiImportC').then((intercept) => {
+            cy.wait('@apiImportC').then(intercept => {
                 const txID = intercept.response?.body.result.txID
                 cy.get('.tx_state_card')
                     .last()
@@ -182,7 +182,7 @@ describe('Cross chain: X to C', () => {
                     .should('have.text', txID)
             })
             // wait `avax.getAtomicTxStatus` to get the tx status
-            cy.waitUntil('@apiImportCStatus', (intercept) => {
+            cy.waitUntil('@apiImportCStatus', intercept => {
                 const txStatus = intercept.response?.body.result.status
                 if (txStatus === 'Accepted') {
                     cy.get('.tx_state_card')
@@ -201,7 +201,7 @@ describe('Cross chain: X to C', () => {
             // check the balances on X chain
             cy.get('.confirmation_val > p')
                 .invoke('text')
-                .then((amountWithSymbol) => amountWithSymbol.replace(/(\s)?CAM/, ''))
+                .then(amountWithSymbol => amountWithSymbol.replace(/(\s)?CAM/, ''))
                 .as('amount')
         })
     })

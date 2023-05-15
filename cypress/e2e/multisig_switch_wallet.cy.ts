@@ -1,4 +1,4 @@
-describe('multisig: switch wellet', () => {
+describe('multisig: switch wellet',{ tags: ['@wallet'] }, () => {
     beforeEach(() => {
         cy.loginWalletWith('privateKey', 'multisigAliasPrivateKey')
         cy.switchToWalletFunctionTab('Manage Keys')

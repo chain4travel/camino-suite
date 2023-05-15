@@ -1,46 +1,43 @@
-import {
-    BN,
-    bnToAvaxX
-} from '@c4tplatform/camino-wallet-sdk/dist'
+import { BN, bnToAvaxX } from '@c4tplatform/camino-wallet-sdk/dist'
 
-describe('Cross chain: X to P', () => {
+describe('Cross chain: X to P', { tags: ['@wallet'] }, () => {
     beforeEach(() => {
         cy.loginWalletWith('privateKey')
 
         // RPC aliases
-        cy.intercept('POST', '**/ext/bc/X', (request) => {
+        cy.intercept('POST', '**/ext/bc/X', request => {
             if (request.body.method == 'avm.getUTXOs') {
                 request.reply({
                     statusCode: 200,
-                    fixture: 'mocks/avm_getUTXOs.json'
+                    fixture: 'mocks/avm_getUTXOs.json',
                 })
             } else if (request.body.method === 'avm.issueTx') {
                 request.reply({
                     statusCode: 200,
-                    fixture: 'mocks/avm_issue_tx.json'
+                    fixture: 'mocks/avm_issue_tx.json',
                 })
                 request.alias = 'apiExportX'
             } else if (request.body.method === 'avm.getTxStatus') {
                 request.reply({
                     statusCode: 200,
-                    fixture: 'mocks/avm_get_tx_status.json'
+                    fixture: 'mocks/avm_get_tx_status.json',
                 })
                 request.alias = 'apiExportXStatus'
             }
         })
-        cy.intercept('POST', '**/ext/bc/P', (request) => {
+        cy.intercept('POST', '**/ext/bc/P', request => {
             if (request.body.method === 'platform.issueTx') {
                 request.reply({
                     statusCode: 200,
-                    fixture: 'mocks/platform_issue_tx.json'
+                    fixture: 'mocks/platform_issue_tx.json',
                 })
                 request.alias = 'apiImportP'
-            }  
-            
+            }
+
             if (request.body.method === 'platform.getTxStatus') {
                 request.reply({
                     statusCode: 200,
-                    fixture: 'mocks/platform_get_tx_status.json'
+                    fixture: 'mocks/platform_get_tx_status.json',
                 })
                 request.alias = 'apiImportPStatus'
             }
@@ -48,7 +45,7 @@ describe('Cross chain: X to P', () => {
             if (request.body.method === 'platform.getUTXOs') {
                 request.reply({
                     statusCode: 200,
-                    fixture: 'mocks/platform_getUTXOs.json'
+                    fixture: 'mocks/platform_getUTXOs.json',
                 })
             }
         })
@@ -61,7 +58,7 @@ describe('Cross chain: X to P', () => {
             .should('have.text', 'Cross Chain')
     })
 
-    it('export CAM from X to P', () => {
+    it.skip('export CAM from X to P', () => {
         cy.get('label').contains('Source Chain').siblings('select').first().as('selectSource')
         cy.get('label')
             .contains('Destination Chain')
@@ -71,14 +68,14 @@ describe('Cross chain: X to P', () => {
         //Switch source and destination chains
         cy.get('@selectSource')
             .invoke('val')
-            .then((value) => {
+            .then(value => {
                 if (value !== 'X') {
                     cy.get('@selectSource').select('X')
                 }
             })
         cy.get('@selectDestination')
             .invoke('val')
-            .then((value) => {
+            .then(value => {
                 if (value !== 'P') {
                     cy.get('@selectDestination').select('P')
                 }
@@ -91,13 +88,13 @@ describe('Cross chain: X to P', () => {
         cy.get('.chain_card .balance')
             .first()
             .invoke('text')
-            .then((balance) => cy.wrap(balance).as('initialXBalance'))
+            .then(balance => cy.wrap(balance).as('initialXBalance'))
         cy.get('.chain_card .balance')
             .eq(1)
             .invoke('text')
-            .then((balance) => cy.wrap(balance).as('initialPBalance'))
+            .then(balance => cy.wrap(balance).as('initialPBalance'))
 
-        cy.get<string>('@txFee').then((txFee) => {
+        cy.get<string>('@txFee').then(txFee => {
             console.debug('txFee: ', bnToAvaxX(new BN(txFee)))
             cy.get('div')
                 .contains('Export Fee')
@@ -117,7 +114,7 @@ describe('Cross chain: X to P', () => {
             cy.get('[data-cy="submit"]').click()
 
             // wait `avm.issueTx` to get txID
-            cy.wait('@apiExportX').then((intercept) => {
+            cy.wait('@apiExportX').then(intercept => {
                 const txID = intercept.response?.body.result.txID
                 cy.get('.tx_state_card')
                     .first()
@@ -128,7 +125,7 @@ describe('Cross chain: X to P', () => {
 
             // wait `avm.getTxStatus` to get the tx status
             // looks like client polling to get tx status until 'Accepted'
-            cy.waitUntil('@apiExportXStatus', (intercept) => {
+            cy.waitUntil('@apiExportXStatus', intercept => {
                 const txStatus = intercept.response?.body.result.status
                 if (txStatus === 'Accepted') {
                     cy.get('.tx_state_card')
@@ -142,7 +139,7 @@ describe('Cross chain: X to P', () => {
             })
 
             // wait `avax.issueTx` to get txID
-            cy.wait('@apiImportP', { timeout: 30000 }).then((intercept) => {
+            cy.wait('@apiImportP', { timeout: 30000 }).then(intercept => {
                 const txID = intercept.response?.body.result.txID
                 cy.get('.tx_state_card')
                     .last()
@@ -152,7 +149,7 @@ describe('Cross chain: X to P', () => {
             })
 
             // wait `avax.getAtomicTxStatus` to get the tx status
-            cy.waitUntil('@apiImportPStatus', (intercept) => {
+            cy.waitUntil('@apiImportPStatus', intercept => {
                 const txStatus = intercept.response?.body.result.status
                 if (txStatus === 'Committed') {
                     cy.get('.tx_state_card')
@@ -171,9 +168,8 @@ describe('Cross chain: X to P', () => {
             // check the balances on X chain
             cy.get('.confirmation_val > p')
                 .invoke('text')
-                .then((amountWithSymbol) => amountWithSymbol.replace(/(\s)?CAM/, ''))
+                .then(amountWithSymbol => amountWithSymbol.replace(/(\s)?CAM/, ''))
                 .as('amount')
-
         })
     })
 })

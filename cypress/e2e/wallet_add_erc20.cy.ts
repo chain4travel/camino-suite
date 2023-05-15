@@ -11,7 +11,7 @@ const name = hex2a(hexName)
 const symbol = hex2a(hexSymbol)
 var amount = 0
 
-describe('activity transactions', () => {
+describe('activity transactions', { tags: ['@wallet'] }, () => {
     before(() => {
         cy.visit('/')
     })
@@ -29,57 +29,54 @@ describe('activity transactions', () => {
             .then(() => {
                 let strUrlRpc: any = localStorage.getItem('network_selected')
                 let strUrlRpcArr = strUrlRpc.split('"')
-                cy.intercept(
-                    { method: 'POST', url: `${strUrlRpcArr[1]}/ext/bc/C/rpc` },
-                    (req) => {
-                        switch (req.body.params[0].data) {
-                            case '0x06fdde03':
-                                req.reply({
-                                    status: 200,
-                                    body: {
-                                        interceptCase: 1,
-                                        jsonrpc: '2.0',
-                                        id: parseInt(req.body.id),
-                                        result: hexName,
-                                    },
-                                })
-                                break
-                            case '0x95d89b41':
-                                req.reply({
-                                    status: 200,
-                                    body: {
-                                        interceptCase: 2,
-                                        jsonrpc: '2.0',
-                                        id: parseInt(req.body.id),
-                                        result: hexSymbol,
-                                    },
-                                })
-                                break
-                            case '0x313ce567':
-                                req.reply({
-                                    status: 200,
-                                    body: {
-                                        interceptCase: 3,
-                                        jsonrpc: '2.0',
-                                        id: parseInt(req.body.id),
-                                        result: hexDecimals,
-                                    },
-                                })
-                                break
-                        }
+                cy.intercept({ method: 'POST', url: `${strUrlRpcArr[1]}/ext/bc/C/rpc` }, req => {
+                    switch (req.body.params[0].data) {
+                        case '0x06fdde03':
+                            req.reply({
+                                status: 200,
+                                body: {
+                                    interceptCase: 1,
+                                    jsonrpc: '2.0',
+                                    id: parseInt(req.body.id),
+                                    result: hexName,
+                                },
+                            })
+                            break
+                        case '0x95d89b41':
+                            req.reply({
+                                status: 200,
+                                body: {
+                                    interceptCase: 2,
+                                    jsonrpc: '2.0',
+                                    id: parseInt(req.body.id),
+                                    result: hexSymbol,
+                                },
+                            })
+                            break
+                        case '0x313ce567':
+                            req.reply({
+                                status: 200,
+                                body: {
+                                    interceptCase: 3,
+                                    jsonrpc: '2.0',
+                                    id: parseInt(req.body.id),
+                                    result: hexDecimals,
+                                },
+                            })
+                            break
                     }
-                ).as('validateERC20');
+                }).as('validateERC20')
 
                 cy.get('.add_token_body > :nth-child(1) > input')
                     .type('0x5aa01B3b5877255cE50cc55e8986a7a5fe29C70e')
                     .then(() => {
-                        cy.wait('@validateERC20');
+                        cy.wait('@validateERC20')
                         cy.get('.add_token_body > .button_secondary > .v-btn__content').click()
                     })
                 cy.get('.erc_row > .balance_col').should('be.visible')
                 cy.get('.erc_row > .balance_col')
                     .invoke('text')
-                    .then((text) => {
+                    .then(text => {
                         cy.log(text)
                         amount = parseInt(text)
                     })
@@ -89,10 +86,10 @@ describe('activity transactions', () => {
 
                 cy.get('[data-cy="token-erc20-name"]')
                     .invoke('text')
-                    .then((nameERC20) => {
+                    .then(nameERC20 => {
                         cy.get('[data-cy="token-erc20-symbol"]')
                             .invoke('text')
-                            .then((symbolERC20) => {
+                            .then(symbolERC20 => {
                                 if (name == nameERC20 && symbol == symbolERC20 && amount > 0) {
                                     cy.log('Success')
                                 } else {
@@ -110,7 +107,7 @@ function hex2a(hex) {
     for (var i = 0; i < hex.length; i += 2) {
         str += String.fromCharCode(parseInt(hex.substr(i, 2), 16))
     }
-    let strSplitted = str.split('').filter((str) => str != '\u0000' && str != '\t')
+    let strSplitted = str.split('').filter(str => str != '\u0000' && str != '\t')
     let strTemp = ''
     for (let i = 0; i < strSplitted.length; i++) {
         strTemp = strTemp + strSplitted[i]

@@ -1,6 +1,6 @@
 import moment from 'moment'
 
-describe('Display validators', () => {
+describe('Display validators', { tags: ['@explorer'] }, () => {
     before(() => {
         cy.visit('/')
     })
@@ -14,6 +14,8 @@ describe('Display validators', () => {
             })
         }).as('getValidatorsInfo')
         cy.addKopernikusNetwork()
+        cy.selectExplorerApp()
+        cy.wait(3000)
 
         cy.get('[data-cy="activeValidators"]')
             .invoke('text')
@@ -22,7 +24,7 @@ describe('Display validators', () => {
                 cy.log(numberOfValidators).as('numberOflValidators')
             })
 
-            cy.get('[data-cy="activeValidators"]').click()
+        cy.get('[data-cy="activeValidators"]').click()
 
         cy.get('[data-cy="validator-status"] > .MuiChip-label')
             .invoke('text')
@@ -31,21 +33,22 @@ describe('Display validators', () => {
                 cy.log(status).as('status')
             })
 
-            cy.get('[data-cy="nodeId"]')
+        cy.get('[data-cy="nodeId"]')
             .invoke('text')
             .then(NodeID => {
                 expect(NodeID).equal(data.value[0].nodeID)
                 cy.log(NodeID).as('nodeID')
             })
 
-            cy.get('[data-cy="startTime"]')
+        cy.get('[data-cy="startTime"]')
             .invoke('text')
             .then(startTime => {
                 const newStartTime = data.value[0].startTime.split(' ')
                 expect(moment(startTime).format()).equal(moment(newStartTime[0]).format())
-                cy.log(startTime).as('startTime')})
+                cy.log(startTime).as('startTime')
+            })
 
-                cy.get('[data-cy="endTime"]')
+        cy.get('[data-cy="endTime"]')
             .invoke('text')
             .then(endTime => {
                 const newEndTime = data.value[0].endTime.split(' ')
@@ -53,14 +56,14 @@ describe('Display validators', () => {
                 cy.log(endTime).as('endTime')
             })
 
-            cy.get('[data-cy="uptime"]')
+        cy.get('[data-cy="uptime"]')
             .invoke('text')
             .then(upTime => {
                 expect(upTime).equal(data.value[0].uptime * 100 + '%')
                 cy.log(upTime).as('upTime')
             })
 
-            cy.get('[data-cy="txID"]')
+        cy.get('[data-cy="txID"]')
             .invoke('text')
             .then(txID => {
                 expect(txID).equal(data.value[0].txID)
