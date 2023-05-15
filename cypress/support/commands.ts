@@ -521,11 +521,11 @@ Cypress.Commands.add(
 )
 
 Cypress.Commands.add('selectWalletApp', func => {
-    cy.get(':nth-child(1) > .MuiPaper-root > .MuiButtonBase-root > .MuiTypography-root').click()
+    cy.get('[data-cy="go-to-Wallet"]').click()
 })
 
 Cypress.Commands.add('selectExplorerApp', func => {
-    cy.get(':nth-child(2) > .MuiPaper-root > .MuiButtonBase-root > .MuiTypography-root').click()
+    cy.get('[data-cy="go-to-Explorer"]').click()
 })
 //
 //
