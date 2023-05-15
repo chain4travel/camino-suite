@@ -5,14 +5,22 @@ import LandingPageAppWidget from './LandingPageAppWidget'
 import { useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router'
 import { changeActiveApp } from '../../redux/slices/app-config'
+import { useAppSelector } from '../../hooks/reduxHooks'
+import { getActiveNetwork } from '../../redux/slices/network'
 
 export default function LandingPage() {
+    const activeNetwork = useAppSelector(getActiveNetwork)
     const dispatch = useDispatch()
     const navigate = useNavigate()
 
     const handleWidgetClick = app => {
         dispatch(changeActiveApp(app?.name))
-        navigate(app?.url)
+
+        if (app.name === 'Explorer') {
+            navigate(app?.url + '/' + activeNetwork.name.toLowerCase())
+        } else {
+            navigate(app?.url)
+        }
     }
 
     return (
