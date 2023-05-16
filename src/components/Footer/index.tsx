@@ -8,6 +8,7 @@ import {
     MEDIUM,
     GITHUB,
     DISCORD,
+    CAMINO,
 } from '../../constants/route-paths'
 import { Link } from 'react-router-dom'
 
@@ -180,6 +181,10 @@ const FooterLinks = [
             {
                 text: 'Documentation',
                 url: DOCS,
+            },
+            {
+                text: 'Camino Network Website',
+                url: CAMINO,
             },
         ],
     },
