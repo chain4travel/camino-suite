@@ -75,6 +75,16 @@ const useNetwork = (): {
     }
     const handleChangeNetwork = (selected: string) => {
         setSelectedNetwork(selected)
+
+        if (
+            selected.toLowerCase() === 'camino' ||
+            selected.toLowerCase() === 'columbus' ||
+            selected.toLowerCase() === 'kopernikus'
+        ) {
+            localStorage.setItem('network-name-min', selected.toLowerCase())
+        } else {
+            localStorage.setItem('network-name-min', 'custom')
+        }
     }
     const handleEditCustomNetwork = () => {
         setSelectedEvent('editNetwork')
