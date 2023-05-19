@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Navigate, Route, Routes } from 'react-router-dom'
+import { Navigate, Route, Routes, useLocation, useNavigate } from 'react-router-dom'
 import ExplorerApp from '../views/explorer/ExplorerApp'
 import Wallet from '../views/wallet/WalletApp'
 import LoginPage from '../views/login/LoginPage'
@@ -12,15 +12,25 @@ import { getActiveNetwork } from '../redux/slices/network'
 import { useAppSelector } from '../hooks/reduxHooks'
 
 export default function RoutesSuite() {
+    const navigate = useNavigate()
+    const location = useLocation()
     const activeNetwork = useAppSelector(getActiveNetwork)
 
     const [networkAliasToUrl, setNetworkAliasToUrl] = useState<string>('')
 
     useEffect(() => {
         if (activeNetwork) {
-            setNetworkAliasToUrl(activeNetwork.name.toLowerCase())
+            if (activeNetwork.name !== networkAliasToUrl) {
+                setNetworkAliasToUrl(activeNetwork.name.toLowerCase())
+            }
         }
     }, [activeNetwork])
+
+    useEffect(() => {
+        if (networkAliasToUrl !== '') {
+            navigate('/changing-network')
+        }
+    }, [networkAliasToUrl])
 
     return (
         <>
@@ -40,9 +50,16 @@ export default function RoutesSuite() {
 
                 {activeNetwork ? (
                     <>
+                        <Route path={`/explorer/*`} element={<ExplorerApp />} />
+
                         <Route
                             path={`/explorer/${networkAliasToUrl}/*`}
                             element={<ExplorerApp />}
+                        />
+
+                        <Route
+                            path={`/changing-network`}
+                            element={<Navigate to={`/explorer/${networkAliasToUrl}/c-chain`} />}
                         />
 
                         <Route
