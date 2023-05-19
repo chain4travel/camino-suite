@@ -27,11 +27,16 @@ export default function RoutesSuite() {
     }, [activeNetwork])
 
     //Temporally Solution when the network is changed
-    // useEffect(() => {
-    //     if (networkAliasToUrl !== '') {
-    //         navigate('/changing-network')
-    //     }
-    // }, [networkAliasToUrl])
+    useEffect(() => {
+        if (
+            location.pathname.split('/')[4] === undefined ||
+            location.pathname.split('/')[4] === null
+        ) {
+            if (networkAliasToUrl !== '') {
+                navigate('/changing-network')
+            }
+        }
+    }, [networkAliasToUrl])
 
     return (
         <>
