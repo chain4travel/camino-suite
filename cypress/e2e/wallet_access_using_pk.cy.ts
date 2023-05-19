@@ -1,12 +1,12 @@
 import { expect } from 'chai'
 
-describe('access wallet', () => {
+describe('access wallet', { tags: ['@wallet'] }, () => {
     before(() => {
         cy.visit('/')
     })
-    it('Wallet access private key ',{tags:'@wallet'}, () => {
+    it('Wallet access private key ', () => {
         cy.addKopernikusNetwork()
         cy.accessWallet('privateKey')
-        cy.get('.router-link-exact-active', {timeout:20000}).should('be.visible')
+        cy.get('.router-link-exact-active', { timeout: 20000 }).should('be.visible')
     })
 })

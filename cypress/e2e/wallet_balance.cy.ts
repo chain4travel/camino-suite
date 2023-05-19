@@ -1,14 +1,14 @@
 import { expect } from 'chai'
 import '@cypress/xpath'
 
-describe('Wallet Balance Mnemonic', {tags:'@wallet'}, () => {
+describe('Wallet Balance Mnemonic', { tags: ['@wallet'] }, () => {
     before(() => {
         cy.visit('/')
     })
 
     it('open suite/open wallet using mnemonic', () => {
         cy.addKopernikusNetwork()
-        cy.accessWallet('mnemonic','','columbus')
+        cy.accessWallet('mnemonic', '', 'columbus')
         interceptXChainBalance()
         interceptPChainBalance()
         interceptChainBalance()
@@ -25,7 +25,7 @@ describe('Wallet Balance Mnemonic', {tags:'@wallet'}, () => {
 })
 
 async function interceptXChainBalance() {
-    cy.intercept('POST', '**/ext/bc/X', (req) => {
+    cy.intercept('POST', '**/ext/bc/X', req => {
         if (req.body.method == 'avm.getUTXOs') {
             req.reply({
                 statusCode: 200,
@@ -53,7 +53,7 @@ async function interceptXChainBalance() {
 }
 
 async function interceptPChainBalance() {
-    cy.intercept('POST', '**/ext/bc/P', (req) => {
+    cy.intercept('POST', '**/ext/bc/P', req => {
         if (req.body.method == 'platform.getUTXOs') {
             req.reply({
                 statusCode: 200,
@@ -80,7 +80,7 @@ async function interceptPChainBalance() {
 }
 
 async function interceptChainBalance() {
-    cy.intercept('POST', '**/ext/bc/C/rpc', (req) => {
+    cy.intercept('POST', '**/ext/bc/C/rpc', req => {
         if (req.body.method == 'eth_getBalance') {
             req.reply({
                 statusCode: 200,
@@ -125,11 +125,9 @@ function getTotalBalanceText(): Promise<number> {
         let balanceTotal = '0'
         cy.get('[data-cy="wallet_balance"]')
             .invoke('text')
-            .then((data) => {
+            .then(data => {
                 let dataSplit = data.split(' ')
-                let dataString = dataSplit.filter(
-                    (str) => str != '\n' && str != '' && str != 'CAM\n'
-                )
+                let dataString = dataSplit.filter(str => str != '\n' && str != '' && str != 'CAM\n')
                 let value: number = 0
                 for (let i = 0; i < dataString.length; i++) {
                     let valueStrNumber = parseFloat(dataString[i])
@@ -158,10 +156,10 @@ function getBalanceText(chain: string): Promise<number> {
         }
         cy.get(attributeFind)
             .invoke('text')
-            .then((response) => {
+            .then(response => {
                 let fundsSplitted = response.split(' ')
                 let fundsString = fundsSplitted.filter(
-                    (str) => str != '\n' && str != '' && str != 'CAM\n'
+                    str => str != '\n' && str != '' && str != 'CAM\n',
                 )
                 let funds = parseFloat(fundsString[0])
                 resolve(funds)

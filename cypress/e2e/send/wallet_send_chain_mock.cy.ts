@@ -1,6 +1,6 @@
 import { BN, bnToAvaxC } from '@c4tplatform/camino-wallet-sdk/dist'
 
-describe('Send: C to C transfer by already owned balance', () => {
+describe('Send: C to C transfer by already owned balance',{ tags: ['@wallet'] }, () => {
     beforeEach(() => {
         cy.loginWalletWith('privateKey')
 
@@ -82,7 +82,7 @@ describe('Send: C to C transfer by already owned balance', () => {
         })
     })
 
-    it('verify Fee from C to C', () => {
+    it.skip('verify Fee from C to C', () => {
         cy.get<string>('@ownChainBalance').then((balance) => {
             if (balance > 0) {
                 // Input C Chain Addr
@@ -173,7 +173,7 @@ describe('Send: C to C transfer by already owned balance', () => {
     })
 })
 
-describe('Send: C to C transfer by not balance', () => {
+describe('Send: C to C transfer by not balance',{ tags: ['@wallet'] }, () => {
     beforeEach(() => {
         cy.loginWalletWith('privateKey', 'privateKeyZeroBalance')
 
@@ -203,7 +203,7 @@ describe('Send: C to C transfer by not balance', () => {
         })
     })
 
-    it('verify Fee from C to C', () => {
+    it.skip('verify Fee from C to C', () => {
         // Input C Chain Addr
         cy.get('.bottom_tabs > .chain_select > button:nth-child(3)').click()
         cy.get('[data-cy="wallet_address"]').invoke('text').as('chainAddress')

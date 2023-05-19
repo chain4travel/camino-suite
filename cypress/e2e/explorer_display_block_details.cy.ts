@@ -1,12 +1,14 @@
 import { addKopernikusNetwork } from '../utils/utils'
 
-describe('Display block details', {tags:'@explorer'},() => {
+describe('Display block details', { tags: ['@explorer'] }, () => {
     before(() => {
         cy.visit('/')
     })
 
     it('display block details', () => {
         cy.addKopernikusNetwork()
+        cy.selectExplorerApp()
+        cy.wait(3000)
         cy.intercept('GET', '**/v2/ctxdata/**', req => {
             console.log(dataBody)
             req.reply({

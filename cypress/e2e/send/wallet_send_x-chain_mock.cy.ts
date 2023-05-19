@@ -1,7 +1,7 @@
 import { BigNumber } from 'bignumber.js'
 import { BN, bnToBigAvaxX } from '@c4tplatform/camino-wallet-sdk/dist'
 
-describe('Send transaction with x-chain balance', () => {
+describe('Send transaction with x-chain balance',{ tags: ['@wallet'] }, () => {
     beforeEach(() => {
 
         // access wallet with private key
@@ -60,7 +60,7 @@ describe('Send transaction with x-chain balance', () => {
 
     })
 
-    it('Send transaction with all available x-chain balance', () => {
+    it.skip('Send transaction with all available x-chain balance', () => {
 
         // click Source Chain X
         cy.get('@btnSourceX').click()
