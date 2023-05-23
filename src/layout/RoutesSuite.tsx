@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Navigate, Route, Routes, useLocation, useNavigate } from 'react-router-dom'
+import { Navigate, Route, Routes, useNavigate } from 'react-router-dom'
 import ExplorerApp from '../views/explorer/ExplorerApp'
 import Wallet from '../views/wallet/WalletApp'
 import LoginPage from '../views/login/LoginPage'
@@ -13,7 +13,6 @@ import { useAppSelector } from '../hooks/reduxHooks'
 
 export default function RoutesSuite() {
     const navigate = useNavigate()
-    const location = useLocation()
     const activeNetwork = useAppSelector(getActiveNetwork)
 
     const [lastUrlWithNewNetwork, setLastUrlWithNewNetwork] = useState('')
