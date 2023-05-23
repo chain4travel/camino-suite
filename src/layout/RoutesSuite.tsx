@@ -16,11 +16,19 @@ export default function RoutesSuite() {
     const location = useLocation()
     const activeNetwork = useAppSelector(getActiveNetwork)
 
+    const [lastUrlWithNewNetwork, setLastUrlWithNewNetwork] = useState('')
     const [networkAliasToUrl, setNetworkAliasToUrl] = useState<string>('')
 
     useEffect(() => {
         if (activeNetwork) {
             if (activeNetwork.name !== networkAliasToUrl) {
+                let lastNetwork = window.location.pathname.split('/')[2]
+
+                let newUrl = window.location.pathname
+                    .toString()
+                    .replace(lastNetwork, activeNetwork.name.toLowerCase())
+
+                setLastUrlWithNewNetwork(newUrl)
                 setNetworkAliasToUrl(activeNetwork.name.toLowerCase())
             }
         }
@@ -28,13 +36,9 @@ export default function RoutesSuite() {
 
     //Temporally Solution when the network is changed
     useEffect(() => {
-        if (
-            location.pathname.split('/')[4] === undefined ||
-            location.pathname.split('/')[4] === null
-        ) {
-            if (networkAliasToUrl !== '') {
-                navigate('/changing-network')
-            }
+        let isExplorer = lastUrlWithNewNetwork.split('/')[1] === 'explorer' ? true : false
+        if (isExplorer && networkAliasToUrl !== '') {
+            navigate('/changing-network')
         }
     }, [networkAliasToUrl])
 
@@ -65,7 +69,7 @@ export default function RoutesSuite() {
 
                         <Route
                             path={`/changing-network`}
-                            element={<Navigate to={`/explorer/${networkAliasToUrl}/c-chain`} />}
+                            element={<Navigate to={`${lastUrlWithNewNetwork}`} />}
                         />
 
                         <Route
