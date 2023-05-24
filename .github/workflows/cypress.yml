@@ -2,7 +2,7 @@ name: cypress-tests
 
 on:
   push:
-    branches: [c4t, dev, suite, suite-c4t]
+    branches: [c4t, dev, suite, suite-c4t, cypress-suite]
   pull_request:
     branches: [c4t, dev, suite, suite-c4t]
 
@@ -36,21 +36,25 @@ jobs:
 
       - name: build local image
         run: |
-          docker-compose build --build-arg EXPLORER_IMAGE=${{ env.explorer_image }}:${{ steps.setBranch.outputs.branch }} --build-arg WALLET_IMAGE=${{ env.wallet_image }}:${{ steps.setBranch.outputs.branch }}
-          export EXPLORER_IMAGE=${{ env.explorer_image }}:${{ steps.setBranch.outputs.branch }}
-          export WALLET_IMAGE=${{ env.wallet_image }}:${{ steps.setBranch.outputs.branch }}
+          #docker-compose build --build-arg EXPLORER_IMAGE=${{ env.explorer_image }}:${{ steps.setBranch.outputs.branch }} --build-arg WALLET_IMAGE=${{ env.wallet_image }}:${{ steps.setBranch.outputs.branch }}          
+          #export EXPLORER_IMAGE=${{ env.explorer_image }}:${{ steps.setBranch.outputs.branch }}
+          #export WALLET_IMAGE=${{ env.wallet_image }}:${{ steps.setBranch.outputs.branch }}
+          docker-compose build --build-arg EXPLORER_IMAGE=${{ env.explorer_image }}:suite --build-arg WALLET_IMAGE=${{ env.wallet_image }}:suite
+          export EXPLORER_IMAGE=${{ env.explorer_image }}:suite
+          export WALLET_IMAGE=${{ env.wallet_image }}:suite
           docker-compose up -d
-          docker cp camino-suite-wallet-container:/app/camino-wallet ./
+          #docker cp camino-suite-wallet-container:/app/camino-wallet ./
           mkdir -p /home/runner/.cache
-          docker cp camino-suite-wallet-container:/root/.cache/Cypress  /home/runner/.cache/
+          docker cp camino-suite-host-container:/root/.cache/Cypress  /home/runner/.cache/
 
       - name: cypress-run
         uses: cypress-io/github-action@v5
         env:
           USE_HTTP: true
+          grepTags: "@explorer"
         with:
           wait-on: 'http://localhost:5001/, http://localhost:5002/, http://localhost:5003/'
-          working-directory: camino-wallet
+          working-directory: .
           # wait for 3 minutes for the server to respond
           wait-on-timeout: 180
           browser: chrome
