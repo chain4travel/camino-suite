@@ -1,6 +1,6 @@
 import moment from 'moment'
 
-describe('Display validators', { tags: ['@explorer'] }, () => {
+describe('Display validators', { tags: ['@explorer', '@suite'] }, () => {
     before(() => {
         cy.visit('/')
     })

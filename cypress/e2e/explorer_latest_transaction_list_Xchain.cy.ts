@@ -205,7 +205,7 @@ let validators = {
     ],
 }
 
-describe('latest transaction list Xchainet', { tags: ['@explorer'] }, () => {
+describe('latest transaction list Xchainet', { tags: ['@explorer', '@suite'] }, () => {
     before(() => {
         cy.visit('/')
     })

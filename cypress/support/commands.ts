@@ -442,13 +442,8 @@ Cypress.Commands.add('addKopernikusNetwork', () => {
         .type(configNetwork.magellandUrl, { force: true })
     cy.get('[data-cy="btn-add-network"]', { timeout: 20000 }).click()
 
+    cy.get(`[data-cy="network-name-${configNetwork.networkName}"]`).click()
 
-    cy.get('body').then((body) => {
-        if (body.find(`[data-cy="network-name-${configNetwork.networkName}"]`).length > 0) {
-            cy.get(element).click();
-        }
-    });
-    
     cy.wait(2000)
 })
 

@@ -3,7 +3,7 @@ import '@cypress/xpath'
 
 let networkTesteds: any = []
 
-describe('Basic Functionality', { tags: ['@wallet', '@explorer'] }, () => {
+describe('Basic Functionality', { tags: ['@wallet', '@explorer', '@suite'] }, () => {
     before(() => {
         cy.visit('/')
     })

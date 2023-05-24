@@ -4,7 +4,7 @@ import Web3 from 'web3'
 
 const path: string = '/ext/bc/C/rpc'
 
-describe('Wallet Creation', { tags: ['@wallet'] }, () => {
+describe('Wallet Creation', { tags: ['@wallet', '@suite'] }, () => {
     before(() => {
         cy.visit('/')
     })

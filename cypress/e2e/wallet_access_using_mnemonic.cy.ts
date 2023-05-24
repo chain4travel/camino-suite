@@ -1,6 +1,6 @@
 import { expect } from 'chai'
 
-describe('Wallet Access Mnemonic', { tags: ['@wallet'] }, () => {
+describe('Wallet Access Mnemonic', { tags: ['@wallet', '@suite'] }, () => {
     before(() => {
         cy.visit('/')
     })

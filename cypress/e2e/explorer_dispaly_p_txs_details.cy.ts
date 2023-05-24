@@ -3,7 +3,7 @@ import { roundedToLocaleString, getDisplayAmount } from '../../src/utils/currenc
 
 describe(
     'Explorer: Latest block list and transaction list in P chain',
-    { tags: ['@explorer'] },
+    { tags: ['@explorer', '@suite'] },
     () => {
         beforeEach(() => {
             cy.entryExplorer()
