@@ -60,6 +60,7 @@ jobs:
           browser: chrome
           headless: true
           config-file: cypress.config.ts
+          env: grepTags=@explorer
 
       # These extract all artifacts out from the container to git so they can be previewed
       - name: extract screenshots to git
