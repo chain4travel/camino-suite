@@ -77,7 +77,7 @@ jobs:
           path: camino-wallet/cypress/videos
 
 
-explorer-cypress:
+  explorer-cypress:
     runs-on: ubuntu-latest
     strategy:
       matrix:
