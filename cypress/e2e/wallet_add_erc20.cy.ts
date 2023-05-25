@@ -11,7 +11,7 @@ const name = hex2a(hexName)
 const symbol = hex2a(hexSymbol)
 var amount = 0
 
-describe('activity transactions', { tags: ['@wallet'] }, () => {
+describe('activity transactions', { tags: ['@wallet', '@suite'] }, () => {
     before(() => {
         cy.visit('/')
     })

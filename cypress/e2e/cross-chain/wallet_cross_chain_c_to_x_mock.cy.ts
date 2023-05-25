@@ -6,7 +6,7 @@ import {
     numberToBNAvaxC,
 } from '@c4tplatform/camino-wallet-sdk/dist'
 
-describe('Cross chain: C to X', { tags: ['@wallet'] }, () => {
+describe('Cross chain: C to X', { tags: ['@wallet', '@suite'] }, () => {
     beforeEach(() => {
         cy.loginWalletWith('privateKey')
 

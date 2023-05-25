@@ -6,7 +6,7 @@ import {
     GasHelper,
 } from '@c4tplatform/camino-wallet-sdk/dist'
 
-describe('Cross chain: X to C', { tags: ['@wallet'] }, () => {
+describe('Cross chain: X to C', { tags: ['@wallet', '@suite'] }, () => {
     beforeEach(() => {
         cy.loginWalletWith('privateKey')
 

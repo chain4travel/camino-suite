@@ -28,6 +28,14 @@ Cypress.Commands.add('addCustomNetwork', (networkConfig: NetworkConfig) => {
     cy.get('[data-cy="btn-add-network"]').click()
     // Wait to connecting network
     cy.wait(5000)
+
+    const itExists = Cypress.$(`[data-cy="network-name-${networkConfig.networkName}"]`).length
+
+    if (itExists) {
+        console.log('existe')
+        cy.get(`[data-cy="network-name-${networkConfig.networkName}"]`).click()
+    }
+
     // Click backdrop to close menu
 })
 
@@ -284,21 +292,6 @@ Cypress.Commands.add('switchToWalletFunctionTab', func => {
         cy.get(`[data-cy="${funcKey}"]`, { timeout: 15000 }).click()
     }
 })
-Cypress.Commands.add('addCustomNetwork', (networkConfig: NetworkConfig) => {
-    const { networkName, rpcUrl, magellanUrl, explorerUrl } = networkConfig
-    cy.get('[data-cy="network-selector"]').click()
-    cy.get('[data-cy="add-custom-network"]').click()
-    // Wait for re-rendering ??
-    cy.wait(5000)
-    cy.get('[data-cy="add-network-field-network-name"]', { timeout: 30000 }).type(networkName)
-    cy.get('[data-cy="add-network-field-url"]').type(rpcUrl)
-    cy.get('[data-cy="add-network-field-magellan-address"]').type(magellanUrl || '')
-    // cy.get('[data-cy="add-network-field-explorerSiteUrl-address"]').type(explorerUrl || '')
-    cy.get('[data-cy="btn-add-network"]').click()
-    // Wait to connecting network
-    cy.wait(5000)
-    // Click backdrop to close menu
-})
 
 Cypress.Commands.add('entryExplorer', (network: string = 'Kopernikus') => {
     cy.visit('/')
@@ -442,13 +435,14 @@ Cypress.Commands.add('addKopernikusNetwork', () => {
         .type(configNetwork.magellandUrl, { force: true })
     cy.get('[data-cy="btn-add-network"]', { timeout: 20000 }).click()
 
-
-    cy.get('body').then((body) => {
-        if (body.find(`[data-cy="network-name-${configNetwork.networkName}"]`).length > 0) {
-            cy.get(element).click();
+    cy.get('div[role="presentation"]').then($elements => {
+        let childrenFirstElement = $elements[0].classList
+        let elementsChilds = Array.from(childrenFirstElement)
+        if (elementsChilds.some(element => element === 'MuiMenu-root')) {
+            cy.get(`[data-cy="network-name-${configNetwork.networkName}"]`).click()
         }
-    });
-    
+    })
+
     cy.wait(2000)
 })
 
