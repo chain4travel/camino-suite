@@ -23,6 +23,7 @@ export default function LandingPageAppWidget({ name, description, onClick }) {
                 sx={{ marginTop: 'auto', textTransform: 'none' }}
                 variant="contained"
                 onClick={onClick}
+                data-cy={`go-to-${name}`}
             >
                 <Typography variant="body1" color="white">
                     {`Go to ${name}`}
