@@ -2,7 +2,7 @@ name: cypress-tests
 
 on:
   push:
-    branches: [c4t, dev, suite, suite-c4t, cypress-suite]
+    branches: [c4t, dev, suite, suite-c4t]
   pull_request:
     branches: [c4t, dev, suite, suite-c4t]
 
@@ -36,14 +36,10 @@ jobs:
 
       - name: build local image
         run: |
-          #docker-compose build --build-arg EXPLORER_IMAGE=${{ env.explorer_image }}:${{ steps.setBranch.outputs.branch }} --build-arg WALLET_IMAGE=${{ env.wallet_image }}:${{ steps.setBranch.outputs.branch }}          
-          #export EXPLORER_IMAGE=${{ env.explorer_image }}:${{ steps.setBranch.outputs.branch }}
-          #export WALLET_IMAGE=${{ env.wallet_image }}:${{ steps.setBranch.outputs.branch }}
-          docker-compose build --build-arg EXPLORER_IMAGE=${{ env.explorer_image }}:suite --build-arg WALLET_IMAGE=${{ env.wallet_image }}:suite
-          export EXPLORER_IMAGE=${{ env.explorer_image }}:suite
-          export WALLET_IMAGE=${{ env.wallet_image }}:suite
+          docker-compose build --build-arg EXPLORER_IMAGE=${{ env.explorer_image }}:${{ steps.setBranch.outputs.branch }} --build-arg WALLET_IMAGE=${{ env.wallet_image }}:${{ steps.setBranch.outputs.branch }}          
+          export EXPLORER_IMAGE=${{ env.explorer_image }}:${{ steps.setBranch.outputs.branch }}
+          export WALLET_IMAGE=${{ env.wallet_image }}:${{ steps.setBranch.outputs.branch }}
           docker-compose up -d
-          #docker cp camino-suite-wallet-container:/app/camino-wallet ./
           mkdir -p /home/runner/.cache
           docker cp camino-suite-host-container:/root/.cache/Cypress  /home/runner/.cache/
 
@@ -102,14 +98,10 @@ jobs:
 
       - name: build local image
         run: |
-          #docker-compose build --build-arg EXPLORER_IMAGE=${{ env.explorer_image }}:${{ steps.setBranch.outputs.branch }} --build-arg WALLET_IMAGE=${{ env.wallet_image }}:${{ steps.setBranch.outputs.branch }}          
-          #export EXPLORER_IMAGE=${{ env.explorer_image }}:${{ steps.setBranch.outputs.branch }}
-          #export WALLET_IMAGE=${{ env.wallet_image }}:${{ steps.setBranch.outputs.branch }}
-          docker-compose build --build-arg EXPLORER_IMAGE=${{ env.explorer_image }}:suite --build-arg WALLET_IMAGE=${{ env.wallet_image }}:suite
-          export EXPLORER_IMAGE=${{ env.explorer_image }}:suite
-          export WALLET_IMAGE=${{ env.wallet_image }}:suite
+          docker-compose build --build-arg EXPLORER_IMAGE=${{ env.explorer_image }}:${{ steps.setBranch.outputs.branch }} --build-arg WALLET_IMAGE=${{ env.wallet_image }}:${{ steps.setBranch.outputs.branch }}          
+          export EXPLORER_IMAGE=${{ env.explorer_image }}:${{ steps.setBranch.outputs.branch }}
+          export WALLET_IMAGE=${{ env.wallet_image }}:${{ steps.setBranch.outputs.branch }}
           docker-compose up -d
-          #docker cp camino-suite-wallet-container:/app/camino-wallet ./
           mkdir -p /home/runner/.cache
           docker cp camino-suite-host-container:/root/.cache/Cypress  /home/runner/.cache/
 
