@@ -40,6 +40,7 @@ jobs:
           export EXPLORER_IMAGE=${{ env.explorer_image }}:${{ steps.setBranch.outputs.branch }}
           export WALLET_IMAGE=${{ env.wallet_image }}:${{ steps.setBranch.outputs.branch }}
           docker-compose up -d
+          docker cp camino-suite-host-container:/app/camino-suite ./
           mkdir -p /home/runner/.cache
           docker cp camino-suite-host-container:/root/.cache/Cypress  /home/runner/.cache/
 
@@ -49,7 +50,7 @@ jobs:
           USE_HTTP: true
         with:
           wait-on: 'http://localhost:5001/, http://localhost:5002/, http://localhost:5003/'
-          working-directory: .
+          working-directory: camino-suite
           # wait for 3 minutes for the server to respond
           wait-on-timeout: 180
           browser: chrome
@@ -63,14 +64,14 @@ jobs:
         if: failure()
         with:
           name: cypress-screenshots
-          path: camino-wallet/cypress/screenshots
+          path: camino-suite/cypress/screenshots
       # Test run video was always captured, so this action uses "always()" condition
       - name: extract videos to git
         uses: actions/upload-artifact@v3
         if: always()
         with:
           name: cypress-videos
-          path: camino-wallet/cypress/videos
+          path: camino-suite/cypress/videos
 
 
   explorer-cypress:
@@ -102,6 +103,7 @@ jobs:
           export EXPLORER_IMAGE=${{ env.explorer_image }}:${{ steps.setBranch.outputs.branch }}
           export WALLET_IMAGE=${{ env.wallet_image }}:${{ steps.setBranch.outputs.branch }}
           docker-compose up -d
+          docker cp camino-suite-host-container:/app/camino-suite ./
           mkdir -p /home/runner/.cache
           docker cp camino-suite-host-container:/root/.cache/Cypress  /home/runner/.cache/
 
@@ -111,7 +113,7 @@ jobs:
           USE_HTTP: true
         with:
           wait-on: 'http://localhost:5001/, http://localhost:5002/, http://localhost:5003/'
-          working-directory: .
+          working-directory: camino-suite
           # wait for 3 minutes for the server to respond
           wait-on-timeout: 180
           browser: chrome
@@ -125,11 +127,11 @@ jobs:
         if: failure()
         with:
           name: cypress-screenshots
-          path: camino-wallet/cypress/screenshots
+          path: camino-suite/cypress/screenshots
       # Test run video was always captured, so this action uses "always()" condition
       - name: extract videos to git
         uses: actions/upload-artifact@v3
         if: always()
         with:
           name: cypress-videos
-          path: camino-wallet/cypress/videos
+          path: camino-suite/cypress/videos
