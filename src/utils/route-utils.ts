@@ -67,7 +67,7 @@ export function GetChainTypeFromUrl(): ChainType {
     return ChainType.C_CHAIN
 }
 
-export function getTransactionType(chainType) {
+export function GetTransactionType(chainType) {
     switch (chainType) {
         case ChainType.X_CHAIN:
             return XTRANSACTION
@@ -78,7 +78,7 @@ export function getTransactionType(chainType) {
     }
 }
 
-export function getAddressType(chainType) {
+export function GetAddressType(chainType) {
     switch (chainType) {
         case ChainType.X_CHAIN:
             return XADDRESS
