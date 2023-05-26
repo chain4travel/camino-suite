@@ -33,7 +33,7 @@ Cypress.Commands.add('addCustomNetwork', (networkConfig: NetworkConfig) => {
         let childrenFirstElement = $elements[0].classList
         let elementsChilds = Array.from(childrenFirstElement)
         if (elementsChilds.some(element => element === 'MuiMenu-root')) {
-            cy.get(`[data-cy="network-name-${configNetwork.networkName}"]`).click()
+            cy.get(`[data-cy="network-name-${networkConfig.networkName}"]`).click()
         }
     })
 
