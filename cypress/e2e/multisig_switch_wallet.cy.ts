@@ -116,15 +116,16 @@ describe('multisig: switch wellet', { tags: ['@wallet', '@suite'] }, () => {
 
         verifyBalance()
 
-        // cy.wait('@platformGetUTXOs').then(intercept => {
-        //     cy.get('.addr_text')
-        //         .invoke('text')
-        //         .then(text => {
-        //             expect(text.replace(/\s/g, '')).to.equal(
-        //                 intercept.response?.body.result.endIndex.address,
-        //             )
-        //         })
-        // })
+        cy.get('.chain_select > button').click()
+        cy.wait('@platformGetUTXOs').then(intercept => {
+            cy.get('.addr_text')
+                .invoke('text')
+                .then(text => {
+                    expect(text.replace(/\s/g, '')).to.equal(
+                        intercept.response?.body.result.endIndex.address,
+                    )
+                })
+        })
     })
 })
 
@@ -133,41 +134,43 @@ const clearBalanceFormat = (data: string) => {
 }
 
 const verifyBalance = () => {
-    cy.get('.header > h4')
-        .invoke('text')
-        .then(textH4 => {
-            cy.wait(5000).then(() => {
-                cy.get('[data-cy="top-balance-available-P"]').as('balanceP')
-                cy.get('[data-cy="wallet_balance"]').as('totalBalance')
-                if (textH4.includes('Multisig')) {
-                    cy.get('.alt_breakdown').find('div').eq(2).find('p').eq(0).as('Deposited')
-                } else {
-                    cy.get('.alt_breakdown').find('div').eq(1).find('p').eq(0).as('Deposited')
-                }
+    cy.get('[data-cy="top-balance-available-P"]').as('balanceP')
+    cy.get('[data-cy="wallet_balance"]').as('totalBalance')
+    cy.get('@totalBalance', { timeout: 5000 })
+        .should('not.include.text', '--')
+        .then(() => {
+            cy.get('.header > h4')
+                .invoke('text')
+                .then(textH4 => {
+                    if (textH4.includes('Multisig')) {
+                        cy.get('.alt_breakdown').find('div').eq(2).find('p').eq(0).as('Deposited')
+                    } else {
+                        cy.get('.alt_breakdown').find('div').eq(1).find('p').eq(0).as('Deposited')
+                    }
 
-                cy.get('@balanceP')
-                    .invoke('text')
-                    .then(balanceP => {
-                        cy.get('@Deposited')
-                            .invoke('text')
-                            .then(Deposited => {
-                                console.log('balanceDataP', balanceP)
-                                console.log('balanceDataDeposited', Deposited)
+                    cy.get('@balanceP')
+                        .invoke('text')
+                        .then(balanceP => {
+                            cy.get('@Deposited')
+                                .invoke('text')
+                                .then(Deposited => {
+                                    console.log('balanceDataP', balanceP)
+                                    console.log('balanceDataDeposited', Deposited)
 
-                                const totalXPCBalance =
-                                    parseFloat(clearBalanceFormat(balanceP)) +
-                                    parseFloat(clearBalanceFormat(Deposited))
+                                    const totalXPCBalance =
+                                        parseFloat(clearBalanceFormat(balanceP)) +
+                                        parseFloat(clearBalanceFormat(Deposited))
 
-                                cy.get('@totalBalance')
-                                    .invoke('text')
-                                    .then(totalBalance => {
-                                        return parseFloat(clearBalanceFormat(totalBalance))
-                                    })
-                                    .then(totalBalance => {
-                                        expect(totalBalance).to.equal(totalXPCBalance)
-                                    })
-                            })
-                    })
-            })
+                                    cy.get('@totalBalance')
+                                        .invoke('text')
+                                        .then(totalBalance => {
+                                            return parseFloat(clearBalanceFormat(totalBalance))
+                                        })
+                                        .then(totalBalance => {
+                                            expect(totalBalance).to.equal(totalXPCBalance)
+                                        })
+                                })
+                        })
+                })
         })
 }
