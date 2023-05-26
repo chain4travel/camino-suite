@@ -43,6 +43,9 @@ export default function LoginIcon() {
                     <MenuItem>
                         <LoadAccountMenu type="kyc" />
                     </MenuItem>
+                    <MenuItem>
+                        <LoadAccountMenu type="kyb" />
+                    </MenuItem>
                     <MenuItem
                         onClick={logout}
                         sx={{ display: 'flex', justifyContent: 'space-between' }}
@@ -86,6 +89,14 @@ export default function LoginIcon() {
                                 sx={{ typography: 'body1', width: '100%', maxWidth: '326px' }}
                             >
                                 <LoadAccountMenu type="kyc" />
+                            </MenuItem>
+                            <MenuItem
+                                onKeyDown={e => {
+                                    handleKeyDown(e)
+                                }}
+                                sx={{ typography: 'body1', width: '100%', maxWidth: '326px' }}
+                            >
+                                <LoadAccountMenu type="kyb" />
                             </MenuItem>
                             <MenuItem
                                 onKeyDown={e => handleKeyDown(e)}
