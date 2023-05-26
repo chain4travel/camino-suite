@@ -1,8 +1,8 @@
-describe('multisig: switch wellet',{ tags: ['@wallet', '@suite'] }, () => {
+describe('multisig: switch wellet', { tags: ['@wallet', '@suite'] }, () => {
     beforeEach(() => {
         cy.loginWalletWith('privateKey', 'multisigAliasPrivateKey')
         cy.switchToWalletFunctionTab('Manage Keys')
-        cy.intercept('GET', '**/v2/multisigalias/*', (request) => {
+        cy.intercept('GET', '**/v2/multisigalias/*', request => {
             request.reply({
                 statusCode: 200,
                 body: {
@@ -15,7 +15,7 @@ describe('multisig: switch wellet',{ tags: ['@wallet', '@suite'] }, () => {
             })
         })
 
-        cy.intercept('POST', '**/ext/bc/P', (request) => {
+        cy.intercept('POST', '**/ext/bc/P', request => {
             if (request.body.method === 'platform.getMultisigAlias') {
                 request.reply({
                     statusCode: 200,
@@ -42,33 +42,7 @@ describe('multisig: switch wellet',{ tags: ['@wallet', '@suite'] }, () => {
             }
         })
 
-        cy.intercept('POST', '**/ext/bc/X', (request) => {
-            if (request.body.method === 'avm.getUTXOs') {
-                request.reply({
-                    statusCode: 200,
-                    body: {
-                        id: request.body.id,
-                        jsonrpc: '2.0',
-                        result: {
-                            encoding: 'hex',
-                            endIndex: {
-                                address: 'X-kopernikus1maff3tql60ndkwn9mvz06ssywvag4uf48el62q',
-                                utxo: '5EHYBsL9HbHS1yHgp9dQCYZKy7C8VB3J4roTQ5FBJmqr65G8T',
-                            },
-                            numFetched: '2',
-                            utxos: [
-                                '0x0000bd2fcdf4cb5f5cdad2516397155d28474cab585134824db35107af86f5180bdf000000005e21ded8a9e53a62f6c48ef045b37c938c5c5e9b25a14b4987db93682ca30f76000000070000001694a615a800000000000000000000000100000001df5298ac1fd3e6db3a65db04fd4204733a8af13523b9a8a6',
-                                '0x0000b392b7aabdb825257857ac7bd087fdb8c10290ac561c561a8c1e71346085091f000000005e21ded8a9e53a62f6c48ef045b37c938c5c5e9b25a14b4987db93682ca30f7600000007000000000098968000000000000000000000000100000001df5298ac1fd3e6db3a65db04fd4204733a8af1358dc4f97d',
-                                '0x000074586670c1bf26ffbd7af84e4298a3e19c05fb8235fc2f19459fe2f930a283a4000000005e21ded8a9e53a62f6c48ef045b37c938c5c5e9b25a14b4987db93682ca30f7600000007000000003b9aca0000000000000000000000000100000001df5298ac1fd3e6db3a65db04fd4204733a8af135e77d4535',
-                                '0x00005d59e292133376a3ec90f6fb64e6f77d0745cced9d15ea861ee0c95a636705fc000000005e21ded8a9e53a62f6c48ef045b37c938c5c5e9b25a14b4987db93682ca30f7600000007000000003b9aca0000000000000000000000000100000001df5298ac1fd3e6db3a65db04fd4204733a8af1356e6bd739',
-                            ],
-                        },
-                    },
-                })
-            }
-        })
-
-        cy.intercept('POST', '**/ext/bc/P', (request) => {
+        cy.intercept('POST', '**/ext/bc/P', request => {
             if (request.body.method === 'platform.getUTXOs') {
                 request.reply({
                     statusCode: 200,
@@ -92,26 +66,7 @@ describe('multisig: switch wellet',{ tags: ['@wallet', '@suite'] }, () => {
             }
         })
 
-        cy.intercept('POST', '**/ext/bc/C/rpc', (request) => {
-            if (request.body.method === 'eth_getBalance') {
-                request.reply({
-                    statusCode: 200,
-                    body: {
-                        id: request.body.id,
-                        jsonrpc: '2.0',
-                        result: '0x57971e715b9a0e000',
-                    },
-                })
-                request.alias = 'firstPlatformGetUTXOs'
-            }
-        })
-
         cy.get('[data-cy="btn-show-breakdown"]').click()
-        cy.get('[data-cy="top-balance-available-X"]').as('balanceX')
-        cy.get('[data-cy="top-balance-available-P"]').as('balanceP')
-        cy.get('[data-cy="top-balance-available-C"]').as('balanceC')
-        cy.get('[data-cy="wallet_balance"]').as('totalBalance')
-        cy.get('.alt_breakdown').find('div').eq(1).find('p').eq(0).as('Deposited')
 
         verifyBalance()
     })
@@ -134,28 +89,7 @@ describe('multisig: switch wellet',{ tags: ['@wallet', '@suite'] }, () => {
 
         // cy.contains('Wallet Switcher').siblings('div').click({ force: true })
 
-        cy.intercept('POST', '**/ext/bc/X', (request) => {
-            if (request.body.method === 'avm.getUTXOs') {
-                request.reply({
-                    statusCode: 200,
-                    body: {
-                        id: request.body.id,
-                        jsonrpc: '2.0',
-                        result: {
-                            encoding: 'hex',
-                            endIndex: {
-                                address: 'P-kopernikus18gw475en5h5jvtkslp7xqed7t7ugq6rmc4zrvh',
-                                utxo: '11111111111111111111111111111111LpoYY',
-                            },
-                            numFetched: '0',
-                            utxos: [],
-                        },
-                    },
-                })
-            }
-        })
-
-        cy.intercept('POST', '**/ext/bc/P', (request) => {
+        cy.intercept('POST', '**/ext/bc/P', request => {
             if (request.body.method === 'platform.getUTXOs') {
                 request.reply({
                     statusCode: 200,
@@ -180,15 +114,15 @@ describe('multisig: switch wellet',{ tags: ['@wallet', '@suite'] }, () => {
             }
         })
 
-        cy.wait(1000)
         verifyBalance()
-        cy.get('.chain_select').find('button').eq(1).click()
-        cy.wait('@platformGetUTXOs').then((intercept) => {
+
+        cy.get('.chain_select > button').click()
+        cy.wait('@platformGetUTXOs').then(intercept => {
             cy.get('.addr_text')
                 .invoke('text')
-                .then((text) => {
+                .then(text => {
                     expect(text.replace(/\s/g, '')).to.equal(
-                        intercept.response?.body.result.endIndex.address
+                        intercept.response?.body.result.endIndex.address,
                     )
                 })
         })
@@ -200,22 +134,43 @@ const clearBalanceFormat = (data: string) => {
 }
 
 const verifyBalance = () => {
-    cy.get('@balanceX').invoke('text').then((balanceX) => {
-        cy.get('@balanceP').invoke('text').then((balanceP) => {
-            cy.get('@balanceC').invoke('text').then((balanceC) => {
-                cy.get('@Deposited').invoke('text').then((Deposited) => {
-                    const totalXPCBalance = parseFloat(clearBalanceFormat(balanceX)) +
-                    parseFloat(clearBalanceFormat(balanceP)) +
-                    parseFloat(clearBalanceFormat(balanceC)) +
-                    parseFloat(clearBalanceFormat(Deposited))
-                    
-                    cy.get('@totalBalance').invoke('text').then((totalBalance) => {
-                        return parseFloat(clearBalanceFormat(totalBalance))
-                    }).then((totalBalance) => {
-                        expect(totalBalance).to.equal(totalXPCBalance)
-                    })
+    cy.get('[data-cy="top-balance-available-P"]').as('balanceP')
+    cy.get('[data-cy="wallet_balance"]').as('totalBalance')
+    cy.get('@totalBalance', { timeout: 5000 })
+        .should('not.include.text', '--')
+        .then(() => {
+            cy.get('.header > h4')
+                .invoke('text')
+                .then(textH4 => {
+                    if (textH4.includes('Multisig')) {
+                        cy.get('.alt_breakdown').find('div').eq(2).find('p').eq(0).as('Deposited')
+                    } else {
+                        cy.get('.alt_breakdown').find('div').eq(1).find('p').eq(0).as('Deposited')
+                    }
+
+                    cy.get('@balanceP')
+                        .invoke('text')
+                        .then(balanceP => {
+                            cy.get('@Deposited')
+                                .invoke('text')
+                                .then(Deposited => {
+                                    console.log('balanceDataP', balanceP)
+                                    console.log('balanceDataDeposited', Deposited)
+
+                                    const totalXPCBalance =
+                                        parseFloat(clearBalanceFormat(balanceP)) +
+                                        parseFloat(clearBalanceFormat(Deposited))
+
+                                    cy.get('@totalBalance')
+                                        .invoke('text')
+                                        .then(totalBalance => {
+                                            return parseFloat(clearBalanceFormat(totalBalance))
+                                        })
+                                        .then(totalBalance => {
+                                            expect(totalBalance).to.equal(totalXPCBalance)
+                                        })
+                                })
+                        })
                 })
-            })
-        })    
-    })
+        })
 }
