@@ -10,13 +10,18 @@ import MountAccessComponent from '../views/access/MountAccessComponent'
 import LandingPage from '../views/landing/LandingPage'
 import { getActiveNetwork } from '../redux/slices/network'
 import { useAppSelector } from '../hooks/reduxHooks'
+import useNetwork from '../hooks/useNetwork'
+import { validateIsCustom } from '../utils/networkUtils'
 
 export default function RoutesSuite() {
+    const { handleChangeNetwork } = useNetwork()
+
     const navigate = useNavigate()
     const activeNetwork = useAppSelector(getActiveNetwork)
 
     const [lastUrlWithNewNetwork, setLastUrlWithNewNetwork] = useState('')
     const [networkAliasToUrl, setNetworkAliasToUrl] = useState<string>('')
+    const [firstLoad, setFirstLoad] = useState(false)
 
     useEffect(() => {
         if (activeNetwork) {
@@ -38,8 +43,18 @@ export default function RoutesSuite() {
         let isExplorer = lastUrlWithNewNetwork.split('/')[1] === 'explorer' ? true : false
         if (isExplorer && networkAliasToUrl !== '') {
             navigate('/changing-network')
+
+            if (firstLoad === false) {
+                setFirstLoad(true)
+            }
         }
     }, [networkAliasToUrl])
+
+    useEffect(() => {
+        if (firstLoad === true && validateIsCustom(activeNetwork.name.toLowerCase())) {
+            handleChangeNetwork(activeNetwork.name)
+        }
+    }, [firstLoad])
 
     return (
         <>

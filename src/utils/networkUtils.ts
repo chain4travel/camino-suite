@@ -27,3 +27,11 @@ export const networkStatusName = (status: string) => {
             return 'Connecting...'
     }
 }
+
+export const validateIsCustom = (networkName: string) => {
+    if (networkName === 'columbus' || networkName === 'camino') {
+        return false
+    } else {
+        return true
+    }
+}
