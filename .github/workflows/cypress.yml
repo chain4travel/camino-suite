@@ -2,16 +2,16 @@ name: cypress-tests
 
 on:
   push:
-    branches: [c4t, dev, suite]
+    branches: [c4t, dev, suite, suite-c4t]
   pull_request:
-    branches: [c4t, dev, suite]
+    branches: [c4t, dev, suite, suite-c4t]
 
 env:
   wallet_image: 'europe-west3-docker.pkg.dev/pwk-c4t-dev/camino-suite-apps/camino-suite-wallet'
   explorer_image: 'europe-west3-docker.pkg.dev/pwk-c4t-dev/camino-suite-apps/camino-suite-explorer'
 
 jobs:
-  build:
+  wallet-cypress:
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -36,13 +36,13 @@ jobs:
 
       - name: build local image
         run: |
-          docker-compose build --build-arg EXPLORER_IMAGE=${{ env.explorer_image }}:${{ steps.setBranch.outputs.branch }} --build-arg WALLET_IMAGE=${{ env.wallet_image }}:${{ steps.setBranch.outputs.branch }}
+          docker-compose build --build-arg EXPLORER_IMAGE=${{ env.explorer_image }}:${{ steps.setBranch.outputs.branch }} --build-arg WALLET_IMAGE=${{ env.wallet_image }}:${{ steps.setBranch.outputs.branch }}          
           export EXPLORER_IMAGE=${{ env.explorer_image }}:${{ steps.setBranch.outputs.branch }}
           export WALLET_IMAGE=${{ env.wallet_image }}:${{ steps.setBranch.outputs.branch }}
           docker-compose up -d
-          docker cp camino-suite-wallet-container:/app/camino-wallet ./
+          docker cp camino-suite-host-container:/app/camino-suite ./
           mkdir -p /home/runner/.cache
-          docker cp camino-suite-wallet-container:/root/.cache/Cypress  /home/runner/.cache/
+          docker cp camino-suite-host-container:/root/.cache/Cypress  /home/runner/.cache/
 
       - name: cypress-run
         uses: cypress-io/github-action@v5
@@ -50,12 +50,13 @@ jobs:
           USE_HTTP: true
         with:
           wait-on: 'http://localhost:5001/, http://localhost:5002/, http://localhost:5003/'
-          working-directory: camino-wallet
+          working-directory: camino-suite
           # wait for 3 minutes for the server to respond
           wait-on-timeout: 180
           browser: chrome
           headless: true
           config-file: cypress.config.ts
+          env: grepTags=@wallet
 
       # These extract all artifacts out from the container to git so they can be previewed
       - name: extract screenshots to git
@@ -63,12 +64,74 @@ jobs:
         if: failure()
         with:
           name: cypress-screenshots
-          path: camino-wallet/cypress/screenshots
+          path: camino-suite/cypress/screenshots
       # Test run video was always captured, so this action uses "always()" condition
       - name: extract videos to git
         uses: actions/upload-artifact@v3
         if: always()
         with:
           name: cypress-videos
-          path: camino-wallet/cypress/videos
+          path: camino-suite/cypress/videos
 
+
+  explorer-cypress:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        # The node version, you can put one or many versions in here to test with
+        node: [16]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Use Node.js ${{ matrix.node }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node }}
+
+      - name: get branch name
+        id: setBranch
+        run: |
+          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+            echo "branch=${{ github.base_ref }}" >> $GITHUB_OUTPUT
+          else
+            echo "branch=${{ github.ref_name }}" >> $GITHUB_OUTPUT
+          fi
+
+      - name: build local image
+        run: |
+          docker-compose build --build-arg EXPLORER_IMAGE=${{ env.explorer_image }}:${{ steps.setBranch.outputs.branch }} --build-arg WALLET_IMAGE=${{ env.wallet_image }}:${{ steps.setBranch.outputs.branch }}          
+          export EXPLORER_IMAGE=${{ env.explorer_image }}:${{ steps.setBranch.outputs.branch }}
+          export WALLET_IMAGE=${{ env.wallet_image }}:${{ steps.setBranch.outputs.branch }}
+          docker-compose up -d
+          docker cp camino-suite-host-container:/app/camino-suite ./
+          mkdir -p /home/runner/.cache
+          docker cp camino-suite-host-container:/root/.cache/Cypress  /home/runner/.cache/
+
+      - name: cypress-run
+        uses: cypress-io/github-action@v5
+        env:
+          USE_HTTP: true
+        with:
+          wait-on: 'http://localhost:5001/, http://localhost:5002/, http://localhost:5003/'
+          working-directory: camino-suite
+          # wait for 3 minutes for the server to respond
+          wait-on-timeout: 180
+          browser: chrome
+          headless: true
+          config-file: cypress.config.ts
+          env: grepTags=@explorer
+
+      # These extract all artifacts out from the container to git so they can be previewed
+      - name: extract screenshots to git
+        uses: actions/upload-artifact@v3
+        if: failure()
+        with:
+          name: cypress-screenshots
+          path: camino-suite/cypress/screenshots
+      # Test run video was always captured, so this action uses "always()" condition
+      - name: extract videos to git
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: cypress-videos
+          path: camino-suite/cypress/videos
