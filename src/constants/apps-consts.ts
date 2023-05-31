@@ -9,6 +9,11 @@ export const APPS_CONSTS = [
         subText: 'Lookup network activity and statistics.',
         url: '/explorer',
     },
+    {
+        name: 'Consortium',
+        subText: 'Governance for the Camino Network',
+        url: '/consortium',
+    },
 ]
 
 export const DEFAULT_PLATFORM_SELECTION_ITEM = {
