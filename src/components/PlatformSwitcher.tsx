@@ -2,27 +2,35 @@ import React, { useEffect } from 'react'
 import { useState } from 'react'
 import { Box, MenuItem, Select, useTheme, Typography } from '@mui/material'
 import { mdiChevronRight } from '@mdi/js'
-import { APPS_CONSTS } from '../constants/apps-consts'
+import { APPS_CONSTS, DEFAULT_PLATFORM_SELECTION_ITEM } from '../constants/apps-consts'
 import useWidth from '../hooks/useWidth'
 import Icon from '@mdi/react'
 import { useDispatch } from 'react-redux'
-import { changeActiveApp } from '../redux/slices/app-config'
+import { changeActiveApp, getActiveApp } from '../redux/slices/app-config'
 import { useNavigate } from 'react-router-dom'
+import { useAppSelector } from '../hooks/reduxHooks'
+import { capitalize } from 'lodash'
 
 export default function PlatformSwitcher() {
     const theme = useTheme()
     const navigate = useNavigate()
+    const activeApp = useAppSelector(getActiveApp)
     const themeMode = theme.palette.mode === 'light' ? true : false
     const { isDesktop } = useWidth()
     const location = window.location.pathname.split('/')[1]
     const dispatch = useDispatch()
     const [app, setApp] = useState(
-        location.charAt(0).toUpperCase() + location.slice(1) || 'Explorer',
+        location.charAt(0).toUpperCase() + location.slice(1) ||
+            DEFAULT_PLATFORM_SELECTION_ITEM.name,
     )
 
     useEffect(() => {
-        if (!APPS_CONSTS.find(a => a.name === app)) setApp('Explorer')
-    }, [app])
+        if (activeApp) {
+            setApp(capitalize(activeApp))
+        } else {
+            if (!APPS_CONSTS.find(a => a.name === app)) setApp(DEFAULT_PLATFORM_SELECTION_ITEM.name)
+        }
+    }, [app, activeApp])
 
     return (
         <Box
@@ -36,6 +44,7 @@ export default function PlatformSwitcher() {
             }}
         >
             <Select
+                MenuProps={{ MenuListProps: { disableListWrap: true } }}
                 value={app}
                 onChange={e => {
                     setApp(e.target.value)
@@ -82,7 +91,7 @@ export default function PlatformSwitcher() {
                 )}
                 data-cy="app-selector-menu"
             >
-                {APPS_CONSTS.map((app, index) => (
+                {APPS_CONSTS?.map((app, index) => (
                     <MenuItem
                         key={index}
                         value={app.name}

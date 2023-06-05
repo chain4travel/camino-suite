@@ -1,0 +1,3 @@
+[submodule "camino-wallet-sdk"]
+	path = camino-wallet-sdk
+	url = https://github.com/chain4travel/camino-wallet-sdk.git

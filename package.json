@@ -14,7 +14,8 @@
         "lint": "yarn run eslint src",
         "lint:fix": "yarn run eslint --fix src",
         "format-check": "prettier --check '{*.js, src/**/*.{js,jsx,ts,tsx}, .github/workflows/*.{yml,yaml}}'",
-        "format": "prettier --write '{*.js, src/**/*.{js,jsx,ts,tsx}, .github/workflows/*.{yml,yaml}}'"
+        "format": "prettier --write '{*.js, src/**/*.{js,jsx,ts,tsx}, .github/workflows/*.{yml,yaml}}'",
+        "preinstall": "git submodule update --recursive --init"
     },
     "devDependencies": {
         "@babel/core": "^7.15.8",
@@ -24,13 +25,16 @@
         "@babel/preset-env": "^7.15.8",
         "@babel/preset-react": "^7.14.5",
         "@babel/preset-typescript": "^7.10.4",
+        "@c4tplatform/camino-wallet-sdk": "file:camino-wallet-sdk",
+        "@cypress/grep": "^3.1.4",
+        "@cypress/xpath": "^2.0.3",
         "@emotion/react": "^11.10.5",
         "@emotion/styled": "^11.10.5",
         "@mdi/js": "^7.0.96",
         "@mdi/react": "^1.6.1",
-        "@mui/icons-material": "^5.10.14",
-        "@mui/material": "^5.10.14",
-        "@mui/system": "^5.10.14",
+        "@mui/icons-material": "5.10.14",
+        "@mui/material": "5.10.14",
+        "@mui/system": "5.10.14",
         "@reduxjs/toolkit": "^1.8.1",
         "@testing-library/dom": "^8.19.0",
         "@testing-library/jest-dom": "^5.16.4",
@@ -46,6 +50,7 @@
         "axios": "^1.1.3",
         "babel-loader": "^8.2.2",
         "copy-webpack-plugin": "^11.0.0",
+        "cypress-file-upload": "^4.0.7",
         "eslint": "^8.34.0",
         "eslint-config-prettier": "^8.6.0",
         "eslint-config-react-app": "^7.0.1",
@@ -60,6 +65,7 @@
         "postcss-loader": "^4.1.0",
         "prettier": "^2.8.3",
         "react-helmet-async": "^1.3.0",
+        "react-idle-timer": "^5.5.3",
         "react-redux": "^8.0.1",
         "react-router": "^6.8.1",
         "react-router-dom": "^6.8.1",
@@ -71,8 +77,8 @@
         "webpack-cli": "^5.0.0",
         "webpack-dev-server": "^4.3.1",
         "webpack-merge": "^5.8.0",
-        "react-idle-timer": "^5.5.3",
-        "yup": "^0.32.11"
+        "yup": "^0.32.11",
+        "cypress": "12.5.1"
     },
     "dependencies": {
         "react": "^18.2.0",

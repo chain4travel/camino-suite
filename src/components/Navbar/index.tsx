@@ -24,6 +24,7 @@ import MIconButton from '../@material-extend/MIconButton'
 import { updateAccount, updateAuthStatus } from '../../redux/slices/app-config'
 import store from 'wallet/store'
 import { TIMEOUT_DURATION, DRAWER_WIDTH } from '../../constants/apps-consts'
+import AliasPicker from './AliasPicker'
 
 export default function Navbar() {
     const theme = useTheme()
@@ -45,7 +46,6 @@ export default function Navbar() {
             await store.dispatch('logout')
             dispatch(updateAccount(null))
             dispatch(updateAuthStatus(false))
-            navigate('/login')
         }
     }
 
@@ -158,7 +158,12 @@ export default function Navbar() {
                                     </Typography>
                                 </Box>
                             )}
-                            {auth && <LoginButton />}
+                            {auth && (
+                                <>
+                                    <AliasPicker />
+                                    <LoginButton />
+                                </>
+                            )}
                         </>
                     </MHidden>
                 </Box>

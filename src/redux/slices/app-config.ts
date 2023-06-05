@@ -12,11 +12,11 @@ interface InitialStateAppConfigType {
     isAuth: boolean
     walletStore: any
     account: any
-    selectedAlias?: string
+    showButton: boolean
 }
 
 let initialState: InitialStateAppConfigType = {
-    activeApp: 'explorer',
+    activeApp: null,
     status: Status.IDLE,
     walletStore: null,
     isAuth: false,
@@ -24,6 +24,7 @@ let initialState: InitialStateAppConfigType = {
     notificationSeverity: 'success',
     notificationMessage: '',
     account: null,
+    showButton: false,
 }
 
 const appConfigSlice = createSlice({
@@ -51,8 +52,8 @@ const appConfigSlice = createSlice({
                 state.notificationMessage = state.notificationStatus ? payload.message : ''
             }
         },
-        updateSelectedAlias(state, { payload }) {
-            state.selectedAlias = payload
+        updateShowButton(state) {
+            state.showButton = !state.showButton
         },
     },
 })
@@ -79,7 +80,7 @@ export const getNotificationMessage = (state: RootState) => state.appConfig.noti
 export const getNotificationSeverity = (state: RootState) => state.appConfig.notificationSeverity
 
 // get selectedAlias
-export const getSelectedAlias = (state: RootState) => state.appConfig.selectedAlias
+export const getShowButton = (state: RootState) => state.appConfig.showButton
 
 export const {
     changeActiveApp,
@@ -87,6 +88,6 @@ export const {
     updateAuthStatus,
     updateAccount,
     updateNotificationStatus,
-    updateSelectedAlias,
+    updateShowButton,
 } = appConfigSlice.actions
 export default appConfigSlice.reducer
