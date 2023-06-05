@@ -19,8 +19,8 @@ const LoadWallet = () => {
     const ref = useRef(null)
     const navigate = useNavigate()
 
-    const dispatchNotification = ({ message, type }) =>
-        dispatch(updateNotificationStatus({ message, severity: type }))
+    const dispatchNotification = ({ message, type, title }) =>
+        dispatch(updateNotificationStatus({ message, severity: type, title }))
     const setAccount = account => dispatch(updateAccount(account))
     useEffect(() => {
         dispatch(updateValues(updateStore))
