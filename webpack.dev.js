@@ -10,7 +10,7 @@ const walletPath = process.env.WALLET_PATH
 module.exports = merge(common, {
     mode: 'development',
     devtool: 'inline-source-map',
-    
+
     output: {
         publicPath: publicPath,
         filename: 'js/[name].[fullhash:8].js',
