@@ -10,6 +10,7 @@ import AccessLayout from '../views/access'
 import MountAccessComponent from '../views/access/MountAccessComponent'
 import ScrollToTop from '../components/ScrollToTop'
 import LandingPage from '../views/landing/LandingPage'
+import Protected from './Protected'
 
 export default function Layout() {
     return (
@@ -19,7 +20,9 @@ export default function Layout() {
                 <Routes>
                     <Route path="/" element={<LandingPage />} />
                     <Route path="/explorer/*" element={<ExplorerApp />} />
-                    <Route path="/wallet/*" element={<Wallet />} />
+                    <Route element={<Protected />}>
+                        <Route path="/wallet/*" element={<Wallet />} />
+                    </Route>
                     <Route path="/login" element={<LoginPage />} />
                     <Route path="/create" element={<Create />} />
                     <Route path="/legal" element={<Legal />} />

@@ -1,10 +1,13 @@
 import { createSlice } from '@reduxjs/toolkit'
 import { RootState } from '../store'
-import { Status } from '../../@types'
+import { Status, SuitePlatforms } from '../../@types'
+import { APPS_CONSTS } from '../../constants/apps-consts'
 
 type NotificationSeverityType = 'success' | 'warning' | 'info' | 'error'
+
 interface InitialStateAppConfigType {
-    activeApp: string
+    apps: SuitePlatforms[]
+    activeApp: number
     status: Status
     notificationStatus: boolean
     notificationMessage: string
@@ -16,7 +19,8 @@ interface InitialStateAppConfigType {
 }
 
 let initialState: InitialStateAppConfigType = {
-    activeApp: null,
+    apps: APPS_CONSTS,
+    activeApp: 0,
     status: Status.IDLE,
     walletStore: null,
     isAuth: false,
@@ -32,9 +36,7 @@ const appConfigSlice = createSlice({
     initialState,
     reducers: {
         changeActiveApp: (state, { payload }) => {
-            if (payload === 'Wallet') state.activeApp = 'wallet'
-            else if (payload === 'Explorer') state.activeApp = 'explorer'
-            else state.activeApp = ''
+            state.activeApp = state.apps.indexOf(state.apps.find(app => app.name === payload))
         },
         updateValues(state, { payload }) {
             state.walletStore = payload
@@ -58,8 +60,11 @@ const appConfigSlice = createSlice({
     },
 })
 
-// Select All networks
+// Select Active App
 export const getActiveApp = (state: RootState) => state.appConfig.activeApp
+
+// Select All Apps
+export const getAllApps = (state: RootState) => state.appConfig.apps
 
 // Select Auth Status from wallet store
 export const selectAuthStatus = (state: RootState) => state.appConfig.walletStore?.isAuth
