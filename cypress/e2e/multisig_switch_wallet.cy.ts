@@ -1,10 +1,6 @@
 describe('multisig: switch wellet', { tags: ['@wallet', '@suite'] }, () => {
-    before(() => {
-        cy.visit('/')
-    })
     beforeEach(() => {
-        cy.addKopernikusNetwork()
-        cy.accessWallet('mnemonic')
+        cy.loginWalletWith('privateKey', 'multisigAliasPrivateKey')
         cy.switchToWalletFunctionTab('Manage Keys')
         cy.intercept('GET', '**/v2/multisigalias/*', request => {
             request.reply({
@@ -75,7 +71,7 @@ describe('multisig: switch wellet', { tags: ['@wallet', '@suite'] }, () => {
         verifyBalance()
     })
 
-    it.skip('change to active other key', () => {
+    it('change to active other key', () => {
         cy.get('.button_container').find('button').eq(1).click()
         cy.get('.v-slide-group__content').find('div').eq(5).click()
         cy.get('.fetch_button').click()
