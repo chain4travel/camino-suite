@@ -1,6 +1,15 @@
 import React from 'react'
 import { Box, Grid, Typography, useTheme, Divider, Container, MenuItem } from '@mui/material'
-import { DOCS, TWITTER, TELEGRAM, MEDIUM, GITHUB, DISCORD } from '../../constants/route-paths'
+import {
+    DOCS,
+    TWITTER,
+    TELEGRAM_CAMINO,
+    TELEGRAM_ANNOUNCEMENTS,
+    MEDIUM,
+    GITHUB,
+    DISCORD,
+    CAMINO,
+} from '../../constants/route-paths'
 import { Link } from 'react-router-dom'
 
 export default function Footer() {
@@ -37,13 +46,13 @@ export default function Footer() {
                             <Grid item>
                                 {theme.palette.mode === 'light' ? (
                                     <img
-                                        src="/assets/LogoDark.svg"
+                                        src="/assets/LightModeLogo.svg"
                                         style={{ height: '40px', width: 'auto' }}
                                         alt="camino logo"
                                     />
                                 ) : (
                                     <img
-                                        src="/assets/LogoLight.svg"
+                                        src="/assets/DarkModeLogo.svg"
                                         style={{ height: '40px', width: 'auto' }}
                                         alt="camino logo"
                                     />
@@ -58,10 +67,10 @@ export default function Footer() {
                                         textAlign: { xs: 'center', md: 'left' },
                                     }}
                                 >
-                                    Camino is a fast, high-through put open-source consortium
-                                    blockchain enabling the creation of travel related products.
+                                    Camino is a fast, high-throughput open-source consortium
+                                    blockchain enabling the creation of travel-related products.
                                     Camino’s tech stack and consensus protocol deliver unmatched
-                                    speed, security and reliability within the network.
+                                    speed, security, and reliability within the network.
                                 </Typography>
                             </Grid>
                         </Grid>
@@ -149,8 +158,12 @@ const FooterLinks = [
                 url: TWITTER,
             },
             {
-                text: 'Telegram',
-                url: TELEGRAM,
+                text: 'Telegram Camino Network',
+                url: TELEGRAM_CAMINO,
+            },
+            {
+                text: 'Telegram Announcements',
+                url: TELEGRAM_ANNOUNCEMENTS,
             },
         ],
     },
@@ -168,6 +181,10 @@ const FooterLinks = [
             {
                 text: 'Documentation',
                 url: DOCS,
+            },
+            {
+                text: 'Camino Network Website',
+                url: CAMINO,
             },
         ],
     },

@@ -1,20 +1,20 @@
 const { merge } = require('webpack-merge')
-const ModuleFederationPlugin = require('webpack/lib/container/ModuleFederationPlugin.js')
 const common = require('./webpack.common.js')
+const ModuleFederationPlugin = require('webpack/lib/container/ModuleFederationPlugin.js')
 const deps = require('./package.json').dependencies
+
+const publicPath = process.env.PUBLIC_PATH
+const explorerPath = process.env.EXPLORER_PATH
+const walletPath = process.env.WALLET_PATH
 
 module.exports = merge(common, {
     mode: 'development',
     devtool: 'inline-source-map',
 
     output: {
-        publicPath: 'http://localhost:5001/',
-    },
-
-    devServer: {
-        port: 5001,
-        historyApiFallback: true,
-        static: './dist',
+        publicPath: publicPath,
+        filename: 'js/[name].[fullhash:8].js',
+        chunkFilename: 'js/[name].[fullhash:8].js',
     },
 
     plugins: [
@@ -22,8 +22,8 @@ module.exports = merge(common, {
             name: 'host_react',
             filename: 'remoteEntry.js',
             remotes: {
-                Explorer: 'Explorer@http://localhost:5002/remoteEntry.js',
-                wallet: 'wallet@http://localhost:5003/remoteEntry.js',
+                Explorer: 'Explorer@' + explorerPath + 'remoteEntry.js',
+                wallet: 'wallet@' + walletPath + 'remoteEntry.js',
             },
             exposes: {},
             shared: {
@@ -39,4 +39,18 @@ module.exports = merge(common, {
             },
         }),
     ],
+
+    optimization: {
+        splitChunks: {
+            chunks: 'all',
+            minSize: 10000,
+            maxSize: 250000,
+        },
+    },
+
+    performance: {
+        hints: false,
+        maxEntrypointSize: 512000,
+        maxAssetSize: 512000,
+    },
 })

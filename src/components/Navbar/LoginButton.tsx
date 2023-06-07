@@ -8,10 +8,11 @@ import { mdiLogout } from '@mdi/js'
 import Icon from '@mdi/react'
 import MHidden from '../@material-extend/MHidden'
 import { LoadAccountMenu } from '../LoadAccountMenu'
-import AliasPicker from '../AliasPicker'
+import AliasPicker from './AliasPicker'
 
 export default function LoginIcon() {
     const cAddress = useAppSelector(state => state.appConfig.walletStore?.activeWallet?.ethAddress)
+    const auth = useAppSelector(state => state.appConfig.isAuth)
     const dispatch = useAppDispatch()
     const navigate = useNavigate()
     const account = useAppSelector(getAccount)
@@ -34,11 +35,16 @@ export default function LoginIcon() {
                     <MenuItem>
                         <LoadAccountMenu type="user" />
                     </MenuItem>
-                    <MenuItem>
-                        <AliasPicker />
-                    </MenuItem>
+                    {auth && (
+                        <MenuItem>
+                            <AliasPicker />
+                        </MenuItem>
+                    )}
                     <MenuItem>
                         <LoadAccountMenu type="kyc" />
+                    </MenuItem>
+                    <MenuItem>
+                        <LoadAccountMenu type="kyb" />
                     </MenuItem>
                     <MenuItem
                         onClick={logout}
@@ -53,7 +59,6 @@ export default function LoginIcon() {
             </MHidden>
             <MHidden width="smDown">
                 <>
-                    <AliasPicker />
                     {cAddress && (
                         <Select
                             value={!account ? cAddress : <LoadAccountMenu type="" />}
@@ -89,6 +94,12 @@ export default function LoginIcon() {
                                 onKeyDown={e => {
                                     handleKeyDown(e)
                                 }}
+                                sx={{ typography: 'body1', width: '100%', maxWidth: '326px' }}
+                            >
+                                <LoadAccountMenu type="kyb" />
+                            </MenuItem>
+                            <MenuItem
+                                onKeyDown={e => handleKeyDown(e)}
                                 onClick={logout}
                                 sx={{
                                     typography: 'body1',
