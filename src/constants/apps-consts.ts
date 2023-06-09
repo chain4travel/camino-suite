@@ -18,6 +18,13 @@ export const APPS_CONSTS = [
         url: '/explorer',
         private: false,
     },
+    {
+        name: 'Settings',
+        subText: 'Lookup network activity and statistics.',
+        url: '/settings',
+        private: true,
+        hidden: true,
+    },
 ]
 
 export const TIMEOUT_DURATION = 60000 * 20 // in milliseconde

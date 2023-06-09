@@ -11,6 +11,7 @@ import MountAccessComponent from '../views/access/MountAccessComponent'
 import ScrollToTop from '../components/ScrollToTop'
 import LandingPage from '../views/landing/LandingPage'
 import Protected from './Protected'
+import Settings from '../views/settings/index'
 
 export default function Layout() {
     return (
@@ -22,6 +23,7 @@ export default function Layout() {
                     <Route path="/explorer/*" element={<ExplorerApp />} />
                     <Route element={<Protected />}>
                         <Route path="/wallet/*" element={<Wallet />} />
+                        <Route path="/settings" element={<Settings />} />
                     </Route>
                     <Route path="/login" element={<LoginPage />} />
                     <Route path="/create" element={<Create />} />

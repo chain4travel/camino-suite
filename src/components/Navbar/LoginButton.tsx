@@ -1,9 +1,14 @@
 import React from 'react'
 import { useAppDispatch, useAppSelector } from '../../hooks/reduxHooks'
-import { MenuItem, MenuList, Select, IconButton, useTheme } from '@mui/material'
+import { MenuItem, MenuList, Select, IconButton, useTheme, Typography } from '@mui/material'
 import store from 'wallet/store'
 import { useNavigate } from 'react-router-dom'
-import { getAccount, updateAuthStatus, updateAccount } from '../../redux/slices/app-config'
+import {
+    getAccount,
+    updateAuthStatus,
+    updateAccount,
+    changeActiveApp,
+} from '../../redux/slices/app-config'
 import { mdiLogout } from '@mdi/js'
 import Icon from '@mdi/react'
 import MHidden from '../@material-extend/MHidden'
@@ -21,7 +26,8 @@ export default function LoginIcon() {
         await store.dispatch('logout')
         dispatch(updateAccount(null))
         dispatch(updateAuthStatus(false))
-        navigate('/login')
+        dispatch(changeActiveApp('Network'))
+        navigate('/')
     }
 
     const handleKeyDown = e => {
@@ -32,8 +38,8 @@ export default function LoginIcon() {
         <>
             <MHidden width="smUp">
                 <MenuList sx={{ backgroundColor: 'transparent' }}>
-                    <MenuItem>
-                        <LoadAccountMenu type="user" />
+                    <MenuItem onClick={() => navigate('/settings')}>
+                        <Typography variant="body1">Settings</Typography>
                     </MenuItem>
                     {auth && (
                         <MenuItem>
@@ -75,12 +81,19 @@ export default function LoginIcon() {
                             }}
                         >
                             <MenuItem
+                                onClick={() => navigate('/settings')}
                                 onKeyDown={e => {
                                     handleKeyDown(e)
                                 }}
-                                sx={{ typography: 'body1', width: '100%', maxWidth: '326px' }}
+                                sx={{
+                                    typography: 'body1',
+                                    width: '100%',
+                                    maxWidth: '326px',
+                                    display: 'flex',
+                                    justifyContent: { xs: 'flex-end', sm: 'center' },
+                                }}
                             >
-                                <LoadAccountMenu type="user" />
+                                <Typography variant="body1">Settings</Typography>
                             </MenuItem>
                             <MenuItem
                                 onKeyDown={e => {
