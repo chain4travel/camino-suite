@@ -18,6 +18,16 @@ const networkStatusColor = (status: string) => {
     }
 }
 
+const networkChip = (networkName: string) => {
+    if (networkName?.includes('Camino')) {
+        return 'mainnet'
+    } else if (networkName?.includes('Columbus')) {
+        return 'testnet'
+    } else {
+        return 'custom'
+    }
+}
+
 export default function SelectedNetwork() {
     const status = useAppSelector(selectNetworkStatus)
     const activeNetwork = useAppSelector(getActiveNetwork)
@@ -37,6 +47,18 @@ export default function SelectedNetwork() {
             >
                 {activeNetwork?.name}
             </Typography>
+            <Chip
+                color="secondary"
+                size="small"
+                sx={{
+                    position: 'absolute',
+                    fontSize: '12px',
+                    height: '16px',
+                    top: 0,
+                    right: 0,
+                }}
+                label={networkChip(activeNetwork?.name)}
+            />
         </Box>
     )
 }
