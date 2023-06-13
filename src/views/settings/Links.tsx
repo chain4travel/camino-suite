@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import Tabs from '@mui/material/Tabs'
 import Tab from '@mui/material/Tab'
 import Box from '@mui/material/Box'
+import { useNavigate } from 'react-router'
 
 function a11yProps(index: number) {
     return {
@@ -12,6 +13,7 @@ function a11yProps(index: number) {
 
 export default function Links() {
     const [value, setValue] = useState(0)
+    const navigate = useNavigate()
     const handleChange = (event: React.SyntheticEvent, newValue: number) => setValue(newValue)
     return (
         <Box
@@ -35,6 +37,7 @@ export default function Links() {
                     className="tab"
                     disableRipple
                     label="Save account"
+                    onClick={() => navigate('/settings')}
                     {...a11yProps(0)}
                     sx={{
                         alignItems: { xs: 'baseline', sm: 'self-start' },
@@ -44,6 +47,7 @@ export default function Links() {
                     className="tab"
                     disableRipple
                     label="Multisignature Wallet"
+                    onClick={() => navigate('create-multisig')}
                     {...a11yProps(1)}
                     sx={{ alignItems: { xs: 'baseline', sm: 'self-start' } }}
                 />

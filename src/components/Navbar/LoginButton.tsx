@@ -9,7 +9,7 @@ import {
     updateAccount,
     changeActiveApp,
 } from '../../redux/slices/app-config'
-import { mdiLogout } from '@mdi/js'
+import { mdiLogout, mdiCogOutline } from '@mdi/js'
 import Icon from '@mdi/react'
 import MHidden from '../@material-extend/MHidden'
 import { LoadAccountMenu } from '../LoadAccountMenu'
@@ -39,6 +39,9 @@ export default function LoginIcon() {
             <MHidden width="smUp">
                 <MenuList sx={{ backgroundColor: 'transparent' }}>
                     <MenuItem onClick={() => navigate('/settings')}>
+                        <IconButton>
+                            <Icon path={mdiCogOutline} size={0.8} />
+                        </IconButton>
                         <Typography variant="body1">Settings</Typography>
                     </MenuItem>
                     {auth && (
@@ -56,10 +59,10 @@ export default function LoginIcon() {
                         onClick={logout}
                         sx={{ display: 'flex', justifyContent: 'space-between' }}
                     >
-                        Logout
                         <IconButton>
                             <Icon path={mdiLogout} size={0.8} />
                         </IconButton>
+                        <Typography variant="body1">logout</Typography>
                     </MenuItem>
                 </MenuList>
             </MHidden>
@@ -93,6 +96,9 @@ export default function LoginIcon() {
                                     justifyContent: { xs: 'flex-end', sm: 'center' },
                                 }}
                             >
+                                <IconButton>
+                                    <Icon path={mdiCogOutline} size={0.7} />
+                                </IconButton>
                                 <Typography variant="body1">Settings</Typography>
                             </MenuItem>
                             <MenuItem
@@ -123,8 +129,10 @@ export default function LoginIcon() {
                                     gap: '0.3rem',
                                 }}
                             >
-                                <Icon path={mdiLogout} size={0.7} />
-                                logout
+                                <IconButton>
+                                    <Icon path={mdiLogout} size={0.7} />
+                                </IconButton>
+                                <Typography variant="body1">logout</Typography>
                             </MenuItem>
                         </Select>
                     )}
