@@ -1,7 +1,7 @@
 import React from 'react'
 import { Box, Typography, Chip } from '@mui/material'
 import { useAppSelector } from '../../hooks/reduxHooks'
-import { getActiveNetwork, selectNetworkStatus } from '../../redux/slices/network'
+import { NetworkID, getActiveNetwork, selectNetworkStatus } from '../../redux/slices/network'
 
 const networkStatusColor = (status: string) => {
     switch (status) {
@@ -18,10 +18,10 @@ const networkStatusColor = (status: string) => {
     }
 }
 
-const networkChip = (networkName: string) => {
-    if (networkName?.includes('Camino')) {
+const networkChip = (networkId: NetworkID) => {
+    if (networkId === NetworkID.MAINNET) {
         return 'mainnet'
-    } else if (networkName?.includes('Columbus')) {
+    } else if (networkId === NetworkID.TESTNET) {
         return 'testnet'
     } else {
         return 'custom'
@@ -57,7 +57,7 @@ export default function SelectedNetwork() {
                     top: 0,
                     right: 0,
                 }}
-                label={networkChip(activeNetwork?.name)}
+                label={networkChip(activeNetwork?.networkId)}
             />
         </Box>
     )
