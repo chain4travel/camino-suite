@@ -2,7 +2,11 @@ import { createSlice } from '@reduxjs/toolkit'
 import { RootState } from '../store'
 import { Status } from '../../@types'
 
-interface NetworkType {
+export enum NetworkID {
+    MAINNET = 1000,
+    TESTNET = 1001,
+}
+export interface NetworkType {
     withCredentials: boolean
     id: number
     name: string
