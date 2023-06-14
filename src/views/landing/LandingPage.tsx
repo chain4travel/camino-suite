@@ -1,18 +1,18 @@
 import React from 'react'
 import { Box, Grid, Typography } from '@mui/material'
-import { APPS_CONSTS } from '../../constants/apps-consts'
 import LandingPageAppWidget from './LandingPageAppWidget'
 import { useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router'
-import { changeActiveApp } from '../../redux/slices/app-config'
-import { useAppSelector } from '../../hooks/reduxHooks'
 import { getActiveNetwork } from '../../redux/slices/network'
+import { changeActiveApp, getAllApps } from '../../redux/slices/app-config'
+import { useAppSelector } from '../../hooks/reduxHooks'
 
 export default function LandingPage() {
     const activeNetwork = useAppSelector(getActiveNetwork)
     const dispatch = useDispatch()
     const navigate = useNavigate()
-
+    const allApps = useAppSelector(getAllApps)
+    const isAuth = useAppSelector(state => state.appConfig.isAuth)
     const handleWidgetClick = app => {
         dispatch(changeActiveApp(app?.name))
 
@@ -38,15 +38,22 @@ export default function LandingPage() {
 
             <Box mt={4}>
                 <Grid sx={{ flexGrow: 1 }} container alignItems={'stretch'} spacing={2}>
-                    {APPS_CONSTS?.map((app, index) => (
-                        <Grid item key={index} xs={12} sm={12} md={APPS_CONSTS?.length > 2 ? 4 : 6}>
-                            <LandingPageAppWidget
-                                name={app.name}
-                                description={app.subText}
-                                onClick={() => handleWidgetClick(app)}
-                            />
-                        </Grid>
-                    ))}
+                    {allApps?.map((app, index) => {
+                        if (
+                            !app.hidden &&
+                            (app.private === false || (app.name === 'Partners' && isAuth))
+                        )
+                            return (
+                                <Grid item key={index} xs={12} sm={12} md>
+                                    <LandingPageAppWidget
+                                        name={app.name}
+                                        description={app.subText}
+                                        onClick={() => handleWidgetClick(app)}
+                                    />
+                                </Grid>
+                            )
+                        else return null
+                    })}
                 </Grid>
             </Box>
         </Box>

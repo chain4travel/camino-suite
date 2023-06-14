@@ -10,18 +10,17 @@ import MountAccessComponent from '../views/access/MountAccessComponent'
 import LandingPage from '../views/landing/LandingPage'
 import { getActiveNetwork } from '../redux/slices/network'
 import { useAppSelector } from '../hooks/reduxHooks'
-import useNetwork from '../hooks/useNetwork'
-import { validateIsCustom } from '../utils/networkUtils'
+import Protected from './Protected'
+import Settings from '../views/settings/index'
+import SettingsLayout from './SettingsLayout'
 
 export default function RoutesSuite() {
-    const { handleChangeNetwork } = useNetwork()
 
     const navigate = useNavigate()
     const activeNetwork = useAppSelector(getActiveNetwork)
 
     const [lastUrlWithNewNetwork, setLastUrlWithNewNetwork] = useState('')
     const [networkAliasToUrl, setNetworkAliasToUrl] = useState<string>('')
-    const [firstLoad, setFirstLoad] = useState(false)
 
     useEffect(() => {
         if (activeNetwork) {
@@ -43,35 +42,13 @@ export default function RoutesSuite() {
         let isExplorer = lastUrlWithNewNetwork.split('/')[1] === 'explorer' ? true : false
         if (isExplorer && networkAliasToUrl !== '') {
             navigate('/changing-network')
-
-            if (firstLoad === false) {
-                setFirstLoad(true)
-            }
         }
     }, [networkAliasToUrl])
-
-    useEffect(() => {
-        if (firstLoad === true && validateIsCustom(activeNetwork.name.toLowerCase())) {
-            handleChangeNetwork(activeNetwork.name)
-        }
-    }, [firstLoad])
 
     return (
         <>
             <Routes>
                 <Route path="/" element={<LandingPage />} />
-                <Route path="/wallet/*" element={<Wallet />} />
-                <Route path="/login" element={<LoginPage />} />
-                <Route path="/create" element={<Create />} />
-                <Route path="/legal" element={<Legal />} />
-                <Route path="/access" element={<AccessLayout />}>
-                    <Route path="keystore" element={<MountAccessComponent type="Keystore" />} />
-                    <Route path="mnemonic" element={<MountAccessComponent type="Mnemonic" />} />
-                    <Route path="privateKey" element={<MountAccessComponent type="PrivateKey" />} />
-                    <Route path="account/*" element={<MountAccessComponent type="Account" />} />
-                </Route>
-                <Route path="*" element={<Navigate to="/" />} />
-
                 {activeNetwork ? (
                     <>
                         <Route path={`/explorer/*`} element={<ExplorerApp />} />
@@ -92,6 +69,24 @@ export default function RoutesSuite() {
                         />
                     </>
                 ) : null}
+                <Route element={<Protected />}>
+                    <Route path="/wallet/*" element={<Wallet />} />
+                    <Route path="/settings" element={<SettingsLayout />}>
+                        <Route index element={<Settings />} />
+                        <Route path="save-account" element={<Settings />} />
+                        <Route path="create-multisig" element={<div>create multisig</div>} />
+                    </Route>
+                </Route>
+                <Route path="/login" element={<LoginPage />} />
+                <Route path="/create" element={<Create />} />
+                <Route path="/legal" element={<Legal />} />
+                <Route path="/access" element={<AccessLayout />}>
+                    <Route path="keystore" element={<MountAccessComponent type="Keystore" />} />
+                    <Route path="mnemonic" element={<MountAccessComponent type="Mnemonic" />} />
+                    <Route path="privateKey" element={<MountAccessComponent type="PrivateKey" />} />
+                    <Route path="account/*" element={<MountAccessComponent type="Account" />} />
+                </Route>
+                <Route path="*" element={<Navigate to="/" />} />
             </Routes>
         </>
     )
