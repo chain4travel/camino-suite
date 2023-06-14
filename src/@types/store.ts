@@ -14,3 +14,11 @@ export interface Network {
     magellanAddress: string
     signavaultAddress: string
 }
+
+export interface SuitePlatforms {
+    name: string
+    subText: string
+    url: string
+    private: boolean
+    hidden?: boolean
+}

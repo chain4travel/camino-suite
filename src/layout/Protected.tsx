@@ -1,13 +1,12 @@
 import React from 'react'
-import { Navigate } from 'react-router-dom'
+import { Navigate, Outlet } from 'react-router-dom'
 import { useAppSelector } from '../hooks/reduxHooks'
-import { selectAuthStatus } from '../redux/slices/app-config'
 
-function Protected({ children }) {
-    const auth = useAppSelector(selectAuthStatus)
+function Protected() {
+    const auth = useAppSelector(state => state.appConfig.isAuth)
     if (auth === false) {
         return <Navigate to="/login" replace />
     }
-    return children
+    return <Outlet />
 }
 export default Protected

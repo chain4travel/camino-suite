@@ -1,22 +1,17 @@
 import React, { useEffect } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { useAppSelector } from '../../hooks/reduxHooks'
-import { getActiveApp, selectAuthStatus } from '../../redux/slices/app-config'
+import { getActiveApp, getAllApps, selectAuthStatus } from '../../redux/slices/app-config'
 import LoadComponent from './LoadComponent'
 const MountAccessComponent = ({ type }) => {
     const navigate = useNavigate()
-    const app = useAppSelector(getActiveApp)
+    const activeApp = useAppSelector(getActiveApp)
+    const allApps = useAppSelector(getAllApps)
     const auth = useAppSelector(selectAuthStatus)
     const location = useLocation()
     useEffect(() => {
         if (auth) {
-            if (app) {
-                if (app === 'wallet') {
-                    navigate('/wallet')
-                } else navigate('/explorer')
-            } else {
-                navigate('/')
-            }
+            navigate(allApps[activeApp].url)
         }
     }, [auth]) // eslint-disable-line react-hooks/exhaustive-deps
 
