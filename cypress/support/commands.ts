@@ -29,12 +29,13 @@ Cypress.Commands.add('addCustomNetwork', (networkConfig: NetworkConfig) => {
     // Wait to connecting network
     cy.wait(5000)
 
-    const itExists = Cypress.$(`[data-cy="network-name-${networkConfig.networkName}"]`).length
-
-    if (itExists) {
-        console.log('existe')
-        cy.get(`[data-cy="network-name-${networkConfig.networkName}"]`).click()
-    }
+    cy.get('div[role="presentation"]').then($elements => {
+        let childrenFirstElement = $elements[0].classList
+        let elementsChilds = Array.from(childrenFirstElement)
+        if (elementsChilds.some(element => element === 'MuiMenu-root')) {
+            cy.get(`[data-cy="network-name-${networkConfig.networkName}"]`).click()
+        }
+    })
 
     // Click backdrop to close menu
 })
