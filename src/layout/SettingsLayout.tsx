@@ -27,7 +27,18 @@ const SettingsLayout = () => {
                     <Links />
                 </Toolbar>
             </Box>
-            <Outlet />
+            <Box
+                sx={{
+                    width: '100%',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    padding: '2rem 1.5rem',
+                    flex: 1,
+                }}
+            >
+                <Outlet />
+            </Box>
         </Box>
     )
 }
