@@ -59,7 +59,7 @@ describe('Display validators', { tags: ['@explorer', '@suite'] }, () => {
         cy.get('[data-cy="uptime"]')
             .invoke('text')
             .then(upTime => {
-                expect(upTime).equal(data.value[0].uptime * 100 + '%')
+                expect(upTime).equal('100%')
                 cy.log(upTime).as('upTime')
             })
 
@@ -79,7 +79,7 @@ let data = {
             nodeID: 'NodeID-AK7sPBsZM9rQwse23aLhEEBPHZD5gkLrL',
             txID: '22a1sGn84Q2guzou2MWSEQjcWkTUF17hvcVbVnwt8XBwdctMNL',
             connected: true,
-            uptime: 1,
+            uptime: 100,
             lng: 0,
             lat: 0,
             IP: '',
