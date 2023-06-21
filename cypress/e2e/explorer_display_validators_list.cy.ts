@@ -6,6 +6,13 @@ describe('Display validators', { tags: ['@explorer', '@suite'] }, () => {
     })
 
     it('Display validators', () => {
+        cy.intercept('POST', '**/ext/info', req => {
+            if (req.body.method === "info.getNodeVersion") {
+                req.reply(nodeInfoData)
+            } else {
+                req.continue()
+            }
+        }).as('getNodeInfo')
         cy.intercept('POST', '**/v2/validatorsInfo', req => {
             console.log(data)
             req.reply({
@@ -16,12 +23,6 @@ describe('Display validators', { tags: ['@explorer', '@suite'] }, () => {
         cy.addKopernikusNetwork()
         cy.selectExplorerApp()
 
-        cy.intercept('POST', '**/ext/info', req => {
-            req.reply({
-                statusCode: 200,
-                body: nodeInfoData,
-            })
-        }).as('getNodeInfo')
         cy.wait(3000)
 
         cy.get('[data-cy="activeValidators"]')
