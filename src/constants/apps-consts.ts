@@ -25,7 +25,18 @@ export const APPS_CONSTS = [
         private: true,
         hidden: true,
     },
+    {
+        name: 'Explorer',
+        subText: 'Lookup network activity and statistics.',
+        url: '/explorer',
+    },
 ]
+
+export const DEFAULT_PLATFORM_SELECTION_ITEM = {
+    name: 'Network',
+    subText: 'Camino network',
+    url: '/',
+}
 
 export const TIMEOUT_DURATION = 60000 * 20 // in milliseconde
 

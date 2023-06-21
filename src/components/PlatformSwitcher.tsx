@@ -19,6 +19,7 @@ export default function PlatformSwitcher() {
     const activeApp = useAppSelector(getActiveApp)
     const allApps = useAppSelector(getAllApps)
     const isAuth = useAppSelector(getAuthStatus)
+
     const themeMode = theme.palette.mode === 'light' ? true : false
     const { isDesktop } = useWidth()
     const dispatch = useDispatch()
