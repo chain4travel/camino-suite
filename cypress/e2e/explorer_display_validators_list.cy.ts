@@ -15,6 +15,13 @@ describe('Display validators', { tags: ['@explorer', '@suite'] }, () => {
         }).as('getValidatorsInfo')
         cy.addKopernikusNetwork()
         cy.selectExplorerApp()
+
+        cy.intercept('POST', '**/ext/info', req => {
+            req.reply({
+                statusCode: 200,
+                body: nodeInfoData,
+            })
+        }).as('getNodeInfo')
         cy.wait(3000)
 
         cy.get('[data-cy="activeValidators"]')
@@ -32,7 +39,6 @@ describe('Display validators', { tags: ['@explorer', '@suite'] }, () => {
                 expect(status).equal(data.value[0].connected ? 'Connected' : 'Disconnected')
                 cy.log(status).as('status')
             })
-
         cy.get('[data-cy="nodeId"]')
             .invoke('text')
             .then(NodeID => {
@@ -59,7 +65,7 @@ describe('Display validators', { tags: ['@explorer', '@suite'] }, () => {
         cy.get('[data-cy="uptime"]')
             .invoke('text')
             .then(upTime => {
-                expect(upTime).equal(data.value[0].uptime * 100 + '%')
+                expect(upTime).equal('100%')
                 cy.log(upTime).as('upTime')
             })
 
@@ -71,6 +77,28 @@ describe('Display validators', { tags: ['@explorer', '@suite'] }, () => {
             })
     })
 })
+
+let nodeInfoData = {
+    statusCode: 200,
+    body: {
+        jsonrpc: '2.0',
+        result: {
+            version: 'avalanche/0.4.9',
+            databaseVersion: 'v1.4.5',
+            rpcProtocolVersion: '20',
+            sdkGitCommit: 'f554e0749',
+            sdkGitVersion: 'v0.4.9-rc1',
+            gitCommit: '66df290',
+            gitVersion: 'v0.4.9-rc1',
+            vmVersions: {
+                avm: 'v0.4.9',
+                evm: 'v0.4.9-rc1@2d50b218',
+                platform: 'v0.4.9',
+            },
+        },
+        id: 1,
+    },
+}
 
 let data = {
     name: 'GeoIPInfo',
