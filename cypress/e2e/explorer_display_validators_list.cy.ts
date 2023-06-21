@@ -17,12 +17,11 @@ describe('Display validators', { tags: ['@explorer', '@suite'] }, () => {
         cy.selectExplorerApp()
 
         cy.intercept('POST', '**/ext/info', req => {
-            console.log('edwwwwww')
             req.reply({
                 statusCode: 200,
                 body: nodeInfoData,
             })
-        })
+        }).as('getNodeInfo')
         cy.wait(3000)
 
         cy.get('[data-cy="activeValidators"]')
