@@ -3,7 +3,7 @@ import '@cypress/xpath'
 
 let networkTesteds: any = []
 
-describe('Basic Functionality', () => {
+describe('Basic Functionality', { tags: ['@wallet', '@explorer', '@suite'] }, () => {
     before(() => {
         cy.visit('/')
     })
@@ -27,12 +27,12 @@ async function processSelectNetwork() {
 function verifyNetwork(): Promise<boolean> {
     return new Promise((resolve, reject) => {
         cy.contains('Something went wrong, Please Try Again!')
-            .should((_) => {})
-            .then(($element) => {
+            .should(_ => {})
+            .then($element => {
                 if (!($element || []).length) {
                     resolve(true)
                 } else {
-                    executeChangeNetwork().then((resolved) => {
+                    executeChangeNetwork().then(resolved => {
                         resolve(resolved)
                     })
                 }
@@ -61,9 +61,9 @@ function networkSelectVerify() {
             .each(($row: any) => {
                 cy.get($row)
                     .invoke('text')
-                    .then((textRow) => {
+                    .then(textRow => {
                         if (textRow != 'Add Custom Network') {
-                            if (!networkTesteds.some((text) => text == textRow)) {
+                            if (!networkTesteds.some(text => text == textRow)) {
                                 cy.get($row)
                                     .invoke('attr', 'aria-selected')
                                     .then((val: any) => {

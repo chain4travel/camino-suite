@@ -32,6 +32,14 @@ export function addKopernikusNetwork(cy: Cypress.cy & CyEventEmitter) {
     cy.get('[data-cy="btn-add-network"]', { timeout: 30000 }).click()
     cy.get(`[data-cy="network-name-${configNetwork.networkName}"]`, { timeout: 30000 }).click()
     cy.wait(2000)
+
+    cy.get('div[role="presentation"]').then($elements => {
+        let childrenFirstElement = $elements[0].classList
+        let elementsChilds = Array.from(childrenFirstElement)
+        if (elementsChilds.some(element => element === 'MuiMenu-root')) {
+            cy.get(`[data-cy="network-name-${configNetwork.networkName}"]`).click()
+        }
+    })
 }
 
 export async function accessWallet(cy: Cypress.cy & CyEventEmitter, type: string) {

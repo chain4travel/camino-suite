@@ -27,7 +27,11 @@ export const LoadAccountMenu = (props: {
     const dispatchNotification = ({ message, type }) =>
         dispatch(updateNotificationStatus({ message, severity: type }))
     useEffectOnce(() => {
-        mountAccountMenu(ref.current, { ...props, setAccount, dispatchNotification })
+        mountAccountMenu(ref.current, {
+            ...props,
+            setAccount,
+            dispatchNotification,
+        })
     }) // eslint-disable-line react-hooks/exhaustive-deps
 
     return (

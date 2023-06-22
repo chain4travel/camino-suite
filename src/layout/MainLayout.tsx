@@ -23,6 +23,7 @@ const MainLayout = ({ children }) => {
         if (location.pathname.split('/')[1] === 'wallet') dispatch(changeActiveApp('Wallet'))
         else if (location.pathname.split('/')[1] === 'explorer')
             dispatch(changeActiveApp('Explorer'))
+
         dispatch(changeNetworkStatus(Status.LOADING))
         await store.dispatch('Network/init')
         await store.dispatch('Assets/initErc20List')

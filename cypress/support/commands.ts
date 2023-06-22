@@ -20,28 +20,36 @@ Cypress.Commands.add('addCustomNetwork', (networkConfig: NetworkConfig) => {
     cy.get('[data-cy="add-custom-network"]').click()
     // Wait for re-rendering ??
     cy.wait(2000)
-    cy.get('[data-cy="add-network-field-network-name"]', { timeout: 15000 }).find('input', { timeout: 12000 }).type(networkName)
+    cy.get('[data-cy="add-network-field-network-name"]', { timeout: 15000 })
+        .find('input', { timeout: 12000 })
+        .type(networkName)
     cy.get('[data-cy="add-network-field-url"]').type(rpcUrl)
     cy.get('[data-cy="add-network-field-magellan-address"]').type(magellanUrl || '')
     cy.get('[data-cy="btn-add-network"]').click()
     // Wait to connecting network
     cy.wait(5000)
+
+    cy.get('div[role="presentation"]').then($elements => {
+        let childrenFirstElement = $elements[0].classList
+        let elementsChilds = Array.from(childrenFirstElement)
+        if (elementsChilds.some(element => element === 'MuiMenu-root')) {
+            cy.get(`[data-cy="network-name-${networkConfig.networkName}"]`).click()
+        }
+    })
+
     // Click backdrop to close menu
-    cy.get(`body > div[role="presentation"].MuiPopover-root`, { timeout: 12000 }).click()
 })
 
 Cypress.Commands.add('addCustomNetworkByName', (network: string) => {
-
-    cy.fixture(`${network.toLowerCase()}/network`)
-        .then((networkConfig: NetworkConfig) => {
-            if (networkConfig) {
-                cy.addCustomNetwork(networkConfig)
-            }
-        })
+    cy.fixture(`${network.toLowerCase()}/network`).then((networkConfig: NetworkConfig) => {
+        if (networkConfig) {
+            cy.addCustomNetwork(networkConfig)
+        }
+    })
 })
 
 Cypress.Commands.add('changeNetwork', (network: string = 'Kopernikus') => {
-    const interceptNetworkInfo = (intercept) => {
+    const interceptNetworkInfo = intercept => {
         switch (intercept.request.body.method) {
             case 'info.getNetworkID':
                 const networkID = intercept.response?.body.result.networkID
@@ -61,20 +69,19 @@ Cypress.Commands.add('changeNetwork', (network: string = 'Kopernikus') => {
     }
 
     // intercept to get default info
-    cy.intercept('POST', '**/ext/info', (request) => {
+    cy.intercept('POST', '**/ext/info', request => {
         if (request.body.method === 'info.getNetworkID') {
             request.alias = 'getNetworkID'
         } else if (request.body.method === 'info.getTxFee') {
             request.alias = 'getTxFee'
-        }
-        else {
+        } else {
             console.log('Other Info Query')
         }
     })
 
     cy.get('@txtSelectedNetwork')
         .invoke('text')
-        .then((currentNetwork) => {
+        .then(currentNetwork => {
             cy.get('@btnNetworkSwitcher').click({ force: true }) // Network Switcher
             cy.get(`[data-value="${network}"]`).click() // Select Network
 
@@ -88,10 +95,13 @@ Cypress.Commands.add('changeNetwork', (network: string = 'Kopernikus') => {
             cy.wrap((network ?? currentNetwork).toLowerCase()).as('currentNetwork')
         })
 })
-Cypress.Commands.add('accessWallet', (type, keyName, networkName:string = 'kopernikus' ) => {
-    cy.get('header > .MuiToolbar-root > .MuiBox-root:nth-child(2)').as('elPreferenceMenu')
-    cy.get('@elPreferenceMenu').find('> .MuiBox-root').as('btnWallet')
-    cy.get('@btnWallet').click()
+Cypress.Commands.add('accessWallet', (type, keyName, networkName: string = 'kopernikus') => {
+    //cy.get('header > .MuiToolbar-root > .MuiBox-root:nth-child(2)').as('elPreferenceMenu')
+    // cy.get('@elPreferenceMenu').find('> .MuiBox-root').as('btnWallet')
+    // cy.get('@btnWallet').click()
+
+    cy.selectWalletApp()
+    cy.wait(5000)
     cy.get('h6 + .MuiGrid-container').as('elWalletOptions')
     cy.get('@elWalletOptions')
         .find('> .MuiGrid-container:nth-child(1) > :nth-child(1)')
@@ -103,8 +113,10 @@ Cypress.Commands.add('accessWallet', (type, keyName, networkName:string = 'koper
         case 'privateKey':
             {
                 cy.get('@elPrivateKeyOption').click()
-                cy.fixture(`${networkName}/private_key_wallet`).then((privateKeys) => {
-                    cy.get('[data-cy="field-private-key"]').type(privateKeys[keyName || 'privateKey'])
+                cy.fixture(`${networkName}/private_key_wallet`).then(privateKeys => {
+                    cy.get('[data-cy="field-private-key"]').type(
+                        privateKeys[keyName || 'privateKey'],
+                    )
                 })
                 cy.get('button[type="button"]').contains('Access Wallet').click()
             }
@@ -113,7 +125,7 @@ Cypress.Commands.add('accessWallet', (type, keyName, networkName:string = 'koper
             {
                 cy.get('@elMnemonicOption').find('> .MuiButtonBase-root').click()
                 console.log(networkName)
-                cy.fixture(`${networkName}/mnemonic_wallet`).then((phraseArr) => {
+                cy.fixture(`${networkName}/mnemonic_wallet`).then(phraseArr => {
                     const mnemonicStr = phraseArr.join(' ')
                     cy.get('input.phrase_word').first()?.type(mnemonicStr)
                     cy.get('button[type="button"]').contains('Access Wallet').click()
@@ -123,8 +135,6 @@ Cypress.Commands.add('accessWallet', (type, keyName, networkName:string = 'koper
         default:
             break
     }
-    cy.get('[data-cy="app-selector-menu"] > .MuiSelect-select').click()
-    cy.get('[data-cy="app-selector-Wallet"]').click()
     cy.get('[data-cy="btn-show-breakdown"]', { timeout: 20000 }).should('be.visible')
     // cy.intercept('GET', '**/api/v1/verified/*').as('apiVerifiedAddress')
     // cy.wait('@apiVerifiedAddress').then((intercept) => {
@@ -205,11 +215,46 @@ Cypress.Commands.add(
         }
 
         cy.changeNetwork(network)
-        cy.accessWallet(walletAccessType, keyName)
-    }
+
+        cy.wait(5000)
+        cy.get('h6 + .MuiGrid-container').as('elWalletOptions')
+        cy.get('@elWalletOptions')
+            .find('> .MuiGrid-container:nth-child(1) > :nth-child(1)')
+            .as('elPrivateKeyOption')
+        cy.get('@elWalletOptions')
+            .find('> .MuiGrid-container:nth-child(1) > :nth-child(2)')
+            .as('elMnemonicOption')
+        switch (walletAccessType) {
+            case 'privateKey':
+                {
+                    cy.get('@elPrivateKeyOption').click()
+                    cy.fixture(`${network.toLowerCase()}/private_key_wallet`).then(privateKeys => {
+                        cy.get('[data-cy="field-private-key"]').type(
+                            privateKeys[keyName || 'privateKey'],
+                        )
+                    })
+                    cy.get('button[type="button"]').contains('Access Wallet').click()
+                }
+                break
+            case 'mnemonic':
+                {
+                    cy.get('@elMnemonicOption').find('> .MuiButtonBase-root').click()
+                    console.log(network)
+                    cy.fixture(`${network.toLowerCase()}/mnemonic_wallet`).then(phraseArr => {
+                        const mnemonicStr = phraseArr.join(' ')
+                        cy.get('input.phrase_word').first()?.type(mnemonicStr)
+                        cy.get('button[type="button"]').contains('Access Wallet').click()
+                    })
+                }
+                break
+            default:
+                break
+        }
+        cy.get('[data-cy="btn-show-breakdown"]', { timeout: 20000 }).should('be.visible')
+    },
 )
 
-Cypress.Commands.add('switchToWalletFunctionTab', (func) => {
+Cypress.Commands.add('switchToWalletFunctionTab', func => {
     let funcKey
     switch (func) {
         case 'Portfolio':
@@ -248,28 +293,12 @@ Cypress.Commands.add('switchToWalletFunctionTab', (func) => {
         cy.get(`[data-cy="${funcKey}"]`, { timeout: 15000 }).click()
     }
 })
-Cypress.Commands.add('addCustomNetwork', (networkConfig: NetworkConfig) => {
-    const { networkName, rpcUrl, magellanUrl, explorerUrl } = networkConfig
-    cy.get('[data-cy="network-selector"]').click()
-    cy.get('[data-cy="add-custom-network"]').click()
-    // Wait for re-rendering ??
-    cy.wait(5000)
-    cy.get('[data-cy="add-network-field-network-name"]', { timeout: 30000 }).type(networkName)
-    cy.get('[data-cy="add-network-field-url"]').type(rpcUrl)
-    cy.get('[data-cy="add-network-field-magellan-address"]').type(magellanUrl || '')
-    // cy.get('[data-cy="add-network-field-explorerSiteUrl-address"]').type(explorerUrl || '')
-    cy.get('[data-cy="btn-add-network"]').click()
-    // Wait to connecting network
-    cy.wait(5000)
-    // Click backdrop to close menu
-    cy.get(`body > div[role="presentation"].MuiPopover-root`, {timeout: 12000}).click()
-})
 
 Cypress.Commands.add('entryExplorer', (network: string = 'Kopernikus') => {
     cy.visit('/')
 
-    cy.fixture('mocks/txfee_aggregates.json').then((txfeeAggregates) => {
-        cy.intercept('GET', '**/v2/txfeeAggregates*', (request) => {
+    cy.fixture('mocks/txfee_aggregates.json').then(txfeeAggregates => {
+        cy.intercept('GET', '**/v2/txfeeAggregates*', request => {
             request.reply({
                 statusCode: 200,
                 body: txfeeAggregates,
@@ -277,8 +306,8 @@ Cypress.Commands.add('entryExplorer', (network: string = 'Kopernikus') => {
         }).as('txfeeAggregates')
     })
 
-    cy.fixture('mocks/tx_count_aggregates.json').then((aggregates) => {
-        cy.intercept('GET', '**/v2/aggregates*', (request) => {
+    cy.fixture('mocks/tx_count_aggregates.json').then(aggregates => {
+        cy.intercept('GET', '**/v2/aggregates*', request => {
             request.reply({
                 statusCode: 200,
                 body: aggregates,
@@ -286,8 +315,8 @@ Cypress.Commands.add('entryExplorer', (network: string = 'Kopernikus') => {
         }).as('aggregates')
     })
 
-    cy.fixture('mocks/validators_info.json').then((validatorsInfo) => {
-        cy.intercept('POST', '**/v2/validatorsInfo', (request) => {
+    cy.fixture('mocks/validators_info.json').then(validatorsInfo => {
+        cy.intercept('POST', '**/v2/validatorsInfo', request => {
             request.reply({
                 statusCode: 200,
                 body: validatorsInfo,
@@ -321,101 +350,113 @@ Cypress.Commands.add('entryExplorer', (network: string = 'Kopernikus') => {
     cy.changeNetwork(network)
 
     cy.get('@txtSelectedNetwork').should('have.text', network)
+
+    cy.selectExplorerApp()
+
+    cy.wait(6000)
 })
 
 Cypress.Commands.add('checkValidatorsTxsGasFee', () => {
     cy.contains('Number Of Validators').siblings('div').as('numberOfValidatorsBlock')
     cy.contains('Number of Transactions').siblings('div').as('numberOfTransactionsBlock')
     cy.contains('Total Gas Fees').siblings('div').as('totalGasFeesBlock')
-    cy.wait('@aggregates').then((intercept) => {
-        return intercept.response?.body.aggregates
-    }).then(({transactionCount}) => {
-        cy.get('@numberOfTransactionsBlock')
-        .first()
-        .should('have.text', transactionCount)
-    })
-    
-    cy.wait('@validatorsInfo').then((intercept) => {
-        return intercept.response?.body.value
-    }).then((validators) => {
-        // numberOfValidators
-        const numberOfValidators = validators.length
+    cy.wait('@aggregates')
+        .then(intercept => {
+            return intercept.response?.body.aggregates
+        })
+        .then(({ transactionCount }) => {
+            cy.get('@numberOfTransactionsBlock').first().should('have.text', transactionCount)
+        })
 
-        // numberOfActiveValidators
-        const numberOfActiveValidators = validators.filter(
-            (v: any) => v.connected,
-        ).length
+    cy.wait('@validatorsInfo')
+        .then(intercept => {
+            return intercept.response?.body.value
+        })
+        .then(validators => {
+            // numberOfValidators
+            const numberOfValidators = validators.length
 
-        // numberOfActiveValidators
-        const percentageOfActiveValidators = parseInt(
-            ((numberOfActiveValidators / numberOfValidators) * 100).toFixed(0),
-        )
-        
-        return {
-            numberOfValidators,
-            numberOfActiveValidators,
-            percentageOfActiveValidators
-        }
-    }).then(({
-        numberOfValidators,
-        numberOfActiveValidators,
-        percentageOfActiveValidators
-    }) => {
-        cy.get('@numberOfValidatorsBlock')
-        .first()
-        .should('have.text', `${numberOfValidators}(${numberOfActiveValidators} / ${percentageOfActiveValidators}% active)`);
-    })
+            // numberOfActiveValidators
+            const numberOfActiveValidators = validators.filter((v: any) => v.connected).length
 
-    cy.wait('@txfeeAggregates').then((intercept) => {
-        return intercept.response?.body.aggregates
-    }).then(({txfee}) => {
-        console.log(txfee)
-        cy.get('@totalGasFeesBlock')
-        .first()
-        .should('have.text', getDisplayValueForGewi(txfee))
-    })
+            // numberOfActiveValidators
+            const percentageOfActiveValidators = parseInt(
+                ((numberOfActiveValidators / numberOfValidators) * 100).toFixed(0),
+            )
+
+            return {
+                numberOfValidators,
+                numberOfActiveValidators,
+                percentageOfActiveValidators,
+            }
+        })
+        .then(({ numberOfValidators, numberOfActiveValidators, percentageOfActiveValidators }) => {
+            cy.get('@numberOfValidatorsBlock')
+                .first()
+                .should(
+                    'have.text',
+                    `${numberOfValidators}(${numberOfActiveValidators} / ${percentageOfActiveValidators}% active)`,
+                )
+        })
+
+    cy.wait('@txfeeAggregates')
+        .then(intercept => {
+            return intercept.response?.body.aggregates
+        })
+        .then(({ txfee }) => {
+            console.log(txfee)
+            cy.get('@totalGasFeesBlock').first().should('have.text', getDisplayValueForGewi(txfee))
+        })
 })
 
 Cypress.Commands.add('acceptCookies', () => {
-    cy.get('.cc-nb-okagree').click();
-  });
- 
+    cy.get('.cc-nb-okagree').click()
+})
+
 Cypress.Commands.add('addKopernikusNetwork', () => {
     const configNetwork = {
-      networkName: 'Kopernikus',
-      urlAndPort: 'https://kopernikus.camino.network:443',
-      magellandUrl: 'https://magellan.kopernikus.camino.network',
-      sigavaultAddress: ''
-    };
-  
-    cy.acceptCookies();
-    cy.get('[data-cy="network-selector"]', { timeout: 12000 }).click();
-    cy.get('[data-cy="add-custom-network"]', { timeout: 12000 }).click();
-    cy.wait(10000);
-    cy.get('[data-cy="add-network-field-network-name"]', { timeout: 12000 })
-      .find('input', { timeout: 12000 })
-      .type(`${configNetwork.networkName}`);
-    cy.get('[data-cy="add-network-field-url"]', { timeout: 12000 })
-      .find('input', { timeout: 12000 })
-      .type(configNetwork.urlAndPort, { force: true });
-    cy.get('[data-cy="add-network-field-magellan-address"]', { timeout: 12000 })
-      .find('input', { timeout: 12000 })
-      .type(configNetwork.magellandUrl, { force: true });
-    cy.get('[data-cy="btn-add-network"]', { timeout: 20000 }).click();
-    cy.get(`[data-cy="network-name-${configNetwork.networkName}"]`, { timeout: 20000 }).click();
-    cy.wait(2000);
-  });
+        networkName: 'Kopernikus',
+        urlAndPort: 'https://kopernikus.camino.network:443',
+        magellandUrl: 'https://magellan.kopernikus.camino.network',
+        sigavaultAddress: '',
+    }
 
-  Cypress.Commands.add(
+    cy.acceptCookies()
+    cy.get('[data-cy="network-selector"]', { timeout: 12000 }).click()
+    cy.get('[data-cy="add-custom-network"]', { timeout: 12000 }).click()
+    cy.wait(10000)
+    cy.get('[data-cy="add-network-field-network-name"]', { timeout: 12000 })
+        .find('input', { timeout: 12000 })
+        .type(`${configNetwork.networkName}`)
+    cy.get('[data-cy="add-network-field-url"]', { timeout: 12000 })
+        .find('input', { timeout: 12000 })
+        .type(configNetwork.urlAndPort, { force: true })
+    cy.get('[data-cy="add-network-field-magellan-address"]', { timeout: 12000 })
+        .find('input', { timeout: 12000 })
+        .type(configNetwork.magellandUrl, { force: true })
+    cy.get('[data-cy="btn-add-network"]', { timeout: 20000 }).click()
+
+    cy.get('div[role="presentation"]').then($elements => {
+        let childrenFirstElement = $elements[0].classList
+        let elementsChilds = Array.from(childrenFirstElement)
+        if (elementsChilds.some(element => element === 'MuiMenu-root')) {
+            cy.get(`[data-cy="network-name-${configNetwork.networkName}"]`).click()
+        }
+    })
+
+    cy.wait(2000)
+})
+
+Cypress.Commands.add(
     'waitUntil',
     (alias: string, untilFunc: (intercept: Interception) => boolean) => {
-        cy.wait(alias).then((intercept) => {
+        cy.wait(alias).then(intercept => {
             const success = untilFunc(intercept)
             if (!success) {
                 cy.waitUntil(alias, untilFunc)
             }
         })
-    }
+    },
 )
 
 Cypress.Commands.add(
@@ -424,7 +465,7 @@ Cypress.Commands.add(
         payloadMethod: string,
         requestUrl: string = '**/ext/bc/C/rpc',
         mockPath?: string,
-        aliasName?: string
+        aliasName?: string,
     ) => {
         if (!mockPath) {
             const transferUnderLinePayloadMethod = payloadMethod
@@ -437,8 +478,8 @@ Cypress.Commands.add(
             const getFileName = mockPath.replace('mocks/', '')
             aliasName = payloadMethod ? payloadMethod : getFileName.replace('.json', '')
         }
-        cy.fixture(mockPath).then((mockData) => {
-            cy.intercept({ method: 'GET', url: requestUrl }, (request) => {
+        cy.fixture(mockPath).then(mockData => {
+            cy.intercept({ method: 'GET', url: requestUrl }, request => {
                 if (!payloadMethod) {
                     request.reply({
                         statusCode: 200,
@@ -458,7 +499,7 @@ Cypress.Commands.add(
                 }
             })
 
-            cy.intercept({ method: 'POST', url: requestUrl }, (request) => {
+            cy.intercept({ method: 'POST', url: requestUrl }, request => {
                 if (!payloadMethod) {
                     request.reply({
                         statusCode: 200,
@@ -478,9 +519,16 @@ Cypress.Commands.add(
                 }
             })
         })
-    }
+    },
 )
 
+Cypress.Commands.add('selectWalletApp', func => {
+    cy.get('[data-cy="go-to-Wallet"]').click()
+})
+
+Cypress.Commands.add('selectExplorerApp', func => {
+    cy.get('[data-cy="go-to-Explorer"]').click()
+})
 //
 //
 // -- This is a child command --

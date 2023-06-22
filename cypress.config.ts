@@ -14,9 +14,6 @@ export default defineConfig({
         requestTimeout: 15000,
     },
     env: {
-        grepOmitFiltered: true,
-        grepUntagged: true,
-        grepTags: '',
         grepFilterSpecs: true,
     },
 })

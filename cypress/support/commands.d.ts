@@ -11,6 +11,8 @@ declare global {
     }
     namespace Cypress {
         interface Chainable {
+            selectWalletApp()
+            selectExplorerApp()
             changeNetwork(network?: string): Chainable<Element>
             accessWallet(type: WalletAccessType, keyName?: string,networkName?:string): Chainable<Element>
             switchToWalletApp(): Chainable<Element>

@@ -13,7 +13,7 @@ export function getPathElement(type: ChainType): string {
     return type.toLowerCase()
 }
 
-export function getTransactionDetailsPath(chaintype: ChainType, transactionId: string): string {
+export function GetTransactionDetailsPath(chaintype: ChainType, transactionId: string): string {
     const basePath = `/${getPathElement(chaintype)}${TRANSACTION}/`
     if (transactionId) {
         return basePath + transactionId
@@ -21,11 +21,11 @@ export function getTransactionDetailsPath(chaintype: ChainType, transactionId: s
     return basePath
 }
 
-export function getAddressDetailsPath(chaintype: ChainType, addressId: string): string {
+export function GetAddressDetailsPath(chaintype: ChainType, addressId: string): string {
     return `/${getPathElement(chaintype)}${ADDRESS}/${addressId}`
 }
 
-export function getBlockDetailsPath(chaintype: ChainType, blockId: string | number): string {
+export function GetBlockDetailsPath(chaintype: ChainType, blockId: string | number): string {
     const basePath = `/${getPathElement(chaintype)}${BLOCK}/`
     if (blockId !== undefined) {
         return basePath + blockId
@@ -55,7 +55,7 @@ export function getBlockNumber(): string {
     return window.location.pathname.split('/').pop()
 }
 
-export function getChainTypeFromUrl(): ChainType {
+export function GetChainTypeFromUrl(): ChainType {
     const chainType = window.location.pathname.split('/')[2]
 
     if (chainType === ChainType.X_CHAIN) {
@@ -67,7 +67,7 @@ export function getChainTypeFromUrl(): ChainType {
     return ChainType.C_CHAIN
 }
 
-export function getTransactionType(chainType) {
+export function GetTransactionType(chainType) {
     switch (chainType) {
         case ChainType.X_CHAIN:
             return XTRANSACTION
@@ -78,7 +78,7 @@ export function getTransactionType(chainType) {
     }
 }
 
-export function getAddressType(chainType) {
+export function GetAddressType(chainType) {
     switch (chainType) {
         case ChainType.X_CHAIN:
             return XADDRESS

@@ -1,10 +1,15 @@
 import React from 'react'
 import { useAppDispatch, useAppSelector } from '../../hooks/reduxHooks'
-import { MenuItem, MenuList, Select, IconButton, useTheme } from '@mui/material'
+import { MenuItem, MenuList, Select, IconButton, useTheme, Typography } from '@mui/material'
 import store from 'wallet/store'
 import { useNavigate } from 'react-router-dom'
-import { getAccount, updateAuthStatus, updateAccount } from '../../redux/slices/app-config'
-import { mdiLogout } from '@mdi/js'
+import {
+    getAccount,
+    updateAuthStatus,
+    updateAccount,
+    changeActiveApp,
+} from '../../redux/slices/app-config'
+import { mdiLogout, mdiCogOutline } from '@mdi/js'
 import Icon from '@mdi/react'
 import MHidden from '../@material-extend/MHidden'
 import { LoadAccountMenu } from '../LoadAccountMenu'
@@ -21,7 +26,8 @@ export default function LoginIcon() {
         await store.dispatch('logout')
         dispatch(updateAccount(null))
         dispatch(updateAuthStatus(false))
-        navigate('/login')
+        dispatch(changeActiveApp('Network'))
+        navigate('/')
     }
 
     const handleKeyDown = e => {
@@ -32,8 +38,11 @@ export default function LoginIcon() {
         <>
             <MHidden width="smUp">
                 <MenuList sx={{ backgroundColor: 'transparent' }}>
-                    <MenuItem>
-                        <LoadAccountMenu type="user" />
+                    <MenuItem onClick={() => navigate('/settings')}>
+                        <IconButton>
+                            <Icon path={mdiCogOutline} size={0.8} />
+                        </IconButton>
+                        <Typography variant="body1">Settings</Typography>
                     </MenuItem>
                     {auth && (
                         <MenuItem>
@@ -43,14 +52,17 @@ export default function LoginIcon() {
                     <MenuItem>
                         <LoadAccountMenu type="kyc" />
                     </MenuItem>
+                    <MenuItem>
+                        <LoadAccountMenu type="kyb" />
+                    </MenuItem>
                     <MenuItem
                         onClick={logout}
                         sx={{ display: 'flex', justifyContent: 'space-between' }}
                     >
-                        Logout
                         <IconButton>
                             <Icon path={mdiLogout} size={0.8} />
                         </IconButton>
+                        <Typography variant="body1">logout</Typography>
                     </MenuItem>
                 </MenuList>
             </MHidden>
@@ -72,12 +84,22 @@ export default function LoginIcon() {
                             }}
                         >
                             <MenuItem
+                                onClick={() => navigate('/settings')}
                                 onKeyDown={e => {
                                     handleKeyDown(e)
                                 }}
-                                sx={{ typography: 'body1', width: '100%', maxWidth: '326px' }}
+                                sx={{
+                                    typography: 'body1',
+                                    width: '100%',
+                                    maxWidth: '326px',
+                                    display: 'flex',
+                                    justifyContent: { xs: 'flex-end', sm: 'center' },
+                                }}
                             >
-                                <LoadAccountMenu type="user" />
+                                <IconButton>
+                                    <Icon path={mdiCogOutline} size={0.7} />
+                                </IconButton>
+                                <Typography variant="body1">Settings</Typography>
                             </MenuItem>
                             <MenuItem
                                 onKeyDown={e => {
@@ -86,6 +108,14 @@ export default function LoginIcon() {
                                 sx={{ typography: 'body1', width: '100%', maxWidth: '326px' }}
                             >
                                 <LoadAccountMenu type="kyc" />
+                            </MenuItem>
+                            <MenuItem
+                                onKeyDown={e => {
+                                    handleKeyDown(e)
+                                }}
+                                sx={{ typography: 'body1', width: '100%', maxWidth: '326px' }}
+                            >
+                                <LoadAccountMenu type="kyb" />
                             </MenuItem>
                             <MenuItem
                                 onKeyDown={e => handleKeyDown(e)}
@@ -99,8 +129,10 @@ export default function LoginIcon() {
                                     gap: '0.3rem',
                                 }}
                             >
-                                <Icon path={mdiLogout} size={0.7} />
-                                logout
+                                <IconButton>
+                                    <Icon path={mdiLogout} size={0.7} />
+                                </IconButton>
+                                <Typography variant="body1">logout</Typography>
                             </MenuItem>
                         </Select>
                     )}
