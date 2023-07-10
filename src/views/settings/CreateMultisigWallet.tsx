@@ -1,10 +1,15 @@
 import React, { useEffect, useRef } from 'react'
 import { mountCreateMultisigWallet } from 'wallet/mountCreateMultisigWallet'
+import { useAppDispatch } from '../../hooks/reduxHooks'
+import { updateNotificationStatus } from '../../redux/slices/app-config'
 
 const LoadCreateMultisigWallet = () => {
     const ref = useRef(null)
+    const dispatch = useAppDispatch()
+    const dispatchNotification = ({ message, type }) =>
+        dispatch(updateNotificationStatus({ message, severity: type }))
     useEffect(() => {
-        mountCreateMultisigWallet(ref.current)
+        mountCreateMultisigWallet(ref.current, { dispatchNotification })
     }, [])
 
     return (
