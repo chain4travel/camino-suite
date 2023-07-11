@@ -6,27 +6,32 @@ const SettingsLayout = () => {
     return (
         <Box
             sx={{
+                width: '100%',
                 height: '100%',
-                width: '100vw',
                 display: 'flex',
                 flexDirection: 'column',
                 alignItems: 'center',
             }}
         >
-            <Box
+            <Toolbar
                 sx={{
-                    width: '100%',
                     borderBottom: '1px solid',
                     borderColor: 'rgba(145, 158, 171, 0.24)',
-                    height: 'auto',
+                    background: theme => theme.palette.background.paper,
+                    flexGrow: 1,
+                    p: '1.5rem',
+                    zIndex: 9,
+                    position: 'fixed',
+                    top: '65px',
+                    width: '100vw',
+                    height: '61px',
                     display: 'flex',
                     justifyContent: 'center',
+                    right: 0,
                 }}
             >
-                <Toolbar sx={{ flexGrow: 1, maxWidth: '1536px', px: '0rem !important' }}>
-                    <Links />
-                </Toolbar>
-            </Box>
+                <Links />
+            </Toolbar>
             <Outlet />
         </Box>
     )
