@@ -1,5 +1,15 @@
 import React from 'react'
-import { Box, Grid, Typography, useTheme, Divider, Container, MenuItem } from '@mui/material'
+import {
+    Box,
+    Grid,
+    Typography,
+    useTheme,
+    Divider,
+    Container,
+    MenuItem,
+    Tooltip,
+    Fade,
+} from '@mui/material'
 import {
     DOCS,
     TWITTER,
@@ -9,8 +19,12 @@ import {
     GITHUB,
     DISCORD,
     CAMINO,
+    SUITE_RELEASES,
 } from '../../constants/route-paths'
 import { Link } from 'react-router-dom'
+import { mdiInformationOutline } from '@mdi/js'
+import Icon from '@mdi/react'
+import Version from './Version'
 
 export default function Footer() {
     const theme = useTheme()
@@ -137,6 +151,61 @@ export default function Footer() {
                                     </ul>
                                 </Grid>
                             ))}
+                        </Grid>
+                    </Grid>
+                    <Divider sx={{ mt: 2 }} variant="fullWidth" />
+                    <Grid container sx={{ mt: 2 }} justifyContent="space-between">
+                        <Grid item xs={12} md={6}>
+                            <Typography
+                                variant="subtitle1"
+                                component="p"
+                                sx={{
+                                    textAlign: { xs: 'center', md: 'left' },
+                                }}
+                            >
+                                Camino Network Foundation &copy; 2023
+                            </Typography>
+                        </Grid>
+                        <Grid item xs={12} md={6}>
+                            <Box
+                                sx={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '.5rem',
+                                    justifyContent: { xs: 'center', md: 'flex-end' },
+                                }}
+                            >
+                                {process.env.NODE_ENV === 'development' ? (
+                                    <Tooltip
+                                        TransitionComponent={Fade}
+                                        TransitionProps={{ timeout: 600 }}
+                                        title={<Version />}
+                                        placement="top"
+                                        PopperProps={{
+                                            sx: {
+                                                '& .MuiTooltip-tooltip': {
+                                                    maxWidth: '500px !important',
+                                                },
+                                            },
+                                        }}
+                                    >
+                                        <Icon path={mdiInformationOutline} size={0.85} />
+                                    </Tooltip>
+                                ) : (
+                                    <Icon path={mdiInformationOutline} size={0.85} />
+                                )}
+
+                                <Link
+                                    rel="noopener noreferrer"
+                                    target="_blank"
+                                    style={{ textDecoration: 'none' }}
+                                    to={SUITE_RELEASES}
+                                >
+                                    <Typography variant="body1" component="p" color="primary">
+                                        {process.env.VERSION}
+                                    </Typography>
+                                </Link>
+                            </Box>
                         </Grid>
                     </Grid>
                 </Container>
