@@ -7,9 +7,16 @@ import { Link, useNavigate } from 'react-router-dom'
 import { styled } from '@mui/material/styles'
 import { mountAccounts } from 'wallet/mountAccounts'
 
+const StyledExternalLink = styled('a')(({ theme }) => ({
+    color: theme.palette.text.primary,
+    textDecoration: 'underline !important',
+    mx: '.5rem',
+}))
+
 const StyledLink = styled(Link)(({ theme }) => ({
     color: theme.palette.text.primary,
     textDecoration: 'underline !important',
+    mx: '.5rem',
 }))
 
 const LoadAccountMenu = () => {
@@ -112,9 +119,23 @@ export default function LoginPage() {
                     </StyledLink>
                     <Typography variant="body2" color="text.secondary">
                         By using this application, you agree to the&nbsp;
-                        <StyledLink to="/legal" style={{ textDecoration: 'none' }}>
+                        <StyledExternalLink
+                            href="/legal"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            style={{ textDecoration: 'none' }}
+                        >
                             Terms of Use
-                        </StyledLink>
+                        </StyledExternalLink>
+                        &nbsp;and&nbsp;
+                        <StyledExternalLink
+                            href="https://camino.network/privacy-policy/"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            style={{ textDecoration: 'none' }}
+                        >
+                            Privacy Policy
+                        </StyledExternalLink>
                     </Typography>
                 </Box>
             </Paper>

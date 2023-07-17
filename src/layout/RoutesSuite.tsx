@@ -15,7 +15,6 @@ import Settings from '../views/settings/index'
 import SettingsLayout from './SettingsLayout'
 
 export default function RoutesSuite() {
-
     const navigate = useNavigate()
     const activeNetwork = useAppSelector(getActiveNetwork)
 
@@ -74,7 +73,7 @@ export default function RoutesSuite() {
                     <Route path="/settings" element={<SettingsLayout />}>
                         <Route index element={<Settings />} />
                         <Route path="save-account" element={<Settings />} />
-                        <Route path="create-multisig" element={<div>create multisig</div>} />
+                        {/* <Route path="create-multisig" element={<div>create multisig</div>} /> */}
                     </Route>
                 </Route>
                 <Route path="/login" element={<LoginPage />} />
