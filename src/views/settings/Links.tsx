@@ -3,6 +3,7 @@ import Tabs from '@mui/material/Tabs'
 import Tab from '@mui/material/Tab'
 import Box from '@mui/material/Box'
 import { useNavigate } from 'react-router'
+import { Typography } from '@mui/material'
 
 function a11yProps(index: number) {
     return {
@@ -21,14 +22,14 @@ export default function Links() {
                 display: 'flex',
                 cursor: 'pointer',
                 width: '100%',
-                height: '48px',
+                maxWidth: '1536px',
             }}
         >
             <Tabs
                 value={value}
                 onChange={handleChange}
                 textColor="secondary"
-                sx={{ '& .MuiTabs-indicator': { display: 'none' } }}
+                sx={{ '& .MuiTabs-indicator': { display: 'none' }, height: '61px' }}
                 scrollButtons="auto"
                 variant="scrollable"
                 allowScrollButtonsMobile
@@ -36,21 +37,49 @@ export default function Links() {
                 <Tab
                     className="tab"
                     disableRipple
-                    label="Save account"
+                    label={
+                        <Typography
+                            sx={{
+                                fontFamily: 'Inter',
+                                fontSize: '14px',
+                                fontStyle: 'normal',
+                                fontWeight: '600',
+                                lineHeight: '20px',
+                                color: theme => theme.palette.text.primary,
+                            }}
+                        >
+                            Save account
+                        </Typography>
+                    }
                     onClick={() => navigate('/settings')}
                     {...a11yProps(0)}
                     sx={{
-                        alignItems: { xs: 'baseline', sm: 'self-start' },
+                        display: 'flex',
+                        padding: '10px 12px',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        position: 'relative',
+                        height: '61px',
+                        '&::after': {
+                            content: '""',
+                            display: value === 0 ? 'block' : 'none',
+                            width: '100%',
+                            height: '4px',
+                            position: 'absolute',
+                            bottom: '0px',
+                            borderRadius: '4px 4px 0px 0px',
+                            background: '#0085FF',
+                        },
                     }}
                 />
-                <Tab
+                {/* <Tab
                     className="tab"
                     disableRipple
                     label="Multisignature Wallet"
                     onClick={() => navigate('create-multisig')}
                     {...a11yProps(1)}
                     sx={{ alignItems: { xs: 'baseline', sm: 'self-start' } }}
-                />
+                /> */}
             </Tabs>
         </Box>
     )

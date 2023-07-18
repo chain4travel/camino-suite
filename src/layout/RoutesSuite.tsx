@@ -35,7 +35,7 @@ export default function RoutesSuite() {
                 setNetworkAliasToUrl(activeNetwork.name.toLowerCase())
             }
         }
-    }, [activeNetwork])
+    }, [activeNetwork]) // eslint-disable-line react-hooks/exhaustive-deps
 
     //Temporally Solution when the network is changed
     useEffect(() => {
@@ -43,7 +43,7 @@ export default function RoutesSuite() {
         if (isExplorer && networkAliasToUrl !== '') {
             navigate('/changing-network')
         }
-    }, [networkAliasToUrl])
+    }, [networkAliasToUrl]) // eslint-disable-line react-hooks/exhaustive-deps
 
     return (
         <>
