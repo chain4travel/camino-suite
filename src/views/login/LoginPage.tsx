@@ -19,6 +19,32 @@ const StyledLink = styled(Link)(({ theme }) => ({
     mx: '.5rem',
 }))
 
+const AccessActionButton = props => {
+    const navigate = useNavigate()
+    return (
+        <Button
+            variant="contained"
+            sx={{
+                p: '.75rem',
+                width: '100%',
+                bgcolor: 'button.secondary',
+                padding: '1.25rem',
+                justifyContent: 'space-between',
+                '&:hover': { bgcolor: 'button.secondary', opacity: '.8' },
+                '&:disabled': {
+                    opacity: '.3',
+                    bgcolor: 'button.secondary',
+                    cursor: 'not-allowed',
+                },
+            }}
+            onClick={() => navigate(props.to)}
+            {...props}
+        >
+            {props.children}
+        </Button>
+    )
+}
+
 const LoadAccountMenu = () => {
     const ref = useRef(null)
     const navigate = useNavigate()
@@ -140,31 +166,5 @@ export default function LoginPage() {
                 </Box>
             </Paper>
         </React.Suspense>
-    )
-}
-
-function AccessActionButton(props) {
-    const navigate = useNavigate()
-    return (
-        <Button
-            variant="contained"
-            sx={{
-                p: '.75rem',
-                width: '100%',
-                bgcolor: 'button.secondary',
-                padding: '1.25rem',
-                justifyContent: 'space-between',
-                '&:hover': { bgcolor: 'button.secondary', opacity: '.8' },
-                '&:disabled': {
-                    opacity: '.3',
-                    bgcolor: 'button.secondary',
-                    cursor: 'not-allowed',
-                },
-            }}
-            onClick={() => navigate(props.to)}
-            {...props}
-        >
-            {props.children}
-        </Button>
     )
 }
