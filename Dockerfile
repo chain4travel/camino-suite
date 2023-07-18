@@ -6,4 +6,5 @@ WORKDIR /app/camino-suite
 
 COPY ./ /app/camino-suite/
 RUN yarn install
+RUN git describe --tags --always
 RUN yarn $BUILD_ENV
