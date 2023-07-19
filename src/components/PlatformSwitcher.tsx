@@ -1,36 +1,27 @@
-import React, { useEffect } from 'react'
-import { useState } from 'react'
+import React from 'react'
 import { Box, MenuItem, Select, useTheme, Typography } from '@mui/material'
 import { mdiChevronRight } from '@mdi/js'
-import { APPS_CONSTS, DEFAULT_PLATFORM_SELECTION_ITEM } from '../constants/apps-consts'
 import useWidth from '../hooks/useWidth'
 import Icon from '@mdi/react'
 import { useDispatch } from 'react-redux'
-import { changeActiveApp, getActiveApp } from '../redux/slices/app-config'
+import {
+    changeActiveApp,
+    getActiveApp,
+    getAllApps,
+    getAuthStatus,
+} from '../redux/slices/app-config'
 import { useNavigate } from 'react-router-dom'
 import { useAppSelector } from '../hooks/reduxHooks'
-import { capitalize } from 'lodash'
 
 export default function PlatformSwitcher() {
     const theme = useTheme()
     const navigate = useNavigate()
     const activeApp = useAppSelector(getActiveApp)
+    const allApps = useAppSelector(getAllApps)
+    const isAuth = useAppSelector(getAuthStatus)
     const themeMode = theme.palette.mode === 'light' ? true : false
     const { isDesktop } = useWidth()
-    const location = window.location.pathname.split('/')[1]
     const dispatch = useDispatch()
-    const [app, setApp] = useState(
-        location.charAt(0).toUpperCase() + location.slice(1) ||
-            DEFAULT_PLATFORM_SELECTION_ITEM.name,
-    )
-
-    useEffect(() => {
-        if (activeApp) {
-            setApp(capitalize(activeApp))
-        } else {
-            if (!APPS_CONSTS.find(a => a.name === app)) setApp(DEFAULT_PLATFORM_SELECTION_ITEM.name)
-        }
-    }, [app, activeApp])
 
     return (
         <Box
@@ -45,9 +36,8 @@ export default function PlatformSwitcher() {
         >
             <Select
                 MenuProps={{ MenuListProps: { disableListWrap: true } }}
-                value={app}
+                value={allApps[activeApp].name}
                 onChange={e => {
-                    setApp(e.target.value)
                     dispatch(changeActiveApp(e.target.value))
                 }}
                 sx={{
@@ -85,45 +75,52 @@ export default function PlatformSwitcher() {
                             fontWeight="400"
                             sx={{ ml: '.5rem', color: theme.palette.logo.primary }}
                         >
-                            {app}
+                            {allApps[activeApp].name}
                         </Typography>
                     </Box>
                 )}
                 data-cy="app-selector-menu"
             >
-                {APPS_CONSTS?.map((app, index) => (
-                    <MenuItem
-                        key={index}
-                        value={app.name}
-                        divider
-                        onClick={() => navigate(app.url)}
-                        data-cy={`app-selector-${app.name}`}
-                    >
-                        <Box sx={{ width: '100%' }}>
-                            <Box
-                                sx={{
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'space-between',
-                                }}
+                {allApps?.map((app, index) => {
+                    if (!app.hidden && (!app.private || isAuth))
+                        return (
+                            <MenuItem
+                                key={index}
+                                value={app.name}
+                                divider
+                                onClick={() => navigate(app.url)}
+                                data-cy={`app-selector-${app.name}`}
                             >
-                                <Typography
-                                    variant="h5"
-                                    component="span"
-                                    noWrap
-                                    fontWeight="500"
-                                    sx={{ color: '#149EED' }}
-                                >
-                                    {app.name}
-                                </Typography>
-                                <Icon path={mdiChevronRight} size={0.9} />
-                            </Box>
-                            <Typography variant="subtitle2" component="span" fontWeight="300">
-                                {app.subText}
-                            </Typography>
-                        </Box>
-                    </MenuItem>
-                ))}
+                                <Box sx={{ width: '100%' }}>
+                                    <Box
+                                        sx={{
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'space-between',
+                                        }}
+                                    >
+                                        <Typography
+                                            variant="h5"
+                                            component="span"
+                                            noWrap
+                                            fontWeight="500"
+                                            sx={{ color: '#149EED' }}
+                                        >
+                                            {app.name}
+                                        </Typography>
+                                        <Icon path={mdiChevronRight} size={0.9} />
+                                    </Box>
+                                    <Typography
+                                        variant="subtitle2"
+                                        component="span"
+                                        fontWeight="300"
+                                    >
+                                        {app.subText}
+                                    </Typography>
+                                </Box>
+                            </MenuItem>
+                        )
+                })}
             </Select>
         </Box>
     )

@@ -142,7 +142,7 @@ export default function Navbar() {
                         <>
                             <ThemeSwitcher />
                             {activeNetwork && <NetworkSwitcher />}
-                            {!auth && (
+                            {!auth ? (
                                 <Box
                                     onClick={() => navigate('/login')}
                                     sx={{
@@ -157,8 +157,7 @@ export default function Navbar() {
                                         Login
                                     </Typography>
                                 </Box>
-                            )}
-                            {auth && (
+                            ) : (
                                 <>
                                     <AliasPicker />
                                     <LoginButton />

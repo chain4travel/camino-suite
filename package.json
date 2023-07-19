@@ -51,6 +51,7 @@
         "babel-loader": "^8.2.2",
         "copy-webpack-plugin": "^11.0.0",
         "cypress-file-upload": "^4.0.7",
+        "dotenv-webpack": "^8.0.1",
         "eslint": "^8.34.0",
         "eslint-config-prettier": "^8.6.0",
         "eslint-config-react-app": "^7.0.1",

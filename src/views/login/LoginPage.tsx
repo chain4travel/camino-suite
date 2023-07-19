@@ -7,10 +7,43 @@ import { Link, useNavigate } from 'react-router-dom'
 import { styled } from '@mui/material/styles'
 import { mountAccounts } from 'wallet/mountAccounts'
 
+const StyledExternalLink = styled('a')(({ theme }) => ({
+    color: theme.palette.text.primary,
+    textDecoration: 'underline !important',
+    mx: '.5rem',
+}))
+
 const StyledLink = styled(Link)(({ theme }) => ({
     color: theme.palette.text.primary,
     textDecoration: 'underline !important',
+    mx: '.5rem',
 }))
+
+const AccessActionButton = props => {
+    const navigate = useNavigate()
+    return (
+        <Button
+            variant="contained"
+            sx={{
+                p: '.75rem',
+                width: '100%',
+                bgcolor: 'button.secondary',
+                padding: '1.25rem',
+                justifyContent: 'space-between',
+                '&:hover': { bgcolor: 'button.secondary', opacity: '.8' },
+                '&:disabled': {
+                    opacity: '.3',
+                    bgcolor: 'button.secondary',
+                    cursor: 'not-allowed',
+                },
+            }}
+            onClick={() => navigate(props.to)}
+            {...props}
+        >
+            {props.children}
+        </Button>
+    )
+}
 
 const LoadAccountMenu = () => {
     const ref = useRef(null)
@@ -112,38 +145,26 @@ export default function LoginPage() {
                     </StyledLink>
                     <Typography variant="body2" color="text.secondary">
                         By using this application, you agree to the&nbsp;
-                        <StyledLink to="/legal" style={{ textDecoration: 'none' }}>
+                        <StyledExternalLink
+                            href="/legal"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            style={{ textDecoration: 'none' }}
+                        >
                             Terms of Use
-                        </StyledLink>
+                        </StyledExternalLink>
+                        &nbsp;and&nbsp;
+                        <StyledExternalLink
+                            href="https://camino.network/privacy-policy/"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            style={{ textDecoration: 'none' }}
+                        >
+                            Privacy Policy
+                        </StyledExternalLink>
                     </Typography>
                 </Box>
             </Paper>
         </React.Suspense>
-    )
-}
-
-function AccessActionButton(props) {
-    const navigate = useNavigate()
-    return (
-        <Button
-            variant="contained"
-            sx={{
-                p: '.75rem',
-                width: '100%',
-                bgcolor: 'button.secondary',
-                padding: '1.25rem',
-                justifyContent: 'space-between',
-                '&:hover': { bgcolor: 'button.secondary', opacity: '.8' },
-                '&:disabled': {
-                    opacity: '.3',
-                    bgcolor: 'button.secondary',
-                    cursor: 'not-allowed',
-                },
-            }}
-            onClick={() => navigate(props.to)}
-            {...props}
-        >
-            {props.children}
-        </Button>
     )
 }
