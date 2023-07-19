@@ -12,7 +12,7 @@ import { getActiveNetwork } from '../redux/slices/network'
 import { useAppSelector } from '../hooks/reduxHooks'
 import Protected from './Protected'
 import Settings from '../views/settings/index'
-import CreateMultisigWallet from '../views/settings/CreateMultisigWallet'
+import MultisigWallet from '../views/settings/MultisigWallet'
 import SettingsLayout from './SettingsLayout'
 
 export default function RoutesSuite() {
@@ -74,7 +74,7 @@ export default function RoutesSuite() {
                     <Route path="/settings" element={<SettingsLayout />}>
                         <Route index element={<Settings />} />
                         <Route path="save-account" element={<Settings />} />
-                        <Route path="create-multisig" element={<CreateMultisigWallet />} />
+                        <Route path="create-multisig" element={<MultisigWallet />} />
                     </Route>
                 </Route>
                 <Route path="/login" element={<LoginPage />} />
