@@ -12,6 +12,7 @@ import { getActiveNetwork } from '../redux/slices/network'
 import { useAppSelector } from '../hooks/reduxHooks'
 import Protected from './Protected'
 import Settings from '../views/settings/index'
+import MultisigWallet from '../views/settings/MultisigWallet'
 import SettingsLayout from './SettingsLayout'
 
 export default function RoutesSuite() {
@@ -34,7 +35,7 @@ export default function RoutesSuite() {
                 setNetworkAliasToUrl(activeNetwork.name.toLowerCase())
             }
         }
-    }, [activeNetwork])
+    }, [activeNetwork]) // eslint-disable-line react-hooks/exhaustive-deps
 
     //Temporally Solution when the network is changed
     useEffect(() => {
@@ -42,7 +43,7 @@ export default function RoutesSuite() {
         if (isExplorer && networkAliasToUrl !== '') {
             navigate('/changing-network')
         }
-    }, [networkAliasToUrl])
+    }, [networkAliasToUrl]) // eslint-disable-line react-hooks/exhaustive-deps
 
     return (
         <>
@@ -73,7 +74,7 @@ export default function RoutesSuite() {
                     <Route path="/settings" element={<SettingsLayout />}>
                         <Route index element={<Settings />} />
                         <Route path="save-account" element={<Settings />} />
-                        {/* <Route path="create-multisig" element={<div>create multisig</div>} /> */}
+                        <Route path="create-multisig" element={<MultisigWallet />} />
                     </Route>
                 </Route>
                 <Route path="/login" element={<LoginPage />} />
