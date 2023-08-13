@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react'
 import {
     addNetworks,
     changeActiveNetwork,
@@ -8,11 +7,12 @@ import {
     selectNetworkStatus,
 } from '@/redux/slices/network'
 import { useStore } from 'Explorer/useStore'
-import { Status } from '../@types'
+import { useEffect, useState } from 'react'
+import { AvaNetwork } from 'wallet/AvaNetwork'
 import store from 'wallet/store'
+import { Status } from '../@types'
 import { updateNotificationStatus, updateShowButton } from '../redux/slices/app-config'
 import { useAppDispatch, useAppSelector } from './reduxHooks'
-import { AvaNetwork } from 'wallet/AvaNetwork'
 
 const useNetwork = (): {
     handleChangeNetwork: (arg: string) => void
@@ -53,6 +53,7 @@ const useNetwork = (): {
             dispatch(changeNetworkStatus(Status.LOADING))
             await store.dispatch('Network/setNetwork', network)
             dispatch(changeNetworkStatus(Status.SUCCEEDED))
+            await store.dispatch('fetchMultiSigAliases', { disable: false })
             dispatch(updateShowButton())
             dispatch(
                 updateNotificationStatus({
