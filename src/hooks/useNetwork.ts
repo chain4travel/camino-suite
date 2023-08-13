@@ -51,6 +51,9 @@ const useNetwork = (): {
     const switchNetwork = async (network: AvaNetwork) => {
         try {
             dispatch(changeNetworkStatus(Status.LOADING))
+            if (store.state.activeWallet?.type === 'multisig') {
+                await store.dispatch('activateWallet', store.state.wallets[0])
+            }
             await store.dispatch('Network/setNetwork', network)
             dispatch(changeNetworkStatus(Status.SUCCEEDED))
             await store.dispatch('fetchMultiSigAliases', { disable: false })
