@@ -19,7 +19,6 @@ export default function Tab(theme: Theme) {
                     color: theme => theme.palette.text.primary,
                     '&::after': {
                         content: '""',
-                        // display: value === 1 ? 'block' : 'none',
                         width: '100%',
                         height: '4px',
                         position: 'absolute',

@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from 'react'
+// @ts-ignore
 import { mountMultisigWalletSetting } from 'wallet/mountMultisigWalletSetting'
 import { useAppDispatch } from '../../hooks/reduxHooks'
 import { updateNotificationStatus, updateShowButton } from '../../redux/slices/app-config'
