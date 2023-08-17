@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import Tabs from '@mui/material/Tabs'
 import Tab from '@mui/material/Tab'
 import Box from '@mui/material/Box'
@@ -15,6 +15,14 @@ export default function Links() {
     const [value, setValue] = useState(0)
     const navigate = useNavigate()
     const handleChange = (event: React.SyntheticEvent, newValue: number) => setValue(newValue)
+    const path = window.location.pathname
+
+    useEffect(() => {
+        if (path === '/settings') setValue(0)
+        else if (path === '/settings/create-multisig') setValue(1)
+        else setValue(0)
+    }, [path]) // eslint-disable-line react-hooks/exhaustive-deps
+
     return (
         <Box sx={{ display: 'flex', cursor: 'pointer', width: '100%', maxWidth: '1536px' }}>
             <Tabs
