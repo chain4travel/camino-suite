@@ -1,9 +1,8 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import Tabs from '@mui/material/Tabs'
 import Tab from '@mui/material/Tab'
 import Box from '@mui/material/Box'
 import { useNavigate } from 'react-router'
-import { Typography } from '@mui/material'
 
 function a11yProps(index: number) {
     return {
@@ -15,7 +14,13 @@ function a11yProps(index: number) {
 export default function Links() {
     const [value, setValue] = useState(0)
     const navigate = useNavigate()
+    const path = window.location.pathname
     const handleChange = (event: React.SyntheticEvent, newValue: number) => setValue(newValue)
+    useEffect(() => {
+        if (path === '/settings') setValue(0)
+        else if (path === '/settings/create-multisig') setValue(1)
+        else setValue(0)
+    }, [path])
     return (
         <Box sx={{ display: 'flex', cursor: 'pointer', width: '100%', maxWidth: '1536px' }}>
             <Tabs
