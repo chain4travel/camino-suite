@@ -1,15 +1,15 @@
-import { Box, DialogContent, DialogTitle, Typography, Divider, IconButton } from '@mui/material'
-import React, { useEffect, useState } from 'react'
-import DialogAnimate from '../Animate/DialogAnimate'
-import Icon from '@mdi/react'
 import { mdiClose } from '@mdi/js'
-import MainButton from '../MainButton'
-import LoadMyKeysComponent from './LoadMyKeysComponent'
-import LoadSaveKeysComponent from './LoadSaveKeysComponent'
+import Icon from '@mdi/react'
+import { Box, DialogContent, DialogTitle, Divider, Typography, IconButton } from '@mui/material'
+import React, { useEffect, useState } from 'react'
 import store from 'wallet/store'
 import { getMultisigAliases } from '../../api'
 import { useAppSelector } from '../../hooks/reduxHooks'
 import { getShowButton } from '../../redux/slices/app-config'
+import DialogAnimate from '../Animate/DialogAnimate'
+import MainButton from '../MainButton'
+import LoadMyKeysComponent from './LoadMyKeysComponent'
+import LoadSaveKeysComponent from './LoadSaveKeysComponent'
 
 const AliasPicker = () => {
     const [open, setOpen] = useState(false)
@@ -19,6 +19,7 @@ const AliasPicker = () => {
     }
     const showButtonState = useAppSelector(getShowButton)
     async function showButton() {
+        setLoad(false)
         let aliases = await getMultisigAliases(store.getters['staticAddresses']('P'))
         if ((aliases && aliases.length > 0) || store.state.wallets.length > 1) setLoad(true)
     }
