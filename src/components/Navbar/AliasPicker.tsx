@@ -1,6 +1,6 @@
 import { mdiClose } from '@mdi/js'
 import Icon from '@mdi/react'
-import { Box, DialogContent, DialogTitle, Divider, Typography } from '@mui/material'
+import { Box, DialogContent, DialogTitle, Divider, Typography, IconButton } from '@mui/material'
 import React, { useEffect, useState } from 'react'
 import store from 'wallet/store'
 import { getMultisigAliases } from '../../api'
@@ -40,22 +40,25 @@ const AliasPicker = () => {
                 Switch Wallet
             </MainButton>
             <DialogAnimate open={open} onClose={handleCloseModal}>
-                <DialogTitle
-                    sx={{
-                        position: 'relative',
-                        display: 'flex',
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                        justifyContent: 'space-between',
-                    }}
-                >
-                    <Typography variant="h4" component="h4">
+                <DialogTitle sx={{ m: 0, p: 2 }}>
+                    <Typography variant="h4" component="span">
                         Wallet Switcher
                     </Typography>
-                    <Box sx={{ cursor: 'pointer' }} onClick={handleCloseModal}>
+                    <IconButton
+                        aria-label="close"
+                        onClick={handleCloseModal}
+                        sx={{
+                            position: 'absolute',
+                            right: 10,
+                            top: 15,
+                            cursor: 'pointer',
+                            color: theme => theme.palette.grey[500],
+                        }}
+                    >
                         <Icon path={mdiClose} size={1} />
-                    </Box>
+                    </IconButton>
                 </DialogTitle>
+
                 <Divider sx={{ borderWidth: '1.5px' }} />
                 <DialogContent>
                     <Box

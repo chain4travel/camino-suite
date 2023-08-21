@@ -34,7 +34,7 @@ const LoadMultisigWalletSetting = () => {
     )
 }
 
-export default function MultisigWallet() {
+export default function MultisigWalletSetting() {
     return (
         <React.Suspense fallback={<div>Loading...</div>}>
             <LoadMultisigWalletSetting />
