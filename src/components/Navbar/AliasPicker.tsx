@@ -19,6 +19,7 @@ const AliasPicker = () => {
     }
     const showButtonState = useAppSelector(getShowButton)
     async function showButton() {
+        setLoad(false)
         let aliases = await getMultisigAliases(store.getters['staticAddresses']('P'))
         if ((aliases && aliases.length > 0) || store.state.wallets.length > 1) setLoad(true)
     }
