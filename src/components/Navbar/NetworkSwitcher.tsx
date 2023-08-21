@@ -91,7 +91,7 @@ export default function NetworkSwitcher() {
                                     </Typography>
                                 </Box>
                                 <Box sx={{ flexGrow: 1 }} />
-                                {!network.readonly && (
+                                {!network.readonly && network.url !== activeNetwork.url && (
                                     <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
                                         <IconButton onClick={() => handleEditCustomNetwork()}>
                                             <Icon path={mdiPencilOutline} size={0.8} />
@@ -173,7 +173,7 @@ export default function NetworkSwitcher() {
                             <Typography variant="subtitle1" component="span" noWrap>
                                 {network.name}
                             </Typography>
-                            {!network.readonly && (
+                            {!network.readonly && network.url !== activeNetwork.url && (
                                 <Box sx={{ display: 'flex', gap: 1, ml: 1 }}>
                                     <Button
                                         sx={{
