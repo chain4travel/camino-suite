@@ -14,6 +14,14 @@ export const GITHUB = 'https://github.com/chain4travel/'
 
 export const CAMINO = 'https://camino.network/'
 
+export const SUITE_RELEASES = 'https://github.com/chain4travel/camino-suite/releases'
+
+export const SUITE_WALLET = 'https://github.com/chain4travel/camino-wallet/tree/suite'
+
+export const SUITE_EXPLORER = 'https://github.com/chain4travel/camino-block-explorer/tree/suite'
+
+export const SUITE = 'https://github.com/chain4travel/camino-suite/tree/suite'
+
 export const WALLET = '/wallet'
 
 export const BASE_PATH = '/explorer'

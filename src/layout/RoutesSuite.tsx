@@ -1,18 +1,20 @@
-import React, { useState, useEffect } from 'react'
 import { Navigate, Route, Routes, useNavigate } from 'react-router-dom'
-import ExplorerApp from '../views/explorer/ExplorerApp'
-import Wallet from '../views/wallet/WalletApp'
-import LoginPage from '../views/login/LoginPage'
-import Create from '../views/create/Create'
-import Legal from '../views/legal/Legal'
+import React, { useEffect, useState } from 'react'
+
 import AccessLayout from '../views/access'
-import MountAccessComponent from '../views/access/MountAccessComponent'
+import Create from '../views/create/Create'
+import ExplorerApp from '../views/explorer/ExplorerApp'
 import LandingPage from '../views/landing/LandingPage'
-import { getActiveNetwork } from '../redux/slices/network'
-import { useAppSelector } from '../hooks/reduxHooks'
+import Legal from '../views/legal/Legal'
+import LoginPage from '../views/login/LoginPage'
+import MountAccessComponent from '../views/access/MountAccessComponent'
+import MultisigWallet from '../views/settings/MultisigWallet'
 import Protected from './Protected'
 import Settings from '../views/settings/index'
 import SettingsLayout from './SettingsLayout'
+import Wallet from '../views/wallet/WalletApp'
+import { getActiveNetwork } from '../redux/slices/network'
+import { useAppSelector } from '../hooks/reduxHooks'
 
 export default function RoutesSuite() {
     const navigate = useNavigate()
@@ -34,7 +36,7 @@ export default function RoutesSuite() {
                 setNetworkAliasToUrl(activeNetwork.name.toLowerCase())
             }
         }
-    }, [activeNetwork])
+    }, [activeNetwork]) // eslint-disable-line react-hooks/exhaustive-deps
 
     //Temporally Solution when the network is changed
     useEffect(() => {
@@ -42,7 +44,7 @@ export default function RoutesSuite() {
         if (isExplorer && networkAliasToUrl !== '') {
             navigate('/changing-network')
         }
-    }, [networkAliasToUrl])
+    }, [networkAliasToUrl]) // eslint-disable-line react-hooks/exhaustive-deps
 
     return (
         <>
@@ -73,7 +75,7 @@ export default function RoutesSuite() {
                     <Route path="/settings" element={<SettingsLayout />}>
                         <Route index element={<Settings />} />
                         <Route path="save-account" element={<Settings />} />
-                        {/* <Route path="create-multisig" element={<div>create multisig</div>} /> */}
+                        <Route path="create-multisig" element={<MultisigWallet />} />
                     </Route>
                 </Route>
                 <Route path="/login" element={<LoginPage />} />
