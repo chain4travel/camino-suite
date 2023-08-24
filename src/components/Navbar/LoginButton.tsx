@@ -1,6 +1,6 @@
 import React from 'react'
 import { useAppDispatch, useAppSelector } from '../../hooks/reduxHooks'
-import { MenuItem, MenuList, Select, IconButton, useTheme, Typography } from '@mui/material'
+import { MenuItem, MenuList, Select, IconButton, useTheme, Typography, Chip } from '@mui/material'
 import store from 'wallet/store'
 import { useNavigate } from 'react-router-dom'
 import {
@@ -52,8 +52,20 @@ export default function LoginIcon() {
                     <MenuItem>
                         <LoadAccountMenu type="kyc" />
                     </MenuItem>
-                    <MenuItem>
+                    <MenuItem sx={{ position: 'relative' }}>
                         <LoadAccountMenu type="kyb" />
+                        <Chip
+                            color="secondary"
+                            size="small"
+                            sx={{
+                                position: 'absolute',
+                                fontSize: '12px',
+                                height: '16px',
+                                top: 0,
+                                right: { xs: '0.3rem', sm: 0 },
+                            }}
+                            label="beta"
+                        />
                     </MenuItem>
                     <MenuItem
                         onClick={logout}
@@ -113,8 +125,25 @@ export default function LoginIcon() {
                                 onKeyDown={e => {
                                     handleKeyDown(e)
                                 }}
-                                sx={{ typography: 'body1', width: '100%', maxWidth: '326px' }}
+                                sx={{
+                                    typography: 'body1',
+                                    width: '100%',
+                                    maxWidth: '326px',
+                                    position: 'relative',
+                                }}
                             >
+                                <Chip
+                                    color="secondary"
+                                    size="small"
+                                    sx={{
+                                        position: 'absolute',
+                                        fontSize: '12px',
+                                        height: '16px',
+                                        top: 0,
+                                        right: { xs: '0.3rem', sm: 0 },
+                                    }}
+                                    label="beta"
+                                />
                                 <LoadAccountMenu type="kyb" />
                             </MenuItem>
                             <MenuItem

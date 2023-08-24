@@ -16,7 +16,7 @@ function responsiveFontSizes({ sm, md, lg }: { sm: number; md: number; lg: numbe
     }
 }
 
-const FONT_PRIMARY = 'ClashDisplay'
+const FONT_PRIMARY = 'Inter'
 const FONT_SECONDARY = 'Inter'
 
 const typography = {
