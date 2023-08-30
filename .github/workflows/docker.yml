@@ -57,7 +57,7 @@ jobs:
           fi
 
       - name: Create tag
-        if: github.ref  == 'refs/heads/suite-c4t' && github.event_name == 'push' && ${{ steps.setDefaults.outputs.create_tag }} == 'true'
+        if: ${{ (github.ref  == 'refs/heads/suite-c4t') && (github.event_name == 'push') && (steps.setDefaults.outputs.create_tag == 'true') }}
         uses: actions/github-script@v5
         with:
           script: |
