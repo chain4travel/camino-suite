@@ -1,7 +1,9 @@
-import React, { useState, useEffect } from 'react'
-import Tabs from '@mui/material/Tabs'
-import Tab from '@mui/material/Tab'
+
+import React, { useEffect, useState } from 'react'
+
 import Box from '@mui/material/Box'
+import Tab from '@mui/material/Tab'
+import Tabs from '@mui/material/Tabs'
 import { useNavigate } from 'react-router'
 
 function a11yProps(index: number) {
