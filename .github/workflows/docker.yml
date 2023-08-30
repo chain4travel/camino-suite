@@ -32,13 +32,19 @@ jobs:
         id: setDefaults
         run: |
           DOCKER_IMAGE_NAME="europe-west3-docker.pkg.dev/pwk-c4t-dev/internal-camino-dev/camino-suite"
-          
+          echo "create_tag=false" >> $GITHUB_OUTPUT
           if [[ "${{ github.ref }}" == "refs/heads/c4t" ]]; then
               echo "docker_image=$DOCKER_IMAGE_NAME:stage" >> $GITHUB_OUTPUT
               echo "build_env=stage" >> $GITHUB_OUTPUT
           elif [[ "${{ github.ref }}" == "refs/heads/suite-c4t" ]]; then
               echo "docker_image=$DOCKER_IMAGE_NAME:stage" >> $GITHUB_OUTPUT
               echo "build_env=stage" >> $GITHUB_OUTPUT
+              CURRENT_TAG=$(git describe --abbrev=0 --tags)
+              if [[ $CURRENT_TAG == *"-rc"* ]]; then
+                TAG_TEMP=$(echo "$CURRENT_TAG"|awk -F'-rc' -v OFS='-rc' '{$2=sprintf("%1d",++$2)}7')
+                echo "tag=$TAG_TEMP" >> $GITHUB_OUTPUT
+                echo "create_tag=true" >> $GITHUB_OUTPUT
+              fi
           elif [[ "${{ github.ref }}" == "refs/heads/dev" ]]; then
               echo "docker_image=$DOCKER_IMAGE_NAME:dev" >> $GITHUB_OUTPUT
               echo "build_env=dev" >> $GITHUB_OUTPUT
@@ -49,6 +55,18 @@ jobs:
               echo "docker_image=$DOCKER_IMAGE_NAME:temp" >> $GITHUB_OUTPUT
               echo "build_env=dev" >> $GITHUB_OUTPUT   
           fi
+
+      - name: Create tag
+        if: github.ref  == 'refs/heads/c4t' && github.event_name == 'push' && ${{ steps.setDefaults.outputs.create_tag }} == 'true'
+        uses: actions/github-script@v5
+        with:
+          script: |
+            github.rest.git.createRef({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: 'refs/tags/${{ steps.setDefaults.outputs.tag }}',
+              sha: context.sha
+            })
 
       - name: Cloud authentication
         if: github.event_name == 'push'
