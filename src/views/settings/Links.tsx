@@ -1,9 +1,10 @@
-import React, { useState } from 'react'
-import Tabs from '@mui/material/Tabs'
-import Tab from '@mui/material/Tab'
+
+import React, { useEffect, useState } from 'react'
+
 import Box from '@mui/material/Box'
+import Tab from '@mui/material/Tab'
+import Tabs from '@mui/material/Tabs'
 import { useNavigate } from 'react-router'
-import { Typography } from '@mui/material'
 
 function a11yProps(index: number) {
     return {
@@ -15,16 +16,15 @@ function a11yProps(index: number) {
 export default function Links() {
     const [value, setValue] = useState(0)
     const navigate = useNavigate()
+    const path = window.location.pathname
     const handleChange = (event: React.SyntheticEvent, newValue: number) => setValue(newValue)
+    useEffect(() => {
+        if (path === '/settings') setValue(0)
+        else if (path === '/settings/create-multisig') setValue(1)
+        else setValue(0)
+    }, [path])
     return (
-        <Box
-            sx={{
-                display: 'flex',
-                cursor: 'pointer',
-                width: '100%',
-                maxWidth: '1536px',
-            }}
-        >
+        <Box sx={{ display: 'flex', cursor: 'pointer', width: '100%', maxWidth: '1536px' }}>
             <Tabs
                 value={value}
                 onChange={handleChange}
@@ -37,49 +37,19 @@ export default function Links() {
                 <Tab
                     className="tab"
                     disableRipple
-                    label={
-                        <Typography
-                            sx={{
-                                fontFamily: 'Inter',
-                                fontSize: '14px',
-                                fontStyle: 'normal',
-                                fontWeight: '600',
-                                lineHeight: '20px',
-                                color: theme => theme.palette.text.primary,
-                            }}
-                        >
-                            Save account
-                        </Typography>
-                    }
+                    label="Save account"
                     onClick={() => navigate('/settings')}
                     {...a11yProps(0)}
-                    sx={{
-                        display: 'flex',
-                        padding: '10px 12px',
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        position: 'relative',
-                        height: '61px',
-                        '&::after': {
-                            content: '""',
-                            display: value === 0 ? 'block' : 'none',
-                            width: '100%',
-                            height: '4px',
-                            position: 'absolute',
-                            bottom: '0px',
-                            borderRadius: '4px 4px 0px 0px',
-                            background: '#0085FF',
-                        },
-                    }}
+                    sx={{ '&::after': { display: value === 0 ? 'block' : 'none' } }}
                 />
-                {/* <Tab
+                <Tab
                     className="tab"
                     disableRipple
                     label="Multisignature Wallet"
                     onClick={() => navigate('create-multisig')}
                     {...a11yProps(1)}
-                    sx={{ alignItems: { xs: 'baseline', sm: 'self-start' } }}
-                /> */}
+                    sx={{ '&::after': { display: value === 1 ? 'block' : 'none' } }}
+                />
             </Tabs>
         </Box>
     )

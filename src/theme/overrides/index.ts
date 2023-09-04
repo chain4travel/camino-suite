@@ -12,6 +12,7 @@ import Paper from './Paper'
 import Drawer from './Drawer'
 import Input from './Input'
 import DialogActions from './DialogActions'
+import Tab from './Tab'
 
 export default function ComponentsOverrides(theme: Theme) {
     return merge(
@@ -27,5 +28,6 @@ export default function ComponentsOverrides(theme: Theme) {
         Drawer(theme),
         Input(theme),
         DialogActions(theme),
+        Tab(theme),
     )
 }
