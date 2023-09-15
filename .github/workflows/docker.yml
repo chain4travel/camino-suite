@@ -111,11 +111,4 @@ jobs:
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
           git tag -a ${{ steps.setDefaults.outputs.tag }} -m "creat tag ${{ steps.setDefaults.outputs.tag }} for staging"
-
-
-      - name: Push tag
-        if: ${{ (github.ref  == 'refs/heads/suite-tagging') && (github.event_name == 'push') && (steps.setDefaults.outputs.create_tag == 'true') }}
-        uses: ad-m/github-push-action@master
-        with:
-          tags: true
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          git push --tags
