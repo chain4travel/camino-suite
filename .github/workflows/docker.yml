@@ -106,13 +106,13 @@ jobs:
           gcloud run deploy camino-suite-${{ steps.setDefaults.outputs.build_env }} --image ${{ steps.setDefaults.outputs.docker_image }} --region=europe-west1
 
       - name: Create tag
-        if: ${{ (github.ref  == 'refs/heads/suite-tagging') && (github.event_name == 'push') && (steps.setDefaults.outputs.create_tag == 'true') }}
+        if: ${{ (github.ref  == 'refs/heads/suite-c4t') && (github.event_name == 'push') && (steps.setDefaults.outputs.create_tag == 'true') }}
         run: |
           git tag -a ${{ steps.setDefaults.outputs.tag }} -m "creat tag ${{ steps.setDefaults.outputs.tag }} for staging"
 
 
       - name: Push tag
-        if: ${{ (github.ref  == 'refs/heads/suite-tagging') && (github.event_name == 'push') && (steps.setDefaults.outputs.create_tag == 'true') }}
+        if: ${{ (github.ref  == 'refs/heads/suite-c4t') && (github.event_name == 'push') && (steps.setDefaults.outputs.create_tag == 'true') }}
         uses: ad-m/github-push-action@master
         with:
           tags: true
