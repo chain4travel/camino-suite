@@ -6,13 +6,15 @@ on:
         - c4t
         - dev
         - suite
-        - suite-c4t
+        - suite-tagging
   push:
     branches:
         - c4t
         - dev
         - suite
-        - suite-c4t
+        - suite-tagging
+    tags:        
+      - v*
 
 env:
   node_version: 16
@@ -33,12 +35,26 @@ jobs:
         run: |
           DOCKER_IMAGE_NAME="europe-west3-docker.pkg.dev/pwk-c4t-dev/internal-camino-dev/camino-suite"
           echo "create_tag=false" >> $GITHUB_OUTPUT
-          if [[ "${{ github.ref }}" == "refs/heads/c4t" ]]; then
+          echo "push=false" >> $GITHUB_OUTPUT
+          if [[ "${{ github.ref_type }}" == "tag" ]]; then
               echo "docker_image=$DOCKER_IMAGE_NAME:stage" >> $GITHUB_OUTPUT
               echo "build_env=stage" >> $GITHUB_OUTPUT
-          elif [[ "${{ github.ref }}" == "refs/heads/suite-c4t" ]]; then
+              echo "branch=suite-tagging" >> $GITHUB_OUTPUT
+              echo "push=true" >> $GITHUB_OUTPUT
+          elif [[ "${{ github.ref }}" == "refs/heads/c4t" ]]; then
               echo "docker_image=$DOCKER_IMAGE_NAME:stage" >> $GITHUB_OUTPUT
               echo "build_env=stage" >> $GITHUB_OUTPUT
+              echo "branch=c4t" >> $GITHUB_OUTPUT
+              CURRENT_TAG=$(git describe --abbrev=0 --tags)
+              if [[ $CURRENT_TAG == *"-rc"* ]]; then
+                TAG_TEMP=$(echo "$CURRENT_TAG"|awk -F'-rc' -v OFS='-rc' '{$2=sprintf("%1d",++$2)}7')
+                echo "tag=$TAG_TEMP" >> $GITHUB_OUTPUT
+                echo "create_tag=true" >> $GITHUB_OUTPUT
+              fi
+          elif [[ "${{ github.ref }}" == "refs/heads/suite-tagging" ]]; then
+              echo "docker_image=$DOCKER_IMAGE_NAME:stage" >> $GITHUB_OUTPUT
+              echo "build_env=stage" >> $GITHUB_OUTPUT
+              echo "branch=suite-c4t" >> $GITHUB_OUTPUT
               CURRENT_TAG=$(git describe --abbrev=0 --tags)
               if [[ $CURRENT_TAG == *"-rc"* ]]; then
                 TAG_TEMP=$(echo "$CURRENT_TAG"|awk -F'-rc' -v OFS='-rc' '{$2=sprintf("%1d",++$2)}7')
@@ -48,25 +64,18 @@ jobs:
           elif [[ "${{ github.ref }}" == "refs/heads/dev" ]]; then
               echo "docker_image=$DOCKER_IMAGE_NAME:dev" >> $GITHUB_OUTPUT
               echo "build_env=dev" >> $GITHUB_OUTPUT
+              echo "push=true" >> $GITHUB_OUTPUT
+              echo "branch=dev" >> $GITHUB_OUTPUT
           elif [[ "${{ github.ref }}" == "refs/heads/suite" ]]; then
               echo "docker_image=$DOCKER_IMAGE_NAME:dev" >> $GITHUB_OUTPUT
               echo "build_env=dev" >> $GITHUB_OUTPUT 
+              echo "push=true" >> $GITHUB_OUTPUT
+              echo "branch=suite" >> $GITHUB_OUTPUT
           else
               echo "docker_image=$DOCKER_IMAGE_NAME:temp" >> $GITHUB_OUTPUT
+              echo "branch=temp" >> $GITHUB_OUTPUT
               echo "build_env=dev" >> $GITHUB_OUTPUT   
           fi
-
-      - name: Create tag
-        if: ${{ (github.ref  == 'refs/heads/suite-c4t') && (github.event_name == 'push') && (steps.setDefaults.outputs.create_tag == 'true') }}
-        uses: actions/github-script@v5
-        with:
-          script: |
-            github.rest.git.createRef({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              ref: 'refs/tags/${{ steps.setDefaults.outputs.tag }}',
-              sha: context.sha
-            })
 
       - name: Cloud authentication
         if: github.event_name == 'push'
@@ -76,27 +85,34 @@ jobs:
           credentials_json: '${{ secrets.GOOGLE_CREDENTIALS }}'
 
       - name: create module docker image
-        if: github.event_name == 'push'
+        if: ${{ (github.event_name == 'push') && (steps.setDefaults.outputs.push == 'true') }}
         run: |     
           gcloud auth configure-docker --quiet europe-west3-docker.pkg.dev     
-          docker build . -t ${{ env.module_docker_image }}:${{ github.ref_name }} --build-arg BUILD_ENV=build:${{ steps.setDefaults.outputs.build_env }}
-          docker push ${{ env.module_docker_image }}:${{ github.ref_name }}
+          docker build . -t ${{ env.module_docker_image }}:${{ steps.setDefaults.outputs.branch }} --build-arg BUILD_ENV=build:${{ steps.setDefaults.outputs.build_env }}
+          docker push ${{ env.module_docker_image }}:${{ steps.setDefaults.outputs.branch }}
           
       
       - name: create suite docker image
         run: |
-          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
-            docker build . -f Dockerfile_SUITE -t ${{ steps.setDefaults.outputs.docker_image }} --build-arg BUILD_ENV=build:${{ steps.setDefaults.outputs.build_env }} --build-arg EXPLORER_BRANCH=${{ github.base_ref }} --build-arg WALLET_BRANCH=${{ github.base_ref }}
-          else
-            docker build . -f Dockerfile_SUITE -t ${{ steps.setDefaults.outputs.docker_image }} --build-arg BUILD_ENV=build:${{ steps.setDefaults.outputs.build_env }} --build-arg EXPLORER_BRANCH=${{ github.ref_name }} --build-arg WALLET_BRANCH=${{ github.ref_name }}
-            
-          fi
+          docker build . -f Dockerfile_SUITE -t ${{ steps.setDefaults.outputs.docker_image }} --build-arg BUILD_ENV=build:${{ steps.setDefaults.outputs.build_env }} --build-arg EXPLORER_BRANCH=${{ steps.setDefaults.outputs.branch }} --build-arg WALLET_BRANCH=${{ steps.setDefaults.outputs.branch }}
 
           
       
       - name: push and deploy docker
-        if: github.event_name == 'push'
+        if: ${{ (github.event_name == 'push') && (steps.setDefaults.outputs.push == 'true') }}
         run: |
           gcloud auth configure-docker --quiet europe-west3-docker.pkg.dev
           docker push ${{ steps.setDefaults.outputs.docker_image }}          
           gcloud run deploy camino-suite-${{ steps.setDefaults.outputs.build_env }} --image ${{ steps.setDefaults.outputs.docker_image }} --region=europe-west1
+
+      - name: Create tag
+        if: ${{ (github.ref  == 'refs/heads/suite-tagging') && (github.event_name == 'push') && (steps.setDefaults.outputs.create_tag == 'true') }}
+        run: |
+          git tag -a ${{ steps.setDefaults.outputs.tag }} -m "creat tag ${{ steps.setDefaults.outputs.tag }} for staging"
+
+
+      - name: Push tag
+        if: ${{ (github.ref  == 'refs/heads/suite-tagging') && (github.event_name == 'push') && (steps.setDefaults.outputs.create_tag == 'true') }}
+        uses: ad-m/github-push-action@master
+        with:
+          tags: true
