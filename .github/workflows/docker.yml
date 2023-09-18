@@ -6,13 +6,13 @@ on:
         - c4t
         - dev
         - suite
-        - suite-tagging
+        - suite-c4t
   push:
     branches:
         - c4t
         - dev
         - suite
-        - suite-tagging
+        - suite-c4t
     tags:        
       - v*
 
@@ -38,7 +38,7 @@ jobs:
           if [[ "${{ github.ref_type }}" == "tag" ]]; then
               echo "docker_image=$DOCKER_IMAGE_NAME:stage" >> $GITHUB_OUTPUT
               echo "build_env=stage" >> $GITHUB_OUTPUT
-              echo "branch=suite-tagging" >> $GITHUB_OUTPUT
+              echo "branch=suite-c4t" >> $GITHUB_OUTPUT
           elif [[ "${{ github.ref }}" == "refs/heads/c4t" ]]; then
               echo "docker_image=$DOCKER_IMAGE_NAME:stage" >> $GITHUB_OUTPUT
               echo "build_env=stage" >> $GITHUB_OUTPUT
@@ -49,7 +49,7 @@ jobs:
                 echo "tag=$TAG_TEMP" >> $GITHUB_OUTPUT
                 echo "create_tag=true" >> $GITHUB_OUTPUT
               fi
-          elif [[ "${{ github.ref }}" == "refs/heads/suite-tagging" ]]; then
+          elif [[ "${{ github.ref }}" == "refs/heads/suite-c4t" ]]; then
               echo "docker_image=$DOCKER_IMAGE_NAME:stage" >> $GITHUB_OUTPUT
               echo "build_env=stage" >> $GITHUB_OUTPUT
               echo "branch=suite-c4t" >> $GITHUB_OUTPUT
@@ -81,7 +81,7 @@ jobs:
           credentials_json: '${{ secrets.GOOGLE_CREDENTIALS }}'
       
       - name: Create tag
-        if: ${{ (github.ref  == 'refs/heads/suite-tagging') && (github.event_name == 'push') && (steps.setDefaults.outputs.create_tag == 'true') }}
+        if: ${{ (github.ref  == 'refs/heads/suite-c4t') && (github.event_name == 'push') && (steps.setDefaults.outputs.create_tag == 'true') }}
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
