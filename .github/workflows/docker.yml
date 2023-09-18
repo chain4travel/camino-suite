@@ -39,7 +39,7 @@ jobs:
               echo "docker_image=$DOCKER_IMAGE_NAME:stage" >> $GITHUB_OUTPUT
               echo "build_env=stage" >> $GITHUB_OUTPUT
               echo "branch=suite-c4t" >> $GITHUB_OUTPUT
-          elif [[ "${{ github.ref }}" == "refs/heads/c4t" ]]; then
+          elif [[ "${{ github.ref }}" == "refs/heads/c4t" ]] || [[ "${{ github.base_ref }}" == "c4t" ]]; then
               echo "docker_image=$DOCKER_IMAGE_NAME:stage" >> $GITHUB_OUTPUT
               echo "build_env=stage" >> $GITHUB_OUTPUT
               echo "branch=c4t" >> $GITHUB_OUTPUT
@@ -49,7 +49,7 @@ jobs:
                 echo "tag=$TAG_TEMP" >> $GITHUB_OUTPUT
                 echo "create_tag=true" >> $GITHUB_OUTPUT
               fi
-          elif [[ "${{ github.ref }}" == "refs/heads/suite-c4t" ]]; then
+          elif [[ "${{ github.ref }}" == "refs/heads/suite-c4t" ]] || [[ "${{ github.base_ref }}" == "suite-c4t" ]]; then
               echo "docker_image=$DOCKER_IMAGE_NAME:stage" >> $GITHUB_OUTPUT
               echo "build_env=stage" >> $GITHUB_OUTPUT
               echo "branch=suite-c4t" >> $GITHUB_OUTPUT
@@ -59,11 +59,11 @@ jobs:
                 echo "tag=$TAG_TEMP" >> $GITHUB_OUTPUT
                 echo "create_tag=true" >> $GITHUB_OUTPUT
               fi
-          elif [[ "${{ github.ref }}" == "refs/heads/dev" ]]; then
+          elif [[ "${{ github.ref }}" == "refs/heads/dev" ]] || [[ "${{ github.base_ref }}" == "dev" ]]; then
               echo "docker_image=$DOCKER_IMAGE_NAME:dev" >> $GITHUB_OUTPUT
               echo "build_env=dev" >> $GITHUB_OUTPUT
               echo "branch=dev" >> $GITHUB_OUTPUT
-          elif [[ "${{ github.ref }}" == "refs/heads/suite" ]]; then
+          elif [[ "${{ github.ref }}" == "refs/heads/suite" ]] || [[ "${{ github.base_ref }}" == "suite" ]]; then
               echo "docker_image=$DOCKER_IMAGE_NAME:dev" >> $GITHUB_OUTPUT
               echo "build_env=dev" >> $GITHUB_OUTPUT 
               echo "branch=suite" >> $GITHUB_OUTPUT
