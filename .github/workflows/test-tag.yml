@@ -1,0 +1,84 @@
+name: test-tag
+
+on:
+  push:
+    tags:        
+      - x*
+
+env:
+  node_version: 16
+  module_docker_image: "europe-west3-docker.pkg.dev/pwk-c4t-dev/camino-suite-apps/camino-suite-host"
+
+jobs:
+  build_docker:    
+    name: Build Docker
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: recursive
+          fetch-depth: 0
+
+      - name: Prepare Image Tag
+        id: setDefaults
+        run: |
+          DOCKER_IMAGE_NAME="europe-west3-docker.pkg.dev/pwk-c4t-dev/internal-camino-dev/camino-suite"
+          echo "create_tag=false" >> $GITHUB_OUTPUT
+          if [[ "${{ github.ref_type }}" == "tag" ]]; then
+              echo "docker_image=$DOCKER_IMAGE_NAME:stage" >> $GITHUB_OUTPUT
+              echo "build_env=stage" >> $GITHUB_OUTPUT
+              echo "branch=suite-c4t" >> $GITHUB_OUTPUT
+              git describe --abbrev=0 --tags
+          elif [[ "${{ github.ref }}" == "refs/heads/c4t" ]] || [[ "${{ github.base_ref }}" == "c4t" ]]; then
+              echo "docker_image=$DOCKER_IMAGE_NAME:stage" >> $GITHUB_OUTPUT
+              echo "build_env=stage" >> $GITHUB_OUTPUT
+              echo "branch=c4t" >> $GITHUB_OUTPUT
+              CURRENT_TAG=$(git describe --abbrev=0 --tags)
+              if [[ $CURRENT_TAG == *"-rc"* ]]; then
+                TAG_TEMP=$(echo "$CURRENT_TAG"|awk -F'-rc' -v OFS='-rc' '{$2=sprintf("%1d",++$2)}7')
+                echo "tag=$TAG_TEMP" >> $GITHUB_OUTPUT
+                echo "create_tag=true" >> $GITHUB_OUTPUT
+              fi
+          elif [[ "${{ github.ref }}" == "refs/heads/test-tag" ]] || [[ "${{ github.base_ref }}" == "test-tag" ]]; then
+              echo "docker_image=$DOCKER_IMAGE_NAME:stage" >> $GITHUB_OUTPUT
+              echo "build_env=stage" >> $GITHUB_OUTPUT
+              echo "branch=suite-c4t" >> $GITHUB_OUTPUT
+              CURRENT_TAG=$(git describe --abbrev=0 --tags)
+              if [[ $CURRENT_TAG == *"-rc"* ]]; then
+                TAG_TEMP=$(echo "$CURRENT_TAG"|awk -F'-rc' -v OFS='-rc' '{$2=sprintf("%1d",++$2)}7')
+                echo "tag=$TAG_TEMP" >> $GITHUB_OUTPUT
+                echo "create_tag=true" >> $GITHUB_OUTPUT
+              fi
+          elif [[ "${{ github.ref }}" == "refs/heads/dev" ]] || [[ "${{ github.base_ref }}" == "dev" ]]; then
+              echo "docker_image=$DOCKER_IMAGE_NAME:dev" >> $GITHUB_OUTPUT
+              echo "build_env=dev" >> $GITHUB_OUTPUT
+              echo "branch=dev" >> $GITHUB_OUTPUT
+          elif [[ "${{ github.ref }}" == "refs/heads/suite" ]] || [[ "${{ github.base_ref }}" == "suite" ]]; then
+              echo "docker_image=$DOCKER_IMAGE_NAME:dev" >> $GITHUB_OUTPUT
+              echo "build_env=dev" >> $GITHUB_OUTPUT 
+              echo "branch=suite" >> $GITHUB_OUTPUT
+          else
+              echo "docker_image=$DOCKER_IMAGE_NAME:temp" >> $GITHUB_OUTPUT
+              echo "branch=temp" >> $GITHUB_OUTPUT
+              echo "build_env=dev" >> $GITHUB_OUTPUT   
+          fi
+
+      - name: Cloud authentication
+        if: github.event_name == 'push'
+        id: auth
+        uses: 'google-github-actions/auth@v1'
+        with:
+          credentials_json: '${{ secrets.GOOGLE_CREDENTIALS }}'
+      
+
+      - name: create module docker image
+        if: ${{ (github.event_name == 'push') }}
+        run: |     
+          gcloud auth configure-docker --quiet europe-west3-docker.pkg.dev     
+          docker build . -t ${{ env.module_docker_image }}:${{ steps.setDefaults.outputs.branch }} --build-arg BUILD_ENV=build:${{ steps.setDefaults.outputs.build_env }}
+      
+      - name: create suite docker image
+        run: |
+          docker build . -f Dockerfile_SUITE -t ${{ steps.setDefaults.outputs.docker_image }} --build-arg BUILD_ENV=build:${{ steps.setDefaults.outputs.build_env }} --build-arg EXPLORER_BRANCH=${{ steps.setDefaults.outputs.branch }} --build-arg WALLET_BRANCH=${{ steps.setDefaults.outputs.branch }}
+
+          
