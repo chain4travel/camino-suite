@@ -29,6 +29,8 @@ jobs:
               echo "build_env=stage" >> $GITHUB_OUTPUT
               echo "branch=suite-c4t" >> $GITHUB_OUTPUT
               git describe --abbrev=0 --tags
+              git tag -l
+              
           elif [[ "${{ github.ref }}" == "refs/heads/c4t" ]] || [[ "${{ github.base_ref }}" == "c4t" ]]; then
               echo "docker_image=$DOCKER_IMAGE_NAME:stage" >> $GITHUB_OUTPUT
               echo "build_env=stage" >> $GITHUB_OUTPUT
