@@ -10,6 +10,7 @@ const getGitInformation = () => {
         const commit = execSync('git rev-parse --short HEAD').toString().trim()
         const repo = execSync('git config --get remote.origin.url').toString().trim()
         const tag = execSync('git describe --tags --always').toString().trim()
+        console.log("Debug: Tag = ", tag)
         return { commit, repo, tag }
     } catch (e) {
         return { commit: '', repo: '', tag: '' }
