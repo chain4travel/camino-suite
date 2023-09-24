@@ -175,25 +175,21 @@ export default function Footer() {
                                     justifyContent: { xs: 'center', md: 'flex-end' },
                                 }}
                             >
-                                {process.env.NODE_ENV === 'development' ? (
-                                    <Tooltip
-                                        TransitionComponent={Fade}
-                                        TransitionProps={{ timeout: 600 }}
-                                        title={<Version />}
-                                        placement="top"
-                                        PopperProps={{
-                                            sx: {
-                                                '& .MuiTooltip-tooltip': {
-                                                    maxWidth: '500px !important',
-                                                },
+                                <Tooltip
+                                    TransitionComponent={Fade}
+                                    TransitionProps={{ timeout: 600 }}
+                                    title={<Version />}
+                                    placement="top"
+                                    PopperProps={{
+                                        sx: {
+                                            '& .MuiTooltip-tooltip': {
+                                                maxWidth: '500px !important',
                                             },
-                                        }}
-                                    >
-                                        <Icon path={mdiInformationOutline} size={0.85} />
-                                    </Tooltip>
-                                ) : (
+                                        },
+                                    }}
+                                >
                                     <Icon path={mdiInformationOutline} size={0.85} />
-                                )}
+                                </Tooltip>
 
                                 <Link
                                     rel="noopener noreferrer"
