@@ -15,7 +15,11 @@ import MHidden from '../@material-extend/MHidden'
 import { LoadAccountMenu } from '../LoadAccountMenu'
 import AliasPicker from './AliasPicker'
 
-export default function LoginIcon() {
+interface LoginIconProps {
+    handleCloseSidebar?: () => void
+}
+
+export default function LoginIcon({ handleCloseSidebar }: LoginIconProps) {
     const cAddress = useAppSelector(state => state.appConfig.walletStore?.activeWallet?.ethAddress)
     const auth = useAppSelector(state => state.appConfig.isAuth)
     const dispatch = useAppDispatch()
@@ -23,11 +27,17 @@ export default function LoginIcon() {
     const account = useAppSelector(getAccount)
     const theme = useTheme()
     const logout = async () => {
+        handleCloseSidebar()
         await store.dispatch('logout')
         dispatch(updateAccount(null))
         dispatch(updateAuthStatus(false))
         dispatch(changeActiveApp('Network'))
         navigate('/')
+    }
+
+    const navigateToSettings = () => {
+        navigate('/settings')
+        handleCloseSidebar()
     }
 
     const handleKeyDown = e => {
@@ -38,7 +48,7 @@ export default function LoginIcon() {
         <>
             <MHidden width="smUp">
                 <MenuList sx={{ backgroundColor: 'transparent' }}>
-                    <MenuItem onClick={() => navigate('/settings')}>
+                    <MenuItem onClick={navigateToSettings}>
                         <IconButton>
                             <Icon path={mdiCogOutline} size={0.8} />
                         </IconButton>
@@ -67,10 +77,7 @@ export default function LoginIcon() {
                             label="beta"
                         />
                     </MenuItem>
-                    <MenuItem
-                        onClick={logout}
-                        sx={{ display: 'flex', justifyContent: 'space-between' }}
-                    >
+                    <MenuItem onClick={logout} sx={{ display: 'flex' }}>
                         <IconButton>
                             <Icon path={mdiLogout} size={0.8} />
                         </IconButton>
