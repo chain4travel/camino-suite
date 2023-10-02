@@ -49,6 +49,11 @@ export default function Navbar() {
         }
     }
 
+    const navigateToLogin = () => {
+        navigate('/login')
+        handleCloseSidebar()
+    }
+
     useIdleTimer({
         onIdle,
         timeout: TIMEOUT_DURATION,
@@ -84,7 +89,7 @@ export default function Navbar() {
                     <MHidden width="smUp">
                         {!auth && (
                             <Box
-                                onClick={() => navigate('/login')}
+                                onClick={navigateToLogin}
                                 sx={{
                                     display: 'flex',
                                     alignItems: 'center',
@@ -120,7 +125,7 @@ export default function Navbar() {
                                 >
                                     <Box>
                                         <ThemeSwitcher />
-                                        <IconButton onClick={() => navigate('/login')}>
+                                        <IconButton onClick={navigateToLogin}>
                                             <Icon path={mdiWalletOutline} size={1} />
                                         </IconButton>
                                     </Box>
@@ -129,9 +134,11 @@ export default function Navbar() {
                                         <Icon path={mdiClose} size={1} />
                                     </MIconButton>
                                 </Stack>
-                                {activeNetwork && <NetworkSwitcher />}
+                                {activeNetwork && (
+                                    <NetworkSwitcher handleCloseSidebar={handleCloseSidebar} />
+                                )}
                             </Box>
-                            {auth && <LoginButton />}
+                            {auth && <LoginButton handleCloseSidebar={handleCloseSidebar} />}
                         </Drawer>
                         <MIconButton onClick={handleOpenSidebar}>
                             <Icon path={mdiMenu} size={1} />

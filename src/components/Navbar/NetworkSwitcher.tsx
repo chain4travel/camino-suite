@@ -21,7 +21,11 @@ import AddNewNetwork from './AddNewNetwork'
 import SelectedNetwork from './SelectNetwork'
 import useNetwork from '../../hooks/useNetwork'
 
-export default function NetworkSwitcher() {
+interface NetworkSwitcherProps {
+    handleCloseSidebar?: () => void
+}
+
+export default function NetworkSwitcher({ handleCloseSidebar }: NetworkSwitcherProps) {
     const {
         handleChangeNetwork,
         handleEditCustomNetwork,
@@ -37,6 +41,31 @@ export default function NetworkSwitcher() {
         activeNetwork,
     } = useNetwork()
     const theme = useTheme()
+
+    const changeNetwork = networkName => {
+        handleChangeNetwork(networkName)
+        handleCloseSidebar()
+    }
+
+    const editNetwork = () => {
+        handleEditCustomNetwork()
+        handleCloseSidebar()
+    }
+
+    const removeNetwork = () => {
+        handleRemoveCustomNetwork()
+        handleCloseSidebar()
+    }
+
+    const openModal = () => {
+        handleOpenModal()
+        handleCloseSidebar()
+    }
+
+    const closeModal = () => {
+        handleCloseModal()
+        handleCloseSidebar()
+    }
 
     return (
         <>
@@ -62,7 +91,7 @@ export default function NetworkSwitcher() {
                                 alignItems: 'baseline',
                                 color: theme.palette.text.primary,
                             }}
-                            onClick={() => handleChangeNetwork(network.name)}
+                            onClick={() => changeNetwork(network.name)}
                         >
                             <Stack
                                 direction="row"
@@ -93,10 +122,10 @@ export default function NetworkSwitcher() {
                                 <Box sx={{ flexGrow: 1 }} />
                                 {!network.readonly && network.url !== activeNetwork.url && (
                                     <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-                                        <IconButton onClick={() => handleEditCustomNetwork()}>
+                                        <IconButton onClick={editNetwork}>
                                             <Icon path={mdiPencilOutline} size={0.8} />
                                         </IconButton>
-                                        <IconButton onClick={() => handleRemoveCustomNetwork()}>
+                                        <IconButton onClick={removeNetwork}>
                                             <Icon path={mdiDeleteOutline} size={0.8} />
                                         </IconButton>
                                     </Box>
@@ -122,7 +151,7 @@ export default function NetworkSwitcher() {
                         </MenuItem>
                     ))}
                     <MenuItem
-                        onClick={handleOpenModal}
+                        onClick={openModal}
                         sx={{
                             typography: 'body1',
                             width: '100%',
@@ -136,11 +165,11 @@ export default function NetworkSwitcher() {
                         </IconButton>
                     </MenuItem>
                 </MenuList>
-                <DialogAnimate open={open} onClose={handleCloseModal}>
+                <DialogAnimate open={open} onClose={closeModal}>
                     <DialogTitle>Add New Network</DialogTitle>
                     <AddNewNetwork
                         networks={networks}
-                        handleClose={handleCloseModal}
+                        handleClose={closeModal}
                         switchNetwork={switchNetwork}
                         edit={edit}
                         networkToEdit={networkToEdit}
