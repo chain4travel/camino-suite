@@ -167,7 +167,7 @@ export default function Navbar() {
                             ) : (
                                 <>
                                     <AliasPicker />
-                                    <LoginButton />
+                                    <LoginButton handleCloseSidebar={handleCloseSidebar} />
                                 </>
                             )}
                         </>

@@ -16,10 +16,10 @@ import { LoadAccountMenu } from '../LoadAccountMenu'
 import AliasPicker from './AliasPicker'
 
 interface LoginIconProps {
-    handleCloseSidebar?: () => void
+    handleCloseSidebar: () => void
 }
 
-export default function LoginIcon({ handleCloseSidebar }: LoginIconProps) {
+export default function LoginButton({ handleCloseSidebar }: LoginIconProps) {
     const cAddress = useAppSelector(state => state.appConfig.walletStore?.activeWallet?.ethAddress)
     const auth = useAppSelector(state => state.appConfig.isAuth)
     const dispatch = useAppDispatch()
