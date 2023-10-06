@@ -10,7 +10,7 @@ const WalletVersionComponent = () => {
 
     return (
         <>
-            <div ref={ref} />
+            <span ref={ref} />
         </>
     )
 }

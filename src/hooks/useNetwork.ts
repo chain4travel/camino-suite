@@ -34,6 +34,7 @@ const useNetwork = (): {
     const [open, setOpen] = useState(false)
     const [edit, setEdit] = useState(false)
     const [networkToEdit, setNetworkToEdit] = useState('')
+    const isAuth = useAppSelector(state => state.appConfig.isAuth)
 
     const networks: AvaNetwork[] = useAppSelector(getNetworks)
     const activeNetwork = useAppSelector<AvaNetwork>(getActiveNetwork)
@@ -56,7 +57,7 @@ const useNetwork = (): {
             }
             await store.dispatch('Network/setNetwork', network)
             dispatch(changeNetworkStatus(Status.SUCCEEDED))
-            await store.dispatch('fetchMultiSigAliases', { disable: false })
+            if (isAuth) await store.dispatch('fetchMultiSigAliases', { disable: false })
             dispatch(updateShowButton())
             dispatch(
                 updateNotificationStatus({

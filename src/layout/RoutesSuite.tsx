@@ -75,7 +75,7 @@ export default function RoutesSuite() {
                     <Route path="/settings" element={<SettingsLayout />}>
                         <Route index element={<Settings />} />
                         <Route path="save-account" element={<Settings />} />
-                        <Route path="create-multisig" element={<MultisigWallet />} />
+                        <Route path="manage-multisig" element={<MultisigWallet />} />
                     </Route>
                 </Route>
                 <Route path="/login" element={<LoginPage />} />
