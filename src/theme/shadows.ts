@@ -2,7 +2,7 @@ import { alpha } from '@mui/material/styles'
 import { Shadows } from '@mui/material/styles/shadows'
 import palette from './palette'
 
-interface CustomShadowOptions {
+export interface CustomShadowOptions {
     z1: string
     z8: string
     z12: string
@@ -15,15 +15,6 @@ interface CustomShadowOptions {
     success: string
     warning: string
     error: string
-}
-
-declare module '@mui/material/styles' {
-    interface Theme {
-        customShadows: CustomShadowOptions
-    }
-    interface ThemeOptions {
-        customShadows?: CustomShadowOptions
-    }
 }
 
 const LIGHT_MODE = palette.light.grey[200]

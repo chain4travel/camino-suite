@@ -19,6 +19,12 @@ export const APPS_CONSTS = [
         private: false,
     },
     {
+        name: 'Partners',
+        subText: 'Partners of the Camino Network.',
+        url: '/partners',
+        private: false,
+    },
+    {
         name: 'Settings',
         subText: 'Manage your wallet settings.',
         url: '/settings',
@@ -37,3 +43,23 @@ export const APPS_CONSTS = [
 export const TIMEOUT_DURATION = 60000 * 20 // in milliseconde
 
 export const DRAWER_WIDTH = 300
+
+export const BUSINESS_FIELDS = [
+    'Aerospace',
+    'Customer Engagement',
+    'Loyalty',
+    'Transportation',
+    'Reviews',
+    'Consulting',
+    'Data Insights',
+    'Distribution',
+    'Finance',
+    'Hospitality',
+    'Software Development',
+    'Travel Technology',
+    'E-Mobility',
+    'Security',
+    'Software as a Service',
+    'Metaverse',
+    'Climate Technology',
+]

@@ -1,8 +1,8 @@
-import { Box, Toolbar } from '@mui/material'
 import React from 'react'
 import { Outlet } from 'react-router'
+import { Box, Toolbar } from '@mui/material'
 import Links from '../views/settings/Links'
-const SettingsLayout = () => {
+const PartnersLayout = () => {
     return (
         <Box
             sx={{
@@ -19,7 +19,7 @@ const SettingsLayout = () => {
                     borderColor: 'rgba(145, 158, 171, 0.24)',
                     background: theme => theme.palette.background.paper,
                     flexGrow: 1,
-                    p: '1.5rem',
+                    px: '0rem !important',
                     zIndex: 9,
                     position: 'fixed',
                     top: '65px',
@@ -30,11 +30,11 @@ const SettingsLayout = () => {
                     right: 0,
                 }}
             >
-                <Links type={true} />
+                <Links />
             </Toolbar>
             <Outlet />
         </Box>
     )
 }
 
-export default SettingsLayout
+export default PartnersLayout
