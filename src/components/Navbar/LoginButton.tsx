@@ -1,15 +1,15 @@
-import React from 'react'
-import { useAppDispatch, useAppSelector } from '../../hooks/reduxHooks'
-import { MenuItem, MenuList, Select, IconButton, useTheme, Typography, Chip } from '@mui/material'
-import store from 'wallet/store'
-import { useNavigate } from 'react-router-dom'
-import { getAccount, updateAccount, changeActiveApp } from '../../redux/slices/app-config'
-import { mdiLogout, mdiCogOutline } from '@mdi/js'
+import { mdiCogOutline, mdiLogout } from '@mdi/js'
 import Icon from '@mdi/react'
+import { Chip, IconButton, MenuItem, MenuList, Select, Typography, useTheme } from '@mui/material'
+import { default as React } from 'react'
+import { useNavigate } from 'react-router-dom'
+import store from 'wallet/store'
+import { useAppDispatch, useAppSelector } from '../../hooks/reduxHooks'
+import { changeActiveApp, getAccount, updateAccount } from '../../redux/slices/app-config'
+import { updateAuthStatus } from '../../redux/slices/utils'
 import MHidden from '../@material-extend/MHidden'
 import { LoadAccountMenu } from '../LoadAccountMenu'
 import AliasPicker from './AliasPicker'
-import { updateAuthStatus } from '../../redux/slices/utils'
 
 interface LoginIconProps {
     handleCloseSidebar: () => void
@@ -104,10 +104,9 @@ export default function LoginButton({ handleCloseSidebar }: LoginIconProps) {
                                     handleKeyDown(e)
                                 }}
                                 sx={{
-                                    typography: 'body1',
+                                    typography: 'body2',
                                     width: '100%',
                                     maxWidth: '326px',
-                                    display: 'flex',
                                     justifyContent: { xs: 'flex-end', sm: 'center' },
                                 }}
                             >
@@ -120,7 +119,7 @@ export default function LoginButton({ handleCloseSidebar }: LoginIconProps) {
                                 onKeyDown={e => {
                                     handleKeyDown(e)
                                 }}
-                                sx={{ typography: 'body1', width: '100%', maxWidth: '326px' }}
+                                sx={{ typography: 'body2', width: '100%', maxWidth: '326px' }}
                             >
                                 <LoadAccountMenu type="kyc" />
                             </MenuItem>
@@ -153,7 +152,7 @@ export default function LoginButton({ handleCloseSidebar }: LoginIconProps) {
                                 onKeyDown={e => handleKeyDown(e)}
                                 onClick={logout}
                                 sx={{
-                                    typography: 'body1',
+                                    typography: 'body2',
                                     width: '100%',
                                     maxWidth: '326px',
                                     display: 'flex',
