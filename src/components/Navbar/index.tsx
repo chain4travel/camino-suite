@@ -21,10 +21,11 @@ import ThemeSwitcher from './ThemeSwitcher'
 import LoginButton from './LoginButton'
 import MHidden from '../@material-extend/MHidden'
 import MIconButton from '../@material-extend/MIconButton'
-import { updateAccount, updateAuthStatus } from '../../redux/slices/app-config'
+import { updateAccount } from '../../redux/slices/app-config'
 import store from 'wallet/store'
 import { TIMEOUT_DURATION, DRAWER_WIDTH } from '../../constants/apps-consts'
 import AliasPicker from './AliasPicker'
+import { updateAuthStatus } from '../../redux/slices/utils'
 
 export default function Navbar() {
     const theme = useTheme()

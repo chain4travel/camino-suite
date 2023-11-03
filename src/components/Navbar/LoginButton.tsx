@@ -3,17 +3,13 @@ import { useAppDispatch, useAppSelector } from '../../hooks/reduxHooks'
 import { MenuItem, MenuList, Select, IconButton, useTheme, Typography, Chip } from '@mui/material'
 import store from 'wallet/store'
 import { useNavigate } from 'react-router-dom'
-import {
-    getAccount,
-    updateAuthStatus,
-    updateAccount,
-    changeActiveApp,
-} from '../../redux/slices/app-config'
+import { getAccount, updateAccount, changeActiveApp } from '../../redux/slices/app-config'
 import { mdiLogout, mdiCogOutline } from '@mdi/js'
 import Icon from '@mdi/react'
 import MHidden from '../@material-extend/MHidden'
 import { LoadAccountMenu } from '../LoadAccountMenu'
 import AliasPicker from './AliasPicker'
+import { updateAuthStatus } from '../../redux/slices/utils'
 
 interface LoginIconProps {
     handleCloseSidebar: () => void
