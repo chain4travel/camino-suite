@@ -1,8 +1,9 @@
+import React, { useEffect, useRef, useState } from 'react'
 import { mountAccessComponents } from 'wallet/mountAccessComponents'
-import React, { useRef, useEffect, useState } from 'react'
-import { updateAccount, updateAuthStatus, updateValues } from '../../redux/slices/app-config'
 import { useAppDispatch } from '../../hooks/reduxHooks'
 import { useEffectOnce } from '../../hooks/useEffectOnce'
+import { updateAccount, updateValues } from '../../redux/slices/app-config'
+import { updateAuthStatus } from '../../redux/slices/utils'
 
 const LoadComponent = ({ type, props }) => {
     const ref = useRef(null)

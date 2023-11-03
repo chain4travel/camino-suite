@@ -25,6 +25,13 @@ export const APPS_CONSTS = [
         private: true,
         hidden: true,
     },
+    {
+        name: 'Partners',
+        subText: 'Lookup network activity and statistics.',
+        url: '/foundation',
+        private: true,
+        hidden: true,
+    },
 ]
 
 export const TIMEOUT_DURATION = 60000 * 20 // in milliseconde

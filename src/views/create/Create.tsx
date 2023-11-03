@@ -2,12 +2,8 @@ import React, { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { mountCreateWallet } from 'wallet/mountCreate'
 import { useAppDispatch, useAppSelector } from '../../hooks/reduxHooks'
-import {
-    getActiveApp,
-    selectAuthStatus,
-    updateAuthStatus,
-    updateValues,
-} from '../../redux/slices/app-config'
+import { getActiveApp, selectAuthStatus, updateValues } from '../../redux/slices/app-config'
+import { updateAuthStatus } from '../../redux/slices/utils'
 
 const CreateWallet = () => {
     const ref = useRef(null)
