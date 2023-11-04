@@ -57,7 +57,7 @@ const appConfigSlice = createSlice({
         },
         updateApps(state, { payload }) {
             if (payload) {
-                state.apps.find(elem => elem.name === 'Partners')
+                state.apps.find(elem => elem.name === 'Foundation')
                 let t = state.apps
                 t[4].hidden = false
                 state.apps = [...t]
@@ -71,7 +71,7 @@ const appConfigSlice = createSlice({
     extraReducers: builder => {
         builder.addCase(updateAuthStatus.fulfilled, (state, { payload }) => {
             if (store.getters['Platform/isOfferCreator']) {
-                state.apps.find(elem => elem.name === 'Partners')
+                state.apps.find(elem => elem.name === 'Foundation')
                 let t = state.apps
                 t[4].hidden = false
                 state.apps = [...t]

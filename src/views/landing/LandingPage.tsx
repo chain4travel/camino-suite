@@ -41,7 +41,7 @@ export default function LandingPage() {
                     {allApps?.map((app, index) => {
                         if (
                             !app.hidden &&
-                            (app.private === false || (app.name === 'Partners' && isAuth))
+                            (app.private === false || (app.name === 'Foundation' && isAuth))
                         )
                             return (
                                 <Grid item key={index} xs={12} sm={12} md>
