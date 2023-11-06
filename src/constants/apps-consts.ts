@@ -27,7 +27,7 @@ export const APPS_CONSTS = [
     },
     {
         name: 'Foundation',
-        subText: 'Lookup network activity and statistics.',
+        subText: 'Tools for foundation members.',
         url: '/foundation',
         private: true,
         hidden: true,
