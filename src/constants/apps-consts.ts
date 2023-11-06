@@ -20,14 +20,14 @@ export const APPS_CONSTS = [
     },
     {
         name: 'Settings',
-        subText: 'Lookup network activity and statistics.',
+        subText: 'Manage your wallet settings.',
         url: '/settings',
         private: true,
         hidden: true,
     },
     {
-        name: 'Partners',
-        subText: 'Lookup network activity and statistics.',
+        name: 'Foundation',
+        subText: 'Tools for foundation members.',
         url: '/foundation',
         private: true,
         hidden: true,
