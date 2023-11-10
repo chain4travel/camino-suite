@@ -96,44 +96,29 @@ Cypress.Commands.add('changeNetwork', (network: string = 'Kopernikus') => {
         })
 })
 Cypress.Commands.add('accessWallet', (type, keyName, networkName: string = 'kopernikus') => {
-    //cy.get('header > .MuiToolbar-root > .MuiBox-root:nth-child(2)').as('elPreferenceMenu')
-    // cy.get('@elPreferenceMenu').find('> .MuiBox-root').as('btnWallet')
-    // cy.get('@btnWallet').click()
-
     cy.selectWalletApp()
     cy.wait(5000)
-    cy.get('h6 + .MuiGrid-container').as('elWalletOptions')
-    cy.get('@elWalletOptions')
-        .find('> .MuiGrid-container:nth-child(1) > :nth-child(1)')
-        .as('elPrivateKeyOption')
-    cy.get('@elWalletOptions')
-        .find('> .MuiGrid-container:nth-child(1) > :nth-child(2)')
-        .as('elMnemonicOption')
-    switch (type) {
-        case 'privateKey':
-            {
-                cy.get('@elPrivateKeyOption').click()
-                cy.fixture(`${networkName}/private_key_wallet`).then(privateKeys => {
-                    cy.get('[data-cy="field-private-key"]').type(
-                        privateKeys[keyName || 'privateKey'],
-                    )
-                })
-                cy.get('button[type="button"]').contains('Access Wallet').click()
+    cy.get('[data-cy="app-selector-menu"]').click()
+    cy.get('[data-cy="app-selector-Wallet"]').click()
+
+    if (type === 'mnemonic') {
+        cy.get('[data-cy="btn-wallet-access-mnemonic"]').click()
+        cy.readFile(`cypress/temp/wallets/mnemonic_wallet.json`).then(data => {
+            let phraseArr = data
+            for (let i = 0; i < phraseArr.length; i++) {
+                let indexInput = i + 1
+                cy.get(`[data-cy="mnemonic-field-${indexInput}"]`).type(phraseArr[i])
             }
-            break
-        case 'mnemonic':
-            {
-                cy.get('@elMnemonicOption').find('> .MuiButtonBase-root').click()
-                console.log(networkName)
-                cy.fixture(`${networkName}/mnemonic_wallet`).then(phraseArr => {
-                    const mnemonicStr = phraseArr.join(' ')
-                    cy.get('input.phrase_word').first()?.type(mnemonicStr)
-                    cy.get('button[type="button"]').contains('Access Wallet').click()
-                })
-            }
-            break
-        default:
-            break
+            cy.get('[data-cy="btn-submit-mnemonic-phrase"]').click({ force: true })
+        })
+    }
+    if (type === 'privateKey') {
+        cy.get('[data-cy="btn-wallet-access-private-key"]', { timeout: 10000 }).click()
+        cy.readFile('cypress/temp/wallets/private_key_wallet.json').then(privateKey => {
+            const privateKeyCChain = privateKey.privateKey
+            cy.get('[data-cy="field-private-key"]', { timeout: 10000 }).type(privateKeyCChain)
+        })
+        cy.get('[data-cy="btn-submit-private-key"]').click()
     }
     cy.get('[data-cy="btn-show-breakdown"]', { timeout: 20000 }).should('be.visible')
     // cy.intercept('GET', '**/api/v1/verified/*').as('apiVerifiedAddress')
@@ -217,17 +202,11 @@ Cypress.Commands.add(
         cy.changeNetwork(network)
 
         cy.wait(5000)
-        cy.get('h6 + .MuiGrid-container').as('elWalletOptions')
-        cy.get('@elWalletOptions')
-            .find('> .MuiGrid-container:nth-child(1) > :nth-child(1)')
-            .as('elPrivateKeyOption')
-        cy.get('@elWalletOptions')
-            .find('> .MuiGrid-container:nth-child(1) > :nth-child(2)')
-            .as('elMnemonicOption')
+
         switch (walletAccessType) {
             case 'privateKey':
                 {
-                    cy.get('@elPrivateKeyOption').click()
+                    cy.get('[data-cy="btn-wallet-access-private-key"]').click()
                     cy.fixture(`${network.toLowerCase()}/private_key_wallet`).then(privateKeys => {
                         cy.get('[data-cy="field-private-key"]').type(
                             privateKeys[keyName || 'privateKey'],
@@ -238,7 +217,7 @@ Cypress.Commands.add(
                 break
             case 'mnemonic':
                 {
-                    cy.get('@elMnemonicOption').find('> .MuiButtonBase-root').click()
+                    cy.get('[data-cy="btn-wallet-access-mnemonic"]').click()
                     console.log(network)
                     cy.fixture(`${network.toLowerCase()}/mnemonic_wallet`).then(phraseArr => {
                         const mnemonicStr = phraseArr.join(' ')

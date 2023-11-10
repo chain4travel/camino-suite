@@ -161,7 +161,7 @@ export default function Navbar() {
                                     }}
                                 >
                                     <Icon path={mdiWalletOutline} size={1} />
-                                    <Typography variant="subtitle1" component="span">
+                                    <Typography variant="body2" component="span">
                                         Login
                                     </Typography>
                                 </Box>
