@@ -9,6 +9,10 @@ export const getChains = createAsyncThunk('appConfig/chains', async () => {
 })
 
 export async function getMultisigAliases(ownersAddresses: string[]): Promise<string[]> {
-    let res = await axios.get(`${getBaseUrl()}/v2/multisigalias/${ownersAddresses.join(',')}`)
-    return res.data.alias
+    try {
+        let res = await axios.get(`${getBaseUrl()}/v2/multisigalias/${ownersAddresses.join(',')}`)
+        return res.data.alias
+    } catch (e) {
+        return []
+    }
 }
