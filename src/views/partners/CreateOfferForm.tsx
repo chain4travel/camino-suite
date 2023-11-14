@@ -1,10 +1,15 @@
 import React, { useEffect, useRef } from 'react'
+import { useNavigate } from 'react-router'
 import { mountCreateOfferForm } from 'wallet/mountCreateOfferForm'
 
 const LoadCreateOfferForm = () => {
     const ref = useRef(null)
+    const navigate = useNavigate()
     useEffect(() => {
-        mountCreateOfferForm(ref.current, { isSuite: true })
+        mountCreateOfferForm(ref.current, {
+            isSuite: true,
+            navigate: location => navigate(location),
+        })
     }, [])
 
     return (
