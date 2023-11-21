@@ -15,6 +15,7 @@ import SettingsLayout from './SettingsLayout'
 import Wallet from '../views/wallet/WalletApp'
 import { getActiveNetwork } from '../redux/slices/network'
 import { useAppSelector } from '../hooks/reduxHooks'
+import VoteApp from '../views/vote/VoteApp'
 
 export default function RoutesSuite() {
     const navigate = useNavigate()
@@ -68,6 +69,9 @@ export default function RoutesSuite() {
                             path="/explorer"
                             element={<Navigate to={`/explorer/${networkAliasToUrl}`} />}
                         />
+
+                        <Route path={`/dac/*`} element={<VoteApp />} />
+                        <Route path={`/dac`} element={<Navigate to="/dac/active" />} />
                     </>
                 ) : null}
                 <Route element={<Protected />}>
