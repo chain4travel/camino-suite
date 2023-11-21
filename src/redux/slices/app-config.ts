@@ -1,8 +1,9 @@
 import { createSlice } from '@reduxjs/toolkit'
-import { RootState } from '../store'
+import store from 'wallet/store'
 import { Status, SuitePlatforms } from '../../@types'
 import { APPS_CONSTS } from '../../constants/apps-consts'
-
+import { RootState } from '../store'
+import { updateAuthStatus } from './utils'
 type NotificationSeverityType = 'success' | 'warning' | 'info' | 'error'
 
 interface InitialStateAppConfigType {
@@ -41,9 +42,6 @@ const appConfigSlice = createSlice({
         updateValues(state, { payload }) {
             state.walletStore = payload
         },
-        updateAuthStatus(state, { payload }) {
-            state.isAuth = payload
-        },
         updateAccount(state, { payload }) {
             state.account = payload
         },
@@ -57,6 +55,37 @@ const appConfigSlice = createSlice({
         updateShowButton(state) {
             state.showButton = !state.showButton
         },
+        updateApps(state, { payload }) {
+            if (payload) {
+                state.apps.find(elem => elem.name === 'Foundation')
+                let t = state.apps
+                t[4].hidden = false
+                state.apps = [...t]
+            } else {
+                let t = state.apps
+                t[4].hidden = true
+                state.apps = [...t]
+            }
+        },
+    },
+    extraReducers: builder => {
+        builder.addCase(updateAuthStatus.fulfilled, (state, { payload }) => {
+            if (store.getters['Platform/isOfferCreator']) {
+                state.apps.find(elem => elem.name === 'Foundation')
+                let t = state.apps
+                t[4].hidden = false
+                state.apps = [...t]
+            }
+            if (!payload) {
+                let t = state.apps
+                t[4].hidden = true
+                state.apps = [...t]
+            }
+            state.isAuth = payload
+        })
+        builder.addCase(updateAuthStatus.rejected, (state, { payload }) => {
+            state.isAuth = false
+        })
     },
 })
 
@@ -90,7 +119,7 @@ export const getShowButton = (state: RootState) => state.appConfig.showButton
 export const {
     changeActiveApp,
     updateValues,
-    updateAuthStatus,
+    updateApps,
     updateAccount,
     updateNotificationStatus,
     updateShowButton,

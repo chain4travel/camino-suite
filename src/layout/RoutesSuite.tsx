@@ -1,21 +1,23 @@
-import { Navigate, Route, Routes, useNavigate } from 'react-router-dom'
 import React, { useEffect, useState } from 'react'
+import { Navigate, Route, Routes, useNavigate } from 'react-router-dom'
 
+import { useAppSelector } from '../hooks/reduxHooks'
+import { getActiveNetwork } from '../redux/slices/network'
 import AccessLayout from '../views/access'
+import MountAccessComponent from '../views/access/MountAccessComponent'
 import Create from '../views/create/Create'
 import ExplorerApp from '../views/explorer/ExplorerApp'
 import LandingPage from '../views/landing/LandingPage'
 import Legal from '../views/legal/Legal'
 import LoginPage from '../views/login/LoginPage'
-import MountAccessComponent from '../views/access/MountAccessComponent'
+import Partners from '../views/partners'
 import MultisigWallet from '../views/settings/MultisigWallet'
-import Protected from './Protected'
 import Settings from '../views/settings/index'
-import SettingsLayout from './SettingsLayout'
 import Wallet from '../views/wallet/WalletApp'
-import { getActiveNetwork } from '../redux/slices/network'
-import { useAppSelector } from '../hooks/reduxHooks'
 import VoteApp from '../views/vote/VoteApp'
+import CreateDepositsLayout from './CreateDepositLayout'
+import Protected from './Protected'
+import SettingsLayout from './SettingsLayout'
 
 export default function RoutesSuite() {
     const navigate = useNavigate()
@@ -79,7 +81,10 @@ export default function RoutesSuite() {
                     <Route path="/settings" element={<SettingsLayout />}>
                         <Route index element={<Settings />} />
                         <Route path="save-account" element={<Settings />} />
-                        <Route path="create-multisig" element={<MultisigWallet />} />
+                        <Route path="manage-multisig" element={<MultisigWallet />} />
+                    </Route>
+                    <Route path="/foundation" element={<CreateDepositsLayout />}>
+                        <Route index element={<Partners />} />
                     </Route>
                 </Route>
                 <Route path="/login" element={<LoginPage />} />
