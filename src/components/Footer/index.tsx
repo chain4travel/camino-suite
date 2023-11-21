@@ -106,7 +106,7 @@ export default function Footer() {
                                     sx={{ display: 'flex', flexDirection: 'column' }}
                                 >
                                     <Typography
-                                        variant="subtitle1"
+                                        variant="body1"
                                         component="span"
                                         fontWeight="fontWeightBold"
                                         sx={{
@@ -139,7 +139,7 @@ export default function Footer() {
                                                     style={{ textDecoration: 'none' }}
                                                 >
                                                     <Typography
-                                                        variant="body1"
+                                                        variant="body2"
                                                         component="span"
                                                         sx={{ color: 'grey.500' }}
                                                     >
@@ -157,7 +157,7 @@ export default function Footer() {
                     <Grid container sx={{ mt: 2 }} justifyContent="space-between">
                         <Grid item xs={12} md={6}>
                             <Typography
-                                variant="subtitle1"
+                                variant="body1"
                                 component="p"
                                 sx={{
                                     textAlign: { xs: 'center', md: 'left' },
@@ -175,33 +175,29 @@ export default function Footer() {
                                     justifyContent: { xs: 'center', md: 'flex-end' },
                                 }}
                             >
-                                {process.env.NODE_ENV === 'development' ? (
-                                    <Tooltip
-                                        TransitionComponent={Fade}
-                                        TransitionProps={{ timeout: 600 }}
-                                        title={<Version />}
-                                        placement="top"
-                                        PopperProps={{
-                                            sx: {
-                                                '& .MuiTooltip-tooltip': {
-                                                    maxWidth: '500px !important',
-                                                },
+                                <Tooltip
+                                    TransitionComponent={Fade}
+                                    TransitionProps={{ timeout: 600 }}
+                                    title={<Version />}
+                                    placement="top"
+                                    PopperProps={{
+                                        sx: {
+                                            '& .MuiTooltip-tooltip': {
+                                                maxWidth: '500px !important',
                                             },
-                                        }}
-                                    >
-                                        <Icon path={mdiInformationOutline} size={0.85} />
-                                    </Tooltip>
-                                ) : (
+                                        },
+                                    }}
+                                >
                                     <Icon path={mdiInformationOutline} size={0.85} />
-                                )}
+                                </Tooltip>
 
                                 <Link
                                     rel="noopener noreferrer"
                                     target="_blank"
-                                    style={{ textDecoration: 'none' }}
+                                    style={{ textDecoration: 'none', color: 'inherit' }}
                                     to={SUITE_RELEASES}
                                 >
-                                    <Typography variant="body1" component="p" color="primary">
+                                    <Typography variant="body2" component="p" color="inherit">
                                         {process.env.VERSION}
                                     </Typography>
                                 </Link>

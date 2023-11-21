@@ -11,7 +11,7 @@ import { useEffect, useState } from 'react'
 import { AvaNetwork } from 'wallet/AvaNetwork'
 import store from 'wallet/store'
 import { Status } from '../@types'
-import { updateNotificationStatus, updateShowButton } from '../redux/slices/app-config'
+import { updateApps, updateNotificationStatus, updateShowButton } from '../redux/slices/app-config'
 import { useAppDispatch, useAppSelector } from './reduxHooks'
 
 const useNetwork = (): {
@@ -34,6 +34,7 @@ const useNetwork = (): {
     const [open, setOpen] = useState(false)
     const [edit, setEdit] = useState(false)
     const [networkToEdit, setNetworkToEdit] = useState('')
+    const isAuth = useAppSelector(state => state.appConfig.isAuth)
 
     const networks: AvaNetwork[] = useAppSelector(getNetworks)
     const activeNetwork = useAppSelector<AvaNetwork>(getActiveNetwork)
@@ -56,7 +57,11 @@ const useNetwork = (): {
             }
             await store.dispatch('Network/setNetwork', network)
             dispatch(changeNetworkStatus(Status.SUCCEEDED))
-            await store.dispatch('fetchMultiSigAliases', { disable: false })
+            if (isAuth) {
+                await store.dispatch('fetchMultiSigAliases', { disable: false })
+                await store.dispatch('Platform/updateAddressStates')
+                dispatch(updateApps(store.getters['Platform/isOfferCreator']))
+            }
             dispatch(updateShowButton())
             dispatch(
                 updateNotificationStatus({

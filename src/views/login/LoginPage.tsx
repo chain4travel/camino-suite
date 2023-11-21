@@ -91,7 +91,7 @@ export default function LoginPage() {
                 <LoadAccountMenu />
                 {/* Access wallet section */}
                 <Box sx={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                    <Typography variant="subtitle1">Access your Camino Wallets</Typography>
+                    <Typography variant="body2">Access your Camino Wallets</Typography>
                     <Grid container rowSpacing={2}>
                         <Grid container item xs={12} justifyContent="center" spacing={2}>
                             <Grid item xs={12} sm={6}>
@@ -99,7 +99,7 @@ export default function LoginPage() {
                                     data-cy="btn-wallet-access-private-key"
                                     to="/access/privateKey"
                                 >
-                                    <Typography variant="body1">Private Key</Typography>
+                                    <Typography variant="body2">Private Key</Typography>
                                     <Icon path={mdiShieldKeyOutline} size={1} />
                                 </AccessActionButton>
                             </Grid>
@@ -108,7 +108,7 @@ export default function LoginPage() {
                                     data-cy="btn-wallet-access-mnemonic"
                                     to="/access/mnemonic"
                                 >
-                                    <Typography variant="body1">Mnemonic Key Phrase</Typography>
+                                    <Typography variant="body2">Mnemonic Key Phrase</Typography>
                                     <Icon path={mdiListBoxOutline} size={1} />
                                 </AccessActionButton>
                             </Grid>
@@ -116,13 +116,13 @@ export default function LoginPage() {
                         <Grid container item xs={12} justifyContent="center" spacing={2}>
                             <Grid item xs={12} sm={6}>
                                 <AccessActionButton to="/access/keystore">
-                                    <Typography variant="body1">Keystore File</Typography>
+                                    <Typography variant="body2">Keystore File</Typography>
                                     <Icon path={mdiFileKeyOutline} size={1} />
                                 </AccessActionButton>
                             </Grid>
                             <Grid item xs={12} sm={6} sx={{ cursor: 'not-allowed' }}>
                                 <AccessActionButton disabled>
-                                    <Typography variant="body1">Ledger</Typography>
+                                    <Typography variant="body2">Ledger</Typography>
                                     <Icon path={mdiListBoxOutline} size={1} />
                                 </AccessActionButton>
                             </Grid>
@@ -131,19 +131,19 @@ export default function LoginPage() {
                 </Box>
                 {/* Actions section */}
                 <Box sx={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                    <Typography variant="subtitle1">Don't have a wallet yet ?</Typography>
+                    <Typography variant="body2">Don't have a wallet yet ?</Typography>
                     <StyledLink to="/create" style={{ textDecoration: 'none' }}>
                         <Button
                             variant="contained"
                             sx={{ p: '.75rem', width: '100%' }}
                             data-cy="btn-redirect-create-wallet"
                         >
-                            <Typography variant="body1" color="white">
+                            <Typography variant="body2" color="white">
                                 Create a wallet
                             </Typography>
                         </Button>
                     </StyledLink>
-                    <Typography variant="body2" color="text.secondary">
+                    <Typography variant="caption" color="text.secondary">
                         By using this application, you agree to the&nbsp;
                         <StyledExternalLink
                             href="/legal"

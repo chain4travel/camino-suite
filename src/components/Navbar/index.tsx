@@ -21,10 +21,11 @@ import ThemeSwitcher from './ThemeSwitcher'
 import LoginButton from './LoginButton'
 import MHidden from '../@material-extend/MHidden'
 import MIconButton from '../@material-extend/MIconButton'
-import { updateAccount, updateAuthStatus } from '../../redux/slices/app-config'
+import { updateAccount } from '../../redux/slices/app-config'
 import store from 'wallet/store'
 import { TIMEOUT_DURATION, DRAWER_WIDTH } from '../../constants/apps-consts'
 import AliasPicker from './AliasPicker'
+import { updateAuthStatus } from '../../redux/slices/utils'
 
 export default function Navbar() {
     const theme = useTheme()
@@ -47,6 +48,11 @@ export default function Navbar() {
             dispatch(updateAccount(null))
             dispatch(updateAuthStatus(false))
         }
+    }
+
+    const navigateToLogin = () => {
+        navigate('/login')
+        handleCloseSidebar()
     }
 
     useIdleTimer({
@@ -84,7 +90,7 @@ export default function Navbar() {
                     <MHidden width="smUp">
                         {!auth && (
                             <Box
-                                onClick={() => navigate('/login')}
+                                onClick={navigateToLogin}
                                 sx={{
                                     display: 'flex',
                                     alignItems: 'center',
@@ -120,7 +126,7 @@ export default function Navbar() {
                                 >
                                     <Box>
                                         <ThemeSwitcher />
-                                        <IconButton onClick={() => navigate('/login')}>
+                                        <IconButton onClick={navigateToLogin}>
                                             <Icon path={mdiWalletOutline} size={1} />
                                         </IconButton>
                                     </Box>
@@ -129,9 +135,11 @@ export default function Navbar() {
                                         <Icon path={mdiClose} size={1} />
                                     </MIconButton>
                                 </Stack>
-                                {activeNetwork && <NetworkSwitcher />}
+                                {activeNetwork && (
+                                    <NetworkSwitcher handleCloseSidebar={handleCloseSidebar} />
+                                )}
                             </Box>
-                            {auth && <LoginButton />}
+                            {auth && <LoginButton handleCloseSidebar={handleCloseSidebar} />}
                         </Drawer>
                         <MIconButton onClick={handleOpenSidebar}>
                             <Icon path={mdiMenu} size={1} />
@@ -153,14 +161,14 @@ export default function Navbar() {
                                     }}
                                 >
                                     <Icon path={mdiWalletOutline} size={1} />
-                                    <Typography variant="subtitle1" component="span">
+                                    <Typography variant="body2" component="span">
                                         Login
                                     </Typography>
                                 </Box>
                             ) : (
                                 <>
                                     <AliasPicker />
-                                    <LoginButton />
+                                    <LoginButton handleCloseSidebar={handleCloseSidebar} />
                                 </>
                             )}
                         </>

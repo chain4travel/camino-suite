@@ -1,12 +1,26 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Navigate, Outlet } from 'react-router-dom'
-import { useAppSelector } from '../hooks/reduxHooks'
+import { updateAssets } from '../helpers/walletStore'
+import { useEffectOnce } from '../hooks/useEffectOnce'
+import store from 'wallet/store'
+
+const OutletWrraper = () => {
+    const [fetch, setFetch] = useState(false)
+    const fetchUTXOs = async () => {
+        await updateAssets()
+        setFetch(true)
+    }
+    useEffectOnce(() => {
+        fetchUTXOs()
+    })
+    if (!fetch) return <></>
+    return <Outlet />
+}
 
 function Protected() {
-    const auth = useAppSelector(state => state.appConfig.isAuth)
-    if (auth === false) {
+    if (!store.state.isAuth) {
         return <Navigate to="/login" replace />
     }
-    return <Outlet />
+    return <OutletWrraper />
 }
 export default Protected
