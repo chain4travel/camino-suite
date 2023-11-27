@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { mdiClose, mdiMenu, mdiWalletOutline } from '@mdi/js'
 import Icon from '@mdi/react'
 import {
     AppBar,
@@ -10,22 +10,22 @@ import {
     Typography,
     useTheme,
 } from '@mui/material'
+import React, { useState } from 'react'
 import { useIdleTimer } from 'react-idle-timer'
-import { mdiClose, mdiMenu, mdiWalletOutline } from '@mdi/js'
 import { useNavigate } from 'react-router-dom'
+import store from 'wallet/store'
+import { DRAWER_WIDTH, TIMEOUT_DURATION } from '../../constants/apps-consts'
 import { useAppDispatch, useAppSelector } from '../../hooks/reduxHooks'
+import { updateAccount } from '../../redux/slices/app-config'
 import { getActiveNetwork } from '../../redux/slices/network'
-import PlatformSwitcher from '../PlatformSwitcher'
-import NetworkSwitcher from './NetworkSwitcher'
-import ThemeSwitcher from './ThemeSwitcher'
-import LoginButton from './LoginButton'
+import { updateAuthStatus } from '../../redux/slices/utils'
 import MHidden from '../@material-extend/MHidden'
 import MIconButton from '../@material-extend/MIconButton'
-import { updateAccount } from '../../redux/slices/app-config'
-import store from 'wallet/store'
-import { TIMEOUT_DURATION, DRAWER_WIDTH } from '../../constants/apps-consts'
-import AliasPicker from './AliasPicker'
-import { updateAuthStatus } from '../../redux/slices/utils'
+import PlatformSwitcher from '../PlatformSwitcher'
+import Account from './Account'
+import LoggedInAccount from './LoggedInAccount'
+import NetworkSwitcher from './NetworkSwitcher'
+import ThemeSwitcher from './ThemeSwitcher'
 
 export default function Navbar() {
     const theme = useTheme()
@@ -124,7 +124,7 @@ export default function Navbar() {
                                     justifyContent="center"
                                     sx={{ padding: theme.spacing(2) }}
                                 >
-                                    <Box>
+                                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
                                         <ThemeSwitcher />
                                         <IconButton onClick={navigateToLogin}>
                                             <Icon path={mdiWalletOutline} size={1} />
@@ -139,7 +139,7 @@ export default function Navbar() {
                                     <NetworkSwitcher handleCloseSidebar={handleCloseSidebar} />
                                 )}
                             </Box>
-                            {auth && <LoginButton handleCloseSidebar={handleCloseSidebar} />}
+                            {auth && <Account handleCloseSidebar={handleCloseSidebar} />}
                         </Drawer>
                         <MIconButton onClick={handleOpenSidebar}>
                             <Icon path={mdiMenu} size={1} />
@@ -148,7 +148,7 @@ export default function Navbar() {
                     {/* Desktop */}
                     <MHidden width="smDown">
                         <>
-                            <ThemeSwitcher />
+                            {!auth && <ThemeSwitcher />}
                             {activeNetwork && <NetworkSwitcher />}
                             {!auth ? (
                                 <Box
@@ -167,8 +167,8 @@ export default function Navbar() {
                                 </Box>
                             ) : (
                                 <>
-                                    <AliasPicker />
-                                    <LoginButton handleCloseSidebar={handleCloseSidebar} />
+                                    <LoggedInAccount />
+                                    <Account handleCloseSidebar={handleCloseSidebar} />
                                 </>
                             )}
                         </>
