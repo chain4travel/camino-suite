@@ -1,14 +1,20 @@
 import React, { useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router'
 import { mountCreateOfferForm } from 'wallet/mountCreateOfferForm'
+import { useAppDispatch } from '../../hooks/reduxHooks'
+import { changeActiveApp } from '../../redux/slices/app-config'
 
 const LoadCreateOfferForm = () => {
     const ref = useRef(null)
+    const dispatch = useAppDispatch()
     const navigate = useNavigate()
     useEffect(() => {
         mountCreateOfferForm(ref.current, {
             isSuite: true,
-            navigate: location => navigate(location),
+            navigate: location => {
+                dispatch(changeActiveApp('Network'))
+                navigate(location)
+            },
         })
     }, [])
 
