@@ -12,6 +12,7 @@ interface InitialStateAppConfigType {
     status: Status
     notificationStatus: boolean
     notificationMessage: string
+    notificationTitle: string
     notificationSeverity: NotificationSeverityType
     isAuth: boolean
     walletStore: any
@@ -28,6 +29,7 @@ let initialState: InitialStateAppConfigType = {
     notificationStatus: false,
     notificationSeverity: 'success',
     notificationMessage: '',
+    notificationTitle: '',
     account: null,
     showButton: false,
 }
@@ -50,6 +52,8 @@ const appConfigSlice = createSlice({
             if (payload && payload.severity) {
                 state.notificationSeverity = state.notificationStatus ? payload.severity : ''
                 state.notificationMessage = state.notificationStatus ? payload.message : ''
+                state.notificationTitle =
+                    state.notificationStatus && payload.title ? payload.title : ''
             }
         },
         updateShowButton(state) {
@@ -109,6 +113,9 @@ export const getNotificationStatus = (state: RootState) => state.appConfig.notif
 
 //select notification message
 export const getNotificationMessage = (state: RootState) => state.appConfig.notificationMessage
+
+//select notification message
+export const getNotificationTitle = (state: RootState) => state.appConfig.notificationTitle
 
 //select notification severity
 export const getNotificationSeverity = (state: RootState) => state.appConfig.notificationSeverity
