@@ -1,16 +1,16 @@
-import React, { useRef, useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
+import { Navigate, useNavigate } from 'react-router-dom'
 import { mount } from 'wallet/mountApp'
+import { updateAssets } from '../../helpers/walletStore'
 import { useAppDispatch, useAppSelector } from '../../hooks/reduxHooks'
+import { useEffectOnce } from '../../hooks/useEffectOnce'
 import {
     updateAccount,
-    updateAuthStatus,
     updateNotificationStatus,
     updateShowButton,
     updateValues,
 } from '../../redux/slices/app-config'
-import { Navigate, useNavigate } from 'react-router-dom'
-import { updateAssets } from '../../helpers/walletStore'
-import { useEffectOnce } from '../../hooks/useEffectOnce'
+import { updateAuthStatus } from '../../redux/slices/utils'
 const LoadWallet = () => {
     const [updateStore, setUpdateStore] = useState(null)
     const [fetch, setFetch] = useState(false)
