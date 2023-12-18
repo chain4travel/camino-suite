@@ -1,23 +1,29 @@
-import { mdiCogOutline, mdiLogout } from '@mdi/js'
+import { mdiCog, mdiLogout } from '@mdi/js'
 import Icon from '@mdi/react'
-import { Chip, IconButton, MenuItem, MenuList, Select, Typography, useTheme } from '@mui/material'
-import { default as React } from 'react'
+import { Chip, MenuItem, MenuList, Select, Typography, useTheme } from '@mui/material'
+import React, { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import store from 'wallet/store'
+import {
+    getNameOfMultiSigWallet,
+    getPchainAddress,
+    isMultiSigWallet,
+} from '../../helpers/walletStore'
 import { useAppDispatch, useAppSelector } from '../../hooks/reduxHooks'
 import { changeActiveApp, getAccount, updateAccount } from '../../redux/slices/app-config'
 import { updateAuthStatus } from '../../redux/slices/utils'
 import MHidden from '../@material-extend/MHidden'
 import { LoadAccountMenu } from '../LoadAccountMenu'
 import AliasPicker from './AliasPicker'
+import ThemeSwitcher from './ThemeSwitcher'
 
 interface LoginIconProps {
     handleCloseSidebar: () => void
 }
 
-export default function LoginButton({ handleCloseSidebar }: LoginIconProps) {
-    const cAddress = useAppSelector(state => state.appConfig.walletStore?.activeWallet?.ethAddress)
+export default function Account({ handleCloseSidebar }: LoginIconProps) {
     const auth = useAppSelector(state => state.appConfig.isAuth)
+    const [_, setWalletName] = React.useState('')
     const dispatch = useAppDispatch()
     const navigate = useNavigate()
     const account = useAppSelector(getAccount)
@@ -35,6 +41,11 @@ export default function LoginButton({ handleCloseSidebar }: LoginIconProps) {
         navigate('/settings')
         handleCloseSidebar()
     }
+    useEffect(() => {
+        if (isMultiSigWallet()) {
+            setWalletName(getNameOfMultiSigWallet() || getPchainAddress())
+        } else setWalletName(getPchainAddress())
+    }, [auth])
 
     const handleKeyDown = e => {
         e.stopPropagation()
@@ -44,17 +55,20 @@ export default function LoginButton({ handleCloseSidebar }: LoginIconProps) {
         <>
             <MHidden width="smUp">
                 <MenuList sx={{ backgroundColor: 'transparent' }}>
-                    <MenuItem onClick={navigateToSettings}>
-                        <IconButton>
-                            <Icon path={mdiCogOutline} size={0.8} />
-                        </IconButton>
+                    <MenuItem
+                        sx={{
+                            typography: 'body2',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'start',
+                            gap: '8px',
+                        }}
+                        onClick={navigateToSettings}
+                    >
+                        <Icon path={mdiCog} size={0.8} />
                         <Typography variant="body1">Settings</Typography>
                     </MenuItem>
-                    {auth && (
-                        <MenuItem>
-                            <AliasPicker />
-                        </MenuItem>
-                    )}
+                    {auth && <AliasPicker />}
                     <MenuItem>
                         <LoadAccountMenu type="kyc" />
                     </MenuItem>
@@ -67,27 +81,44 @@ export default function LoginButton({ handleCloseSidebar }: LoginIconProps) {
                                 position: 'absolute',
                                 fontSize: '12px',
                                 height: '16px',
-                                top: 0,
-                                right: { xs: '0.3rem', sm: 0 },
+                                top: '5px',
+                                width: '50px',
+                                left: 'calc(100% - 55px)',
                             }}
                             label="beta"
                         />
                     </MenuItem>
-                    <MenuItem onClick={logout} sx={{ display: 'flex' }}>
-                        <IconButton>
-                            <Icon path={mdiLogout} size={0.8} />
-                        </IconButton>
-                        <Typography variant="body1">logout</Typography>
+                    <MenuItem
+                        onClick={logout}
+                        sx={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'start',
+                            gap: '8px',
+                        }}
+                    >
+                        <Icon path={mdiLogout} size={0.8} />
+                        <Typography variant="body2">Logout</Typography>
                     </MenuItem>
                 </MenuList>
             </MHidden>
             <MHidden width="smDown">
                 <>
-                    {cAddress && (
+                    {auth && (
                         <Select
-                            value={!account ? cAddress : <LoadAccountMenu type="" />}
+                            value={
+                                !account ? (
+                                    <Typography>Account</Typography>
+                                ) : (
+                                    <LoadAccountMenu type="" />
+                                )
+                            }
                             renderValue={() =>
-                                account ? <LoadAccountMenu type="" /> : `0x${cAddress}`
+                                account ? (
+                                    <LoadAccountMenu type="" />
+                                ) : (
+                                    <Typography>Account</Typography>
+                                )
                             }
                             sx={{
                                 maxWidth: '13rem',
@@ -98,23 +129,6 @@ export default function LoginButton({ handleCloseSidebar }: LoginIconProps) {
                                 handleKeyDown(e)
                             }}
                         >
-                            <MenuItem
-                                onClick={() => navigate('/settings')}
-                                onKeyDown={e => {
-                                    handleKeyDown(e)
-                                }}
-                                sx={{
-                                    typography: 'body2',
-                                    width: '100%',
-                                    maxWidth: '326px',
-                                    justifyContent: { xs: 'flex-end', sm: 'center' },
-                                }}
-                            >
-                                <IconButton>
-                                    <Icon path={mdiCogOutline} size={0.7} />
-                                </IconButton>
-                                <Typography variant="body1">Settings</Typography>
-                            </MenuItem>
                             <MenuItem
                                 onKeyDown={e => {
                                     handleKeyDown(e)
@@ -141,12 +155,35 @@ export default function LoginButton({ handleCloseSidebar }: LoginIconProps) {
                                         position: 'absolute',
                                         fontSize: '12px',
                                         height: '16px',
-                                        top: 0,
-                                        right: { xs: '0.3rem', sm: 0 },
+                                        top: '5px',
+                                        width: '50px',
+                                        left: 'calc(100% - 55px)',
                                     }}
                                     label="beta"
                                 />
                                 <LoadAccountMenu type="kyb" />
+                            </MenuItem>
+                            <MenuItem
+                                onClick={() => navigate('/settings')}
+                                onKeyDown={e => {
+                                    handleKeyDown(e)
+                                }}
+                                sx={{
+                                    typography: 'body2',
+                                    width: '100%',
+                                    maxWidth: '326px',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'start',
+                                    gap: '8px',
+                                }}
+                            >
+                                <Icon path={mdiCog} size={1} />
+                                <Typography variant="body2">Settings</Typography>
+                            </MenuItem>
+                            <AliasPicker />
+                            <MenuItem>
+                                <ThemeSwitcher />
                             </MenuItem>
                             <MenuItem
                                 onKeyDown={e => handleKeyDown(e)}
@@ -156,14 +193,13 @@ export default function LoginButton({ handleCloseSidebar }: LoginIconProps) {
                                     width: '100%',
                                     maxWidth: '326px',
                                     display: 'flex',
-                                    justifyContent: { xs: 'flex-end', sm: 'center' },
-                                    gap: '0.3rem',
+                                    alignItems: 'center',
+                                    justifyContent: 'start',
+                                    gap: '8px',
                                 }}
                             >
-                                <IconButton>
-                                    <Icon path={mdiLogout} size={0.7} />
-                                </IconButton>
-                                <Typography variant="body1">logout</Typography>
+                                <Icon path={mdiLogout} size={1} />
+                                <Typography variant="body2">Logout</Typography>
                             </MenuItem>
                         </Select>
                     )}
