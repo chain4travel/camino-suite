@@ -17,9 +17,11 @@ interface InitialStateAppConfigType {
     walletStore: any
     account: any
     showButton: boolean
+    pChainAddress: string
 }
 
 let initialState: InitialStateAppConfigType = {
+    pChainAddress: '',
     apps: APPS_CONSTS,
     activeApp: 0,
     status: Status.IDLE,
@@ -41,6 +43,9 @@ const appConfigSlice = createSlice({
         },
         updateValues(state, { payload }) {
             state.walletStore = payload
+        },
+        updatePchainAddress(state, { payload }) {
+            state.pChainAddress = payload
         },
         updateAccount(state, { payload }) {
             state.account = payload
@@ -116,6 +121,9 @@ export const getNotificationSeverity = (state: RootState) => state.appConfig.not
 // get selectedAlias
 export const getShowButton = (state: RootState) => state.appConfig.showButton
 
+// get PChainAddress
+export const getPChainAddress = (state: RootState) => state.appConfig.pChainAddress
+
 export const {
     changeActiveApp,
     updateValues,
@@ -123,5 +131,6 @@ export const {
     updateAccount,
     updateNotificationStatus,
     updateShowButton,
+    updatePchainAddress,
 } = appConfigSlice.actions
 export default appConfigSlice.reducer

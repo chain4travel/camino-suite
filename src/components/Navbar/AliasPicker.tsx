@@ -1,13 +1,20 @@
-import { mdiClose } from '@mdi/js'
+import { mdiClose, mdiOpenInNew } from '@mdi/js'
 import Icon from '@mdi/react'
-import { Box, DialogContent, DialogTitle, Divider, Typography, IconButton } from '@mui/material'
+import {
+    Box,
+    DialogContent,
+    DialogTitle,
+    Divider,
+    IconButton,
+    MenuItem,
+    Typography,
+} from '@mui/material'
 import React, { useEffect, useState } from 'react'
 import store from 'wallet/store'
 import { getMultisigAliases } from '../../api'
 import { useAppSelector } from '../../hooks/reduxHooks'
 import { getShowButton } from '../../redux/slices/app-config'
 import DialogAnimate from '../Animate/DialogAnimate'
-import MainButton from '../MainButton'
 import LoadMyKeysComponent from './LoadMyKeysComponent'
 import LoadSaveKeysComponent from './LoadSaveKeysComponent'
 
@@ -31,14 +38,17 @@ const AliasPicker = () => {
     }, [showButtonState])
     if (!load) return <></>
     return (
-        <>
-            <MainButton
-                variant="outlined"
+        <MenuItem
+            sx={{ display: 'flex', alignItems: 'center', justifyContent: 'start', gap: '8px' }}
+        >
+            <Icon path={mdiOpenInNew} size={1} />
+            <Typography
+                variant="body2"
                 onClick={handleOpenModal}
-                style={{ width: '100%', whiteSpace: 'nowrap', padding: '0.5rem 1rem' }}
+                style={{ width: '100%', whiteSpace: 'nowrap' }}
             >
                 Switch Wallet
-            </MainButton>
+            </Typography>
             <DialogAnimate open={open} onClose={handleCloseModal}>
                 <DialogTitle sx={{ m: 0, p: 2 }}>
                     <Typography variant="h4" component="span">
@@ -74,7 +84,7 @@ const AliasPicker = () => {
                     <LoadMyKeysComponent />
                 </DialogContent>
             </DialogAnimate>
-        </>
+        </MenuItem>
     )
 }
 

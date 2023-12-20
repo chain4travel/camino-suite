@@ -44,3 +44,19 @@ export async function updateAssets() {
     await updateUTXOs()
     await updateKycStatus()
 }
+
+export function isMultiSigWallet() {
+    return store.state.activeWallet.type === 'multisig'
+}
+
+export function getEthAddress() {
+    return store.state.activeWallet.ethAddress
+}
+
+export function getNameOfMultiSigWallet() {
+    return store.state.activeWallet?.name
+}
+
+export function getPchainAddress() {
+    return store.getters['staticAddresses']('P')
+}

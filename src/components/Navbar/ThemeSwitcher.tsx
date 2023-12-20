@@ -1,20 +1,20 @@
-import React from 'react'
-import { useAppDispatch, useAppSelector } from '../../hooks/reduxHooks'
-import { toggleTheme } from '../../redux/slices/theme'
-import { Button, Typography, useTheme } from '@mui/material'
-import { mdiWeatherSunny } from '@mdi/js'
+import { mdiWhiteBalanceSunny } from '@mdi/js'
 import Icon from '@mdi/react'
-import useWidth from '../../hooks/useWidth'
+import { Button, Typography, useTheme } from '@mui/material'
 import { useStore } from 'Explorer/useStore'
-import { getTheme } from '../../redux/slices/theme'
+import React from 'react'
 import store from 'wallet/store'
+import { useAppDispatch, useAppSelector } from '../../hooks/reduxHooks'
+import useWidth from '../../hooks/useWidth'
+import { getTheme, toggleTheme } from '../../redux/slices/theme'
 
 export default function ThemeSwitcher() {
-    const { isDesktop } = useWidth()
+    const { isDesktop, isMobile } = useWidth()
     const dispatch = useAppDispatch()
     const theme = useTheme()
     const currentTheme = useAppSelector(getTheme)
     const { changeTheme } = useStore()
+    const auth = useAppSelector(state => state.appConfig.isAuth)
     return (
         <Button
             variant="text"
@@ -26,15 +26,22 @@ export default function ThemeSwitcher() {
                 store.commit('updateTheme')
                 dispatch(toggleTheme())
             }}
-            startIcon={<Icon path={mdiWeatherSunny} size={1} />}
+            startIcon={<Icon path={mdiWhiteBalanceSunny} size={1} />}
             disableRipple
             sx={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'start',
+                gap: '8px',
                 minWidth: 'auto',
                 '&:hover': { backgroundColor: 'transparent' },
-                '.MuiButton-startIcon': { mr: isDesktop ? '0.5rem' : '0rem' },
+                '.MuiButton-startIcon': { mr: isDesktop ? '0rem' : '0rem', ml: '-8px' },
+                ...(true && { width: '100%' }),
             }}
         >
-            {isDesktop && <Typography variant="body2">{theme.palette.mode}</Typography>}
+            {(isDesktop || (auth && !isMobile)) && (
+                <Typography variant="body2">{theme.palette.mode}</Typography>
+            )}
         </Button>
     )
 }
