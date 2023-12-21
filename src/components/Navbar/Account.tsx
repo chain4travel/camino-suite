@@ -68,7 +68,7 @@ export default function Account({ handleCloseSidebar }: LoginIconProps) {
                         <Icon path={mdiCog} size={0.8} />
                         <Typography variant="body1">Settings</Typography>
                     </MenuItem>
-                    {auth && <AliasPicker />}
+                    {auth && <AliasPicker handleKeyDown={handleKeyDown} />}
                     <MenuItem>
                         <LoadAccountMenu type="kyc" />
                     </MenuItem>
@@ -84,6 +84,7 @@ export default function Account({ handleCloseSidebar }: LoginIconProps) {
                                 top: '5px',
                                 width: '50px',
                                 left: 'calc(100% - 55px)',
+                                zIndex: '1',
                             }}
                             label="beta"
                         />
@@ -158,6 +159,7 @@ export default function Account({ handleCloseSidebar }: LoginIconProps) {
                                         top: '5px',
                                         width: '50px',
                                         left: 'calc(100% - 55px)',
+                                        zIndex: '1',
                                     }}
                                     label="beta"
                                 />
@@ -181,7 +183,7 @@ export default function Account({ handleCloseSidebar }: LoginIconProps) {
                                 <Icon path={mdiCog} size={1} />
                                 <Typography variant="body2">Settings</Typography>
                             </MenuItem>
-                            <AliasPicker />
+                            <AliasPicker handleKeyDown={handleKeyDown} />
                             <MenuItem>
                                 <ThemeSwitcher />
                             </MenuItem>
