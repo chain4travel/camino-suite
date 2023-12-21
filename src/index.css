@@ -9,7 +9,7 @@
     --tooltip-bg: rgba(51, 65, 85, 0.92);
 }
 
-html[data-theme='day'] {
+html[data-theme='light'] {
     --bg: #f1f5f9;
     --bg-1: 255, 255, 255;
     --bg-light: #e2e8f0;
@@ -37,7 +37,7 @@ html[data-theme='day'] {
     --icon-color-light: #334155;
 }
 
-html[data-theme='night'] {
+html[data-theme='dark'] {
     --bg: #0f172a;
     --bg-1: 36, 39, 41;
     --bg-light: #1e293b;

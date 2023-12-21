@@ -5,14 +5,13 @@ interface ITheme {
 }
 
 const getThemeFromLocalStorage = () => {
-    return 'dark'
-    // let theme = localStorage.getItem("theme") || undefined;
+    let theme = localStorage.getItem('theme') || undefined
 
-    // if (theme) return theme;
-    // else {
-    //   localStorage.setItem("theme", JSON.stringify("light"));
-    //   return "light";
-    // }
+    if (theme) return theme
+    else {
+        localStorage.setItem('theme', JSON.stringify('light'))
+        return 'light'
+    }
 }
 
 let initialState: ITheme = {

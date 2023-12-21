@@ -20,8 +20,8 @@ export default function ThemeSwitcher() {
             variant="text"
             onClick={() => {
                 if (currentTheme === 'light')
-                    document.documentElement.setAttribute('data-theme', 'night')
-                else document.documentElement.setAttribute('data-theme', 'day')
+                    document.documentElement.setAttribute('data-theme', 'dark')
+                else document.documentElement.setAttribute('data-theme', 'light')
                 changeTheme(currentTheme === 'light' ? 'dark' : 'light')
                 store.commit('updateTheme')
                 dispatch(toggleTheme())
