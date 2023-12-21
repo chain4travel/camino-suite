@@ -18,7 +18,7 @@ import DialogAnimate from '../Animate/DialogAnimate'
 import LoadMyKeysComponent from './LoadMyKeysComponent'
 import LoadSaveKeysComponent from './LoadSaveKeysComponent'
 
-const AliasPicker = () => {
+const AliasPicker = ({ handleKeyDown }: { handleKeyDown: (e: any) => void }) => {
     const [open, setOpen] = useState(false)
     const [load, setLoad] = useState(false)
     const handleOpenModal = () => {
@@ -39,6 +39,9 @@ const AliasPicker = () => {
     if (!load) return <></>
     return (
         <MenuItem
+            onKeyDown={e => {
+                handleKeyDown(e)
+            }}
             sx={{ display: 'flex', alignItems: 'center', justifyContent: 'start', gap: '8px' }}
         >
             <Icon path={mdiOpenInNew} size={1} />
