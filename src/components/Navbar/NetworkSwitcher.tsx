@@ -1,25 +1,24 @@
-import React from 'react'
+import { mdiDeleteOutline, mdiPencilOutline, mdiPlus } from '@mdi/js'
 import Icon from '@mdi/react'
 import {
-    Button,
-    MenuItem,
-    Typography,
-    Select,
-    DialogTitle,
-    useTheme,
-    MenuList,
-    Stack,
     Box,
+    Button,
     Chip,
-    IconButton,
+    DialogTitle,
+    MenuItem,
+    MenuList,
+    Select,
+    Stack,
+    Typography,
+    useTheme,
 } from '@mui/material'
-import { mdiDeleteOutline, mdiPencilOutline, mdiPlus } from '@mdi/js'
+import React from 'react'
+import useNetwork from '../../hooks/useNetwork'
 import { networkStatusColor, networkStatusName } from '../../utils/networkUtils'
-import DialogAnimate from '../Animate/DialogAnimate'
 import MHidden from '../@material-extend/MHidden'
+import DialogAnimate from '../Animate/DialogAnimate'
 import AddNewNetwork from './AddNewNetwork'
 import SelectedNetwork from './SelectNetwork'
-import useNetwork from '../../hooks/useNetwork'
 
 interface NetworkSwitcherProps {
     handleCloseSidebar?: () => void
@@ -122,12 +121,12 @@ export default function NetworkSwitcher({ handleCloseSidebar }: NetworkSwitcherP
                                 <Box sx={{ flexGrow: 1 }} />
                                 {!network.readonly && network.url !== activeNetwork.url && (
                                     <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-                                        <IconButton onClick={editNetwork}>
+                                        <Box onClick={editNetwork}>
                                             <Icon path={mdiPencilOutline} size={0.8} />
-                                        </IconButton>
-                                        <IconButton onClick={removeNetwork}>
+                                        </Box>
+                                        <Box onClick={removeNetwork}>
                                             <Icon path={mdiDeleteOutline} size={0.8} />
-                                        </IconButton>
+                                        </Box>
                                     </Box>
                                 )}
                                 <Box sx={{ flexBasis: '50%', textAlign: 'right' }}>
@@ -160,9 +159,7 @@ export default function NetworkSwitcher({ handleCloseSidebar }: NetworkSwitcherP
                         }}
                     >
                         Add Custom Network
-                        <IconButton>
-                            <Icon path={mdiPlus} size={0.8} />
-                        </IconButton>
+                        <Icon path={mdiPlus} size={0.8} />
                     </MenuItem>
                 </MenuList>
                 <DialogAnimate open={open} onClose={closeModal}>
