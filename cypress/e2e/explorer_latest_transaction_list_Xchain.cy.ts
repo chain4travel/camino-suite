@@ -1,5 +1,3 @@
-import { expect } from 'chai'
-
 let transactionsBody = {
     transactions: [
         {
@@ -279,7 +277,7 @@ describe('latest transaction list Xchainet', { tags: ['@explorer', '@suite'] }, 
                 })
         })
         cy.wait('@transactions').then(() => {
-            cy.get('.css-1voxykv-MuiPaper-root').should('be.visible')
+            cy.get('[aria-label="transaction-list"]').should('be.visible')
             cy.get(
                 ':nth-child(1) > .MuiGrid-grid-md-4 > .MuiGrid-container > .MuiGrid-grid-xs-8 > a > .MuiTypography-root',
             )
