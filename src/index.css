@@ -1,12 +1,37 @@
 :root {
     --border-radius-lg: 12px;
-    --border-radius-sm: 7px;
+    --border-radius-sm: 6px;
+    --spacing-space-md: 12px;
+    --spacing-space-base: 16px;
     --primary-btn-border-color: #149ded;
     --secondary-color: #149ded;
     --primary-border: solid 1px var(--primary-border-color);
     --secondary-border: solid 1px var(--secondary-border-color);
     --box-shadow: rgb(0 0 0 / 10%) 0px 0px 5px;
     --tooltip-bg: rgba(51, 65, 85, 0.92);
+    --slate-600: #475569;
+    --negative-background: #e5431f;
+    --white: #fff;
+    --camino-slate-slate-300: #cbd4e2;
+    --camino-slate-slate-600: #475569;
+    --camino-slate-slate-700: #334155;
+    --camino-slate-slate-800: #1e293b;
+    --camino-slate-slate-950: #020617;
+    --camino-brand-too-blue-to-be-true: #0085ff;
+    --camino-brand-too-blue-to-be-true-100: rgba(0, 133, 255, 0.25);
+    --camino-brand-error: #e5431f;
+    --camino-brand-error-100: rgba(229, 67, 31, 0.25);
+    --primary-font: 'Inter', sans-serif;
+    --camino-brand-primary: linear-gradient(90deg, #0085ff 0%, #b440fc 100%);
+    --tailwind-slate-slate-200: #e2e7f0;
+    --tailwind-slate-slate-300: #cbd4e2;
+    --tailwind-slate-slate-600: #475569;
+    --tailwind-slate-slate-900: #0f182a;
+    --tailwind-slate-white: #fff;
+    --spacing-space-sm: 8px;
+    --spacing-space-md: 12px;
+    --spacing-space-base: 16px;
+    --spacing-space-lg: 24px;
 }
 
 html[data-theme='day'] {
@@ -24,7 +49,7 @@ html[data-theme='day'] {
     --info: #2c7490;
     --info-1: 44, 116, 144;
     --bg-wallet: #f5f6fa;
-    --warning: #f19d38;
+    --warning: #e5a21f;
     --bg-wallet-light: #ffffff;
     --primary-border-color: rgba(203, 213, 225, 0.12);
     --secondary-border-color: #e2e8f0;
@@ -35,6 +60,19 @@ html[data-theme='day'] {
     --sidebar-background: #fff;
     --icon-color: #0f172a;
     --icon-color-light: #334155;
+    --camino-slate-slate-white: #ffffff;
+    --camino-info-border: rgba(0, 133, 255, 0.5);
+    --camino-info-background: rgba(0, 133, 255, 0.05);
+    --camino-positive-border: rgba(9, 222, 107, 0.5);
+    --camino-positive-background: rgba(9, 222, 107, 0.05);
+    --camino-warning-border: rgba(229, 162, 31, 0.5);
+    --camino-warning-background: rgba(229, 162, 31, 0.05);
+    --camino-negative-border: rgba(229, 67, 31, 0.5);
+    --camino-negative-background: rgba(229, 67, 31, 0.05);
+    --camino-warning-color: #334155;
+    --camino-alert-color: #334155;
+    --camino-success-color: rgba(24, 183, 40, 1);
+    --camino-error-color: rgba(229, 67, 31, 1);
 }
 
 html[data-theme='night'] {
@@ -63,6 +101,27 @@ html[data-theme='night'] {
     --sidebar-background: #1e293b;
     --icon-color: #ffffff;
     --icon-color--light: #ffffff;
+    --camino-brand-too-blue-to-be-true: #0085ff;
+    --camino-info-border: rgba(0, 133, 255, 0.3);
+    --camino-info-background: rgba(0, 133, 255, 0.05);
+    --camino-positive-border: rgba(9, 222, 107, 0.3);
+    --camino-positive-background: rgba(9, 222, 107, 0.05);
+    --camino-warning-border: rgba(229, 162, 31, 0.3);
+    --camino-warning-background: rgba(229, 162, 31, 0.05);
+    --camino-negative-border: rgba(229, 67, 31, 0.3);
+    --camino-negative-background: rgba(229, 67, 31, 0.05);
+    --camino-warning-color: #cbd4e2;
+    --camino-alert-color: #cbd4e2;
+    --camino-success-color: rgba(9, 222, 107, 1);
+    --camino-error-color: rgba(229, 67, 31, 1);
+    --camino-slate-slate-950: #020617;
+    --camino-slate-slate-600: #475569;
+}
+body {
+    overflow: auto;
+    background-color: var(--bg) !important;
+    height: auto;
+    font-size: 16px !important;
 }
 
 #app {

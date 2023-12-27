@@ -1,9 +1,8 @@
-import { mdiDeleteOutline, mdiPencilOutline, mdiPlus } from '@mdi/js'
-import Icon from '@mdi/react'
 import {
     Box,
     Button,
     Chip,
+    CircularProgress,
     DialogTitle,
     MenuItem,
     MenuList,
@@ -12,13 +11,16 @@ import {
     Typography,
     useTheme,
 } from '@mui/material'
-import React from 'react'
-import useNetwork from '../../hooks/useNetwork'
+import { mdiDeleteOutline, mdiPencilOutline, mdiPlus } from '@mdi/js'
 import { networkStatusColor, networkStatusName } from '../../utils/networkUtils'
-import MHidden from '../@material-extend/MHidden'
-import DialogAnimate from '../Animate/DialogAnimate'
+
 import AddNewNetwork from './AddNewNetwork'
+import DialogAnimate from '../Animate/DialogAnimate'
+import Icon from '@mdi/react'
+import MHidden from '../@material-extend/MHidden'
+import React from 'react'
 import SelectedNetwork from './SelectNetwork'
+import useNetwork from '../../hooks/useNetwork'
 
 interface NetworkSwitcherProps {
     handleCloseSidebar?: () => void

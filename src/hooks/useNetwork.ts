@@ -1,18 +1,20 @@
 import {
     addNetworks,
     changeActiveNetwork,
+    changeLoading,
     changeNetworkStatus,
     getActiveNetwork,
     getNetworks,
     selectNetworkStatus,
 } from '@/redux/slices/network'
-import { useStore } from 'Explorer/useStore'
-import { useEffect, useState } from 'react'
-import { AvaNetwork } from 'wallet/AvaNetwork'
-import store from 'wallet/store'
-import { Status } from '../@types'
 import { updateApps, updateNotificationStatus, updateShowButton } from '../redux/slices/app-config'
 import { useAppDispatch, useAppSelector } from './reduxHooks'
+import { useEffect, useState } from 'react'
+
+import { AvaNetwork } from 'wallet/AvaNetwork'
+import { Status } from '../@types'
+import store from 'wallet/store'
+import { useStore } from 'Explorer/useStore'
 
 const useNetwork = (): {
     handleChangeNetwork: (arg: string) => void
@@ -22,6 +24,7 @@ const useNetwork = (): {
     handleCloseModal: () => void
     switchNetwork: (network: AvaNetwork) => Promise<void>
     status: Status
+    loading: boolean
     networks: AvaNetwork[]
     open: boolean
     edit: boolean
@@ -39,18 +42,19 @@ const useNetwork = (): {
     const networks: AvaNetwork[] = useAppSelector(getNetworks)
     const activeNetwork = useAppSelector<AvaNetwork>(getActiveNetwork)
     const status: Status = useAppSelector(selectNetworkStatus)
+    const loading = useAppSelector(state => state.network.loading)
 
     const { changeNetworkExplorer } = useStore()
 
     useEffect(() => {
-        if (selectedNetwork) {
-            handleChangeEvent()
-        }
+        if (selectedNetwork) handleChangeEvent()
+
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [selectedNetwork])
 
     const switchNetwork = async (network: AvaNetwork) => {
         try {
+            dispatch(changeLoading(true))
             dispatch(changeNetworkStatus(Status.LOADING))
             if (store.state.activeWallet?.type === 'multisig') {
                 await store.dispatch('activateWallet', store.state.wallets[0])
@@ -74,12 +78,14 @@ const useNetwork = (): {
             dispatch(updateNotificationStatus({ message: 'Disconnected', severity: 'error' }))
             store.state.Network.status = 'disconnected'
             dispatch(changeNetworkStatus(Status.FAILED))
+            dispatch(changeLoading(false))
         } finally {
             let newSelectedNetwork = store.state.Network.selectedNetwork
                 ? store.state.Network.selectedNetwork
                 : network
             dispatch(changeActiveNetwork(newSelectedNetwork))
             changeNetworkExplorer(newSelectedNetwork)
+            dispatch(changeLoading(false))
         }
     }
     const handleChangeNetwork = (selected: string) => {
@@ -146,6 +152,7 @@ const useNetwork = (): {
         handleCloseModal,
         switchNetwork,
         status,
+        loading,
         networks,
         open,
         edit,
