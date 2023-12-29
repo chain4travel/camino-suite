@@ -18,8 +18,8 @@ const LoggedInAccount = () => {
 
     useEffect(() => {
         if (isMultiSigWallet()) {
-            setWalletName(getNameOfMultiSigWallet() || getPchainAddress()[0])
-        } else setWalletName(getPchainAddress()[0])
+            setWalletName(getNameOfMultiSigWallet() || pChainAddress || getPchainAddress()[0])
+        } else setWalletName(pChainAddress || getPchainAddress()[0])
     }, [pChainAddress, activeNetwork])
     return (
         <>
