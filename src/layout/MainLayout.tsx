@@ -104,7 +104,6 @@ const MainLayout = ({ children }) => {
                             marginLeft: '10px',
                             marginRight: '10px',
                             minHeight: '200px',
-                            backgroundColor: 'var(--camino-slate-slate-800)',
                             maxWidth: '500px',
                         }}
                     >
@@ -115,21 +114,13 @@ const MainLayout = ({ children }) => {
                                 fontSize: '1.25rem !important',
                                 mb: theme => theme.spacing(3),
                                 textAlign: 'center',
-                                color: 'var(--tailwind-slate-slate-200)',
                             }}
                         >
                             {!loadNetworks
                                 ? `Connecting to a new network, please wait.`
                                 : `Loading networks, please wait.`}
                         </Typography>
-                        <Typography
-                            variant="caption"
-                            gutterBottom
-                            sx={{
-                                textAlign: 'center',
-                                color: 'var(--tailwind-slate-slate-200)',
-                            }}
-                        >
+                        <Typography variant="caption" gutterBottom sx={{ textAlign: 'center' }}>
                             This will only take a few seconds. Please do not close the window.
                         </Typography>
                         <Box
