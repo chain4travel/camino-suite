@@ -7,6 +7,7 @@ import { useEffectOnce } from '../../hooks/useEffectOnce'
 import {
     updateAccount,
     updateNotificationStatus,
+    updatePchainAddress,
     updateShowButton,
     updateValues,
 } from '../../redux/slices/app-config'
@@ -17,8 +18,11 @@ const LoadWallet = () => {
     const [logOut, setLogOut] = useState(false)
     const dispatch = useAppDispatch()
     const ref = useRef(null)
+    const [walletSwitched, setWalletSwitched] = React.useState('')
     const navigate = useNavigate()
-
+    useEffect(() => {
+        dispatch(updatePchainAddress(walletSwitched))
+    }, [walletSwitched]) // eslint-disable-line react-hooks/exhaustive-deps
     const dispatchNotification = ({ message, type }) =>
         dispatch(updateNotificationStatus({ message, severity: type }))
     const setAccount = account => dispatch(updateAccount(account))
@@ -44,6 +48,7 @@ const LoadWallet = () => {
                 dispatchNotification,
                 updateShowAlias,
                 navigate: location => navigate(location),
+                setWalletSwitched,
             })
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [fetch])
