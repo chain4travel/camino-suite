@@ -82,12 +82,24 @@ Cypress.Commands.add('changeNetwork', (network: string = 'Kopernikus') => {
     cy.get('@txtSelectedNetwork')
         .invoke('text')
         .then(currentNetwork => {
-            cy.get('@btnNetworkSwitcher').click({ force: true }) // Network Switcher
-            cy.get(`[data-value="${network}"]`).click() // Select Network
+            if (currentNetwork !== network) {
+                // Only perform the switch if the current network is different
+                cy.get('@btnNetworkSwitcher').click({ force: true })
+                cy.get(`[data-value="${network}"]`).click()
 
-            // Waiting 'info.networkID', and 'info.getTxFee'
-            cy.wait('@getNetworkID').then(interceptNetworkInfo)
-            cy.wait('@getTxFee').then(interceptNetworkInfo)
+                // After switching, wait for the network requests
+                cy.wait('@getNetworkID').then(interceptNetworkInfo)
+                cy.wait('@getTxFee').then(interceptNetworkInfo)
+            } else {
+                cy.get('body').then($body => {
+                    if ($body.find(`[data-value="${network}"]`).length > 0) {
+                        cy.get(`[data-value="${network}"]`).click()
+                    } else {
+                        cy.log(`Network option '${network}' not found.`)
+                    }
+                })
+                cy.log(`Already on the '${network}' network, no switch needed.`)
+            }
 
             // increasing timeout to make sure the network is selected, especially on slowly local dev env
             cy.get('@txtSelectedNetwork', { timeout: 15000 }).should('have.text', network)

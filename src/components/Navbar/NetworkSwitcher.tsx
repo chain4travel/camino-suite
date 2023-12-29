@@ -91,8 +91,12 @@ export default function NetworkSwitcher({ handleCloseSidebar }: NetworkSwitcherP
                                 flexDirection: 'column',
                                 alignItems: 'baseline',
                                 color: theme.palette.text.primary,
+                                ...(network.name === activeNetwork.name && { cursor: 'auto' }),
                             }}
-                            onClick={() => changeNetwork(network.name)}
+                            onClick={() => {
+                                if (network.name === activeNetwork.name) return
+                                changeNetwork(network.name)
+                            }}
                         >
                             <Stack
                                 direction="row"
@@ -194,9 +198,14 @@ export default function NetworkSwitcher({ handleCloseSidebar }: NetworkSwitcherP
                             value={network.name}
                             divider
                             onClick={() => {
+                                if (network.name === activeNetwork.name) return
                                 handleChangeNetwork(network.name)
                             }}
-                            sx={{ gap: '.6rem', justifyContent: 'space-between' }}
+                            sx={{
+                                gap: '.6rem',
+                                justifyContent: 'space-between',
+                                ...(network.name === activeNetwork.name && { cursor: 'auto' }),
+                            }}
                             data-cy={`network-name-${network.name}`}
                         >
                             <Typography variant="body2" component="span" noWrap>
