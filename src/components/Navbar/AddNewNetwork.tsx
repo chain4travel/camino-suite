@@ -52,9 +52,18 @@ export default function AddNewNetwork({
         return _newNetwork
     }
 
+    const isUniqueField = (field, value) => {
+        return !networks.some(network => network[field] === value && !network.predefined)
+    }
+
     const EventSchema = Yup.object().shape({
         id: Yup.string(),
-        displayName: Yup.string().required('This field is required').min(3, 'Too Short!'),
+        displayName: Yup.string()
+            .required('This field is required')
+            .min(3, 'Too Short!')
+            .test('unique-name', 'Network Name already exists', function (value) {
+                return isUniqueField('name', value)
+            }),
         url: Yup.string()
             .min(10, 'URL must be at least 10 characters')
             .max(200, 'URL must be no more than 200 characters')
@@ -79,20 +88,40 @@ export default function AddNewNetwork({
                 }
                 return true
             })
-            .test('validate port', 'You must specify a valid port of the url.', function (value) {
-                let rest = value?.split('://')[1]
-                if (!rest || !rest.includes(':') || isNaN(parseInt(rest.split(':')[1])))
+            .test('validate-port', 'Invalid port for the given protocol', function (value) {
+                if (!value) return true
+
+                const urlParts = value.split('://')
+                if (urlParts.length < 2) return false
+
+                const protocol = urlParts[0]
+                const address = urlParts[1]
+                if (protocol === 'https' && !address.includes(':')) return true
+                else if (
+                    protocol === 'http' &&
+                    (!address.includes(':') || isNaN(parseInt(address.split(':')[1])))
+                )
                     return false
+
                 return true
+            })
+            .test('unique-url', 'URL already exists', function (value) {
+                return isUniqueField('url', value)
             }),
         magellanAddress: Yup.string()
             .min(10, 'URL must be at least 10 characters')
             .max(200, 'URL must be no more than 200 characters')
-            .matches(/^https?:\/\/.+/, 'URL must start with http:// or https://'),
+            .matches(/^https?:\/\/.+/, 'URL must start with http:// or https://')
+            .test('unique-magellan', 'Magellan Address already exists', function (value) {
+                return isUniqueField('explorerUrl', value)
+            }),
         signavaultAddress: Yup.string()
             .min(10, 'URL must be at least 10 characters')
             .max(200, 'URL must be no more than 200 characters')
-            .matches(/^https?:\/\/.+/, 'URL must start with http:// or https://'),
+            .matches(/^https?:\/\/.+/, 'URL must start with http:// or https://')
+            .test('unique-signavault', 'Signavault Address already exists', function (value) {
+                return isUniqueField('signavaultUrl', value)
+            }),
         predefined: Yup.boolean(),
     })
 
@@ -191,7 +220,7 @@ export default function AddNewNetwork({
         },
     })
 
-    const { errors, touched, handleSubmit, getFieldProps } = formik
+    const { errors, touched, handleSubmit, getFieldProps, isValid, dirty } = formik
     return (
         <FormikProvider value={formik}>
             <Form autoComplete="off" noValidate onSubmit={handleSubmit}>
@@ -248,7 +277,11 @@ export default function AddNewNetwork({
                         pb: 0,
                     }}
                 >
-                    <NetworkButton isLoading={isLoading} edit={edit} />
+                    <NetworkButton
+                        isLoading={isLoading}
+                        edit={edit}
+                        disabled={!isValid || !dirty}
+                    />
                     <Button
                         variant="contained"
                         onClick={handleClose}
@@ -264,12 +297,13 @@ export default function AddNewNetwork({
     )
 }
 
-const AddNetworkButton = () => (
+const AddNetworkButton = ({ disabled }) => (
     <Button
         variant="outlined"
         type="submit"
         data-cy="btn-add-network"
         sx={{ py: '.75rem', width: '100%' }}
+        disabled={disabled}
     >
         <Typography variant="body1" color="primary">
             Add Network
@@ -277,12 +311,13 @@ const AddNetworkButton = () => (
     </Button>
 )
 
-const EditNetworkButton = () => (
+const EditNetworkButton = ({ disabled }) => (
     <Button
         variant="outlined"
         type="submit"
         data-cy="btn-edit-network"
         sx={{ py: '.75rem', width: '100%' }}
+        disabled={disabled}
     >
         <Typography variant="body1" color="primary">
             Edit Network
@@ -302,12 +337,12 @@ const LoadingButton = () => (
     </Button>
 )
 
-const NetworkButton = ({ isLoading, edit }) => {
+const NetworkButton = ({ isLoading, edit, disabled }) => {
     if (isLoading) {
         return <LoadingButton />
     } else if (edit) {
-        return <EditNetworkButton />
+        return <EditNetworkButton disabled={disabled} />
     } else {
-        return <AddNetworkButton />
+        return <AddNetworkButton disabled={disabled} />
     }
 }
