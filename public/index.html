@@ -94,16 +94,19 @@
         })
     </script>
 
-    <noscript
-        >Free cookie consent management tool by
-        <a href="https://www.termsfeed.com/privacy-policy-generator/"
-            >TermsFeed Free Privacy Policy Generator</a
-        ></noscript
-    >
+    <noscript>
+        Free cookie consent management tool by
+        <a href="https://www.termsfeed.com/privacy-policy-generator/">
+            TermsFeed Free Privacy Policy Generator
+        </a>
+    </noscript>
     <script>
         // set data-theme based on localStorage
         const theme = localStorage.getItem('theme')
+
         if (theme) document.documentElement.setAttribute('data-theme', theme)
+        else document.documentElement.setAttribute('data-theme', 'light')
+
         let intervalId
 
         function checkAppLoading() {
