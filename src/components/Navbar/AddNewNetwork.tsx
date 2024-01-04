@@ -1,21 +1,23 @@
-import React from 'react'
 import * as Yup from 'yup'
-import { Network } from '../../@types/store'
-import { useAppDispatch } from '../../hooks/reduxHooks'
+
 import {
-    Typography,
-    TextField,
-    DialogContent,
-    DialogActions,
     CircularProgress,
+    DialogActions,
+    DialogContent,
+    TextField,
+    Typography,
 } from '@mui/material'
-import { useFormik, Form, FormikProvider } from 'formik'
-import { Button } from '@mui/material'
+import { Form, FormikProvider, useFormik } from 'formik'
+
 import { AvaNetwork } from 'wallet/AvaNetwork'
-import store from 'wallet/store'
+import { Button } from '@mui/material'
+import { Network } from '../../@types/store'
+import React from 'react'
 import { addNetworks } from '../../redux/slices/network'
-import { useStore } from 'Explorer/useStore'
 import axios from 'axios'
+import store from 'wallet/store'
+import { useAppDispatch } from '../../hooks/reduxHooks'
+import { useStore } from 'Explorer/useStore'
 
 export default function AddNewNetwork({
     networks,
@@ -53,7 +55,45 @@ export default function AddNewNetwork({
     }
 
     const isUniqueField = (field, value) => {
-        return !networks.some(network => network[field] === value && !network.predefined)
+        if (value === undefined || value === null) return true
+
+        const isFieldSpecific = ['url', 'magellanAddress', 'signavaultAddress'].includes(field)
+        const isHttps = value.startsWith('https://')
+
+        if (edit && selectedNetwork) {
+            return !networks.some(
+                network =>
+                    network[field] === value &&
+                    network.id !== selectedNetwork.id &&
+                    !network.predefined &&
+                    (!isFieldSpecific || isHttps || network[field].startsWith('https://')),
+            )
+        } else {
+            return !networks.some(
+                network =>
+                    network[field] === value &&
+                    !network.predefined &&
+                    (!isFieldSpecific || isHttps || network[field].startsWith('https://')),
+            )
+        }
+    }
+
+    const validatePort = value => {
+        if (!value) return true
+
+        const urlParts = value.split('://')
+        if (urlParts.length < 2) return false
+
+        const protocol = urlParts[0]
+        const address = urlParts[1]
+        if (protocol === 'https' && !address.includes(':')) return true
+        else if (
+            protocol === 'http' &&
+            (!address.includes(':') || isNaN(parseInt(address.split(':')[1])))
+        )
+            return false
+
+        return true
     }
 
     const EventSchema = Yup.object().shape({
@@ -66,45 +106,10 @@ export default function AddNewNetwork({
             }),
         url: Yup.string()
             .min(10, 'URL must be at least 10 characters')
+            .required('This field is required')
             .max(200, 'URL must be no more than 200 characters')
-            .test(
-                'validate http / https prefix',
-                'URLs require the appropriate HTTP/HTTPS prefix.',
-                function (value) {
-                    if (
-                        !value ||
-                        (value.substring(0, 7) !== 'http://' &&
-                            value.substring(0, 8) !== 'https://')
-                    ) {
-                        return false
-                    }
-                    return true
-                },
-            )
-            .test('validate base ip', 'Invalid URL.', function (value) {
-                let rest = value?.split('://')[1]
-                if (!rest || rest.length === 0) {
-                    return false
-                }
-                return true
-            })
-            .test('validate-port', 'Invalid port for the given protocol', function (value) {
-                if (!value) return true
-
-                const urlParts = value.split('://')
-                if (urlParts.length < 2) return false
-
-                const protocol = urlParts[0]
-                const address = urlParts[1]
-                if (protocol === 'https' && !address.includes(':')) return true
-                else if (
-                    protocol === 'http' &&
-                    (!address.includes(':') || isNaN(parseInt(address.split(':')[1])))
-                )
-                    return false
-
-                return true
-            })
+            .matches(/^https?:\/\/.+/, 'URL must start with http:// or https://')
+            .test('validate-port', 'Invalid port for the given protocol', validatePort)
             .test('unique-url', 'URL already exists', function (value) {
                 return isUniqueField('url', value)
             }),
@@ -112,13 +117,16 @@ export default function AddNewNetwork({
             .min(10, 'URL must be at least 10 characters')
             .max(200, 'URL must be no more than 200 characters')
             .matches(/^https?:\/\/.+/, 'URL must start with http:// or https://')
+            .test('validate-port', 'Invalid port for the given protocol', validatePort)
             .test('unique-magellan', 'Magellan Address already exists', function (value) {
                 return isUniqueField('explorerUrl', value)
             }),
+
         signavaultAddress: Yup.string()
             .min(10, 'URL must be at least 10 characters')
             .max(200, 'URL must be no more than 200 characters')
             .matches(/^https?:\/\/.+/, 'URL must start with http:// or https://')
+            .test('validate-port', 'Invalid port for the given protocol', validatePort)
             .test('unique-signavault', 'Signavault Address already exists', function (value) {
                 return isUniqueField('signavaultUrl', value)
             }),
@@ -280,7 +288,8 @@ export default function AddNewNetwork({
                     <NetworkButton
                         isLoading={isLoading}
                         edit={edit}
-                        disabled={!isValid || !dirty}
+                        isValid={isValid}
+                        dirty={dirty}
                     />
                     <Button
                         variant="contained"
@@ -297,31 +306,27 @@ export default function AddNewNetwork({
     )
 }
 
-const AddNetworkButton = ({ disabled }) => (
+const AddNetworkButton = ({ isValid, dirty }) => (
     <Button
         variant="outlined"
         type="submit"
         data-cy="btn-add-network"
         sx={{ py: '.75rem', width: '100%' }}
-        disabled={disabled}
+        disabled={!isValid || !dirty}
     >
-        <Typography variant="body1" color="primary">
-            Add Network
-        </Typography>
+        <Typography variant="body1">Add Network</Typography>
     </Button>
 )
 
-const EditNetworkButton = ({ disabled }) => (
+const EditNetworkButton = ({ isValid }) => (
     <Button
         variant="outlined"
         type="submit"
         data-cy="btn-edit-network"
         sx={{ py: '.75rem', width: '100%' }}
-        disabled={disabled}
+        disabled={!isValid}
     >
-        <Typography variant="body1" color="primary">
-            Edit Network
-        </Typography>
+        <Typography variant="body1">Edit Network</Typography>
     </Button>
 )
 
@@ -337,12 +342,12 @@ const LoadingButton = () => (
     </Button>
 )
 
-const NetworkButton = ({ isLoading, edit, disabled }) => {
+const NetworkButton = ({ isLoading, edit, isValid, dirty }) => {
     if (isLoading) {
         return <LoadingButton />
     } else if (edit) {
-        return <EditNetworkButton disabled={disabled} />
+        return <EditNetworkButton isValid={isValid} />
     } else {
-        return <AddNetworkButton disabled={disabled} />
+        return <AddNetworkButton isValid={isValid} dirty={dirty} />
     }
 }
