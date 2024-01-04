@@ -73,6 +73,7 @@ const useNetwork = (): {
                     severity: 'success',
                 }),
             )
+            localStorage.setItem('selectedNetwork', network.name.toLowerCase())
         } catch (e) {
             store.state.Network.selectedNetwork = null
             dispatch(updateNotificationStatus({ message: 'Disconnected', severity: 'error' }))
