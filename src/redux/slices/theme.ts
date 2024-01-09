@@ -9,7 +9,7 @@ const getThemeFromLocalStorage = () => {
 
     if (theme) return theme
     else {
-        localStorage.setItem('theme', JSON.stringify('light'))
+        localStorage.setItem('theme', 'light')
         return 'light'
     }
 }
