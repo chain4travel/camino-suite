@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { Navigate, useNavigate } from 'react-router-dom'
 import { mount } from 'wallet/mountApp'
-import { updateAssets } from '../../helpers/walletStore'
+import { getNameOfWallet, getPchainAddress, updateAssets } from '../../helpers/walletStore'
 import { useAppDispatch, useAppSelector } from '../../hooks/reduxHooks'
 import { useEffectOnce } from '../../hooks/useEffectOnce'
 import {
@@ -21,7 +21,9 @@ const LoadWallet = () => {
     const [walletSwitched, setWalletSwitched] = React.useState('')
     const navigate = useNavigate()
     useEffect(() => {
-        dispatch(updatePchainAddress(walletSwitched))
+        dispatch(
+            updatePchainAddress({ address: getPchainAddress(), walletName: getNameOfWallet() }),
+        )
     }, [walletSwitched]) // eslint-disable-line react-hooks/exhaustive-deps
     const dispatchNotification = ({ message, type }) =>
         dispatch(updateNotificationStatus({ message, severity: type }))
