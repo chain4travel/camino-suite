@@ -1,26 +1,21 @@
 import { mdiWalletOutline } from '@mdi/js'
 import Icon from '@mdi/react'
-import React, { useEffect, useState } from 'react'
-import {
-    getNameOfMultiSigWallet,
-    getPchainAddress,
-    isMultiSigWallet,
-} from '../../helpers/walletStore'
-import { useAppSelector } from '../../hooks/reduxHooks'
-import { getPChainAddress } from '../../redux/slices/app-config'
+import React, { useEffect } from 'react'
+import { getNameOfWallet, getPchainAddress } from '../../helpers/walletStore'
+import { useAppDispatch, useAppSelector } from '../../hooks/reduxHooks'
+import { getWalletName, updatePchainAddress } from '../../redux/slices/app-config'
 import { getActiveNetwork } from '../../redux/slices/network'
 import LongString from '../LongString'
 
 const LoggedInAccount = () => {
-    const [walletName, setWalletName] = useState('')
-    const pChainAddress = useAppSelector(getPChainAddress)
+    const walletName = useAppSelector(getWalletName)
     const activeNetwork = useAppSelector(getActiveNetwork)
-
+    const dispatch = useAppDispatch()
     useEffect(() => {
-        if (isMultiSigWallet()) {
-            setWalletName(getNameOfMultiSigWallet() || pChainAddress || getPchainAddress()[0])
-        } else setWalletName(pChainAddress || getPchainAddress()[0])
-    }, [pChainAddress, activeNetwork])
+        dispatch(
+            updatePchainAddress({ address: getPchainAddress(), walletName: getNameOfWallet() }),
+        )
+    }, [activeNetwork])
     return (
         <>
             <Icon path={mdiWalletOutline} size={1} />
