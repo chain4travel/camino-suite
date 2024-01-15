@@ -1,12 +1,13 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { Navigate, useNavigate } from 'react-router-dom'
 import { mount } from 'wallet/mountApp'
-import { updateAssets } from '../../helpers/walletStore'
+import { getNameOfWallet, getPchainAddress, updateAssets } from '../../helpers/walletStore'
 import { useAppDispatch, useAppSelector } from '../../hooks/reduxHooks'
 import { useEffectOnce } from '../../hooks/useEffectOnce'
 import {
     updateAccount,
     updateNotificationStatus,
+    updatePchainAddress,
     updateShowButton,
     updateValues,
 } from '../../redux/slices/app-config'
@@ -17,8 +18,13 @@ const LoadWallet = () => {
     const [logOut, setLogOut] = useState(false)
     const dispatch = useAppDispatch()
     const ref = useRef(null)
+    const [walletSwitched, setWalletSwitched] = React.useState('')
     const navigate = useNavigate()
-
+    useEffect(() => {
+        dispatch(
+            updatePchainAddress({ address: getPchainAddress(), walletName: getNameOfWallet() }),
+        )
+    }, [walletSwitched]) // eslint-disable-line react-hooks/exhaustive-deps
     const dispatchNotification = ({ message, type }) =>
         dispatch(updateNotificationStatus({ message, severity: type }))
     const setAccount = account => dispatch(updateAccount(account))
@@ -44,6 +50,7 @@ const LoadWallet = () => {
                 dispatchNotification,
                 updateShowAlias,
                 navigate: location => navigate(location),
+                setWalletSwitched,
             })
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [fetch])

@@ -1,30 +1,30 @@
-import React, { useEffect, useState } from 'react'
 import { Navigate, Route, Routes, useNavigate } from 'react-router-dom'
+import React, { useEffect, useState } from 'react'
 
-import { useAppSelector } from '../hooks/reduxHooks'
-import { getActiveNetwork } from '../redux/slices/network'
 import AccessLayout from '../views/access'
-import MountAccessComponent from '../views/access/MountAccessComponent'
 import Create from '../views/create/Create'
+import CreateDepositsLayout from './CreateDepositLayout'
 import ExplorerApp from '../views/explorer/ExplorerApp'
 import LandingPage from '../views/landing/LandingPage'
 import Legal from '../views/legal/Legal'
 import LoginPage from '../views/login/LoginPage'
-import Partners from '../views/partners'
+import MountAccessComponent from '../views/access/MountAccessComponent'
 import MultisigWallet from '../views/settings/MultisigWallet'
-import Settings from '../views/settings/index'
-import Wallet from '../views/wallet/WalletApp'
 import VoteApp from '../views/vote/VoteApp'
-import CreateDepositsLayout from './CreateDepositLayout'
+import Partners from '../views/partners'
 import Protected from './Protected'
+import Settings from '../views/settings/index'
 import SettingsLayout from './SettingsLayout'
+import Wallet from '../views/wallet/WalletApp'
+import { getActiveNetwork } from '../redux/slices/network'
+import { useAppSelector } from '../hooks/reduxHooks'
 
 export default function RoutesSuite() {
     const navigate = useNavigate()
     const activeNetwork = useAppSelector(getActiveNetwork)
 
     const [lastUrlWithNewNetwork, setLastUrlWithNewNetwork] = useState('')
-    const [networkAliasToUrl, setNetworkAliasToUrl] = useState<string>('')
+    const [networkAliasToUrl, setNetworkAliasToUrl] = useState<string>('camino')
 
     useEffect(() => {
         if (activeNetwork) {

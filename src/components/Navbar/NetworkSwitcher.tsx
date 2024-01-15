@@ -1,9 +1,8 @@
-import { mdiDeleteOutline, mdiPencilOutline, mdiPlus } from '@mdi/js'
-import Icon from '@mdi/react'
 import {
     Box,
     Button,
     Chip,
+    CircularProgress,
     DialogTitle,
     MenuItem,
     MenuList,
@@ -12,13 +11,16 @@ import {
     Typography,
     useTheme,
 } from '@mui/material'
-import React from 'react'
-import useNetwork from '../../hooks/useNetwork'
+import { mdiDeleteOutline, mdiPencilOutline, mdiPlus } from '@mdi/js'
 import { networkStatusColor, networkStatusName } from '../../utils/networkUtils'
-import MHidden from '../@material-extend/MHidden'
-import DialogAnimate from '../Animate/DialogAnimate'
+
 import AddNewNetwork from './AddNewNetwork'
+import DialogAnimate from '../Animate/DialogAnimate'
+import Icon from '@mdi/react'
+import MHidden from '../@material-extend/MHidden'
+import React from 'react'
 import SelectedNetwork from './SelectNetwork'
+import useNetwork from '../../hooks/useNetwork'
 
 interface NetworkSwitcherProps {
     handleCloseSidebar?: () => void
@@ -89,8 +91,12 @@ export default function NetworkSwitcher({ handleCloseSidebar }: NetworkSwitcherP
                                 flexDirection: 'column',
                                 alignItems: 'baseline',
                                 color: theme.palette.text.primary,
+                                ...(network.name === activeNetwork.name && { cursor: 'auto' }),
                             }}
-                            onClick={() => changeNetwork(network.name)}
+                            onClick={() => {
+                                if (network.name === activeNetwork.name) return
+                                changeNetwork(network.name)
+                            }}
                         >
                             <Stack
                                 direction="row"
@@ -192,9 +198,14 @@ export default function NetworkSwitcher({ handleCloseSidebar }: NetworkSwitcherP
                             value={network.name}
                             divider
                             onClick={() => {
+                                if (network.name === activeNetwork.name) return
                                 handleChangeNetwork(network.name)
                             }}
-                            sx={{ gap: '.6rem', justifyContent: 'space-between' }}
+                            sx={{
+                                gap: '.6rem',
+                                justifyContent: 'space-between',
+                                ...(network.name === activeNetwork.name && { cursor: 'auto' }),
+                            }}
                             data-cy={`network-name-${network.name}`}
                         >
                             <Typography variant="body2" component="span" noWrap>

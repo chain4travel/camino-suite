@@ -1,12 +1,13 @@
-import { mdiWhiteBalanceSunny } from '@mdi/js'
-import Icon from '@mdi/react'
 import { Button, Typography, useTheme } from '@mui/material'
-import { useStore } from 'Explorer/useStore'
-import React from 'react'
-import store from 'wallet/store'
-import { useAppDispatch, useAppSelector } from '../../hooks/reduxHooks'
-import useWidth from '../../hooks/useWidth'
 import { getTheme, toggleTheme } from '../../redux/slices/theme'
+import { useAppDispatch, useAppSelector } from '../../hooks/reduxHooks'
+
+import Icon from '@mdi/react'
+import React from 'react'
+import { mdiWhiteBalanceSunny } from '@mdi/js'
+import store from 'wallet/store'
+import { useStore } from 'Explorer/useStore'
+import useWidth from '../../hooks/useWidth'
 
 export default function ThemeSwitcher() {
     const { isDesktop, isMobile } = useWidth()
@@ -15,17 +16,19 @@ export default function ThemeSwitcher() {
     const currentTheme = useAppSelector(getTheme)
     const { changeTheme } = useStore()
     const auth = useAppSelector(state => state.appConfig.isAuth)
+
+    const handleChangeTheme = () => {
+        if (currentTheme === 'light') document.documentElement.setAttribute('data-theme', 'dark')
+        else document.documentElement.setAttribute('data-theme', 'light')
+        changeTheme(currentTheme === 'light' ? 'dark' : 'light')
+        store.commit('updateTheme')
+        dispatch(toggleTheme())
+    }
+
     return (
         <Button
             variant="text"
-            onClick={() => {
-                if (currentTheme === 'light')
-                    document.documentElement.setAttribute('data-theme', 'night')
-                else document.documentElement.setAttribute('data-theme', 'day')
-                changeTheme(currentTheme === 'light' ? 'dark' : 'light')
-                store.commit('updateTheme')
-                dispatch(toggleTheme())
-            }}
+            onClick={handleChangeTheme}
             startIcon={<Icon path={mdiWhiteBalanceSunny} size={1} />}
             disableRipple
             sx={{

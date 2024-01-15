@@ -53,7 +53,7 @@ export function getEthAddress() {
     return store.state.activeWallet.ethAddress
 }
 
-export function getNameOfMultiSigWallet() {
+export function getNameOfWallet() {
     return store.state.activeWallet?.name
 }
 
