@@ -15,12 +15,17 @@ import Protected from './Protected'
 import Settings from '../views/settings/index'
 import SettingsLayout from './SettingsLayout'
 import Wallet from '../views/wallet/WalletApp'
+import { changeActiveApp } from '../redux/slices/app-config'
 import { getActiveNetwork } from '../redux/slices/network'
 import { useAppSelector } from '../hooks/reduxHooks'
+import { useDispatch } from 'react-redux'
+import { useLocation } from 'react-router-dom'
 
 export default function RoutesSuite() {
+    const dispatch = useDispatch()
     const navigate = useNavigate()
     const activeNetwork = useAppSelector(getActiveNetwork)
+    const location = useLocation()
 
     const [lastUrlWithNewNetwork, setLastUrlWithNewNetwork] = useState('')
     const [networkAliasToUrl, setNetworkAliasToUrl] = useState<string>('camino')
@@ -47,6 +52,18 @@ export default function RoutesSuite() {
             navigate('/changing-network')
         }
     }, [networkAliasToUrl]) // eslint-disable-line react-hooks/exhaustive-deps
+
+    useEffect(() => {
+        if (location.pathname.split('/')[1] === 'explorer') dispatch(changeActiveApp('Explorer'))
+        else if (
+            location.pathname.split('/')[1] === 'wallet' ||
+            location.pathname.split('/')[1] === 'login'
+        )
+            dispatch(changeActiveApp('Wallet'))
+        console.log('location changed', location.pathname.split('/')[1])
+
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [location])
 
     return (
         <>
