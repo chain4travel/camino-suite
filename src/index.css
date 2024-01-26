@@ -122,6 +122,7 @@ body {
     background-color: var(--bg) !important;
     height: auto;
     font-size: 16px !important;
+    padding-right: 0 !important;
 }
 
 #app {
@@ -131,7 +132,6 @@ body {
     -moz-osx-font-smoothing: grayscale;
     text-align: left;
     color: var(--primary-color);
-    background-color: var(--bg) !important;
     font-family: 'Rubik', sans-serif;
     transition-duration: 0.2s;
     width: 100%;

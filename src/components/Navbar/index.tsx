@@ -1,5 +1,3 @@
-import { mdiClose, mdiMenu, mdiWalletOutline } from '@mdi/js'
-import Icon from '@mdi/react'
 import {
     AppBar,
     Box,
@@ -10,22 +8,25 @@ import {
     Typography,
     useTheme,
 } from '@mui/material'
-import React, { useState } from 'react'
-import { useIdleTimer } from 'react-idle-timer'
-import { useNavigate } from 'react-router-dom'
-import store from 'wallet/store'
 import { DRAWER_WIDTH, TIMEOUT_DURATION } from '../../constants/apps-consts'
+import React, { useState } from 'react'
+import { mdiClose, mdiMenu, mdiWalletOutline } from '@mdi/js'
 import { useAppDispatch, useAppSelector } from '../../hooks/reduxHooks'
-import { updateAccount } from '../../redux/slices/app-config'
-import { getActiveNetwork } from '../../redux/slices/network'
-import { updateAuthStatus } from '../../redux/slices/utils'
+
+import Account from './Account'
+import Icon from '@mdi/react'
+import LoggedInAccount from './LoggedInAccount'
 import MHidden from '../@material-extend/MHidden'
 import MIconButton from '../@material-extend/MIconButton'
-import PlatformSwitcher from '../PlatformSwitcher'
-import Account from './Account'
-import LoggedInAccount from './LoggedInAccount'
 import NetworkSwitcher from './NetworkSwitcher'
+import PlatformSwitcher from '../PlatformSwitcher'
 import ThemeSwitcher from './ThemeSwitcher'
+import { getActiveNetwork } from '../../redux/slices/network'
+import store from 'wallet/store'
+import { updateAccount } from '../../redux/slices/app-config'
+import { updateAuthStatus } from '../../redux/slices/utils'
+import { useIdleTimer } from 'react-idle-timer'
+import { useNavigate } from 'react-router-dom'
 
 export default function Navbar() {
     const theme = useTheme()
@@ -67,7 +68,7 @@ export default function Navbar() {
                 display: 'flex',
                 alignItems: 'center',
                 minHeight: '65px',
-                px: '1.5rem',
+                px: '1.5rem !important',
             }}
             position="fixed"
         >

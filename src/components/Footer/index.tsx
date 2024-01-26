@@ -1,33 +1,35 @@
-import React from 'react'
 import {
     Box,
-    Grid,
-    Typography,
-    useTheme,
-    Divider,
     Container,
+    Divider,
+    Fade,
+    Grid,
     MenuItem,
     Tooltip,
-    Fade,
+    Typography,
+    useTheme,
 } from '@mui/material'
 import {
-    DOCS,
-    TWITTER,
-    TELEGRAM_CAMINO,
-    TELEGRAM_ANNOUNCEMENTS,
-    MEDIUM,
-    GITHUB,
-    DISCORD,
     CAMINO,
+    DISCORD,
+    DOCS,
+    GITHUB,
+    MEDIUM,
     SUITE_RELEASES,
+    TELEGRAM_ANNOUNCEMENTS,
+    TELEGRAM_CAMINO,
+    TWITTER,
 } from '../../constants/route-paths'
-import { Link } from 'react-router-dom'
-import { mdiInformationOutline } from '@mdi/js'
+
 import Icon from '@mdi/react'
+import { Link } from 'react-router-dom'
+import React from 'react'
 import Version from './Version'
+import { mdiInformationOutline } from '@mdi/js'
 
 export default function Footer() {
     const theme = useTheme()
+    const year = new Date().getFullYear()
     return (
         <footer style={{ position: 'relative', marginTop: 'auto' }}>
             {theme.palette.mode !== 'light' && <Divider variant="fullWidth" />}
@@ -163,7 +165,7 @@ export default function Footer() {
                                     textAlign: { xs: 'center', md: 'left' },
                                 }}
                             >
-                                Camino Network Foundation &copy; 2023
+                                Camino Network Foundation &copy; {year}
                             </Typography>
                         </Grid>
                         <Grid item xs={12} md={6}>
