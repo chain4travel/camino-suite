@@ -1,56 +1,51 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { Navigate, useNavigate } from 'react-router-dom'
 import { mount } from 'wallet/mountApp'
-import { getNameOfWallet, getPchainAddress, updateAssets } from '../../helpers/walletStore'
+import { updateAssets } from '../../helpers/walletStore'
 import { useAppDispatch, useAppSelector } from '../../hooks/reduxHooks'
 import { useEffectOnce } from '../../hooks/useEffectOnce'
+import useWallet from '../../hooks/useWallet'
 import {
     updateAccount,
     updateNotificationStatus,
-    updatePchainAddress,
     updateShowButton,
     updateValues,
 } from '../../redux/slices/app-config'
 import { updateAuthStatus } from '../../redux/slices/utils'
 const LoadWallet = () => {
-    const [updateStore, setUpdateStore] = useState(null)
+    const [walletStore, setUpdateStore] = useState(null)
     const [fetch, setFetch] = useState(false)
     const [logOut, setLogOut] = useState(false)
     const dispatch = useAppDispatch()
     const ref = useRef(null)
-    const [walletSwitched, setWalletSwitched] = React.useState('')
     const navigate = useNavigate()
-    useEffect(() => {
-        dispatch(
-            updatePchainAddress({ address: getPchainAddress(), walletName: getNameOfWallet() }),
-        )
-    }, [walletSwitched]) // eslint-disable-line react-hooks/exhaustive-deps
     const dispatchNotification = ({ message, type }) =>
         dispatch(updateNotificationStatus({ message, severity: type }))
     const setAccount = account => dispatch(updateAccount(account))
     useEffect(() => {
-        dispatch(updateValues(updateStore))
-        if (updateStore) dispatch(updateAuthStatus(true))
-    }, [updateStore]) // eslint-disable-line react-hooks/exhaustive-deps
+        dispatch(updateValues(walletStore))
+        if (walletStore) dispatch(updateAuthStatus(true))
+    }, [walletStore]) // eslint-disable-line react-hooks/exhaustive-deps
 
     useEffect(() => {
-        dispatch(updateValues(updateStore))
+        dispatch(updateValues(walletStore))
     }, [logOut]) // eslint-disable-line react-hooks/exhaustive-deps
     const updateShowAlias = () => dispatch(updateShowButton())
     const fetchUTXOs = async () => {
         await updateAssets()
         setFetch(true)
     }
+    const { updateStore } = useWallet()
     useEffect(() => {
         if (fetch)
             mount(ref.current, {
+                updateStore,
                 setUpdateStore,
                 setLogOut,
                 setAccount,
                 dispatchNotification,
                 updateShowAlias,
                 navigate: location => navigate(location),
-                setWalletSwitched,
             })
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [fetch])
