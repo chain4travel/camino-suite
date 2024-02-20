@@ -69,8 +69,8 @@ const PartnerCard: React.FC<PartnerCardProps> = ({ partner, onClick }) => {
                     logoBox={logoBox}
                 />
             )}
-            <Box sx={{ height: '60px' }}>
-                {!!companyName && <Typography variant="h3">{companyName}</Typography>}
+            <Box sx={{ height: 'auto' }}>
+                {!!companyName && <Typography variant="h5">{companyName}</Typography>}
             </Box>
             <Box
                 sx={{
@@ -81,9 +81,13 @@ const PartnerCard: React.FC<PartnerCardProps> = ({ partner, onClick }) => {
             >
                 {!!companyShortDescription && (
                     <Typography
-                        variant="subtitle2"
+                        variant="caption"
                         sx={{
                             color: theme => theme.palette.card.text,
+                            overflow: 'hidden',
+                            display: '-webkit-box',
+                            WebkitBoxOrient: 'vertical',
+                            WebkitLineClamp: 3,
                         }}
                     >
                         {companyShortDescription}

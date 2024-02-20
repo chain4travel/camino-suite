@@ -24,6 +24,8 @@ export default function Select(theme: Theme) {
             styleOverrides: {
                 list: {
                     maxWidth: 'none !important',
+                    width: '100% !important',
+                    paddingRight: '0 !important',
                 },
             },
         },

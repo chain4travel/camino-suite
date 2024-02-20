@@ -1,5 +1,5 @@
-import React from 'react'
 import { Box, Typography } from '@mui/material'
+import React from 'react'
 import { CircleFlag } from 'react-circle-flags'
 import { CountryFlagAttributesType } from '../../@types/partners'
 
@@ -13,7 +13,7 @@ const PartnerFlag: React.FC<PartnerFlagProps> = ({
     return (
         <Box sx={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
             <CircleFlag countryCode={countryIdentifier.toLowerCase()} height="20" />
-            <Typography variant="body1">{countryName}</Typography>
+            <Typography variant="caption">{countryName}</Typography>
         </Box>
     )
 }

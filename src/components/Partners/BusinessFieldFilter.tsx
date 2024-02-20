@@ -33,6 +33,8 @@ const BusinessFieldFilter: React.FC<BusinessFieldFilterProps> = ({
                 padding: '0',
                 maxWidth: '400px',
                 borderRadius: '12px',
+                paddingRight: '0px !important',
+                width: '50% !important',
                 color: theme => theme.palette.text.primary,
                 '.MuiSelect-select ': {
                     boxSizing: 'border-box',
@@ -43,6 +45,10 @@ const BusinessFieldFilter: React.FC<BusinessFieldFilterProps> = ({
                     alignItems: 'center',
                     border: theme => `solid 2px ${theme.palette.card.border}`,
                 },
+                '& .MuiPopover-paper ul': {
+                    paddingRight: 'unset !important',
+                    width: '100% !important',
+                },
                 '.MuiOutlinedInput-notchedOutline': {
                     border: 'none !important',
                 },
@@ -52,7 +58,7 @@ const BusinessFieldFilter: React.FC<BusinessFieldFilterProps> = ({
                     height: '40px',
                 },
             }}
-            renderValue={() => <Typography variant="body1">Business fields</Typography>}
+            renderValue={() => <Typography variant="caption">Business fields</Typography>}
             MenuProps={{
                 PaperProps: {
                     style: {
@@ -63,13 +69,17 @@ const BusinessFieldFilter: React.FC<BusinessFieldFilterProps> = ({
             }}
         >
             <MenuItem sx={{ display: 'none' }} value={'default'}>
-                <Typography variant="body1">Business fields</Typography>
+                <Typography variant="caption">Business fields</Typography>
             </MenuItem>
             {state.businessField.map((businessField, index) => (
                 <MenuItem key={index} value={businessField.name}>
                     <ListItemText
-                        sx={[{ color: !businessField.active ? '#CBD4E2' : '#ffffff' }]}
-                        primary={businessField.name}
+                        sx={[
+                            {
+                                color: !businessField.active ? '#CBD4E2' : '#ffffff',
+                            },
+                        ]}
+                        primary={<Typography variant="caption">{businessField.name}</Typography>}
                     />
                     {businessField.active && <Icon path={mdiCheckCircle} size={1} />}
                 </MenuItem>

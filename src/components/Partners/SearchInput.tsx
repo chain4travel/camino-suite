@@ -1,7 +1,7 @@
-import { Box, InputAdornment, OutlinedInput } from '@mui/material'
-import React, { useCallback } from 'react'
 import SearchIcon from '@mui/icons-material/Search'
+import { Box, InputAdornment, OutlinedInput } from '@mui/material'
 import { debounce } from 'lodash'
+import React, { useCallback } from 'react'
 
 const SearchInput = ({ searchByName }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -25,13 +25,12 @@ const SearchInput = ({ searchByName }) => {
                     p: '8px 16px',
                     border: theme => `solid 2px ${theme.palette.card.border}`,
                     borderRadius: '12px',
-                    fontSize: '15px',
+                    fontSize: '14px',
                     lineHeight: '24px',
                     fontWeight: 500,
                     '.MuiOutlinedInput-notchedOutline': {
                         border: 'none',
                     },
-                    // backgroundColor: '#475569',
                 }}
                 startAdornment={
                     <InputAdornment position="start">

@@ -66,8 +66,10 @@ const Partner: React.FC<PartnerProps> = ({ partner, setPartner }) => {
                             flexWrap: 'wrap',
                         }}
                     >
-                        <Typography variant="h1">{companyName}</Typography>
-                        {!!isConsortiumMember && (
+                        <Typography variant="h3">{companyName}</Typography>
+                        {/* the badge validator will be added when the api support getting p-chain
+                        address */}
+                        {/* {!!isConsortiumMember && (
                             <Box
                                 sx={{
                                     background: theme => theme.palette.background.gradient,
@@ -81,9 +83,9 @@ const Partner: React.FC<PartnerProps> = ({ partner, setPartner }) => {
                             >
                                 <Typography sx={{ color: 'common.white' }}>Validator</Typography>
                             </Box>
-                        )}
+                        )} */}
                     </Box>
-                    <Typography variant="body1">{companyShortDescription}</Typography>
+                    <Typography variant="caption">{companyShortDescription}</Typography>
                     <Box>
                         <PartnerBusinessFields
                             business_fields={business_fields}
@@ -91,8 +93,8 @@ const Partner: React.FC<PartnerProps> = ({ partner, setPartner }) => {
                         />
                     </Box>
                     <Box sx={{ paddingBottom: '1.5rem' }}>
-                        <Typography variant="h3">Description</Typography>
-                        <Typography variant="body1">{companyLongDescription}</Typography>
+                        <Typography variant="subtitle1">Description</Typography>
+                        <Typography variant="body2">{companyLongDescription}</Typography>
                     </Box>
                 </Box>
                 <Box

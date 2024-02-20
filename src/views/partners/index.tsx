@@ -56,7 +56,7 @@ const Partners = () => {
     ) : (
         <>
             <PartnersFilter state={state} dispatchPartnersActions={dispatchPartnersActions} />
-            <Typography variant="h4">{partners.meta.pagination.total} Partners</Typography>
+            <Typography variant="h5">{partners.meta.pagination.total} Partners</Typography>
             <PartnersListWrraper isLoading={isLoading} isFetching={isFetching}>
                 <ListPartners partners={partners} setPartner={setPartner} />
             </PartnersListWrraper>

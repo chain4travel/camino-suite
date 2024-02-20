@@ -70,7 +70,7 @@ export default function PlatformSwitcher() {
                             }
                         />
                         <Typography
-                            variant={!isDesktop ? 'h6' : 'h4'}
+                            variant={!isDesktop ? 'h6' : 'h5'}
                             component="span"
                             fontWeight="500"
                             sx={{ ml: '.5rem', color: theme.palette.logo.primary }}

@@ -12,6 +12,7 @@ const PartnerBusinessFields = ({ business_fields, isPartnerView }: PartnerBusine
                     sx={{
                         backgroundColor: 'transparent',
                         border: '1px solid',
+                        fontSize: '12px',
                         borderColor: theme => theme.palette.grey['700'],
                     }}
                     label={elem.attributes.BusinessField}
@@ -23,6 +24,7 @@ const PartnerBusinessFields = ({ business_fields, isPartnerView }: PartnerBusine
                     sx={{
                         backgroundColor: 'transparent',
                         border: '1px solid',
+                        fontSize: '12px',
                         borderColor: theme => theme.palette.grey['700'],
                     }}
                     label={business_fields.data[0].attributes.BusinessField}
@@ -32,6 +34,7 @@ const PartnerBusinessFields = ({ business_fields, isPartnerView }: PartnerBusine
                         backgroundColor: 'transparent',
                         border: '1px solid',
                         borderColor: theme => theme.palette.grey['700'],
+                        fontSize: '12px',
                     }}
                     label={`+${business_fields.data.length - 1}`}
                 />
