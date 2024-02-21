@@ -10,6 +10,7 @@ interface InitialStateAppConfigType {
     apps: SuitePlatforms[]
     activeApp: number
     status: Status
+    walletName: string
     notificationStatus: boolean
     notificationMessage: string
     notificationSeverity: NotificationSeverityType
@@ -22,6 +23,7 @@ interface InitialStateAppConfigType {
 
 let initialState: InitialStateAppConfigType = {
     pChainAddress: '',
+    walletName: '',
     apps: APPS_CONSTS,
     activeApp: 0,
     status: Status.IDLE,
@@ -45,7 +47,9 @@ const appConfigSlice = createSlice({
             state.walletStore = payload
         },
         updatePchainAddress(state, { payload }) {
-            state.pChainAddress = payload
+            state.pChainAddress = payload.address[0]
+            state.walletName =
+                payload.walletName !== 'Singleton Wallet' ? payload.walletName : payload.address[0]
         },
         updateAccount(state, { payload }) {
             state.account = payload
@@ -123,6 +127,9 @@ export const getShowButton = (state: RootState) => state.appConfig.showButton
 
 // get PChainAddress
 export const getPChainAddress = (state: RootState) => state.appConfig.pChainAddress
+
+// getWalletName
+export const getWalletName = (state: RootState) => state.appConfig.walletName
 
 export const {
     changeActiveApp,

@@ -1,10 +1,11 @@
 import { Box } from '@mui/material'
 import { styled } from '@mui/system'
-import React, { useEffect, useRef } from 'react'
+import React, { useRef } from 'react'
 import { mountKyesComponent } from 'wallet/mountKyesComponent'
 import { useAppDispatch } from '../../hooks/reduxHooks'
 import { useEffectOnce } from '../../hooks/useEffectOnce'
-import { updateNotificationStatus, updatePchainAddress } from '../../redux/slices/app-config'
+import useWallet from '../../hooks/useWallet'
+import { updateNotificationStatus } from '../../redux/slices/app-config'
 
 const StyledBox = styled(Box)(({ theme }) => ({
     display: 'flex',
@@ -40,16 +41,16 @@ const StyledBox = styled(Box)(({ theme }) => ({
 const LoadMyKeysComponent = () => {
     const ref = useRef(null)
     const dispatch = useAppDispatch()
-    const [walletSwitched, setWalletSwitched] = React.useState('')
     const dispatchNotification = ({ message, type }) =>
         dispatch(updateNotificationStatus({ message, severity: type }))
+    const { updateStore } = useWallet()
     useEffectOnce(() => {
-        mountKyesComponent(ref.current, { dispatchNotification, setWalletSwitched })
+        mountKyesComponent(ref.current, {
+            dispatchNotification,
+            updateStore,
+        })
     }) // eslint-disable-line react-hooks/exhaustive-deps
 
-    useEffect(() => {
-        dispatch(updatePchainAddress(walletSwitched))
-    }, [walletSwitched])
     return (
         <StyledBox>
             <div ref={ref} />

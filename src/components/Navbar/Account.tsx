@@ -4,13 +4,14 @@ import { Chip, MenuItem, MenuList, Select, Typography, useTheme } from '@mui/mat
 import React, { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import store from 'wallet/store'
-import {
-    getNameOfMultiSigWallet,
-    getPchainAddress,
-    isMultiSigWallet,
-} from '../../helpers/walletStore'
+import { getNameOfWallet, getPchainAddress } from '../../helpers/walletStore'
 import { useAppDispatch, useAppSelector } from '../../hooks/reduxHooks'
-import { changeActiveApp, getAccount, updateAccount } from '../../redux/slices/app-config'
+import {
+    changeActiveApp,
+    getAccount,
+    updateAccount,
+    updatePchainAddress,
+} from '../../redux/slices/app-config'
 import { updateAuthStatus } from '../../redux/slices/utils'
 import MHidden from '../@material-extend/MHidden'
 import { LoadAccountMenu } from '../LoadAccountMenu'
@@ -23,7 +24,6 @@ interface LoginIconProps {
 
 export default function Account({ handleCloseSidebar }: LoginIconProps) {
     const auth = useAppSelector(state => state.appConfig.isAuth)
-    const [_, setWalletName] = React.useState('')
     const dispatch = useAppDispatch()
     const navigate = useNavigate()
     const account = useAppSelector(getAccount)
@@ -42,11 +42,10 @@ export default function Account({ handleCloseSidebar }: LoginIconProps) {
         handleCloseSidebar()
     }
     useEffect(() => {
-        if (isMultiSigWallet()) {
-            setWalletName(getNameOfMultiSigWallet() || getPchainAddress())
-        } else setWalletName(getPchainAddress())
+        dispatch(
+            updatePchainAddress({ address: getPchainAddress(), walletName: getNameOfWallet() }),
+        )
     }, [auth])
-
     const handleKeyDown = e => {
         e.stopPropagation()
     }

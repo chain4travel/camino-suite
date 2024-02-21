@@ -4,6 +4,7 @@ import { mount } from 'wallet/mountApp'
 import { updateAssets } from '../../helpers/walletStore'
 import { useAppDispatch, useAppSelector } from '../../hooks/reduxHooks'
 import { useEffectOnce } from '../../hooks/useEffectOnce'
+import useWallet from '../../hooks/useWallet'
 import {
     updateAccount,
     updateNotificationStatus,
@@ -12,32 +13,33 @@ import {
 } from '../../redux/slices/app-config'
 import { updateAuthStatus } from '../../redux/slices/utils'
 const LoadWallet = () => {
-    const [updateStore, setUpdateStore] = useState(null)
+    const [walletStore, setUpdateStore] = useState(null)
     const [fetch, setFetch] = useState(false)
     const [logOut, setLogOut] = useState(false)
     const dispatch = useAppDispatch()
     const ref = useRef(null)
     const navigate = useNavigate()
-
     const dispatchNotification = ({ message, type }) =>
         dispatch(updateNotificationStatus({ message, severity: type }))
     const setAccount = account => dispatch(updateAccount(account))
     useEffect(() => {
-        dispatch(updateValues(updateStore))
-        if (updateStore) dispatch(updateAuthStatus(true))
-    }, [updateStore]) // eslint-disable-line react-hooks/exhaustive-deps
+        dispatch(updateValues(walletStore))
+        if (walletStore) dispatch(updateAuthStatus(true))
+    }, [walletStore]) // eslint-disable-line react-hooks/exhaustive-deps
 
     useEffect(() => {
-        dispatch(updateValues(updateStore))
+        dispatch(updateValues(walletStore))
     }, [logOut]) // eslint-disable-line react-hooks/exhaustive-deps
     const updateShowAlias = () => dispatch(updateShowButton())
     const fetchUTXOs = async () => {
         await updateAssets()
         setFetch(true)
     }
+    const { updateStore } = useWallet()
     useEffect(() => {
         if (fetch)
             mount(ref.current, {
+                updateStore,
                 setUpdateStore,
                 setLogOut,
                 setAccount,

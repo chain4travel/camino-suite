@@ -1,6 +1,6 @@
-import { createSlice } from '@reduxjs/toolkit'
 import { RootState } from '../store'
 import { Status } from '../../@types'
+import { createSlice } from '@reduxjs/toolkit'
 
 export enum NetworkID {
     MAINNET = 1000,
@@ -25,12 +25,14 @@ interface InitialStateNetworkSlice {
     activeNetwork?: NetworkType
     networks: NetworkType[]
     status: Status
+    loading: boolean
 }
 
 let initialState: InitialStateNetworkSlice = {
     activeNetwork: undefined,
     networks: [],
     status: Status.IDLE,
+    loading: false,
 }
 
 const appConfigSlice = createSlice({
@@ -46,6 +48,9 @@ const appConfigSlice = createSlice({
         changeActiveNetwork: (state, { payload }) => {
             state.activeNetwork = payload
         },
+        changeLoading: (state, { payload }) => {
+            state.loading = payload
+        },
     },
 })
 
@@ -55,6 +60,9 @@ export const getActiveNetwork = (state: RootState) => state.network.activeNetwor
 export const getNetworks = (state: RootState) => state.network.networks
 // Select Network Status
 export const selectNetworkStatus = (state: RootState) => state.network.status
+// Select Loading Status
+export const selectLoadingStatus = (state: RootState) => state.network.loading
 
-export const { addNetworks, changeNetworkStatus, changeActiveNetwork } = appConfigSlice.actions
+export const { addNetworks, changeNetworkStatus, changeActiveNetwork, changeLoading } =
+    appConfigSlice.actions
 export default appConfigSlice.reducer

@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="night">
+<html lang="en">
     <head>
         <meta charset="utf-8" />
-        <link rel="manifest"  href="/manifest.json"/>
+        <link rel="manifest" href="/manifest.json" />
         <link rel="icon" href="/favicon.ico" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta name="theme-color" content="#000000" />
@@ -38,12 +38,12 @@
         <div id="app"></div>
     </body>
     <style>
-        html[data-theme='day'] {
+        html[data-theme='light'] {
             --background-color: #fff;
             --secondary-background-color: #f1f5f9;
             --text-color: #0f172a;
         }
-        html[data-theme='night'] {
+        html[data-theme='dark'] {
             --background-color: #0f172a;
             --secondary-background-color: #1e293b;
             --text-color: #ffffff;
@@ -94,13 +94,19 @@
         })
     </script>
 
-    <noscript
-        >Free cookie consent management tool by
-        <a href="https://www.termsfeed.com/privacy-policy-generator/"
-            >TermsFeed Free Privacy Policy Generator</a
-        ></noscript
-    >
+    <noscript>
+        Free cookie consent management tool by
+        <a href="https://www.termsfeed.com/privacy-policy-generator/">
+            TermsFeed Free Privacy Policy Generator
+        </a>
+    </noscript>
     <script>
+        // set data-theme based on localStorage
+        const theme = localStorage.getItem('theme')
+
+        if (theme) document.documentElement.setAttribute('data-theme', theme)
+        else document.documentElement.setAttribute('data-theme', 'light')
+
         let intervalId
 
         function checkAppLoading() {

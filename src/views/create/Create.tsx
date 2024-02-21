@@ -1,9 +1,11 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+
+import { changeActiveApp } from '../../redux/slices/app-config'
 import { mountCreateWallet } from 'wallet/mountCreate'
-import { useAppDispatch, useAppSelector } from '../../hooks/reduxHooks'
-import { getActiveApp, selectAuthStatus, updateValues } from '../../redux/slices/app-config'
 import { updateAuthStatus } from '../../redux/slices/utils'
+import { updateValues } from '../../redux/slices/app-config'
+import { useAppDispatch } from '../../hooks/reduxHooks'
+import { useNavigate } from 'react-router-dom'
 
 const CreateWallet = () => {
     const ref = useRef(null)
@@ -14,6 +16,8 @@ const CreateWallet = () => {
         dispatch(updateValues(updateStore))
         if (updateStore?.isAuth) {
             dispatch(updateAuthStatus(updateStore?.isAuth))
+            dispatch(changeActiveApp('Wallet'))
+            navigate('/wallet')
         }
     }, [updateStore]) // eslint-disable-line react-hooks/exhaustive-deps
     useEffect(() => {
@@ -39,16 +43,6 @@ const CreateWallet = () => {
 }
 
 export default function Create() {
-    const app = useAppSelector(getActiveApp)
-    const auth = useAppSelector(selectAuthStatus)
-    const navigate = useNavigate()
-    useEffect(() => {
-        if (auth) {
-            if (app === 'wallet') {
-                navigate('/wallet')
-            } else navigate('/explorer')
-        }
-    }, [auth]) // eslint-disable-line react-hooks/exhaustive-deps
     return (
         <React.Suspense fallback={<div>Loading...</div>}>
             <CreateWallet />
