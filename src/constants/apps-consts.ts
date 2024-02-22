@@ -19,6 +19,13 @@ export const APPS_CONSTS = [
         private: false,
     },
     {
+        name: 'Foundation',
+        subText: 'Tools for foundation members.',
+        url: '/foundation',
+        private: true,
+        hidden: true,
+    },
+    {
         name: 'Partners',
         subText: 'Partners of the Camino Network.',
         url: '/partners',
@@ -28,13 +35,6 @@ export const APPS_CONSTS = [
         name: 'Settings',
         subText: 'Manage your wallet settings.',
         url: '/settings',
-        private: true,
-        hidden: true,
-    },
-    {
-        name: 'Foundation',
-        subText: 'Tools for foundation members.',
-        url: '/foundation',
         private: true,
         hidden: true,
     },
