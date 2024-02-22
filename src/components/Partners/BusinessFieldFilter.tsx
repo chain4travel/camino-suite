@@ -27,6 +27,7 @@ const BusinessFieldFilter: React.FC<BusinessFieldFilterProps> = ({
     return (
         <Select
             multiple
+            // @ts-ignore
             value={['default']}
             onChange={handleChange}
             sx={{
@@ -35,7 +36,7 @@ const BusinessFieldFilter: React.FC<BusinessFieldFilterProps> = ({
                 borderRadius: '12px',
                 paddingRight: '0px !important',
                 maxWidth: { xs: '100%', sm: '50%', md: '250px' },
-                color: theme => theme.palette.text.primary,
+                overflow: 'hidden',
                 '.MuiSelect-select ': {
                     boxSizing: 'border-box',
                     height: '40px',
@@ -53,7 +54,10 @@ const BusinessFieldFilter: React.FC<BusinessFieldFilterProps> = ({
                     border: 'none !important',
                 },
                 '& [aria-expanded=true]': {
-                    background: theme => theme.palette.grey[600],
+                    background: theme =>
+                        theme.palette.mode === 'dark'
+                            ? theme.palette.grey[600]
+                            : theme.palette.grey[200],
                     boxSizing: 'border-box',
                     height: '40px',
                 },
@@ -74,7 +78,7 @@ const BusinessFieldFilter: React.FC<BusinessFieldFilterProps> = ({
             {state.businessField.map((businessField, index) => (
                 <MenuItem key={index} value={businessField.name}>
                     <ListItemText
-                        sx={{ color: !businessField.active ? '#CBD4E2' : '#ffffff' }}
+                        // sx={{ color: !businessField.active ? '#CBD4E2' : '#ffffff' }}
                         primary={
                             <Typography
                                 variant="caption"

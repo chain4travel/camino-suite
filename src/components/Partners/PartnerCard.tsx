@@ -8,11 +8,12 @@ import React from 'react'
 
 interface PartnerCardProps {
     onClick: () => void
+    clickable: boolean
     partner: PartnerDataType
     index: number
 }
 
-const PartnerCard: React.FC<PartnerCardProps> = ({ partner, onClick }) => {
+const PartnerCard: React.FC<PartnerCardProps> = ({ partner, clickable, onClick }) => {
     const {
         attributes: {
             isConsortiumMember,
@@ -29,10 +30,10 @@ const PartnerCard: React.FC<PartnerCardProps> = ({ partner, onClick }) => {
         <Box
             onClick={onClick}
             sx={{
-                minWidth: { xs: '100%', sm: '350px' },
-                cursor: 'pointer',
-                flex: '1 1 25%',
-                maxWidth: '100%',
+                minWidth: { xs: '100%', sm: '343px' },
+                cursor: clickable ? 'pointer' : 'default',
+                flex: '1 1 23%',
+                maxWidth: { xs: '100%', md: '50%', lg: '32%', xl: '25%' },
                 background: theme => theme.palette.card.background,
                 border: theme => `2px solid ${theme.palette.card.border}`,
                 borderRadius: '16px',

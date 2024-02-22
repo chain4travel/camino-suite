@@ -1,7 +1,8 @@
-import { Box } from '@mui/material'
-import React from 'react'
 import { PartnerDataType, PartnersResponseType } from '../../@types/partners'
+
+import { Box } from '@mui/material'
 import PartnerCard from '../../components/Partners/PartnerCard'
+import React from 'react'
 
 interface ListPartnersProps {
     partners: PartnersResponseType
@@ -22,6 +23,22 @@ const ListPartners: React.FC<ListPartnersProps> = ({ partners, setPartner }) => 
                 <PartnerCard
                     onClick={() => {
                         if (
+                            !!(
+                                partner.attributes.companyName &&
+                                partner.attributes.companyLongDescription &&
+                                partner.attributes.companyWebsite &&
+                                partner.attributes.contactEmail &&
+                                partner.attributes.contactFirstname &&
+                                partner.attributes.contactLastname &&
+                                partner.attributes.contactPhone
+                            )
+                        )
+                            setPartner(partner)
+                    }}
+                    partner={partner}
+                    key={index}
+                    clickable={
+                        !!(
                             partner.attributes.companyName &&
                             partner.attributes.companyLongDescription &&
                             partner.attributes.companyWebsite &&
@@ -30,10 +47,7 @@ const ListPartners: React.FC<ListPartnersProps> = ({ partners, setPartner }) => 
                             partner.attributes.contactLastname &&
                             partner.attributes.contactPhone
                         )
-                            setPartner(partner)
-                    }}
-                    partner={partner}
-                    key={index}
+                    }
                     index={index}
                 />
             ))}

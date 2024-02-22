@@ -1,17 +1,49 @@
-import { mdiArrowLeft } from '@mdi/js'
-import Icon from '@mdi/react'
 import { Box, Button, Divider, Typography, useTheme } from '@mui/material'
-import React from 'react'
+
+import Icon from '@mdi/react'
 import { Link } from 'react-router-dom'
-import { PartnerDataType } from '../../@types/partners'
 import PartnerBusinessFields from '../../components/Partners/PartnerBusinessFields'
+import { PartnerDataType } from '../../@types/partners'
 import PartnerFlag from '../../components/Partners/PartnerFlag'
 import PartnerLogo from '../../components/Partners/PartnerLogo'
+import React from 'react'
+import { mdiArrowLeft } from '@mdi/js'
 
 interface PartnerProps {
     partner: PartnerDataType
     setPartner: React.Dispatch<React.SetStateAction<PartnerDataType>>
 }
+
+const ContentField = ({ label, children }) => {
+    return (
+        <Box
+            sx={{
+                display: 'flex',
+                flexDirection: { xs: 'row', md: 'column' },
+                p: { xs: '0.5rem 0.75rem', md: '1rem 1.5rem' },
+                justifyContent: { xs: 'space-between', md: 'center' },
+                flexWrap: 'wrap',
+                alignItems: { xs: 'center', md: 'inherit' },
+                gap: '.5rem',
+            }}
+        >
+            <Typography
+                sx={{
+                    color: theme => theme.palette.text.primary,
+                    fontSize: '12px',
+                    fontStyle: 'normal',
+                    fontWeight: 600,
+                    lineHeight: '20px',
+                    textTransform: 'uppercase',
+                }}
+            >
+                {label}
+            </Typography>
+            {children}
+        </Box>
+    )
+}
+
 const Partner: React.FC<PartnerProps> = ({ partner, setPartner }) => {
     const {
         attributes: {
@@ -33,14 +65,15 @@ const Partner: React.FC<PartnerProps> = ({ partner, setPartner }) => {
     const theme = useTheme()
     const isDark = theme.palette.mode === 'dark'
     return (
-        <Box sx={{ height: '100%' }}>
+        <Box sx={{ height: '100%', mb: '2rem' }}>
             <Box sx={{ mb: '2rem' }}>
                 <Button
                     sx={{
                         height: '40px',
+                        width: { xs: '100%', sm: 'fit-content' },
                         padding: theme => theme.customPadding.defaultPadding,
-                        borderRadius: theme => theme.customShape.borderRadiusSm,
-                        border: theme => `2px solid ${theme.palette.grey[700]}`,
+                        borderRadius: theme => theme.customShape.borderRadiusSm + ' !important',
+                        border: theme => `1px solid ${theme.palette.grey[700]}`,
                     }}
                     startIcon={<Icon path={mdiArrowLeft} size={0.8} />}
                     onClick={() => setPartner(null)}
@@ -101,9 +134,13 @@ const Partner: React.FC<PartnerProps> = ({ partner, setPartner }) => {
                     sx={[
                         {
                             flex: '0 1 30%',
-                            maxWidth: '350px',
-                            minWidth: '300px',
-                            border: theme => `2px solid ${theme.palette.blue[50]}`,
+                            maxWidth: { xs: '100%', md: '350px' },
+                            minWidth: { xs: '100%', md: '300px' },
+                            border: {
+                                md: '2px solid #B5E3FD !important',
+                                xs: 'none',
+                            },
+
                             borderRadius: '16px',
                         },
                         !isDark && { backgroundColor: theme => theme.palette.background.paper },
@@ -124,39 +161,13 @@ const Partner: React.FC<PartnerProps> = ({ partner, setPartner }) => {
                         />
                     </Box>
                     <Divider />
-                    <Box sx={{ display: 'flex', flexDirection: 'column', p: '1rem 1.5rem' }}>
-                        <Typography
-                            sx={{
-                                mb: '.5rem',
-                                color: theme => theme.palette.text.primary,
-                                fontSize: '12px',
-                                fontStyle: 'normal',
-                                fontWeight: 600,
-                                lineHeight: '20px',
-                                textTransform: 'uppercase',
-                            }}
-                        >
-                            company country
-                        </Typography>
+                    <ContentField label="company country">
                         {country_flag && country_flag.data?.attributes && (
                             <PartnerFlag country={country_flag.data.attributes} />
                         )}
-                    </Box>
+                    </ContentField>
                     <Divider />
-                    <Box sx={{ display: 'flex', flexDirection: 'column', p: '1rem 1.5rem' }}>
-                        <Typography
-                            sx={{
-                                mb: '.5rem',
-                                color: theme => theme.palette.text.primary,
-                                fontSize: '12px',
-                                fontStyle: 'normal',
-                                fontWeight: 600,
-                                lineHeight: '20px',
-                                textTransform: 'uppercase',
-                            }}
-                        >
-                            Direct Contact
-                        </Typography>
+                    <ContentField label="Direct Contact">
                         <Typography
                             sx={{
                                 color: theme => theme.palette.card.text,
@@ -168,22 +179,9 @@ const Partner: React.FC<PartnerProps> = ({ partner, setPartner }) => {
                         >
                             {contactFirstname + ' ' + contactLastname}
                         </Typography>
-                    </Box>
+                    </ContentField>
                     <Divider />
-                    <Box sx={{ display: 'flex', flexDirection: 'column', p: '1rem 1.5rem' }}>
-                        <Typography
-                            sx={{
-                                mb: '.5rem',
-                                color: theme => theme.palette.text.primary,
-                                fontSize: '12px',
-                                fontStyle: 'normal',
-                                fontWeight: 600,
-                                lineHeight: '20px',
-                                textTransform: 'uppercase',
-                            }}
-                        >
-                            Contact Email
-                        </Typography>
+                    <ContentField label="Contact Email">
                         <Link
                             rel="noopener noreferrer"
                             style={{ textDecoration: 'none' }}
@@ -201,22 +199,9 @@ const Partner: React.FC<PartnerProps> = ({ partner, setPartner }) => {
                                 {contactEmail}
                             </Typography>
                         </Link>
-                    </Box>
+                    </ContentField>
                     <Divider />
-                    <Box sx={{ display: 'flex', flexDirection: 'column', p: '1rem 1.5rem' }}>
-                        <Typography
-                            sx={{
-                                mb: '.5rem',
-                                color: theme => theme.palette.text.primary,
-                                fontSize: '12px',
-                                fontStyle: 'normal',
-                                fontWeight: 600,
-                                lineHeight: '20px',
-                                textTransform: 'uppercase',
-                            }}
-                        >
-                            Contact Phone
-                        </Typography>
+                    <ContentField label="Contact Phone">
                         <Link
                             rel="noopener noreferrer"
                             style={{ textDecoration: 'none' }}
@@ -234,22 +219,9 @@ const Partner: React.FC<PartnerProps> = ({ partner, setPartner }) => {
                                 {contactPhone}
                             </Typography>
                         </Link>
-                    </Box>
+                    </ContentField>
                     <Divider />
-                    <Box sx={{ display: 'flex', flexDirection: 'column', p: '1rem 1.5rem' }}>
-                        <Typography
-                            sx={{
-                                mb: '.5rem',
-                                color: theme => theme.palette.text.primary,
-                                fontSize: '12px',
-                                fontStyle: 'normal',
-                                fontWeight: 600,
-                                lineHeight: '20px',
-                                textTransform: 'uppercase',
-                            }}
-                        >
-                            Website
-                        </Typography>
+                    <ContentField label="Website">
                         <Link
                             rel="noopener noreferrer"
                             target="_blank"
@@ -268,7 +240,7 @@ const Partner: React.FC<PartnerProps> = ({ partner, setPartner }) => {
                                 {companyWebsite}
                             </Typography>
                         </Link>
-                    </Box>
+                    </ContentField>
                 </Box>
             </Box>
         </Box>
