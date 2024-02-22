@@ -57,12 +57,13 @@ export default function RoutesSuite() {
 
     useEffect(() => {
         if (location.pathname.split('/')[1] === 'explorer') dispatch(changeActiveApp('Explorer'))
+        else if (location.pathname.split('/')[1] === 'partners')
+            dispatch(changeActiveApp('Partners'))
         else if (
             location.pathname.split('/')[1] === 'wallet' ||
             location.pathname.split('/')[1] === 'login'
         )
             dispatch(changeActiveApp('Wallet'))
-        console.log('location changed', location.pathname.split('/')[1])
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [location])
