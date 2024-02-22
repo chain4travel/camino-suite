@@ -1,7 +1,8 @@
-import { Box } from '@mui/material'
-import React from 'react'
 import { ActionType, StatePartnersType, partnersActions } from '../../helpers/partnersReducer'
+
+import { Box } from '@mui/material'
 import BusinessFieldFilter from './BusinessFieldFilter'
+import React from 'react'
 import SearchInput from './SearchInput'
 
 interface PartnersFilterProps {

@@ -1,9 +1,10 @@
 import { Box, Typography } from '@mui/material'
-import React from 'react'
-import { PartnerDataType } from '../../@types/partners'
+
 import PartnerBusinessFields from './PartnerBusinessFields'
+import { PartnerDataType } from '../../@types/partners'
 import PartnerFlag from './PartnerFlag'
 import PartnerLogo from './PartnerLogo'
+import React from 'react'
 
 interface PartnerCardProps {
     onClick: () => void
@@ -28,10 +29,10 @@ const PartnerCard: React.FC<PartnerCardProps> = ({ partner, onClick }) => {
         <Box
             onClick={onClick}
             sx={{
-                minWidth: '300px',
+                minWidth: { xs: '100%', sm: '350px' },
                 cursor: 'pointer',
-                flex: '1 1 23%',
-                maxWidth: '400px',
+                flex: '1 1 25%',
+                maxWidth: '100%',
                 background: theme => theme.palette.card.background,
                 border: theme => `2px solid ${theme.palette.card.border}`,
                 borderRadius: '16px',

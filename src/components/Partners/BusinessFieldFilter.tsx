@@ -1,12 +1,13 @@
-import React from 'react'
+import { ActionType, StatePartnersType, partnersActions } from '../../helpers/partnersReducer'
+import Select, { SelectChangeEvent } from '@mui/material/Select'
 
-import { mdiCheckCircle } from '@mdi/js'
 import Icon from '@mdi/react'
-import { Typography } from '@mui/material'
 import ListItemText from '@mui/material/ListItemText'
 import MenuItem from '@mui/material/MenuItem'
-import Select, { SelectChangeEvent } from '@mui/material/Select'
-import { ActionType, StatePartnersType, partnersActions } from '../../helpers/partnersReducer'
+import React from 'react'
+import { Typography } from '@mui/material'
+import { mdiCheckCircle } from '@mdi/js'
+
 interface BusinessFieldFilterProps {
     state: StatePartnersType
     dispatchPartnersActions: React.Dispatch<ActionType>
@@ -29,12 +30,11 @@ const BusinessFieldFilter: React.FC<BusinessFieldFilterProps> = ({
             value={['default']}
             onChange={handleChange}
             sx={{
-                flex: '1 1 400px',
+                flex: '1 1 250px',
                 padding: '0',
-                maxWidth: '400px',
                 borderRadius: '12px',
                 paddingRight: '0px !important',
-                width: '50% !important',
+                maxWidth: { xs: '100%', sm: '50%', md: '250px' },
                 color: theme => theme.palette.text.primary,
                 '.MuiSelect-select ': {
                     boxSizing: 'border-box',
@@ -43,7 +43,7 @@ const BusinessFieldFilter: React.FC<BusinessFieldFilterProps> = ({
                     borderRadius: '12px',
                     display: 'flex',
                     alignItems: 'center',
-                    border: theme => `solid 2px ${theme.palette.card.border}`,
+                    border: theme => `solid 1px ${theme.palette.card.border}`,
                 },
                 '& .MuiPopover-paper ul': {
                     paddingRight: 'unset !important',
@@ -74,14 +74,19 @@ const BusinessFieldFilter: React.FC<BusinessFieldFilterProps> = ({
             {state.businessField.map((businessField, index) => (
                 <MenuItem key={index} value={businessField.name}>
                     <ListItemText
-                        sx={[
-                            {
-                                color: !businessField.active ? '#CBD4E2' : '#ffffff',
-                            },
-                        ]}
-                        primary={<Typography variant="caption">{businessField.name}</Typography>}
+                        sx={{ color: !businessField.active ? '#CBD4E2' : '#ffffff' }}
+                        primary={
+                            <Typography
+                                variant="caption"
+                                sx={{ fontWeight: !businessField.active ? 500 : 600 }}
+                            >
+                                {businessField.name}
+                            </Typography>
+                        }
                     />
-                    {businessField.active && <Icon path={mdiCheckCircle} size={1} />}
+                    {businessField.active && (
+                        <Icon path={mdiCheckCircle} size={1} color="#B5E3FD" />
+                    )}
                 </MenuItem>
             ))}
         </Select>

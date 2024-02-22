@@ -1,17 +1,18 @@
-import ArrowBackIcon from '@mui/icons-material/ArrowBack'
-import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
 import { Box, CircularProgress, Pagination, PaginationItem, Typography } from '@mui/material'
 import React, { ReactNode, useReducer, useState } from 'react'
-import { PartnerDataType } from '../../@types/partners'
-import PartnersFilter from '../../components/Partners/PartnersFilter'
 import {
     initialStatePartners,
     partnersActions,
     partnersReducer,
 } from '../../helpers/partnersReducer'
-import { useListPartnersQuery } from '../../redux/services/partners'
+
+import ArrowBackIcon from '@mui/icons-material/ArrowBack'
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
 import ListPartners from './ListPartners'
 import Partner from './Partner'
+import { PartnerDataType } from '../../@types/partners'
+import PartnersFilter from '../../components/Partners/PartnersFilter'
+import { useListPartnersQuery } from '../../redux/services/partners'
 
 interface PartnersListWrapperProps {
     isLoading: boolean
@@ -19,7 +20,7 @@ interface PartnersListWrapperProps {
     children?: ReactNode
 }
 
-const PartnersListWrraper: React.FC<PartnersListWrapperProps> = ({
+const PartnersListWrapper: React.FC<PartnersListWrapperProps> = ({
     isLoading,
     isFetching,
     children,
@@ -49,7 +50,7 @@ const Partners = () => {
     const [partner, setPartner] = useState<PartnerDataType | null>(null)
 
     if (!partners?.data) {
-        return <PartnersListWrraper isLoading={isLoading} isFetching={isFetching} />
+        return <PartnersListWrapper isLoading={isLoading} isFetching={isFetching} />
     }
     const content = partner ? (
         <Partner partner={partner} setPartner={setPartner} />
@@ -57,14 +58,15 @@ const Partners = () => {
         <>
             <PartnersFilter state={state} dispatchPartnersActions={dispatchPartnersActions} />
             <Typography variant="h5">{partners.meta.pagination.total} Partners</Typography>
-            <PartnersListWrraper isLoading={isLoading} isFetching={isFetching}>
+            <PartnersListWrapper isLoading={isLoading} isFetching={isFetching}>
                 <ListPartners partners={partners} setPartner={setPartner} />
-            </PartnersListWrraper>
+            </PartnersListWrapper>
             <Box sx={{ display: 'flex', justifyContent: 'center', my: '2rem' }}>
                 <Pagination
                     page={state.page}
                     onChange={handleChange}
                     count={partners.meta.pagination.pageCount}
+                    siblingCount={0}
                     renderItem={item => (
                         <PaginationItem
                             slots={{ previous: ArrowBackIcon, next: ArrowForwardIcon }}

@@ -1,7 +1,9 @@
-import React from 'react'
-import { Outlet } from 'react-router'
 import { Box, Toolbar } from '@mui/material'
+
 import Links from '../views/settings/Links'
+import { Outlet } from 'react-router'
+import React from 'react'
+
 const PartnersLayout = () => {
     return (
         <Box
@@ -19,7 +21,7 @@ const PartnersLayout = () => {
                     borderColor: 'rgba(145, 158, 171, 0.24)',
                     background: theme => theme.palette.background.paper,
                     flexGrow: 1,
-                    px: '0rem !important',
+                    p: '1.5rem',
                     zIndex: 9,
                     position: 'fixed',
                     top: '65px',

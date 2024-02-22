@@ -1,7 +1,8 @@
-import SearchIcon from '@mui/icons-material/Search'
 import { Box, InputAdornment, OutlinedInput } from '@mui/material'
-import { debounce } from 'lodash'
 import React, { useCallback } from 'react'
+
+import SearchIcon from '@mui/icons-material/Search'
+import { debounce } from 'lodash'
 
 const SearchInput = ({ searchByName }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -12,9 +13,9 @@ const SearchInput = ({ searchByName }) => {
     return (
         <Box
             sx={{
-                flex: '1 1 452px',
+                flex: '1 1 400px',
                 height: '40px',
-                maxWidth: '452px',
+                maxWidth: { xs: '100%', md: '400px' },
             }}
         >
             <OutlinedInput
@@ -23,7 +24,7 @@ const SearchInput = ({ searchByName }) => {
                     width: '100%',
                     height: '100%',
                     p: '8px 16px',
-                    border: theme => `solid 2px ${theme.palette.card.border}`,
+                    border: theme => `solid 1px ${theme.palette.card.border}`,
                     borderRadius: '12px',
                     fontSize: '14px',
                     lineHeight: '24px',
