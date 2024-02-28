@@ -22,6 +22,7 @@ import NetworkSwitcher from './NetworkSwitcher'
 import PlatformSwitcher from '../PlatformSwitcher'
 import ThemeSwitcher from './ThemeSwitcher'
 import { getActiveNetwork } from '../../redux/slices/network'
+// @ts-ignore
 import store from 'wallet/store'
 import { updateAccount } from '../../redux/slices/app-config'
 import { updateAuthStatus } from '../../redux/slices/utils'
@@ -69,13 +70,14 @@ export default function Navbar() {
                 alignItems: 'center',
                 minHeight: '65px',
                 px: '1.5rem !important',
+                bgcolor: theme.palette.background.paper,
             }}
             position="fixed"
         >
             <Toolbar
                 sx={{
                     width: '100%',
-                    maxWidth: 'xl',
+                    maxWidth: 'xxl',
                     display: 'flex',
                     height: 'auto',
                     p: '0',
