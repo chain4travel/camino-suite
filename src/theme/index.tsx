@@ -1,20 +1,21 @@
-import React from 'react'
-import { useMemo, ReactNode } from 'react'
-import { CssBaseline } from '@mui/material'
+import { ReactNode, useMemo } from 'react'
 import {
-    createTheme,
+    StyledEngineProvider,
     ThemeOptions,
     ThemeProvider,
-    StyledEngineProvider,
+    createTheme,
 } from '@mui/material/styles'
-import shape from './shape'
-import palette from './palette'
-import typography from './typography'
+import shadows, { customShadows } from './shadows'
+
+import { CssBaseline } from '@mui/material'
+import React from 'react'
 import breakpoints from './breakpoints'
 import componentsOverrides from './overrides'
-import { useAppSelector } from '../hooks/reduxHooks'
 import { getTheme } from '../redux/slices/theme'
-import shadow, { customShadows } from './shadows'
+import palette from './palette'
+import shape from './shape'
+import typography from './typography'
+import { useAppSelector } from '../hooks/reduxHooks'
 
 type ThemeConfigProps = {
     children: ReactNode
@@ -29,10 +30,10 @@ export default function ThemeConfig({ children }: ThemeConfigProps) {
             palette: isLight
                 ? { ...palette.light, mode: 'light' }
                 : { ...palette.dark, mode: 'dark' },
-            shadow,
             shape,
             typography,
             breakpoints,
+            shadows: isLight ? shadows.light : shadows.dark,
             customShadows: isLight ? customShadows.light : customShadows.dark,
         }),
         [isLight],

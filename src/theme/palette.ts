@@ -60,14 +60,15 @@ const GREY = {
     0: '#FFFFFF',
     50: '#F8FAFC',
     100: '#F1F5F9',
-    200: '#E2E8F0',
-    300: '#CBD5E1',
-    400: '#94A3B8',
+    200: '#E2E7F0',
+    300: '#CBD4E2',
+    400: '#94A2B8',
     500: '#64748B',
     600: '#475569',
     700: '#334155',
     800: '#1E293B',
-    900: '#0F172A',
+    900: '#0F182A',
+    950: '#020617',
     A100: '#F5F5F5',
     A200: '#EEEEEE',
     A400: '#DBDBDB',
@@ -106,7 +107,6 @@ const COMMON = {
     error: { ...ERROR, contrastText: '#fff' },
     grey: GREY,
     blue: BLUE,
-    divider: GREY[500_24],
     action: {
         hover: GREY[500_8],
         selected: GREY[500_16],
@@ -121,6 +121,7 @@ const COMMON = {
 const palette = {
     light: {
         ...COMMON,
+        divider: GREY[300],
         text: { primary: GREY[800], secondary: GREY[600], disabled: GREY[500] },
         background: {
             paper: '#fff',
@@ -134,10 +135,11 @@ const palette = {
     },
     dark: {
         ...COMMON,
+        divider: GREY[700],
         text: { primary: '#fff', secondary: GREY[500], disabled: GREY[600] },
         background: {
-            paper: GREY[900],
-            default: GREY[900],
+            paper: GREY[950],
+            default: GREY[950],
             neutral: GREY[500_16],
             secondary: GREY[800],
         },

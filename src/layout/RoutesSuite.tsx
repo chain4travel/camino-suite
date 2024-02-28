@@ -60,7 +60,6 @@ export default function RoutesSuite() {
             location.pathname.split('/')[1] === 'login'
         )
             dispatch(changeActiveApp('Wallet'))
-        console.log('location changed', location.pathname.split('/')[1])
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [location])
