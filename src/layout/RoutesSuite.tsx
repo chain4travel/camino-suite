@@ -14,6 +14,7 @@ import LandingPage from '../views/landing/LandingPage'
 import Legal from '../views/legal/Legal'
 import LoginPage from '../views/login/LoginPage'
 import Partners from '../views/partners'
+import CreatedOffers from '../views/partners/CreatedOffers'
 import Foundation from '../views/partners/Foundation'
 import MultisigWallet from '../views/settings/MultisigWallet'
 import Settings from '../views/settings/index'
@@ -101,6 +102,7 @@ export default function RoutesSuite() {
                     </Route>
                     <Route path="/foundation" element={<CreateDepositsLayout />}>
                         <Route index element={<Foundation />} />
+                        <Route path="whitelisting" element={<CreatedOffers />} />
                     </Route>
                 </Route>
                 <Route path="/partners" element={<PartnersLayout />}>

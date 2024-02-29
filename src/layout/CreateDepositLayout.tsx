@@ -1,10 +1,8 @@
-import React, { useState } from 'react'
-import { Outlet } from 'react-router'
-import { Box, Toolbar } from '@mui/material'
-import Tabs from '@mui/material/Tabs'
+import { Box, Toolbar, Typography } from '@mui/material'
 import Tab from '@mui/material/Tab'
-import { useNavigate } from 'react-router'
-import { Typography } from '@mui/material'
+import Tabs from '@mui/material/Tabs'
+import React, { useState } from 'react'
+import { Outlet, useNavigate } from 'react-router'
 
 function a11yProps(index: number) {
     return {
@@ -52,7 +50,7 @@ const Links = () => {
                             Create new depositOffer
                         </Typography>
                     }
-                    onClick={() => navigate('/settings')}
+                    onClick={() => navigate('/foundation')}
                     {...a11yProps(0)}
                     sx={{
                         display: 'flex',
@@ -64,6 +62,44 @@ const Links = () => {
                         '&::after': {
                             content: '""',
                             display: value === 0 ? 'block' : 'none',
+                            width: '100%',
+                            height: '4px',
+                            position: 'absolute',
+                            bottom: '0px',
+                            borderRadius: '4px 4px 0px 0px',
+                            background: '#0085FF',
+                        },
+                    }}
+                />
+                <Tab
+                    className="tab"
+                    disableRipple
+                    label={
+                        <Typography
+                            sx={{
+                                fontFamily: 'Inter',
+                                fontSize: '14px',
+                                fontStyle: 'normal',
+                                fontWeight: '600',
+                                lineHeight: '20px',
+                                color: theme => theme.palette.text.primary,
+                            }}
+                        >
+                            Edit Whitelisting
+                        </Typography>
+                    }
+                    onClick={() => navigate('whitelisting')}
+                    {...a11yProps(1)}
+                    sx={{
+                        display: 'flex',
+                        padding: '10px 12px',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        position: 'relative',
+                        height: '61px',
+                        '&::after': {
+                            content: '""',
+                            display: value === 1 ? 'block' : 'none',
                             width: '100%',
                             height: '4px',
                             position: 'absolute',

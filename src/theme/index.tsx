@@ -5,7 +5,7 @@ import {
     ThemeProvider,
     createTheme,
 } from '@mui/material/styles'
-import React, { ReactNode, useMemo } from 'react'
+import { ReactNode, useMemo } from 'react'
 import { useAppSelector } from '../hooks/reduxHooks'
 import { getTheme } from '../redux/slices/theme'
 import breakpoints from './breakpoints'
@@ -14,6 +14,8 @@ import palette from './palette'
 import shadows, { CustomShadowOptions, customShadows } from './shadows'
 import shape from './shape'
 import typography from './typography'
+
+import React from 'react'
 
 type ThemeConfigProps = {
     children: ReactNode
