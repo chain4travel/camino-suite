@@ -14,6 +14,12 @@ export const GITHUB = 'https://github.com/chain4travel/'
 
 export const CAMINO = 'https://camino.network/'
 
+export const X = 'https://twitter.com/camino_network'
+
+export const YOUTUBE = 'https://www.youtube.com/@caminonetwork'
+
+export const LINKEDIN = 'https://www.linkedin.com/company/caminonetwork/'
+
 export const SUITE_RELEASES = 'https://github.com/chain4travel/camino-suite/releases'
 
 export const SUITE_WALLET = 'https://github.com/chain4travel/camino-wallet/tree/suite'
