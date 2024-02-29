@@ -16,7 +16,7 @@ export default function LandingPageAppWidget({ name, description, onClick }) {
             }}
         >
             <Box mb={2}>
-                <Typography variant={'h4'}>{name}</Typography>
+                <Typography variant={'h5'}>{name}</Typography>
                 <Typography>{description}</Typography>
             </Box>
 

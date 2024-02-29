@@ -1,10 +1,10 @@
 import { Box, Typography } from '@mui/material'
 
-import PartnerBusinessFields from './PartnerBusinessFields'
+import React from 'react'
 import { PartnerDataType } from '../../@types/partners'
+import PartnerBusinessFields from './PartnerBusinessFields'
 import PartnerFlag from './PartnerFlag'
 import PartnerLogo from './PartnerLogo'
-import React from 'react'
 
 interface PartnerCardProps {
     onClick: () => void
@@ -33,7 +33,7 @@ const PartnerCard: React.FC<PartnerCardProps> = ({ partner, clickable, onClick }
                 minWidth: { xs: '100%', sm: '343px' },
                 cursor: clickable ? 'pointer' : 'default',
                 flex: '1 1 23%',
-                maxWidth: { xs: '100%', md: '50%', lg: '32%', xl: '25%' },
+                maxWidth: { xs: '100%', md: '50%', xl: '25%' },
                 background: theme => theme.palette.card.background,
                 border: theme => `2px solid ${theme.palette.card.border}`,
                 borderRadius: '16px',
@@ -104,4 +104,4 @@ const PartnerCard: React.FC<PartnerCardProps> = ({ partner, clickable, onClick }
     )
 }
 
-export default PartnerCard
+export default React.memo(PartnerCard)
