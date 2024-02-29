@@ -1,6 +1,5 @@
 import {
     Box,
-    Button,
     Container,
     Divider,
     Fade,
@@ -79,7 +78,12 @@ export default function Footer() {
                             <Grid xs={12} item>
                                 <Box sx={{ display: 'flex' }}>
                                     {SocialMediaLinks.map((link, index) => (
-                                        <Link to={link.url} key={index} rel="noopener noreferrer">
+                                        <Link
+                                            to={link.url}
+                                            key={index}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                        >
                                             <Box
                                                 sx={{
                                                     display: 'flex',
@@ -114,6 +118,7 @@ export default function Footer() {
                                     {FooterButtons.map((button, index) => (
                                         <Link
                                             to={button.url}
+                                            target="_blank"
                                             rel="noopener noreferrer"
                                             key={index}
                                             style={{ textDecoration: 'none' }}
