@@ -1,8 +1,10 @@
 import { Box, Toolbar } from '@mui/material'
-import React from 'react'
-import { Outlet } from 'react-router'
+
 import Links from '../views/settings/Links'
-const SettingsLayout = () => {
+import { Outlet } from 'react-router'
+import React from 'react'
+
+const PartnersLayout = () => {
     return (
         <Box
             sx={{
@@ -30,11 +32,11 @@ const SettingsLayout = () => {
                     right: 0,
                 }}
             >
-                <Links type={true} />
+                <Links />
             </Toolbar>
             <Outlet />
         </Box>
     )
 }
 
-export default SettingsLayout
+export default PartnersLayout

@@ -4,8 +4,8 @@ import Box from '@mui/material/Box'
 import Tab from '@mui/material/Tab'
 import Tabs from '@mui/material/Tabs'
 import { useNavigate } from 'react-router'
-import { changeActiveApp } from '../../redux/slices/app-config'
 import { useAppDispatch } from '../../hooks/reduxHooks'
+import { changeActiveApp } from '../../redux/slices/app-config'
 
 function a11yProps(index: number) {
     return {
@@ -27,6 +27,38 @@ export default function Links() {
         dispatch(changeActiveApp('Network'))
     }, [path]) // eslint-disable-line react-hooks/exhaustive-deps
 
+    const settingsTabs = [
+        <Tab
+            className="tab"
+            disableRipple
+            label="Save account"
+            onClick={() => navigate('/settings')}
+            {...a11yProps(0)}
+            key={0}
+            sx={{ '&::after': { display: value === 0 ? 'block' : 'none' } }}
+        />,
+        <Tab
+            className="tab"
+            disableRipple
+            label="Multisignature Wallet"
+            onClick={() => navigate('manage-multisig')}
+            {...a11yProps(1)}
+            key={1}
+            sx={{ '&::after': { display: value === 1 ? 'block' : 'none' } }}
+        />,
+    ]
+
+    const partnersTabs = [
+        <Tab
+            className="tab"
+            disableRipple
+            label="Partner showroom"
+            {...a11yProps(0)}
+            key={0}
+            sx={{ '&::after': { display: value === 0 ? 'block' : 'none' } }}
+        />,
+    ]
+
     return (
         <Box sx={{ display: 'flex', cursor: 'pointer', width: '100%', maxWidth: '1536px' }}>
             <Tabs
@@ -38,22 +70,9 @@ export default function Links() {
                 variant="scrollable"
                 allowScrollButtonsMobile
             >
-                <Tab
-                    className="tab"
-                    disableRipple
-                    label="Save account"
-                    onClick={() => navigate('/settings')}
-                    {...a11yProps(0)}
-                    sx={{ '&::after': { display: value === 0 ? 'block' : 'none' } }}
-                />
-                <Tab
-                    className="tab"
-                    disableRipple
-                    label="Multisignature Wallet"
-                    onClick={() => navigate('manage-multisig')}
-                    {...a11yProps(1)}
-                    sx={{ '&::after': { display: value === 1 ? 'block' : 'none' } }}
-                />
+                {path === '/partners'
+                    ? partnersTabs.map((tab, index) => (tab ? tab : null))
+                    : settingsTabs.map((tab, index) => (tab ? tab : null))}
             </Tabs>
         </Box>
     )

@@ -36,6 +36,8 @@ const MainLayout = ({ children }) => {
         if (location.pathname.split('/')[1] === 'wallet') dispatch(changeActiveApp('Wallet'))
         else if (location.pathname.split('/')[1] === 'explorer')
             dispatch(changeActiveApp('Explorer'))
+        else if (location.pathname.split('/')[1] === 'partners')
+            dispatch(changeActiveApp('Partners'))
 
         dispatch(changeNetworkStatus(Status.LOADING))
         await store.dispatch('Network/init')

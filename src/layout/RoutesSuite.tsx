@@ -15,10 +15,12 @@ import Legal from '../views/legal/Legal'
 import LoginPage from '../views/login/LoginPage'
 import Partners from '../views/partners'
 import CreatedOffers from '../views/partners/CreatedOffers'
+import Foundation from '../views/partners/Foundation'
 import MultisigWallet from '../views/settings/MultisigWallet'
 import Settings from '../views/settings/index'
 import Wallet from '../views/wallet/WalletApp'
 import CreateDepositsLayout from './CreateDepositLayout'
+import PartnersLayout from './PartnersLayout'
 import Protected from './Protected'
 import SettingsLayout from './SettingsLayout'
 
@@ -56,6 +58,8 @@ export default function RoutesSuite() {
 
     useEffect(() => {
         if (location.pathname.split('/')[1] === 'explorer') dispatch(changeActiveApp('Explorer'))
+        else if (location.pathname.split('/')[1] === 'partners')
+            dispatch(changeActiveApp('Partners'))
         else if (
             location.pathname.split('/')[1] === 'wallet' ||
             location.pathname.split('/')[1] === 'login'
@@ -97,9 +101,12 @@ export default function RoutesSuite() {
                         <Route path="manage-multisig" element={<MultisigWallet />} />
                     </Route>
                     <Route path="/foundation" element={<CreateDepositsLayout />}>
-                        <Route index element={<Partners />} />
+                        <Route index element={<Foundation />} />
                         <Route path="whitelisting" element={<CreatedOffers />} />
                     </Route>
+                </Route>
+                <Route path="/partners" element={<PartnersLayout />}>
+                    <Route index element={<Partners />} />
                 </Route>
                 <Route path="/login" element={<LoginPage />} />
                 <Route path="/create" element={<Create />} />

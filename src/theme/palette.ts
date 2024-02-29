@@ -1,14 +1,41 @@
 import { alpha } from '@mui/material/styles'
 
+interface PaletteColorCustomOptions {
+    primary?: string
+    secondary?: string
+    border?: string
+    background?: string
+    text?: string
+}
 declare module '@mui/material/styles/createPalette' {
     interface ColorTypes {
         primary: string
     }
     interface Palette {
         logo: ColorTypes
+        card: PaletteColorCustomOptions
+        blue: {
+            [key in
+                | '0'
+                | '50'
+                | '100'
+                | '200'
+                | '300'
+                | '400'
+                | '500'
+                | '600'
+                | '700'
+                | '800'
+                | '900']: string
+        }
+    }
+    interface PaletteOptions {
+        logo?: PaletteColorCustomOptions
+        card?: PaletteColorCustomOptions
     }
     interface TypeBackground {
         secondary: string
+        gradient: string
     }
 }
 
@@ -128,10 +155,20 @@ const palette = {
             default: GREY[200],
             neutral: GREY[200],
             secondary: GREY[0],
+            gradient: 'linear-gradient(to right, #0085FF, #B440FC)',
         },
         action: { active: GREY[600], ...COMMON.action },
         button: { primary: GREY[200], secondary: GREY[100] },
         logo: { primary: BLUE[400] },
+        border: {
+            infoCard: '#B5E3FD',
+        },
+        card: {
+            border: '#E2E7F0',
+            borderSecondary: '#334155',
+            background: '#FFFFFF',
+            text: '#334155',
+        },
     },
     dark: {
         ...COMMON,
@@ -142,10 +179,19 @@ const palette = {
             default: GREY[950],
             neutral: GREY[500_16],
             secondary: GREY[800],
+            gradient: 'linear-gradient(to right, #0085FF, #B440FC)',
+        },
+        border: {
+            infoCard: '#B5E3FD',
         },
         action: { active: GREY[500], ...COMMON.action },
         button: { primary: GREY[700], secondary: GREY[800] },
         logo: { primary: BLUE[50] },
+        card: {
+            border: '#334155',
+            borderSecondary: '#E2E7F0',
+            text: '#CBD4E2',
+        },
     },
 }
 

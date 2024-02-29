@@ -14,6 +14,8 @@ export const GITHUB = 'https://github.com/chain4travel/'
 
 export const CAMINO = 'https://camino.network/'
 
+export const CAMINO_STRAPI = 'https://api.strapi.camino.network/'
+
 export const X = 'https://twitter.com/camino_network'
 
 export const YOUTUBE = 'https://www.youtube.com/@caminonetwork'
