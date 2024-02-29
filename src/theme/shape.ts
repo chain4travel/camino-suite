@@ -1,10 +1,10 @@
 declare module '@mui/system' {
     interface Shape {
-        borderRadiusNone: number | string
-        borderRadiusSm: number | string
-        borderRadiusMd: number | string
-        borderRadiusLg: number | string
-        borderRadiusXl: number | string
+        borderRadiusNone: number
+        borderRadiusSm: number
+        borderRadiusMd: number
+        borderRadiusLg: number
+        borderRadiusXl: number
     }
 }
 

@@ -1,0 +1,7 @@
+export { default as XIcon } from './XIcon'
+export { default as LinkedInIcon } from './LinkedInIcon'
+export { default as DiscordIcon } from './DiscordIcon'
+export { default as YoutubeIcon } from './YoutubeIcon'
+export { default as GithubIcon } from './GithubIcon'
+export { default as TelegramCaminoIcon } from './TelegramCaminoIcon'
+export { default as TelegramAnouncementIcon } from './TelegramAnouncementIcon'

@@ -11,7 +11,7 @@ import { getTheme } from '../redux/slices/theme'
 import breakpoints from './breakpoints'
 import componentsOverrides from './overrides'
 import palette from './palette'
-import shadow, { CustomShadowOptions, customShadows } from './shadows'
+import shadows, { CustomShadowOptions, customShadows } from './shadows'
 import shape from './shape'
 import typography from './typography'
 
@@ -65,10 +65,10 @@ export default function ThemeConfig({ children }: ThemeConfigProps) {
             palette: isLight
                 ? { ...palette.light, mode: 'light' }
                 : { ...palette.dark, mode: 'dark' },
-            shadow,
             shape,
             typography,
             breakpoints,
+            shadows: isLight ? shadows.light : shadows.dark,
             customShadows: isLight ? customShadows.light : customShadows.dark,
             customPadding: {
                 defaultPadding: '10px 16px 10px 16px',
