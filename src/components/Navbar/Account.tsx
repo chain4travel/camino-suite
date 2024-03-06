@@ -1,22 +1,24 @@
-import { mdiCog, mdiLogout } from '@mdi/js'
-import Icon from '@mdi/react'
 import { Chip, MenuItem, MenuList, Select, Typography, useTheme } from '@mui/material'
 import React, { useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
-import store from 'wallet/store'
-import { getNameOfWallet, getPchainAddress } from '../../helpers/walletStore'
-import { useAppDispatch, useAppSelector } from '../../hooks/reduxHooks'
 import {
     changeActiveApp,
     getAccount,
     updateAccount,
     updatePchainAddress,
 } from '../../redux/slices/app-config'
-import { updateAuthStatus } from '../../redux/slices/utils'
-import MHidden from '../@material-extend/MHidden'
-import { LoadAccountMenu } from '../LoadAccountMenu'
+import { getNameOfWallet, getPchainAddress } from '../../helpers/walletStore'
+import { mdiCog, mdiLogout } from '@mdi/js'
+import { useAppDispatch, useAppSelector } from '../../hooks/reduxHooks'
+
 import AliasPicker from './AliasPicker'
+import Icon from '@mdi/react'
+import { LoadAccountMenu } from '../LoadAccountMenu'
+import MHidden from '../@material-extend/MHidden'
 import ThemeSwitcher from './ThemeSwitcher'
+// @ts-ignore
+import store from 'wallet/store'
+import { updateAuthStatus } from '../../redux/slices/utils'
+import { useNavigate } from 'react-router-dom'
 
 interface LoginIconProps {
     handleCloseSidebar: () => void

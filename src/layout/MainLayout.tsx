@@ -14,12 +14,14 @@ import Notifications from '../components/Notification'
 import { Status } from '../@types'
 import { changeActiveApp } from '../redux/slices/app-config'
 import { matchNetworkStatus } from '../utils/componentsUtils'
+// @ts-ignore
 import store from 'wallet/store'
 import { useAppDispatch } from '../hooks/reduxHooks'
 import { useEffect } from 'react'
 import { useEffectOnce } from '../hooks/useEffectOnce'
 import { useLocation } from 'react-router-dom'
 import useNetwork from '../hooks/useNetwork'
+// @ts-ignore
 import { useStore } from 'Explorer/useStore'
 
 const MainLayout = ({ children }) => {
@@ -34,6 +36,8 @@ const MainLayout = ({ children }) => {
         if (location.pathname.split('/')[1] === 'wallet') dispatch(changeActiveApp('Wallet'))
         else if (location.pathname.split('/')[1] === 'explorer')
             dispatch(changeActiveApp('Explorer'))
+        else if (location.pathname.split('/')[1] === 'partners')
+            dispatch(changeActiveApp('Partners'))
 
         dispatch(changeNetworkStatus(Status.LOADING))
         await store.dispatch('Network/init')
@@ -101,10 +105,11 @@ const MainLayout = ({ children }) => {
                             justifyContent: 'space-between',
                             position: 'fixed',
                             padding: '20px',
-                            marginLeft: '10px',
-                            marginRight: '10px',
+                            mx: '10px',
+                            // marginRight: '10px',
                             minHeight: '200px',
                             maxWidth: '500px',
+                            border: 'none',
                         }}
                     >
                         <Typography

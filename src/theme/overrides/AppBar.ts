@@ -10,7 +10,6 @@ export default function AppBar(theme: Theme) {
                     boxShadow: 'none',
                     border: 'none !important',
                     color: theme.palette.text.primary,
-                    backgroundColor: theme.palette.background.paper,
                     borderBottom: `1px solid ${theme.palette.divider} !important`,
                     zIndex: 10,
                 },

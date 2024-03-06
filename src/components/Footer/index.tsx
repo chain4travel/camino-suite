@@ -1,46 +1,42 @@
-import React from 'react'
 import {
     Box,
+    Container,
+    Divider,
+    Fade,
     Grid,
+    MenuItem,
+    Paper,
+    Tooltip,
     Typography,
     useTheme,
-    Divider,
-    Container,
-    MenuItem,
-    Tooltip,
-    Fade,
 } from '@mui/material'
-import {
-    DOCS,
-    TWITTER,
-    TELEGRAM_CAMINO,
-    TELEGRAM_ANNOUNCEMENTS,
-    MEDIUM,
-    GITHUB,
-    DISCORD,
-    CAMINO,
-    SUITE_RELEASES,
-} from '../../constants/route-paths'
-import { Link } from 'react-router-dom'
-import { mdiInformationOutline } from '@mdi/js'
+import { FooterButtons, FooterLinks, SocialMediaLinks } from '../../constants/footer-consts'
+
 import Icon from '@mdi/react'
+import { Link } from 'react-router-dom'
+import React from 'react'
+import { SUITE_RELEASES } from '../../constants/route-paths'
 import Version from './Version'
+import { mdiInformationOutline } from '@mdi/js'
 
 export default function Footer() {
     const theme = useTheme()
+    const year = new Date().getFullYear()
     return (
         <footer style={{ position: 'relative', marginTop: 'auto' }}>
             {theme.palette.mode !== 'light' && <Divider variant="fullWidth" />}
-            <Box
+            <Paper
                 sx={{
-                    backgroundColor: theme.palette.mode !== 'light' ? 'grey.800' : 'white',
-                    p: '24px',
                     marginTop: '0px',
                     marginBottom: '0px',
+                    border: 'none',
+                    borderRadius: 0,
+                    boxShadow: 0,
                 }}
             >
                 <Container
-                    maxWidth="xl"
+                    // @ts-ignore
+                    maxWidth="xxl"
                     sx={{
                         marginTop: '15px',
                         paddingLeft: '0px !important',
@@ -48,77 +44,126 @@ export default function Footer() {
                         my: '0px !important',
                     }}
                 >
-                    <Grid container spacing={4} justifyContent="space-between">
-                        <Grid
-                            container
-                            item
-                            xs={12}
-                            md={6}
-                            spacing={4}
-                            justifyContent={{ xs: 'center', md: 'left' }}
-                        >
+                    <Grid container spacing={4} justifyContent="space-between" sx={{ p: '24px' }}>
+                        <Grid container item xs={12} lg={6} spacing={4} justifyContent="left">
                             <Grid item>
-                                {theme.palette.mode === 'light' ? (
-                                    <img
-                                        src="/assets/LightModeLogo.svg"
-                                        style={{ height: '40px', width: 'auto' }}
-                                        alt="camino logo"
-                                    />
-                                ) : (
-                                    <img
-                                        src="/assets/DarkModeLogo.svg"
-                                        style={{ height: '40px', width: 'auto' }}
-                                        alt="camino logo"
-                                    />
-                                )}
+                                <Box sx={{ height: { xs: '32px', md: '44px' }, width: 'auto' }}>
+                                    {theme.palette.mode === 'light' ? (
+                                        <img
+                                            src="/assets/LightModeLogo.svg"
+                                            style={{ height: '100%', width: '100%' }}
+                                            alt="camino logo"
+                                        />
+                                    ) : (
+                                        <img
+                                            src="/assets/DarkModeLogo.svg"
+                                            style={{ height: '100%', width: '100%' }}
+                                            alt="camino logo"
+                                        />
+                                    )}
+                                </Box>
                             </Grid>
                             <Grid item>
                                 <Typography
-                                    variant="body1"
+                                    variant="body2"
                                     component="p"
-                                    sx={{
-                                        color: 'grey.500',
-                                        textAlign: { xs: 'center', md: 'left' },
-                                    }}
+                                    sx={{ color: 'grey.400', textAlign: 'left' }}
                                 >
-                                    Camino is a fast, high-throughput open-source consortium
-                                    blockchain enabling the creation of travel-related products.
-                                    Camino’s tech stack and consensus protocol deliver unmatched
-                                    speed, security, and reliability within the network.
+                                    Camino is the travel industry blockchain. Fueled by the Camino
+                                    token, it is offering a versatile network to expand current
+                                    business models and to create new touristic products to delight
+                                    travelers and business partners.
                                 </Typography>
                             </Grid>
-                        </Grid>
-                        <Grid
-                            container
-                            item
-                            xs={12}
-                            md={6}
-                            spacing={2}
-                            justifyContent={{ xs: 'space-around', md: 'left' }}
-                        >
-                            {FooterLinks.map((link, index) => (
-                                <Grid
-                                    item
-                                    xs={12}
-                                    sm={6}
-                                    xl={4}
-                                    key={index}
-                                    sx={{ display: 'flex', flexDirection: 'column' }}
+                            <Grid xs={12} item>
+                                <Box sx={{ display: 'flex' }}>
+                                    {SocialMediaLinks.map((link, index) => (
+                                        <Link
+                                            to={link.url}
+                                            key={index}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                        >
+                                            <Box
+                                                sx={{
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    justifyContent: 'center',
+                                                    borderRadius: '.75rem',
+                                                    color: theme => theme.palette.text.primary,
+                                                    padding: '.5rem',
+                                                    '&:hover': {
+                                                        backgroundColor: theme =>
+                                                            theme.palette.mode === 'dark'
+                                                                ? theme.palette.grey[700]
+                                                                : theme.palette.grey[200],
+                                                    },
+                                                }}
+                                            >
+                                                {link.icon}
+                                            </Box>
+                                        </Link>
+                                    ))}
+                                </Box>
+                            </Grid>
+                            <Grid xs={12} item>
+                                <Box
+                                    sx={{
+                                        display: 'flex',
+                                        flexWrap: 'wrap',
+                                        alignItems: 'center',
+                                        gap: 3,
+                                    }}
                                 >
+                                    {FooterButtons.map((button, index) => (
+                                        <Link
+                                            to={button.url}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            key={index}
+                                            style={{ textDecoration: 'none' }}
+                                        >
+                                            <Box
+                                                sx={{
+                                                    p: '.5rem 1rem',
+                                                    border: `1px solid ${theme.palette.divider}`,
+                                                    color: theme => theme.palette.text.primary,
+                                                    backgroundColor: theme =>
+                                                        theme.palette.mode === 'dark'
+                                                            ? theme.palette.grey[900]
+                                                            : theme.palette.grey[100],
+                                                    borderRadius: '.75rem',
+                                                    '&:hover': {
+                                                        borderWidth: '1px',
+                                                        color: theme => theme.palette.grey[950],
+                                                        backgroundColor: theme =>
+                                                            theme.palette.mode === 'dark'
+                                                                ? '#FFF'
+                                                                : theme.palette.grey[300],
+                                                    },
+                                                }}
+                                            >
+                                                <Typography variant="body2" component="span">
+                                                    {button.name}
+                                                </Typography>
+                                            </Box>
+                                        </Link>
+                                    ))}
+                                </Box>
+                            </Grid>
+                        </Grid>
+                        <Grid container item xs={12} lg={6} spacing={2} justifyContent="left">
+                            {FooterLinks.map((link, index) => (
+                                <Grid item md key={index}>
                                     <Typography
-                                        variant="body1"
+                                        variant="body2"
                                         component="span"
                                         fontWeight="fontWeightBold"
-                                        sx={{
-                                            marginBottom: '.5rem',
-                                            fontSize: '1.25rem',
-                                            justifyContent: { xs: 'center', md: 'left' },
-                                            display: 'flex',
-                                        }}
+                                        sx={{ whiteSpace: 'nowrap', fontWeight: 'bolder' }}
                                     >
                                         {link.name}
                                     </Typography>
-                                    <ul style={{ display: 'grid', gap: '7px' }}>
+                                    <ul style={{ display: 'grid', gap: '5px', marginTop: '.5rem' }}>
                                         {link.links.map((l, i) => (
                                             <MenuItem
                                                 sx={{
@@ -126,7 +171,6 @@ export default function Footer() {
                                                     listStyle: 'none',
                                                     p: 0,
                                                     minHeight: 'auto',
-                                                    justifyContent: { xs: 'center', md: 'left' },
                                                     '&:hover': { backgroundColor: 'transparent' },
                                                 }}
                                                 disableRipple
@@ -141,7 +185,7 @@ export default function Footer() {
                                                     <Typography
                                                         variant="body2"
                                                         component="span"
-                                                        sx={{ color: 'grey.500' }}
+                                                        sx={{ color: 'grey.400' }}
                                                     >
                                                         {l.text}
                                                     </Typography>
@@ -153,26 +197,36 @@ export default function Footer() {
                             ))}
                         </Grid>
                     </Grid>
-                    <Divider sx={{ mt: 2 }} variant="fullWidth" />
-                    <Grid container sx={{ mt: 2 }} justifyContent="space-between">
-                        <Grid item xs={12} md={6}>
+                </Container>
+                <Box
+                    sx={{
+                        backgroundColor: theme =>
+                            theme.palette.mode === 'dark' ? '#0F182A' : '#F1F5F9',
+                        color: theme => (theme.palette.mode === 'dark' ? 'grey.300' : 'grey.700'),
+                    }}
+                >
+                    <Container maxWidth="xl">
+                        <Box
+                            sx={{
+                                display: 'flex',
+                                flexDirection: 'column',
+                                p: '1rem',
+                                justifyContent: 'center',
+                            }}
+                        >
                             <Typography
-                                variant="body1"
+                                variant="caption"
                                 component="p"
-                                sx={{
-                                    textAlign: { xs: 'center', md: 'left' },
-                                }}
+                                sx={{ textAlign: 'center' }}
                             >
-                                Camino Network Foundation &copy; 2023
+                                &copy; {year} Camino Network Foundation. All rights reserved
                             </Typography>
-                        </Grid>
-                        <Grid item xs={12} md={6}>
                             <Box
                                 sx={{
                                     display: 'flex',
                                     alignItems: 'center',
                                     gap: '.5rem',
-                                    justifyContent: { xs: 'center', md: 'flex-end' },
+                                    justifyContent: 'center',
                                 }}
                             >
                                 <Tooltip
@@ -188,7 +242,7 @@ export default function Footer() {
                                         },
                                     }}
                                 >
-                                    <Icon path={mdiInformationOutline} size={0.85} />
+                                    <Icon path={mdiInformationOutline} size={0.65} />
                                 </Tooltip>
 
                                 <Link
@@ -197,60 +251,15 @@ export default function Footer() {
                                     style={{ textDecoration: 'none', color: 'inherit' }}
                                     to={SUITE_RELEASES}
                                 >
-                                    <Typography variant="body2" component="p" color="inherit">
+                                    <Typography variant="caption" component="span" color="inherit">
                                         {process.env.VERSION}
                                     </Typography>
                                 </Link>
                             </Box>
-                        </Grid>
-                    </Grid>
-                </Container>
-            </Box>
+                        </Box>
+                    </Container>
+                </Box>
+            </Paper>
         </footer>
     )
 }
-
-const FooterLinks = [
-    {
-        name: 'Community',
-        links: [
-            {
-                text: 'Discord',
-                url: DISCORD,
-            },
-            {
-                text: 'Twitter',
-                url: TWITTER,
-            },
-            {
-                text: 'Telegram Camino Network',
-                url: TELEGRAM_CAMINO,
-            },
-            {
-                text: 'Telegram Announcements',
-                url: TELEGRAM_ANNOUNCEMENTS,
-            },
-        ],
-    },
-    {
-        name: 'More',
-        links: [
-            {
-                text: 'Github',
-                url: GITHUB,
-            },
-            {
-                text: 'Medium',
-                url: MEDIUM,
-            },
-            {
-                text: 'Documentation',
-                url: DOCS,
-            },
-            {
-                text: 'Camino Network Website',
-                url: CAMINO,
-            },
-        ],
-    },
-]

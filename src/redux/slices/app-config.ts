@@ -47,8 +47,9 @@ const appConfigSlice = createSlice({
             state.walletStore = payload
         },
         updatePchainAddress(state, { payload }) {
-            state.pChainAddress = payload.address
-            state.walletName = payload.walletName
+            state.pChainAddress = payload.address[0]
+            state.walletName =
+                payload.walletName !== 'Singleton Wallet' ? payload.walletName : payload.address[0]
         },
         updateAccount(state, { payload }) {
             state.account = payload
@@ -65,29 +66,28 @@ const appConfigSlice = createSlice({
         },
         updateApps(state, { payload }) {
             if (payload) {
-                state.apps.find(elem => elem.name === 'Foundation')
-                let t = state.apps
-                t[4].hidden = false
-                state.apps = [...t]
+                state.apps = state.apps.map(app => {
+                    if (app.name === 'Foundation') {
+                        return { ...app, hidden: payload ? false : true }
+                    }
+                    return app
+                })
             } else {
-                let t = state.apps
-                t[4].hidden = true
-                state.apps = [...t]
+                state.apps = APPS_CONSTS
             }
         },
     },
     extraReducers: builder => {
         builder.addCase(updateAuthStatus.fulfilled, (state, { payload }) => {
             if (store.getters['Platform/isOfferCreator']) {
-                state.apps.find(elem => elem.name === 'Foundation')
-                let t = state.apps
-                t[4].hidden = false
-                state.apps = [...t]
-            }
-            if (!payload) {
-                let t = state.apps
-                t[4].hidden = true
-                state.apps = [...t]
+                state.apps = state.apps.map(app => {
+                    if (app.name === 'Foundation') {
+                        return { ...app, hidden: payload ? false : true }
+                    }
+                    return app
+                })
+            } else {
+                state.apps = APPS_CONSTS
             }
             state.isAuth = payload
         })
