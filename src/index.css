@@ -23,15 +23,45 @@
     --camino-brand-error-100: rgba(229, 67, 31, 0.25);
     --primary-font: 'Inter', sans-serif;
     --camino-brand-primary: linear-gradient(90deg, #0085ff 0%, #b440fc 100%);
-    --tailwind-slate-slate-200: #e2e7f0;
-    --tailwind-slate-slate-300: #cbd4e2;
-    --tailwind-slate-slate-600: #475569;
-    --tailwind-slate-slate-900: #0f182a;
-    --tailwind-slate-white: #fff;
     --spacing-space-sm: 8px;
     --spacing-space-md: 12px;
     --spacing-space-base: 16px;
     --spacing-space-lg: 24px;
+
+    --tailwind-slate-white: #FFFFFF;
+    --tailwind-slate-slate-50: #F8FAFC;
+    --tailwind-slate-slate-100: #F1F5F9;
+    --tailwind-slate-slate-200: #E2E7F0;
+    --tailwind-slate-slate-300: #CBD4E2;
+    --tailwind-slate-slate-400: #94A2B8;
+    --tailwind-slate-slate-500: #64748B;
+    --tailwind-slate-slate-600: #475569;
+    --tailwind-slate-slate-700: #334155;
+    --tailwind-slate-slate-800: #1E293B;
+    --tailwind-slate-slate-900: #0F182A;
+    --tailwind-slate-slate-950: #020617;
+
+    --camino-too-blue-to-be-true: #0085FF;
+    --camino-magento: #B440FC;
+    --camino-aphrodite-teal: #35E9AD;
+    --camino-aphrodite-aqua: #B5E3FD;
+    --camino-muted-blue: #317CA5;
+
+    --camino-gradient-1: linear-gradient(90deg, #0085FF 0%, #B440FC 100%);
+    --camino-gradient-2: linear-gradient(90deg, #B440FC 0%, #35E9AD 100%);
+    --camino-gradient-3: linear-gradient(90deg, #35E9AD 0%, #0085FF 100%);
+    --camino-gradient-4: linear-gradient(90deg, #B440FC 0%, #0F182A 100%);
+
+    --camino-primary-light: #B3DAFF;
+    --camino-primary-dark: #012C5D;
+    --camino-secondary-light: #E9C6FE;
+    --camino-secondary-dark: #37175C;
+    --camino-success-light: #18B728;
+    --camino-success-dark: #09DE6B;
+    --camino-warning-light: #E5A21F;
+    --camino-warning-dark: #E5A21F;
+    --camino-error-light: #E5431F;
+    --camino-error-dark: #E5431F;
 }
 
 html[data-theme='light'] {
@@ -76,7 +106,7 @@ html[data-theme='light'] {
 }
 
 html[data-theme='dark'] {
-    --bg: #0f172a;
+    --bg: #020617;
     --bg-1: 36, 39, 41;
     --bg-light: #1e293b;
     --bg-light-1: 46, 50, 52;
@@ -120,7 +150,7 @@ html[data-theme='dark'] {
 body {
     overflow: auto;
     background-color: var(--bg) !important;
-    height: auto;
+    height: 100%;
     font-size: 16px !important;
     padding-right: 0 !important;
 }

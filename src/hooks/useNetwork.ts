@@ -7,14 +7,14 @@ import {
     getNetworks,
     selectNetworkStatus,
 } from '@/redux/slices/network'
+import { useEffect, useState } from 'react'
 import { updateApps, updateNotificationStatus, updateShowButton } from '../redux/slices/app-config'
 import { useAppDispatch, useAppSelector } from './reduxHooks'
-import { useEffect, useState } from 'react'
 
-import { AvaNetwork } from 'wallet/AvaNetwork'
-import { Status } from '../@types'
-import store from 'wallet/store'
 import { useStore } from 'Explorer/useStore'
+import { AvaNetwork } from 'wallet/AvaNetwork'
+import store from 'wallet/store'
+import { Status } from '../@types'
 
 const useNetwork = (): {
     handleChangeNetwork: (arg: string) => void

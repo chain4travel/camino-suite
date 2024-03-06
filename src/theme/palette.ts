@@ -1,14 +1,41 @@
 import { alpha } from '@mui/material/styles'
 
+interface PaletteColorCustomOptions {
+    primary?: string
+    secondary?: string
+    border?: string
+    background?: string
+    text?: string
+}
 declare module '@mui/material/styles/createPalette' {
     interface ColorTypes {
         primary: string
     }
     interface Palette {
         logo: ColorTypes
+        card: PaletteColorCustomOptions
+        blue: {
+            [key in
+                | '0'
+                | '50'
+                | '100'
+                | '200'
+                | '300'
+                | '400'
+                | '500'
+                | '600'
+                | '700'
+                | '800'
+                | '900']: string
+        }
+    }
+    interface PaletteOptions {
+        logo?: PaletteColorCustomOptions
+        card?: PaletteColorCustomOptions
     }
     interface TypeBackground {
         secondary: string
+        gradient: string
     }
 }
 
@@ -60,14 +87,15 @@ const GREY = {
     0: '#FFFFFF',
     50: '#F8FAFC',
     100: '#F1F5F9',
-    200: '#E2E8F0',
-    300: '#CBD5E1',
-    400: '#94A3B8',
+    200: '#E2E7F0',
+    300: '#CBD4E2',
+    400: '#94A2B8',
     500: '#64748B',
     600: '#475569',
     700: '#334155',
     800: '#1E293B',
-    900: '#0F172A',
+    900: '#0F182A',
+    950: '#020617',
     A100: '#F5F5F5',
     A200: '#EEEEEE',
     A400: '#DBDBDB',
@@ -106,7 +134,6 @@ const COMMON = {
     error: { ...ERROR, contrastText: '#fff' },
     grey: GREY,
     blue: BLUE,
-    divider: GREY[500_24],
     action: {
         hover: GREY[500_8],
         selected: GREY[500_16],
@@ -121,29 +148,50 @@ const COMMON = {
 const palette = {
     light: {
         ...COMMON,
+        divider: GREY[300],
         text: { primary: GREY[800], secondary: GREY[600], disabled: GREY[500] },
         background: {
             paper: '#fff',
             default: GREY[200],
             neutral: GREY[200],
             secondary: GREY[0],
+            gradient: 'linear-gradient(to right, #0085FF, #B440FC)',
         },
         action: { active: GREY[600], ...COMMON.action },
         button: { primary: GREY[200], secondary: GREY[100] },
         logo: { primary: BLUE[400] },
+        border: {
+            infoCard: '#B5E3FD',
+        },
+        card: {
+            border: '#E2E7F0',
+            borderSecondary: '#334155',
+            background: '#FFFFFF',
+            text: '#334155',
+        },
     },
     dark: {
         ...COMMON,
+        divider: GREY[700],
         text: { primary: '#fff', secondary: GREY[500], disabled: GREY[600] },
         background: {
-            paper: GREY[900],
-            default: GREY[900],
+            paper: GREY[950],
+            default: GREY[950],
             neutral: GREY[500_16],
             secondary: GREY[800],
+            gradient: 'linear-gradient(to right, #0085FF, #B440FC)',
+        },
+        border: {
+            infoCard: '#B5E3FD',
         },
         action: { active: GREY[500], ...COMMON.action },
         button: { primary: GREY[700], secondary: GREY[800] },
         logo: { primary: BLUE[50] },
+        card: {
+            border: '#334155',
+            borderSecondary: '#E2E7F0',
+            text: '#CBD4E2',
+        },
     },
 }
 

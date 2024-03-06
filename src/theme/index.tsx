@@ -1,23 +1,61 @@
-import React from 'react'
-import { useMemo, ReactNode } from 'react'
 import { CssBaseline } from '@mui/material'
 import {
-    createTheme,
+    StyledEngineProvider,
     ThemeOptions,
     ThemeProvider,
-    StyledEngineProvider,
+    createTheme,
 } from '@mui/material/styles'
-import shape from './shape'
-import palette from './palette'
-import typography from './typography'
-import breakpoints from './breakpoints'
-import componentsOverrides from './overrides'
+import { ReactNode, useMemo } from 'react'
 import { useAppSelector } from '../hooks/reduxHooks'
 import { getTheme } from '../redux/slices/theme'
-import shadow, { customShadows } from './shadows'
+import breakpoints from './breakpoints'
+import componentsOverrides from './overrides'
+import palette from './palette'
+import shadows, { CustomShadowOptions, customShadows } from './shadows'
+import shape from './shape'
+import typography from './typography'
+
+import React from 'react'
 
 type ThemeConfigProps = {
     children: ReactNode
+}
+
+interface CustomPaddingOptions {
+    defaultPadding: string
+}
+interface CustomWidthOptions {
+    layoutMaxWitdh: string
+}
+interface CustomShapeOptions {
+    borderRadiusNone: number | string
+    borderRadiusSm: number | string
+    borderRadiusMd: number | string
+    borderRadiusLg: number | string
+    borderRadiusXl: number | string
+}
+
+const customShape = {
+    borderRadiusNone: 0,
+    borderRadius: 8,
+    borderRadiusSm: 12,
+    borderRadiusMd: 16,
+    borderRadiusLg: 20,
+    borderRadiusXl: 25,
+}
+declare module '@mui/material/styles' {
+    interface Theme {
+        customShadows: CustomShadowOptions
+        customPadding: CustomPaddingOptions
+        customWidth: CustomWidthOptions
+        customShape: CustomShapeOptions
+    }
+    interface ThemeOptions {
+        customShadows?: CustomShadowOptions
+        customPadding?: CustomPaddingOptions
+        customWidth?: CustomWidthOptions
+        customShape?: CustomShapeOptions
+    }
 }
 
 export default function ThemeConfig({ children }: ThemeConfigProps) {
@@ -29,11 +67,18 @@ export default function ThemeConfig({ children }: ThemeConfigProps) {
             palette: isLight
                 ? { ...palette.light, mode: 'light' }
                 : { ...palette.dark, mode: 'dark' },
-            shadow,
             shape,
             typography,
             breakpoints,
+            shadows: isLight ? shadows.light : shadows.dark,
             customShadows: isLight ? customShadows.light : customShadows.dark,
+            customPadding: {
+                defaultPadding: '10px 16px 10px 16px',
+            },
+            customWidth: {
+                layoutMaxWitdh: '1536px',
+            },
+            customShape,
         }),
         [isLight],
     )

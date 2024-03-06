@@ -1,6 +1,6 @@
+import { Box, Toolbar } from '@mui/material'
 import React from 'react'
 import { Outlet } from 'react-router'
-import { Box, Toolbar } from '@mui/material'
 import Links from '../views/settings/Links'
 const SettingsLayout = () => {
     return (
@@ -30,7 +30,7 @@ const SettingsLayout = () => {
                     right: 0,
                 }}
             >
-                <Links />
+                <Links type={true} />
             </Toolbar>
             <Outlet />
         </Box>
