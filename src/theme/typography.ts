@@ -140,7 +140,7 @@ const typography = {
     },
     overline: {
         fontFamily: FONT,
-        fontWeight: 700,
+        fontWeight: 600,
         lineHeight: '18px',
         fontSize: pxToRem(12),
         letterSpacing: '-1.1%',
