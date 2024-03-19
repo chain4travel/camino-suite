@@ -116,15 +116,15 @@ export const SocialMediaLinks = [
 export const FooterButtons = [
     {
         name: 'Camino Website',
-        url: 'https://camino.network',
+        url: 'https://camino.network/',
     },
     {
         name: 'Documentation',
-        url: 'https://camino.network/docs',
+        url: 'https://docs.camino.network/',
     },
     {
         name: 'Whitepaper',
-        url: 'https://camino.network/static/docs/Whitepaper.pdf',
+        url: 'https://camino.network/static/docs/Camino_Network_Whitepaper.pdf#view=fit',
     },
 ]
 
@@ -142,19 +142,19 @@ export const FooterLinks = [
             },
             {
                 text: 'Validators',
-                url: 'https://camino.network/validators',
+                url: 'https://camino.network/validators/',
             },
             {
                 text: 'Developers',
-                url: 'https://camino.network/developers',
+                url: 'https://camino.network/developer/',
             },
             {
                 text: 'Community',
-                url: 'https://camino.network/community',
+                url: 'https://camino.network/community/',
             },
             {
                 text: 'Blog',
-                url: 'https://camino.network/blog',
+                url: 'https://camino.network/blog/',
             },
         ],
     },
@@ -163,27 +163,27 @@ export const FooterLinks = [
         links: [
             {
                 text: 'Foundation',
-                url: 'https://camino.network/foundation',
+                url: 'https://foundation.camino.network/',
             },
             {
                 text: 'Imprint',
-                url: 'https://camino.network/imprint',
+                url: 'https://camino.network/imprint/',
             },
             {
                 text: 'Privacy Policy',
-                url: 'https://camino.network/privacy-policy',
+                url: 'https://camino.network/privacy-policy/',
             },
             {
                 text: 'Terms of Use',
-                url: 'https://camino.network/terms-of-use',
+                url: 'https://camino.network/terms/',
             },
             {
                 text: 'Code of Conduct',
-                url: 'https://camino.network/code-of-conduct',
+                url: 'https://camino.network/code-of-conduct/',
             },
             {
                 text: 'Branding',
-                url: 'https://camino.network/branding',
+                url: 'https://camino.network/branding/',
             },
         ],
     },
@@ -196,7 +196,7 @@ export const FooterLinks = [
             },
             {
                 text: 'Disclaimer',
-                url: 'https://camino.network/public-sale-disclaimer',
+                url: 'https://camino.network/public-sale-disclaimer/',
             },
             {
                 text: 'Terms & Conditions',
