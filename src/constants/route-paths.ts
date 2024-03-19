@@ -1,6 +1,6 @@
 export const DOCS = 'https://docs.camino.network/'
 
-export const DISCORD = 'https://discord.gg/camino/'
+export const DISCORD = 'https://discord.com/invite/camino/'
 
 export const TWITTER = 'https://twitter.com/camino_network/'
 
