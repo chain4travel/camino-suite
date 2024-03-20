@@ -224,7 +224,7 @@ Cypress.Commands.add(
                             privateKeys[keyName || 'privateKey'],
                         )
                     })
-                    cy.get('button[type="submit"]').contains('Access Wallet').click()
+                    cy.get('[data-cy="btn-submit-private-key"]').contains('Access Wallet').click()
                 }
                 break
             case 'mnemonic':
