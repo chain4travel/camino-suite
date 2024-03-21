@@ -11,6 +11,7 @@ export interface AttributesType {
     contactFirstname?: string
     contactLastname?: string
     contactPhone?: string
+    pChainAddress?: string
     companyShortDescription?: string
     companyLongDescription?: string
     isConsortiumMember?: boolean
@@ -145,4 +146,34 @@ export interface PaginationType {
     pageSize: number
     pageCount: number
     total: number
+}
+
+type RewardOwner = {
+    locktime: string
+    threshold: string
+    addresses: string[]
+}
+
+type RewardInfo = {
+    locktime: string
+    threshold: string
+    addresses: string[]
+}
+
+export type Validator = {
+    txID: string
+    startTime: string
+    endTime: string
+    weight: string
+    nodeID: string
+    stakeAmount: string
+    rewardOwner: RewardOwner
+    validationRewardOwner: RewardInfo
+    delegationRewardOwner: RewardInfo
+    potentialReward: string
+    delegationFee: string
+    uptime: string
+    connected: boolean
+    delegatorCount: string
+    delegatorWeight: string
 }

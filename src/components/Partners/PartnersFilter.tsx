@@ -1,8 +1,8 @@
 import { ActionType, StatePartnersType, partnersActions } from '../../helpers/partnersReducer'
 
-import { Box } from '@mui/material'
-import BusinessFieldFilter from './BusinessFieldFilter'
+import { Box, Checkbox, FormControlLabel, Typography } from '@mui/material'
 import React from 'react'
+import BusinessFieldFilter from './BusinessFieldFilter'
 import SearchInput from './SearchInput'
 
 interface PartnersFilterProps {
@@ -17,11 +17,9 @@ const PartnersFilter: React.FC<PartnersFilterProps> = ({ state, dispatchPartners
         <Box sx={{ display: 'flex', gap: '1rem', alignItems: 'center', flexWrap: 'wrap' }}>
             <SearchInput searchByName={searchByName} />
             <BusinessFieldFilter state={state} dispatchPartnersActions={dispatchPartnersActions} />
-            {/*
-            disabled for now because we don't have the pchain address for the partner in strapi 
             <Box sx={{ display: 'flex', alignItems: 'center', gap: '.5rem' }}>
                 <FormControlLabel
-                    label="Only Validators"
+                    label={<Typography variant="body2">Only Validators</Typography>}
                     control={
                         <Checkbox
                             sx={{
@@ -40,7 +38,7 @@ const PartnersFilter: React.FC<PartnersFilterProps> = ({ state, dispatchPartners
                         />
                     }
                 />
-            </Box> */}
+            </Box>
         </Box>
     )
 }
