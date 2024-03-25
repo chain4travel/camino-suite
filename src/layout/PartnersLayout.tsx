@@ -1,8 +1,8 @@
 import { Box, Toolbar } from '@mui/material'
 
-import Links from '../views/settings/Links'
-import { Outlet } from 'react-router'
 import React from 'react'
+import { Outlet } from 'react-router'
+import Links from '../views/settings/Links'
 
 const PartnersLayout = () => {
     return (
@@ -34,7 +34,16 @@ const PartnersLayout = () => {
             >
                 <Links />
             </Toolbar>
-            <Outlet />
+            <Box
+                sx={{
+                    mt: '5rem',
+                    height: '100%',
+                    width: '100%',
+                    maxWidth: theme => theme.customWidth.layoutMaxWitdh,
+                }}
+            >
+                <Outlet />
+            </Box>
         </Box>
     )
 }

@@ -1,5 +1,5 @@
 import { Box, CircularProgress, Pagination, PaginationItem, Typography } from '@mui/material'
-import React, { ReactNode, useReducer, useState } from 'react'
+import React, { ReactNode, useReducer } from 'react'
 import {
     initialStatePartners,
     partnersActions,
@@ -8,11 +8,9 @@ import {
 
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
-import ListPartners from './ListPartners'
-import Partner from './Partner'
-import { PartnerDataType } from '../../@types/partners'
 import PartnersFilter from '../../components/Partners/PartnersFilter'
 import { useListPartnersQuery } from '../../redux/services/partners'
+import ListPartners from './ListPartners'
 
 interface PartnersListWrapperProps {
     isLoading: boolean
@@ -47,19 +45,16 @@ const Partners = () => {
     const handleChange = (event: React.ChangeEvent<unknown>, value: number) => {
         dispatchPartnersActions({ type: partnersActions.NEXT_PAGE, payload: value })
     }
-    const [partner, setPartner] = useState<PartnerDataType | null>(null)
 
     if (!partners?.data) {
         return <PartnersListWrapper isLoading={isLoading} isFetching={isFetching} />
     }
-    const content = partner ? (
-        <Partner partner={partner} setPartner={setPartner} />
-    ) : (
+    const content = (
         <>
             <PartnersFilter state={state} dispatchPartnersActions={dispatchPartnersActions} />
             <Typography variant="h5">{partners.meta.pagination.total} Partners</Typography>
             <PartnersListWrapper isLoading={isLoading} isFetching={isFetching}>
-                <ListPartners partners={partners} setPartner={setPartner} />
+                <ListPartners partners={partners} />
             </PartnersListWrapper>
             <Box sx={{ display: 'flex', justifyContent: 'center', my: '2rem' }}>
                 <Pagination
@@ -82,11 +77,7 @@ const Partners = () => {
             sx={{
                 display: 'flex',
                 flexDirection: 'column',
-                mt: '5rem',
                 gap: '1rem',
-                height: '100%',
-                width: '100%',
-                maxWidth: theme => theme.customWidth.layoutMaxWitdh,
             }}
         >
             {content}

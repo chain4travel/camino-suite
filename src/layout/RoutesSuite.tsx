@@ -16,6 +16,7 @@ import LoginPage from '../views/login/LoginPage'
 import Partners from '../views/partners'
 import CreatedOffers from '../views/partners/CreatedOffers'
 import Foundation from '../views/partners/Foundation'
+import Partner from '../views/partners/Partner'
 import MultisigWallet from '../views/settings/MultisigWallet'
 import Settings from '../views/settings/index'
 import Wallet from '../views/wallet/WalletApp'
@@ -107,6 +108,7 @@ export default function RoutesSuite() {
                 </Route>
                 <Route path="/partners" element={<PartnersLayout />}>
                     <Route index element={<Partners />} />
+                    <Route path=":partnerID" element={<Partner />}></Route>
                 </Route>
                 <Route path="/login" element={<LoginPage />} />
                 <Route path="/create" element={<Create />} />
