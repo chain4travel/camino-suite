@@ -2,9 +2,9 @@
     "name": "host-react",
     "version": "1.0.0",
     "scripts": {
-        "build": "PUBLIC_PATH=https://suite.camino.network/ EXPLORER_PATH=https://suite.camino.network/explorer/ WALLET_PATH=https://suite.camino.network/wallet/ webpack --config webpack.prod.js",
-        "build:dev": "PUBLIC_PATH=https://dev.suite.camino.network/ EXPLORER_PATH=https://dev.suite.camino.network/explorer/ WALLET_PATH=https://dev.suite.camino.network/wallet/ webpack --config webpack.dev.js",
-        "build:stage": "PUBLIC_PATH=https://stage.suite.camino.network/ EXPLORER_PATH=https://stage.suite.camino.network/explorer/ WALLET_PATH=https://stage.suite.camino.network/wallet/ webpack --config webpack.prod.js",
+        "build": "PUBLIC_PATH=https://suite.camino.network/ EXPLORER_PATH=https://suite.camino.network/explorer/ WALLET_PATH=https://suite.camino.network/wallet/ DAC_PATH=https://suite.camino.network/dac/ webpack --config webpack.prod.js",
+        "build:dev": "PUBLIC_PATH=https://dev.suite.camino.network/ EXPLORER_PATH=https://dev.suite.camino.network/explorer/ WALLET_PATH=https://dev.suite.camino.network/wallet/ DAC_PATH=https://dev.suite.camino.network/dac/ webpack --config webpack.dev.js",
+        "build:stage": "PUBLIC_PATH=https://stage.suite.camino.network/ EXPLORER_PATH=https://stage.suite.camino.network/explorer/ WALLET_PATH=https://stage.suite.camino.network/wallet/ DAC_PATH=https://stage.suite.camino.network/dac/ webpack --config webpack.prod.js",
         "build:start": "cd dist && PORT=5001 npx serve",
         "start": "webpack-dev-server --config webpack.local.js",
         "start:live": "webpack-dev-server --open --config webpack.local.js --live-reload",

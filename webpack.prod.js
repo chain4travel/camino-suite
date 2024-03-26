@@ -6,6 +6,7 @@ const deps = require('./package.json').dependencies
 const publicPath = process.env.PUBLIC_PATH
 const explorerPath = process.env.EXPLORER_PATH
 const walletPath = process.env.WALLET_PATH
+const dacPath = process.env.DAC_PATH
 
 module.exports = merge(common, {
     mode: 'production',
@@ -23,6 +24,7 @@ module.exports = merge(common, {
             remotes: {
                 Explorer: 'Explorer@' + explorerPath + 'remoteEntry.js',
                 wallet: 'wallet@' + walletPath + 'remoteEntry.js',
+                DAC: 'dac@' + dacPath + 'remoteEntry.js',
             },
             exposes: {},
             shared: {
