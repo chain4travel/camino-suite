@@ -47,10 +47,27 @@ const Partner = () => {
         data: partner,
         isLoading,
         isFetching,
+        error,
     } = useFetchPartnerDataQuery({
         companyName: partnerID,
     })
     const navigate = useNavigate()
+    if (
+        error ||
+        !partner ||
+        !!(
+            partner.attributes.companyName &&
+            partner.attributes.companyLongDescription &&
+            partner.attributes.companyWebsite &&
+            partner.attributes.contactEmail &&
+            partner.attributes.contactFirstname &&
+            partner.attributes.contactLastname &&
+            partner.attributes.contactPhone
+        )
+    ) {
+        navigate('/partners')
+        return null
+    }
     if (isLoading || isFetching) return <></>
     return (
         <Box sx={{ height: '100%', mb: '2rem' }}>

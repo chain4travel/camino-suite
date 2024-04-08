@@ -4,6 +4,8 @@ import { Box } from '@mui/material'
 import React from 'react'
 import { useNavigate } from 'react-router'
 import PartnerCard from '../../components/Partners/PartnerCard'
+import { useAppSelector } from '../../hooks/reduxHooks'
+import { selectValidators } from '../../redux/slices/app-config'
 
 interface ListPartnersProps {
     partners: PartnersResponseType
@@ -11,6 +13,7 @@ interface ListPartnersProps {
 
 const ListPartners: React.FC<ListPartnersProps> = ({ partners }) => {
     const navigate = useNavigate()
+    const validators = useAppSelector(selectValidators)
     return (
         <Box
             sx={{
@@ -22,6 +25,7 @@ const ListPartners: React.FC<ListPartnersProps> = ({ partners }) => {
         >
             {partners.data.map((partner, index) => (
                 <PartnerCard
+                    validators={validators}
                     onClick={() => {
                         if (
                             !!(

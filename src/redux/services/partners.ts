@@ -28,7 +28,7 @@ export const partnersApi = createApi({
                     query += `&filters[companyName][$contains]=${companyName}`
                 }
                 if (validators) {
-                    query += `&filters[isConsortiumMember][$eq]=true`
+                    query += `&filters[pChainAddress][$ne]=null`
                 }
 
                 return query

@@ -1,7 +1,9 @@
 import { Box, Typography } from '@mui/material'
 
-import React from 'react'
-import { PartnerDataType } from '../../@types/partners'
+import React, { useEffect, useState } from 'react'
+import { PartnerDataType, Validator } from '../../@types/partners'
+import { useEffectOnce } from '../../hooks/useEffectOnce'
+import useWallet from '../../hooks/useWallet'
 import PartnerBusinessFields from './PartnerBusinessFields'
 import PartnerFlag from './PartnerFlag'
 import PartnerLogo from './PartnerLogo'
@@ -11,21 +13,33 @@ interface PartnerCardProps {
     clickable: boolean
     partner: PartnerDataType
     index: number
+    validators: Validator[]
 }
 
-const PartnerCard: React.FC<PartnerCardProps> = ({ partner, clickable, onClick }) => {
+const PartnerCard: React.FC<PartnerCardProps> = ({ partner, clickable, onClick, validators }) => {
+    useEffectOnce(() => {})
+    const { getRegisteredNode } = useWallet()
+    const [isValidator, setIsValidator] = useState(false)
+
+    const chackValidatorStatus = async (address: string) => {
+        if (!pChainAddress) setIsValidator(false)
+        let nodeID = await getRegisteredNode(address)
+        setIsValidator(!!validators.find(v => v.nodeID === nodeID))
+    }
     const {
         attributes: {
-            isConsortiumMember,
             companyName,
             companyShortDescription,
             business_fields,
             companyLogoColor,
             country_flag,
             logoBox,
+            pChainAddress,
         },
     } = partner
-
+    useEffect(() => {
+        chackValidatorStatus(pChainAddress)
+    }, [partner])
     return (
         <Box
             onClick={onClick}
@@ -45,13 +59,11 @@ const PartnerCard: React.FC<PartnerCardProps> = ({ partner, clickable, onClick }
                 overflow: 'hidden',
             }}
         >
-            {/*
-            // this value is incorrect, it should be based on the pchain addres but its not yet added to the api
-             {!!isConsortiumMember && (
+            {!!isValidator && (
                 <Box
                     sx={{
                         position: 'absolute',
-                        background: theme => theme.palette.background.gradient,
+                        background: theme => theme.palette.blue[50],
                         padding: '10px 14px 8px 12px',
                         display: 'flex',
                         alignItems: 'center',
@@ -61,9 +73,11 @@ const PartnerCard: React.FC<PartnerCardProps> = ({ partner, clickable, onClick }
                         top: '0',
                     }}
                 >
-                    <Typography sx={{ color: 'common.white' }}>Validator</Typography>
+                    <Typography sx={{ color: theme => theme.palette.grey[950] }} variant="overline">
+                        Validator
+                    </Typography>
                 </Box>
-            )} */}
+            )}
             {!!companyLogoColor && !!companyName && (
                 <PartnerLogo
                     colorLogo={companyLogoColor}
