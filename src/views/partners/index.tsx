@@ -1,4 +1,11 @@
-import { Box, CircularProgress, Pagination, PaginationItem, Typography } from '@mui/material'
+import {
+    Box,
+    CircularProgress,
+    Pagination,
+    PaginationItem,
+    Typography,
+    useTheme,
+} from '@mui/material'
 import React, { ReactNode, useReducer } from 'react'
 import {
     initialStatePartners,
@@ -6,6 +13,8 @@ import {
     partnersReducer,
 } from '../../helpers/partnersReducer'
 
+import { mdiAccessPointNetwork } from '@mdi/js'
+import Icon from '@mdi/react'
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
 import PartnersFilter from '../../components/Partners/PartnersFilter'
@@ -41,14 +50,46 @@ const PartnersListWrapper: React.FC<PartnersListWrapperProps> = ({
 
 const Partners = () => {
     const [state, dispatchPartnersActions] = useReducer(partnersReducer, initialStatePartners)
-    const { data: partners, isLoading, isFetching } = useListPartnersQuery(state)
+    const { data: partners, isLoading, isFetching, error } = useListPartnersQuery(state)
     const handleChange = (event: React.ChangeEvent<unknown>, value: number) => {
         dispatchPartnersActions({ type: partnersActions.NEXT_PAGE, payload: value })
     }
-
+    const theme = useTheme()
+    if (error) {
+        return (
+            <Box
+                sx={{
+                    width: '100%',
+                    height: '100%',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    gap: '2rem',
+                    justifyContent: 'center',
+                }}
+            >
+                <Icon path={mdiAccessPointNetwork} size={3} color={theme.palette.grey[400]} />
+                <Box
+                    sx={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: '16px',
+                        alignItems: 'center',
+                        maxWidth: '450px',
+                    }}
+                >
+                    <Typography variant="h6">Something went wrong</Typography>
+                    <Typography variant="caption" align="center" color={theme.palette.grey[300]}>
+                        We have encountered an unexpected issue with our current system.
+                    </Typography>
+                </Box>
+            </Box>
+        )
+    }
     if (!partners?.data) {
         return <PartnersListWrapper isLoading={isLoading} isFetching={isFetching} />
     }
+
     const content = (
         <>
             <PartnersFilter state={state} dispatchPartnersActions={dispatchPartnersActions} />
@@ -72,6 +113,7 @@ const Partners = () => {
             </Box>
         </>
     )
+
     return (
         <Box
             sx={{
