@@ -1,9 +1,11 @@
 import { Box, Typography } from '@mui/material'
 
 import React, { useEffect, useState } from 'react'
-import { PartnerDataType, Validator } from '../../@types/partners'
+import { PartnerDataType } from '../../@types/partners'
+import { useAppSelector } from '../../hooks/reduxHooks'
 import { useEffectOnce } from '../../hooks/useEffectOnce'
 import useWallet from '../../hooks/useWallet'
+import { selectValidators } from '../../redux/slices/app-config'
 import PartnerBusinessFields from './PartnerBusinessFields'
 import PartnerFlag from './PartnerFlag'
 import PartnerLogo from './PartnerLogo'
@@ -13,17 +15,17 @@ interface PartnerCardProps {
     clickable: boolean
     partner: PartnerDataType
     index: number
-    validators: Validator[]
 }
 
-const PartnerCard: React.FC<PartnerCardProps> = ({ partner, clickable, onClick, validators }) => {
+const PartnerCard: React.FC<PartnerCardProps> = ({ partner, clickable, onClick }) => {
     useEffectOnce(() => {})
     const { getRegisteredNode } = useWallet()
     const [isValidator, setIsValidator] = useState(false)
-
+    const validators = useAppSelector(selectValidators)
+    const { getAddress } = useWallet()
     const chackValidatorStatus = async (address: string) => {
         if (!pChainAddress) setIsValidator(false)
-        let nodeID = await getRegisteredNode(address)
+        let nodeID = await getRegisteredNode(getAddress(address))
         setIsValidator(!!validators.find(v => v.nodeID === nodeID))
     }
     const {
@@ -38,8 +40,8 @@ const PartnerCard: React.FC<PartnerCardProps> = ({ partner, clickable, onClick, 
         },
     } = partner
     useEffect(() => {
-        chackValidatorStatus(pChainAddress)
-    }, [partner])
+        if (pChainAddress) chackValidatorStatus(pChainAddress)
+    }, [partner, validators])
     return (
         <Box
             onClick={onClick}

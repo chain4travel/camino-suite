@@ -30,7 +30,6 @@ import { useEffectOnce } from '../hooks/useEffectOnce'
 import useNetwork from '../hooks/useNetwork'
 // @ts-ignore
 import { useStore } from 'Explorer/useStore'
-import { getCurrentValidators } from '../redux/slices/utils'
 
 const MainLayout = ({ children }) => {
     const [loadNetworks, setLoadNetworks] = useState(true)
@@ -67,7 +66,6 @@ const MainLayout = ({ children }) => {
     useEffectOnce(() => {
         init()
     })
-    dispatch(getCurrentValidators())
     useEffect(() => {
         const html = document.documentElement
         if (loading || loadNetworks) html.style.overflow = 'hidden'
