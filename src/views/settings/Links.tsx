@@ -70,7 +70,7 @@ export default function Links() {
                 variant="scrollable"
                 allowScrollButtonsMobile
             >
-                {path === '/partners'
+                {path.includes('/partners')
                     ? partnersTabs.map((tab, index) => (tab ? tab : null))
                     : settingsTabs.map((tab, index) => (tab ? tab : null))}
             </Tabs>
