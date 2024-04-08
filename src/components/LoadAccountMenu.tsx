@@ -19,6 +19,7 @@ const StyledBox = styled(Box)(({ theme }) => ({
 }))
 export const LoadAccountMenu = (props: {
     type: string
+    setOpen?: React.Dispatch<React.SetStateAction<boolean>>
     selectedAlias?: string
     updateAlias?: any
 }) => {
@@ -26,6 +27,9 @@ export const LoadAccountMenu = (props: {
     const dispatch = useAppDispatch()
     const setAccount = account => dispatch(updateAccount(account))
     const { updateStore } = useWallet()
+    function closeSelect() {
+        props.setOpen(v => !v)
+    }
     const dispatchNotification = ({ message, type }) =>
         dispatch(updateNotificationStatus({ message, severity: type }))
     useEffectOnce(() => {
@@ -33,7 +37,7 @@ export const LoadAccountMenu = (props: {
             ...props,
             setAccount,
             dispatchNotification,
-
+            closeSelect,
             updateStore,
         })
     }) // eslint-disable-line react-hooks/exhaustive-deps
