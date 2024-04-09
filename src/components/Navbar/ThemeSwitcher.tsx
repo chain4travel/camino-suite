@@ -1,15 +1,15 @@
 import { Button, Typography, useTheme } from '@mui/material'
-import { getTheme, toggleTheme } from '../../redux/slices/theme'
 import { useAppDispatch, useAppSelector } from '../../hooks/reduxHooks'
+import { getTheme, toggleTheme } from '../../redux/slices/theme'
 
-import Icon from '@mdi/react'
-import React from 'react'
 import { mdiWhiteBalanceSunny } from '@mdi/js'
-import store from 'wallet/store'
+import Icon from '@mdi/react'
 import { useStore } from 'Explorer/useStore'
+import React, { Dispatch, SetStateAction } from 'react'
+import store from 'wallet/store'
 import useWidth from '../../hooks/useWidth'
 
-export default function ThemeSwitcher() {
+export default function ThemeSwitcher({ setOpen }: { setOpen: Dispatch<SetStateAction<boolean>> }) {
     const { isDesktop, isMobile } = useWidth()
     const dispatch = useAppDispatch()
     const theme = useTheme()
@@ -23,6 +23,7 @@ export default function ThemeSwitcher() {
         changeTheme(currentTheme === 'light' ? 'dark' : 'light')
         store.commit('updateTheme')
         dispatch(toggleTheme())
+        setOpen(v => !v)
     }
 
     return (
