@@ -52,19 +52,7 @@ const Partner = () => {
         companyName: partnerID,
     })
     const navigate = useNavigate()
-    if (
-        error ||
-        !partner ||
-        !!(
-            partner.attributes.companyName &&
-            partner.attributes.companyLongDescription &&
-            partner.attributes.companyWebsite &&
-            partner.attributes.contactEmail &&
-            partner.attributes.contactFirstname &&
-            partner.attributes.contactLastname &&
-            partner.attributes.contactPhone
-        )
-    ) {
+    if (error || (!partner && !isFetching && !isLoading)) {
         navigate('/partners')
         return null
     }

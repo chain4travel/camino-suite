@@ -1,5 +1,5 @@
 import { createAsyncThunk } from '@reduxjs/toolkit'
-import useWallet from '../../hooks/useWallet'
+import { ava as caminoClient } from 'wallet/caminoClient'
 
 export const updateAuthStatus = createAsyncThunk(
     'appConfig/updateAuthStatus',
@@ -12,8 +12,7 @@ export const updateAuthStatus = createAsyncThunk(
 )
 
 export const getCurrentValidators = createAsyncThunk('appConfig/getCurrentValidators', async () => {
-    const { getCurrentValidators } = useWallet()
     try {
-        return (await getCurrentValidators()).validators
+        return (await caminoClient.PChain().getCurrentValidators()).validators
     } catch (e) {}
 })

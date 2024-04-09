@@ -15,6 +15,7 @@ import { useStore } from 'Explorer/useStore'
 import { AvaNetwork } from 'wallet/AvaNetwork'
 import store from 'wallet/store'
 import { Status } from '../@types'
+import { getCurrentValidators } from '../redux/slices/utils'
 
 const useNetwork = (): {
     handleChangeNetwork: (arg: string) => void
@@ -73,6 +74,7 @@ const useNetwork = (): {
                     severity: 'success',
                 }),
             )
+            dispatch(getCurrentValidators())
             localStorage.setItem('selectedNetwork', network.name.toLowerCase())
         } catch (e) {
             store.state.Network.selectedNetwork = null

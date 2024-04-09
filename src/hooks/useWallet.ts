@@ -6,11 +6,17 @@ import { useAppDispatch } from './reduxHooks'
 const useWallet = () => {
     const dispatch = useAppDispatch()
 
-    async function getCurrentValidators() {
-        return caminoClient.PChain().getCurrentValidators()
-    }
     async function getRegisteredNode(address: string): Promise<string> {
         return await caminoClient.PChain().getRegisteredShortIDLink(address)
+    }
+    const getAddress = address => {
+        if (address) {
+            let res = caminoClient
+                .PChain()
+                .addressFromBuffer(caminoClient.PChain().parseAddress(address))
+            return res
+        }
+        return ''
     }
     const updateStore = (type, params) => {
         switch (type) {
@@ -23,7 +29,7 @@ const useWallet = () => {
                 )
         }
     }
-    return { updateStore, getRegisteredNode, getCurrentValidators }
+    return { updateStore, getRegisteredNode, getAddress }
 }
 
 export default useWallet
