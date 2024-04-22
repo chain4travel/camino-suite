@@ -113,20 +113,22 @@ export default function Account({ handleCloseSidebar }: LoginIconProps) {
                                 !account ? (
                                     <Typography>Account</Typography>
                                 ) : (
-                                    <Box onClick={() => setOpen(v => !v)}>
-                                        <LoadAccountMenu type="" />
-                                    </Box>
+                                    <LoadAccountMenu type="" />
                                 )
                             }
-                            renderValue={() =>
-                                account ? (
-                                    <Box onClick={() => setOpen(v => !v)}>
+                            renderValue={() => (
+                                <Box
+                                    onClick={() => {
+                                        setOpen(v => !v)
+                                    }}
+                                >
+                                    {!account ? (
+                                        <Typography>Account</Typography>
+                                    ) : (
                                         <LoadAccountMenu type="" />
-                                    </Box>
-                                ) : (
-                                    <Typography>Account</Typography>
-                                )
-                            }
+                                    )}
+                                </Box>
+                            )}
                             sx={{
                                 maxWidth: '13rem',
                                 '.MuiOutlinedInput-notchedOutline': { border: 'none' },
@@ -136,6 +138,9 @@ export default function Account({ handleCloseSidebar }: LoginIconProps) {
                                 handleKeyDown(e)
                             }}
                             MenuProps={{
+                                onClose: () => {
+                                    setOpen(v => !v)
+                                },
                                 onClick: e => {
                                     e.preventDefault()
                                 },
