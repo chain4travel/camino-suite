@@ -23,7 +23,7 @@ const AliasPicker = ({
     setOpenSelect,
 }: {
     handleKeyDown: (e: any) => void
-    setOpenSelect: React.Dispatch<React.SetStateAction<boolean>>
+    setOpenSelect?: React.Dispatch<React.SetStateAction<boolean>>
 }) => {
     const [open, setOpen] = useState(false)
     const [load, setLoad] = useState(false)
@@ -38,7 +38,7 @@ const AliasPicker = ({
     }
     const handleCloseModal = () => {
         setOpen(false)
-        setOpenSelect(v => !v)
+        if (setOpenSelect) setOpenSelect(v => !v)
     }
     useEffect(() => {
         showButton()
