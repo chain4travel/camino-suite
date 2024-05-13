@@ -1,15 +1,22 @@
-import { PartnerDataType, PartnersResponseType } from '../../@types/partners'
+import { PartnersResponseType } from '../../@types/partners'
 
 import { Box } from '@mui/material'
+import React, { useEffect } from 'react'
+import { useNavigate } from 'react-router'
 import PartnerCard from '../../components/Partners/PartnerCard'
-import React from 'react'
+import { useAppDispatch } from '../../hooks/reduxHooks'
+import { getCurrentValidators } from '../../redux/slices/utils'
 
 interface ListPartnersProps {
     partners: PartnersResponseType
-    setPartner: React.Dispatch<React.SetStateAction<PartnerDataType>>
 }
 
-const ListPartners: React.FC<ListPartnersProps> = ({ partners, setPartner }) => {
+const ListPartners: React.FC<ListPartnersProps> = ({ partners }) => {
+    const navigate = useNavigate()
+    const dispatch = useAppDispatch()
+    useEffect(() => {
+        dispatch(getCurrentValidators())
+    }, [])
     return (
         <Box
             sx={{
@@ -32,11 +39,12 @@ const ListPartners: React.FC<ListPartnersProps> = ({ partners, setPartner }) => 
                                 partner.attributes.contactLastname &&
                                 partner.attributes.contactPhone
                             )
-                        )
-                            setPartner(partner)
+                        ) {
+                            navigate(partner.attributes.companyName)
+                        }
                     }}
                     partner={partner}
-                    key={index}
+                    key={partner.attributes.companyName}
                     clickable={
                         !!(
                             partner.attributes.companyName &&

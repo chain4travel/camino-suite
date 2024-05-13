@@ -18,7 +18,13 @@ import DialogAnimate from '../Animate/DialogAnimate'
 import LoadMyKeysComponent from './LoadMyKeysComponent'
 import LoadSaveKeysComponent from './LoadSaveKeysComponent'
 
-const AliasPicker = ({ handleKeyDown }: { handleKeyDown: (e: any) => void }) => {
+const AliasPicker = ({
+    handleKeyDown,
+    setOpenSelect,
+}: {
+    handleKeyDown: (e: any) => void
+    setOpenSelect?: React.Dispatch<React.SetStateAction<boolean>>
+}) => {
     const [open, setOpen] = useState(false)
     const [load, setLoad] = useState(false)
     const handleOpenModal = () => {
@@ -32,6 +38,7 @@ const AliasPicker = ({ handleKeyDown }: { handleKeyDown: (e: any) => void }) => 
     }
     const handleCloseModal = () => {
         setOpen(false)
+        if (setOpenSelect) setOpenSelect(v => !v)
     }
     useEffect(() => {
         showButton()

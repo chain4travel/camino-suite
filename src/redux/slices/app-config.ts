@@ -1,9 +1,10 @@
 import { createSlice } from '@reduxjs/toolkit'
 import store from 'wallet/store'
 import { Status, SuitePlatforms } from '../../@types'
+import { Validator } from '../../@types/partners'
 import { APPS_CONSTS } from '../../constants/apps-consts'
 import { RootState } from '../store'
-import { updateAuthStatus } from './utils'
+import { getCurrentValidators, updateAuthStatus } from './utils'
 type NotificationSeverityType = 'success' | 'warning' | 'info' | 'error'
 
 interface InitialStateAppConfigType {
@@ -19,6 +20,7 @@ interface InitialStateAppConfigType {
     account: any
     showButton: boolean
     pChainAddress: string
+    validators: Validator[]
 }
 
 let initialState: InitialStateAppConfigType = {
@@ -34,6 +36,7 @@ let initialState: InitialStateAppConfigType = {
     notificationMessage: '',
     account: null,
     showButton: false,
+    validators: [],
 }
 
 const appConfigSlice = createSlice({
@@ -94,6 +97,9 @@ const appConfigSlice = createSlice({
         builder.addCase(updateAuthStatus.rejected, (state, { payload }) => {
             state.isAuth = false
         })
+        builder.addCase(getCurrentValidators.fulfilled, (state, { payload }) => {
+            state.validators = payload
+        })
     },
 })
 
@@ -129,6 +135,8 @@ export const getPChainAddress = (state: RootState) => state.appConfig.pChainAddr
 
 // getWalletName
 export const getWalletName = (state: RootState) => state.appConfig.walletName
+
+export const selectValidators = (state: RootState) => state.appConfig.validators
 
 export const {
     changeActiveApp,

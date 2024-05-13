@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
-import { PartnersResponseType } from '../../@types/partners'
+import { PartnerDataType, PartnersResponseType } from '../../@types/partners'
 import { StatePartnersType } from '../../helpers/partnersReducer'
 
 const baseUrl = 'https://api.strapi.camino.network/partners'
@@ -28,13 +28,24 @@ export const partnersApi = createApi({
                     query += `&filters[companyName][$contains]=${companyName}`
                 }
                 if (validators) {
-                    query += `&filters[isConsortiumMember][$eq]=true`
+                    query += `&filters[pChainAddress][$ne]=null`
                 }
 
                 return query
             },
         }),
+        fetchPartnerData: build.query<PartnerDataType, { companyName: string }>({
+            query: ({ companyName }) => {
+                let query =
+                    '?populate=*&sort[0]=companyName:asc&pagination[page]=1&pagination[pageSize]=12'
+                query += `&filters[companyName][$contains]=${companyName}`
+                return query
+            },
+            transformResponse: (response: PartnersResponseType) => {
+                return response.data[0]
+            },
+        }),
     }),
 })
 
-export const { useListPartnersQuery } = partnersApi
+export const { useListPartnersQuery, useFetchPartnerDataQuery } = partnersApi

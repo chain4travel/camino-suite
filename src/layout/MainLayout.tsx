@@ -1,5 +1,12 @@
-import { Backdrop, CircularProgress, Paper, Typography } from '@mui/material'
-import { Box, Toolbar, useTheme } from '@mui/material'
+import {
+    Backdrop,
+    Box,
+    CircularProgress,
+    Paper,
+    Toolbar,
+    Typography,
+    useTheme,
+} from '@mui/material'
 import React, { useState } from 'react'
 import {
     addNetworks,
@@ -8,18 +15,18 @@ import {
     changeNetworkStatus,
 } from '../redux/slices/network'
 
+import { Status } from '../@types'
 import Footer from '../components/Footer'
 import Navbar from '../components/Navbar'
 import Notifications from '../components/Notification'
-import { Status } from '../@types'
 import { changeActiveApp } from '../redux/slices/app-config'
 import { matchNetworkStatus } from '../utils/componentsUtils'
 // @ts-ignore
+import { useEffect } from 'react'
+import { useLocation } from 'react-router-dom'
 import store from 'wallet/store'
 import { useAppDispatch } from '../hooks/reduxHooks'
-import { useEffect } from 'react'
 import { useEffectOnce } from '../hooks/useEffectOnce'
-import { useLocation } from 'react-router-dom'
 import useNetwork from '../hooks/useNetwork'
 // @ts-ignore
 import { useStore } from 'Explorer/useStore'
@@ -59,7 +66,6 @@ const MainLayout = ({ children }) => {
     useEffectOnce(() => {
         init()
     })
-
     useEffect(() => {
         const html = document.documentElement
         if (loading || loadNetworks) html.style.overflow = 'hidden'

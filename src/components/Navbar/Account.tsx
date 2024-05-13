@@ -1,24 +1,24 @@
-import { Chip, MenuItem, MenuList, Select, Typography, useTheme } from '@mui/material'
-import React, { useEffect } from 'react'
+import { mdiCog, mdiLogout } from '@mdi/js'
+import { Box, Chip, MenuItem, MenuList, Select, Typography, useTheme } from '@mui/material'
+import React, { useEffect, useState } from 'react'
+import { getNameOfWallet, getPchainAddress } from '../../helpers/walletStore'
+import { useAppDispatch, useAppSelector } from '../../hooks/reduxHooks'
 import {
     changeActiveApp,
     getAccount,
     updateAccount,
     updatePchainAddress,
 } from '../../redux/slices/app-config'
-import { getNameOfWallet, getPchainAddress } from '../../helpers/walletStore'
-import { mdiCog, mdiLogout } from '@mdi/js'
-import { useAppDispatch, useAppSelector } from '../../hooks/reduxHooks'
 
-import AliasPicker from './AliasPicker'
 import Icon from '@mdi/react'
-import { LoadAccountMenu } from '../LoadAccountMenu'
 import MHidden from '../@material-extend/MHidden'
+import { LoadAccountMenu } from '../LoadAccountMenu'
+import AliasPicker from './AliasPicker'
 import ThemeSwitcher from './ThemeSwitcher'
 // @ts-ignore
+import { useNavigate } from 'react-router-dom'
 import store from 'wallet/store'
 import { updateAuthStatus } from '../../redux/slices/utils'
-import { useNavigate } from 'react-router-dom'
 
 interface LoginIconProps {
     handleCloseSidebar: () => void
@@ -51,7 +51,7 @@ export default function Account({ handleCloseSidebar }: LoginIconProps) {
     const handleKeyDown = e => {
         e.stopPropagation()
     }
-
+    const [open, setOpen] = useState(false)
     return (
         <>
             <MHidden width="smUp">
@@ -108,6 +108,7 @@ export default function Account({ handleCloseSidebar }: LoginIconProps) {
                 <>
                     {auth && (
                         <Select
+                            open={open}
                             value={
                                 !account ? (
                                     <Typography>Account</Typography>
@@ -115,13 +116,19 @@ export default function Account({ handleCloseSidebar }: LoginIconProps) {
                                     <LoadAccountMenu type="" />
                                 )
                             }
-                            renderValue={() =>
-                                account ? (
-                                    <LoadAccountMenu type="" />
-                                ) : (
-                                    <Typography>Account</Typography>
-                                )
-                            }
+                            renderValue={() => (
+                                <Box
+                                    onClick={() => {
+                                        setOpen(v => !v)
+                                    }}
+                                >
+                                    {!account ? (
+                                        <Typography>Account</Typography>
+                                    ) : (
+                                        <LoadAccountMenu type="" />
+                                    )}
+                                </Box>
+                            )}
                             sx={{
                                 maxWidth: '13rem',
                                 '.MuiOutlinedInput-notchedOutline': { border: 'none' },
@@ -130,6 +137,14 @@ export default function Account({ handleCloseSidebar }: LoginIconProps) {
                             onKeyDown={e => {
                                 handleKeyDown(e)
                             }}
+                            MenuProps={{
+                                onClose: () => {
+                                    setOpen(v => !v)
+                                },
+                                onClick: e => {
+                                    e.preventDefault()
+                                },
+                            }}
                         >
                             <MenuItem
                                 onKeyDown={e => {
@@ -137,7 +152,7 @@ export default function Account({ handleCloseSidebar }: LoginIconProps) {
                                 }}
                                 sx={{ typography: 'body2', width: '100%', maxWidth: '326px' }}
                             >
-                                <LoadAccountMenu type="kyc" />
+                                <LoadAccountMenu type="kyc" setOpen={setOpen} />
                             </MenuItem>
                             <MenuItem
                                 onKeyDown={e => {
@@ -164,10 +179,13 @@ export default function Account({ handleCloseSidebar }: LoginIconProps) {
                                     }}
                                     label="beta"
                                 />
-                                <LoadAccountMenu type="kyb" />
+                                <LoadAccountMenu type="kyb" setOpen={setOpen} />
                             </MenuItem>
                             <MenuItem
-                                onClick={() => navigate('/settings')}
+                                onClick={() => {
+                                    navigate('/settings')
+                                    setOpen(v => !v)
+                                }}
                                 onKeyDown={e => {
                                     handleKeyDown(e)
                                 }}
@@ -184,9 +202,9 @@ export default function Account({ handleCloseSidebar }: LoginIconProps) {
                                 <Icon path={mdiCog} size={1} />
                                 <Typography variant="body2">Settings</Typography>
                             </MenuItem>
-                            <AliasPicker handleKeyDown={handleKeyDown} />
+                            <AliasPicker setOpenSelect={setOpen} handleKeyDown={handleKeyDown} />
                             <MenuItem>
-                                <ThemeSwitcher />
+                                <ThemeSwitcher setOpen={setOpen} />
                             </MenuItem>
                             <MenuItem
                                 onKeyDown={e => handleKeyDown(e)}

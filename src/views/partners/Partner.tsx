@@ -1,18 +1,13 @@
 import { Box, Button, Divider, Typography, useTheme } from '@mui/material'
 
+import { mdiArrowLeft } from '@mdi/js'
 import Icon from '@mdi/react'
-import { Link } from 'react-router-dom'
+import React from 'react'
+import { Link, useNavigate, useParams } from 'react-router-dom'
 import PartnerBusinessFields from '../../components/Partners/PartnerBusinessFields'
-import { PartnerDataType } from '../../@types/partners'
 import PartnerFlag from '../../components/Partners/PartnerFlag'
 import PartnerLogo from '../../components/Partners/PartnerLogo'
-import React from 'react'
-import { mdiArrowLeft } from '@mdi/js'
-
-interface PartnerProps {
-    partner: PartnerDataType
-    setPartner: React.Dispatch<React.SetStateAction<PartnerDataType>>
-}
+import { useFetchPartnerDataQuery } from '../../redux/services/partners'
 
 const ContentField = ({ label, children }) => {
     return (
@@ -44,26 +39,24 @@ const ContentField = ({ label, children }) => {
     )
 }
 
-const Partner: React.FC<PartnerProps> = ({ partner, setPartner }) => {
-    const {
-        attributes: {
-            isConsortiumMember,
-            companyName,
-            companyShortDescription,
-            companyLongDescription,
-            business_fields,
-            companyLogoColor,
-            country_flag,
-            contactEmail,
-            companyWebsite,
-            contactPhone,
-            contactFirstname,
-            contactLastname,
-            logoBox,
-        },
-    } = partner
+const Partner = () => {
+    let { partnerID } = useParams()
     const theme = useTheme()
     const isDark = theme.palette.mode === 'dark'
+    const {
+        data: partner,
+        isLoading,
+        isFetching,
+        error,
+    } = useFetchPartnerDataQuery({
+        companyName: partnerID,
+    })
+    const navigate = useNavigate()
+    if (error || (!partner && !isFetching && !isLoading)) {
+        navigate('/partners')
+        return null
+    }
+    if (isLoading || isFetching) return <></>
     return (
         <Box sx={{ height: '100%', mb: '2rem' }}>
             <Box sx={{ mb: '2rem' }}>
@@ -76,7 +69,7 @@ const Partner: React.FC<PartnerProps> = ({ partner, setPartner }) => {
                         border: theme => `1px solid ${theme.palette.grey[700]}`,
                     }}
                     startIcon={<Icon path={mdiArrowLeft} size={0.8} />}
-                    onClick={() => setPartner(null)}
+                    onClick={() => navigate('/partners')}
                 >
                     Back to all companies
                 </Button>
@@ -99,7 +92,7 @@ const Partner: React.FC<PartnerProps> = ({ partner, setPartner }) => {
                             flexWrap: 'wrap',
                         }}
                     >
-                        <Typography variant="h3">{companyName}</Typography>
+                        <Typography variant="h3">{partner.attributes.companyName}</Typography>
                         {/* the badge validator will be added when the api support getting p-chain
                         address */}
                         {/* {!!isConsortiumMember && (
@@ -118,16 +111,20 @@ const Partner: React.FC<PartnerProps> = ({ partner, setPartner }) => {
                             </Box>
                         )} */}
                     </Box>
-                    <Typography variant="caption">{companyShortDescription}</Typography>
+                    <Typography variant="caption">
+                        {partner.attributes.companyShortDescription}
+                    </Typography>
                     <Box>
                         <PartnerBusinessFields
-                            business_fields={business_fields}
+                            business_fields={partner.attributes.business_fields}
                             isPartnerView={true}
                         />
                     </Box>
                     <Box sx={{ paddingBottom: '1.5rem' }}>
                         <Typography variant="subtitle1">Description</Typography>
-                        <Typography variant="body2">{companyLongDescription}</Typography>
+                        <Typography variant="body2">
+                            {partner.attributes.companyLongDescription}
+                        </Typography>
                     </Box>
                 </Box>
                 <Box
@@ -155,16 +152,19 @@ const Partner: React.FC<PartnerProps> = ({ partner, setPartner }) => {
                         }}
                     >
                         <PartnerLogo
-                            colorLogo={companyLogoColor}
-                            companyName={companyName}
-                            logoBox={logoBox}
+                            colorLogo={partner.attributes.companyLogoColor}
+                            companyName={partner.attributes.companyName}
+                            logoBox={partner.attributes.logoBox}
                         />
                     </Box>
                     <Divider />
                     <ContentField label="company country">
-                        {country_flag && country_flag.data?.attributes && (
-                            <PartnerFlag country={country_flag.data.attributes} />
-                        )}
+                        {partner.attributes.country_flag &&
+                            partner.attributes.country_flag.data?.attributes && (
+                                <PartnerFlag
+                                    country={partner.attributes.country_flag.data.attributes}
+                                />
+                            )}
                     </ContentField>
                     <Divider />
                     <ContentField label="Direct Contact">
@@ -177,7 +177,9 @@ const Partner: React.FC<PartnerProps> = ({ partner, setPartner }) => {
                                 lineHeight: '150%',
                             }}
                         >
-                            {contactFirstname + ' ' + contactLastname}
+                            {partner.attributes.contactFirstname +
+                                ' ' +
+                                partner.attributes.contactLastname}
                         </Typography>
                     </ContentField>
                     <Divider />
@@ -185,7 +187,7 @@ const Partner: React.FC<PartnerProps> = ({ partner, setPartner }) => {
                         <Link
                             rel="noopener noreferrer"
                             style={{ textDecoration: 'none' }}
-                            to={'mailto:' + contactEmail}
+                            to={'mailto:' + partner.attributes.contactEmail}
                         >
                             <Typography
                                 sx={{
@@ -196,7 +198,7 @@ const Partner: React.FC<PartnerProps> = ({ partner, setPartner }) => {
                                     lineHeight: '150%',
                                 }}
                             >
-                                {contactEmail}
+                                {partner.attributes.contactEmail}
                             </Typography>
                         </Link>
                     </ContentField>
@@ -205,7 +207,7 @@ const Partner: React.FC<PartnerProps> = ({ partner, setPartner }) => {
                         <Link
                             rel="noopener noreferrer"
                             style={{ textDecoration: 'none' }}
-                            to={'tel:' + contactPhone}
+                            to={'tel:' + partner.attributes.contactPhone}
                         >
                             <Typography
                                 sx={{
@@ -216,7 +218,7 @@ const Partner: React.FC<PartnerProps> = ({ partner, setPartner }) => {
                                     lineHeight: '150%',
                                 }}
                             >
-                                {contactPhone}
+                                {partner.attributes.contactPhone}
                             </Typography>
                         </Link>
                     </ContentField>
@@ -226,7 +228,7 @@ const Partner: React.FC<PartnerProps> = ({ partner, setPartner }) => {
                             rel="noopener noreferrer"
                             target="_blank"
                             style={{ textDecoration: 'none' }}
-                            to={companyWebsite}
+                            to={partner.attributes.companyWebsite}
                         >
                             <Typography
                                 sx={{
@@ -237,7 +239,7 @@ const Partner: React.FC<PartnerProps> = ({ partner, setPartner }) => {
                                     lineHeight: '150%',
                                 }}
                             >
-                                {companyWebsite}
+                                {partner.attributes.companyWebsite}
                             </Typography>
                         </Link>
                     </ContentField>
