@@ -14,6 +14,7 @@
 
 .termsfeed-com---palette-dark.termsfeed-com---nb {
     border-top-left-radius: 1.5rem;
+    border-top-right-radius: 1.5rem;
     background-color: #b5e3fd !important;
 }
 
@@ -103,4 +104,29 @@
 .termsfeed-com---reset p:not(.cc-nb-title, .cc-nb-text),
 .termsfeed-com---pc-dialog input[type='checkbox'].cc-custom-checkbox + label {
     color: var(--text-color) !important;
+}
+
+.termsfeed-com---nb .cc-nb-main-container {
+    padding: 2rem !important;
+}
+
+@media (max-width: 600px) {
+    .termsfeed-com---nb-simple {
+        max-width: 100% !important;
+    }
+   
+    .termsfeed-com---nb .cc-nb-text {
+        font-size: 0.875rem !important;
+        line-height: 1.25rem !important;
+    }
+}
+@media (min-width: 600px) {
+    .termsfeed-com---nb-simple {
+        max-width: 70% !important;
+    }
+}
+@media (min-width: 1048px) {
+    .termsfeed-com---nb-simple {
+        max-width: 50% !important;
+    }
 }
