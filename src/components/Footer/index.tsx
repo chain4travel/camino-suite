@@ -12,12 +12,12 @@ import {
 } from '@mui/material'
 import { FooterButtons, FooterLinks, SocialMediaLinks } from '../../constants/footer-consts'
 
+import { mdiInformationOutline } from '@mdi/js'
 import Icon from '@mdi/react'
-import { Link } from 'react-router-dom'
 import React from 'react'
+import { Link } from 'react-router-dom'
 import { SUITE_RELEASES } from '../../constants/route-paths'
 import Version from './Version'
-import { mdiInformationOutline } from '@mdi/js'
 
 export default function Footer() {
     const theme = useTheme()
@@ -219,7 +219,7 @@ export default function Footer() {
                                 component="p"
                                 sx={{ textAlign: 'center' }}
                             >
-                                &copy; {year} Camino Network Foundation. All rights reserved
+                                &copy; {year} Camino Network Foundation. All rights reserved.
                             </Typography>
                             <Box
                                 sx={{
