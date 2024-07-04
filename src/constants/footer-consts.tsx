@@ -1,13 +1,4 @@
 import {
-    DISCORD,
-    GITHUB,
-    LINKEDIN,
-    TELEGRAM_ANNOUNCEMENTS,
-    TELEGRAM_CAMINO,
-    X,
-    YOUTUBE,
-} from './route-paths'
-import {
     DiscordIcon,
     GithubIcon,
     LinkedInIcon,
@@ -16,6 +7,15 @@ import {
     XIcon,
     YoutubeIcon,
 } from '../assets'
+import {
+    DISCORD,
+    GITHUB,
+    LINKEDIN,
+    TELEGRAM_ANNOUNCEMENTS,
+    TELEGRAM_CAMINO,
+    X,
+    YOUTUBE,
+} from './route-paths'
 
 import React from 'react'
 
@@ -187,21 +187,5 @@ export const FooterLinks = [
             },
         ],
     },
-    {
-        name: 'Public Sale',
-        links: [
-            {
-                text: 'Get CAM',
-                url: 'https://camino.network/public-sale/',
-            },
-            {
-                text: 'Disclaimer',
-                url: 'https://camino.network/public-sale-disclaimer/',
-            },
-            {
-                text: 'Terms & Conditions',
-                url: 'https://camino.network/static/docs/Terms_and_Conditions_of_Use_Public_Sale_2024.pdf',
-            },
-        ],
-    },
+
 ]
