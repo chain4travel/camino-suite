@@ -1,4 +1,4 @@
-import { mdiCog, mdiLogout } from '@mdi/js'
+import { mdiCheckDecagram, mdiCog, mdiLogout } from '@mdi/js'
 import { Box, Chip, MenuItem, MenuList, Select, Typography, useTheme } from '@mui/material'
 import React, { useEffect, useState } from 'react'
 import { getNameOfWallet, getPchainAddress } from '../../helpers/walletStore'
@@ -147,41 +147,6 @@ export default function Account({ handleCloseSidebar }: LoginIconProps) {
                             }}
                         >
                             <MenuItem
-                                onKeyDown={e => {
-                                    handleKeyDown(e)
-                                }}
-                                sx={{ typography: 'body2', width: '100%', maxWidth: '326px' }}
-                            >
-                                <LoadAccountMenu type="kyc" setOpen={setOpen} />
-                            </MenuItem>
-                            <MenuItem
-                                onKeyDown={e => {
-                                    handleKeyDown(e)
-                                }}
-                                sx={{
-                                    typography: 'body1',
-                                    width: '100%',
-                                    maxWidth: '326px',
-                                    position: 'relative',
-                                }}
-                            >
-                                <Chip
-                                    color="secondary"
-                                    size="small"
-                                    sx={{
-                                        position: 'absolute',
-                                        fontSize: '12px',
-                                        height: '16px',
-                                        top: '5px',
-                                        width: '50px',
-                                        left: 'calc(100% - 55px)',
-                                        zIndex: '1',
-                                    }}
-                                    label="beta"
-                                />
-                                <LoadAccountMenu type="kyb" setOpen={setOpen} />
-                            </MenuItem>
-                            <MenuItem
                                 onClick={() => {
                                     navigate('/settings/verify-wallet')
                                     setOpen(v => !v)
@@ -199,7 +164,7 @@ export default function Account({ handleCloseSidebar }: LoginIconProps) {
                                     gap: '8px',
                                 }}
                             >
-                                <Icon path={mdiCog} size={1} />
+                                <Icon path={mdiCheckDecagram} size={1} />
                                 <Typography variant="body2">Verify Wallet</Typography>
                             </MenuItem>
                             <MenuItem
