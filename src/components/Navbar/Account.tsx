@@ -183,6 +183,27 @@ export default function Account({ handleCloseSidebar }: LoginIconProps) {
                             </MenuItem>
                             <MenuItem
                                 onClick={() => {
+                                    navigate('/settings/verify-wallet')
+                                    setOpen(v => !v)
+                                }}
+                                onKeyDown={e => {
+                                    handleKeyDown(e)
+                                }}
+                                sx={{
+                                    typography: 'body2',
+                                    width: '100%',
+                                    maxWidth: '326px',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'start',
+                                    gap: '8px',
+                                }}
+                            >
+                                <Icon path={mdiCog} size={1} />
+                                <Typography variant="body2">Verify Wallet</Typography>
+                            </MenuItem>
+                            <MenuItem
+                                onClick={() => {
                                     navigate('/settings')
                                     setOpen(v => !v)
                                 }}
