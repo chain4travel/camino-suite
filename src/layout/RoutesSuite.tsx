@@ -18,6 +18,7 @@ import CreatedOffers from '../views/partners/CreatedOffers'
 import Foundation from '../views/partners/Foundation'
 import Partner from '../views/partners/Partner'
 import MultisigWallet from '../views/settings/MultisigWallet'
+import VerifyWallet from '../views/settings/VerifyWallet'
 import Settings from '../views/settings/index'
 import Wallet from '../views/wallet/WalletApp'
 import CreateDepositsLayout from './CreateDepositLayout'
@@ -100,6 +101,7 @@ export default function RoutesSuite() {
                         <Route index element={<Settings />} />
                         <Route path="save-account" element={<Settings />} />
                         <Route path="manage-multisig" element={<MultisigWallet />} />
+                        <Route path="verify-wallet" element={<VerifyWallet />} />
                     </Route>
                     <Route path="/foundation" element={<CreateDepositsLayout />}>
                         <Route index element={<Foundation />} />
