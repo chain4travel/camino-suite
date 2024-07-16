@@ -5,7 +5,7 @@ import { mountKyesComponent } from 'wallet/mountKyesComponent'
 import { useAppDispatch } from '../../hooks/reduxHooks'
 import { useEffectOnce } from '../../hooks/useEffectOnce'
 import useWallet from '../../hooks/useWallet'
-import { updateNotificationStatus } from '../../redux/slices/app-config'
+import { updateAccount, updateNotificationStatus } from '../../redux/slices/app-config'
 
 const StyledBox = styled(Box)(({ theme }) => ({
     display: 'flex',
@@ -43,11 +43,13 @@ const LoadMyKeysComponent = () => {
     const dispatch = useAppDispatch()
     const dispatchNotification = ({ message, type }) =>
         dispatch(updateNotificationStatus({ message, severity: type }))
+    const setAccount = account => dispatch(updateAccount(account))
     const { updateStore } = useWallet()
     useEffectOnce(() => {
         mountKyesComponent(ref.current, {
             dispatchNotification,
             updateStore,
+            setAccount
         })
     }) // eslint-disable-line react-hooks/exhaustive-deps
 
