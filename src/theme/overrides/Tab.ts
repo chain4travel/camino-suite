@@ -1,5 +1,4 @@
 import { Theme } from '@mui/material/styles'
-
 export default function Tab(theme: Theme) {
     return {
         MuiTab: {
@@ -25,6 +24,9 @@ export default function Tab(theme: Theme) {
                         bottom: '0px',
                         borderRadius: '4px 4px 0px 0px',
                         background: '#0085FF',
+                    },
+                    '&.Mui-selected': {
+                        color: theme => theme.palette.text.primary,
                     },
                 },
             },
