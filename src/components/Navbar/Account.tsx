@@ -1,5 +1,5 @@
 import { mdiCheckDecagram, mdiCog, mdiLogout } from '@mdi/js'
-import { Box, Chip, MenuItem, MenuList, Select, Typography, useTheme } from '@mui/material'
+import { Box, MenuItem, MenuList, Select, Typography, useTheme } from '@mui/material'
 import React, { useEffect, useState } from 'react'
 import { getNameOfWallet, getPchainAddress } from '../../helpers/walletStore'
 import { useAppDispatch, useAppSelector } from '../../hooks/reduxHooks'
@@ -43,6 +43,7 @@ export default function Account({ handleCloseSidebar }: LoginIconProps) {
         navigate('/settings')
         handleCloseSidebar()
     }
+
     useEffect(() => {
         dispatch(
             updatePchainAddress({ address: getPchainAddress(), walletName: getNameOfWallet() }),
@@ -57,6 +58,24 @@ export default function Account({ handleCloseSidebar }: LoginIconProps) {
             <MHidden width="smUp">
                 <MenuList sx={{ backgroundColor: 'transparent' }}>
                     <MenuItem
+                        onClick={() => {
+                            navigate('/settings/verify-wallet')
+                            handleCloseSidebar()
+                        }}
+                        sx={{
+                            typography: 'body2',
+                            width: '100%',
+                            maxWidth: '326px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'start',
+                            gap: '8px',
+                        }}
+                    >
+                        <Icon path={mdiCheckDecagram} size={1} />
+                        <Typography variant="body2">Verify Wallet</Typography>
+                    </MenuItem>
+                    <MenuItem
                         sx={{
                             typography: 'body2',
                             display: 'flex',
@@ -70,26 +89,7 @@ export default function Account({ handleCloseSidebar }: LoginIconProps) {
                         <Typography variant="body1">Settings</Typography>
                     </MenuItem>
                     {auth && <AliasPicker handleKeyDown={handleKeyDown} />}
-                    <MenuItem>
-                        <LoadAccountMenu type="kyc" />
-                    </MenuItem>
-                    <MenuItem sx={{ position: 'relative' }}>
-                        <LoadAccountMenu type="kyb" />
-                        <Chip
-                            color="secondary"
-                            size="small"
-                            sx={{
-                                position: 'absolute',
-                                fontSize: '12px',
-                                height: '16px',
-                                top: '5px',
-                                width: '50px',
-                                left: 'calc(100% - 55px)',
-                                zIndex: '1',
-                            }}
-                            label="beta"
-                        />
-                    </MenuItem>
+
                     <MenuItem
                         onClick={logout}
                         sx={{
