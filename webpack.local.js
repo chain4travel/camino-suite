@@ -24,7 +24,7 @@ module.exports = merge(common, {
             remotes: {
                 Explorer: 'Explorer@http://localhost:5002/remoteEntry.js',
                 wallet: 'wallet@http://localhost:5003/remoteEntry.js',
-                caminoNameService: 'caminoNameService@http://localhost:5004/assets/remoteEntry.js',
+                caminoNameService: 'caminoNameService@http://localhost:5004/remoteEntry.js',
             },
             exposes: {},
             shared: {

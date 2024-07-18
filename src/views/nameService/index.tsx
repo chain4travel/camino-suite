@@ -1,11 +1,14 @@
+import { useTheme } from '@mui/system'
 import React from 'react'
-// const NameService = React.lazy(() => import('caminoNameService/button'))
-import NameService from 'caminoNameService/button'
+import useNetwork from '../../hooks/useNetwork'
+const CaminoNameService = React.lazy(() => import('caminoNameService/cns'))
 
 const NameServiceApp = () => {
+    const { activeNetwork } = useNetwork()
+    const theme = useTheme()
     return (
         <React.Suspense fallback={<div>Loading...</div>}>
-            <NameService />
+            <CaminoNameService network={activeNetwork} theme={theme} />
         </React.Suspense>
     )
 }

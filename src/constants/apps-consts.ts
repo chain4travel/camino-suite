@@ -41,7 +41,7 @@ export const APPS_CONSTS = [
     {
         name: 'Camino Name Service',
         subText: 'Manage your wallet settings.',
-        url: '/camino-name-service',
+        url: '/cns',
         private: false,
         hidden: false,
     },

@@ -113,7 +113,7 @@ export default function RoutesSuite() {
                     <Route index element={<Partners />} />
                     <Route path=":partnerID" element={<Partner />}></Route>
                 </Route>
-                <Route path="camino-name-service" element={<NameServiceApp />} />
+                <Route path="cns/*" element={<NameServiceApp />} />
                 <Route path="/login" element={<LoginPage />} />
                 <Route path="/create" element={<Create />} />
                 <Route path="/legal" element={<Legal />} />
