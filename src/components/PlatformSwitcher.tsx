@@ -1,7 +1,7 @@
 import { mdiChevronRight } from '@mdi/js'
 import Icon from '@mdi/react'
 import { Box, MenuItem, Select, Typography, useTheme } from '@mui/material'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { useAppSelector } from '../hooks/reduxHooks'
@@ -12,9 +12,12 @@ import {
     getAllApps,
     getAuthStatus,
 } from '../redux/slices/app-config'
+import { getActiveNetwork } from '../redux/slices/network'
+import { isFeatureEnabled } from '../utils/featureFlags/featureFlagUtils'
 
 export default function PlatformSwitcher() {
     const theme = useTheme()
+    const activeNetwork = useAppSelector(getActiveNetwork)
     const navigate = useNavigate()
     const activeApp = useAppSelector(getActiveApp)
     const allApps = useAppSelector(getAllApps)
@@ -22,6 +25,16 @@ export default function PlatformSwitcher() {
     const themeMode = theme.palette.mode === 'light' ? true : false
     const { isDesktop } = useWidth()
     const dispatch = useDispatch()
+
+    const [featureEnabled, setFeatureEnabled] = useState<boolean>(false)
+
+    useEffect(() => {
+        const checkFeature = async () => {
+            const enabled = await isFeatureEnabled('DACFeature', activeNetwork?.url)
+            setFeatureEnabled(enabled)
+        }
+        checkFeature()
+    }, [activeNetwork])
 
     return (
         <Box
@@ -82,7 +95,11 @@ export default function PlatformSwitcher() {
                 data-cy="app-selector-menu"
             >
                 {allApps?.map((app, index) => {
-                    if (!app.hidden && (!app.private || isAuth))
+                    if (
+                        !app.hidden &&
+                        (!app.private || isAuth) &&
+                        (app.name !== 'DAC' || featureEnabled)
+                    )
                         return (
                             <MenuItem
                                 key={index}
