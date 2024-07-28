@@ -38,7 +38,7 @@ export async function isFeatureEnabled(featureName: string, url: string): Promis
     }
     const isNodeVersionValid = semver.satisfies(nodeVersion, feature.nodeVersion)
     const now = new Date()
-    // const isWithinTimeRange = now >= new Date(feature.startTime) && now <= new Date(feature.endTime)
+    const isWithinTimeRange = now >= new Date(feature.startTime) && now <= new Date(feature.endTime)
 
-    return feature.enabled && isNodeVersionValid
+    return feature.enabled && isNodeVersionValid && isWithinTimeRange
 }
