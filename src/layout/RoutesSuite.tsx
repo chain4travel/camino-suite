@@ -6,6 +6,7 @@ import { useLocation } from 'react-router-dom'
 import { useAppSelector } from '../hooks/reduxHooks'
 import { changeActiveApp } from '../redux/slices/app-config'
 import { getActiveNetwork } from '../redux/slices/network'
+import { isFeatureEnabled } from '../utils/featureFlags/featureFlagUtils'
 import AccessLayout from '../views/access'
 import MountAccessComponent from '../views/access/MountAccessComponent'
 import Create from '../views/create/Create'
@@ -34,6 +35,7 @@ export default function RoutesSuite() {
 
     const [lastUrlWithNewNetwork, setLastUrlWithNewNetwork] = useState('')
     const [networkAliasToUrl, setNetworkAliasToUrl] = useState<string>('camino')
+    const [featureEnabled, setFeatureEnabled] = useState<boolean>(false)
 
     useEffect(() => {
         if (activeNetwork) {
@@ -71,6 +73,15 @@ export default function RoutesSuite() {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [location])
 
+    useEffect(() => {
+        checkFeature()
+    }, [activeNetwork])
+
+    const checkFeature = async () => {
+        const enabled = await isFeatureEnabled('DACFeature', activeNetwork?.url)
+        setFeatureEnabled(enabled)
+    }
+
     return (
         <>
             <Routes>
@@ -94,8 +105,12 @@ export default function RoutesSuite() {
                             element={<Navigate to={`/explorer/${networkAliasToUrl}`} />}
                         />
 
-                        <Route path={`/dac/*`} element={<VoteApp />} />
-                        <Route path={`/dac`} element={<Navigate to="/dac/active" />} />
+                        {featureEnabled && (
+                            <>
+                                <Route path={`/dac/*`} element={<VoteApp />} />
+                                <Route path={`/dac`} element={<Navigate to="/dac/active" />} />
+                            </>
+                        )}
                     </>
                 ) : null}
                 <Route element={<Protected />}>

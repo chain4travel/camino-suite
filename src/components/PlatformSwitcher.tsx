@@ -29,13 +29,14 @@ export default function PlatformSwitcher() {
     const [featureEnabled, setFeatureEnabled] = useState<boolean>(false)
 
     useEffect(() => {
-        const checkFeature = async () => {
-            const enabled = await isFeatureEnabled('DACFeature', activeNetwork?.url)
-            setFeatureEnabled(enabled)
-        }
         checkFeature()
     }, [activeNetwork])
 
+    const checkFeature = async () => {
+        const enabled = await isFeatureEnabled('DACFeature', activeNetwork?.url)
+        setFeatureEnabled(enabled)
+    }
+    
     return (
         <Box
             sx={{
