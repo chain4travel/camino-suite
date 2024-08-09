@@ -49,7 +49,8 @@ const LoadMyKeysComponent = () => {
         mountKyesComponent(ref.current, {
             dispatchNotification,
             updateStore,
-            setAccount
+            setAccount,
+            isSuite: true,
         })
     }) // eslint-disable-line react-hooks/exhaustive-deps
 
