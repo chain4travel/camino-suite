@@ -55,7 +55,7 @@ export async function isFeatureEnabled(
 
         const requiredPhaseValue = phases[feature.requiredUpgradePhase]
 
-        if (isNaN(requiredPhaseValue) || requiredPhaseValue > 1) {
+        if (isNaN(requiredPhaseValue) || requiredPhaseValue === 0) {
             return false
         }
     }
