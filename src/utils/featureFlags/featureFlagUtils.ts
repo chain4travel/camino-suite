@@ -23,7 +23,11 @@ export async function getNodeVersion(url: string, credential = false): Promise<s
     }
 }
 
-export async function isFeatureEnabled(featureName: string, url: string): Promise<boolean> {
+export async function isFeatureEnabled(
+    featureName: string,
+    url: string,
+    phases?: Record<string, number>,
+): Promise<boolean> {
     const feature = featureFlags[featureName]
 
     if (!feature) {
@@ -32,14 +36,29 @@ export async function isFeatureEnabled(featureName: string, url: string): Promis
     }
 
     const nodeVersion = await getNodeVersion(url)
+
     if (typeof nodeVersion !== 'string') {
         console.error('Failed to get node version:', nodeVersion)
         return false
     }
-    const isNodeVersionValid = semver.satisfies(nodeVersion, feature.nodeVersion)
-    const now = new Date()
-    const isWithinStartTime = now >= new Date(feature.startTime)
-    const isWithinEndTime = feature.endTime ? now <= new Date(feature.endTime) : true
 
-    return feature.enabled && isNodeVersionValid && isWithinStartTime && isWithinEndTime
+    const isNodeVersionValid = semver.satisfies(nodeVersion, feature.nodeVersion)
+
+    if (!isNodeVersionValid) {
+        return false
+    }
+
+    if (feature.requiredUpgradePhase && phases) {
+        if (phases?.length < 1) {
+            return false
+        }
+
+        const requiredPhaseValue = phases[feature.requiredUpgradePhase]
+
+        if (isNaN(requiredPhaseValue) || requiredPhaseValue > 1) {
+            return false
+        }
+    }
+
+    return feature.enabled
 }

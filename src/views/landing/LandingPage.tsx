@@ -5,6 +5,7 @@ import React, { useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router'
 import { useAppSelector } from '../../hooks/reduxHooks'
+import useWallet from '../../hooks/useWallet'
 import { getActiveNetwork } from '../../redux/slices/network'
 import { isFeatureEnabled } from '../../utils/featureFlags/featureFlagUtils'
 import LandingPageAppWidget from './LandingPageAppWidget'
@@ -16,13 +17,15 @@ export default function LandingPage() {
     const allApps = useAppSelector(getAllApps)
     const isAuth = useAppSelector(state => state.appConfig.isAuth)
     const [featureEnabled, setFeatureEnabled] = useState<boolean>(false)
+    const { getUpgradePhases } = useWallet()
 
     useEffect(() => {
         checkFeature()
     }, [activeNetwork])
 
     const checkFeature = async () => {
-        const enabled = await isFeatureEnabled('DACFeature', activeNetwork?.url)
+        const phases = await getUpgradePhases()
+        const enabled = await isFeatureEnabled('DACFeature', activeNetwork?.url, phases)
         setFeatureEnabled(enabled)
     }
 

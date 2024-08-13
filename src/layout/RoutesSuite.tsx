@@ -4,6 +4,7 @@ import { Navigate, Route, Routes, useNavigate } from 'react-router-dom'
 import { useDispatch } from 'react-redux'
 import { useLocation } from 'react-router-dom'
 import { useAppSelector } from '../hooks/reduxHooks'
+import useWallet from '../hooks/useWallet'
 import { changeActiveApp } from '../redux/slices/app-config'
 import { getActiveNetwork } from '../redux/slices/network'
 import { isFeatureEnabled } from '../utils/featureFlags/featureFlagUtils'
@@ -32,6 +33,7 @@ export default function RoutesSuite() {
     const navigate = useNavigate()
     const activeNetwork = useAppSelector(getActiveNetwork)
     const location = useLocation()
+    const { getUpgradePhases } = useWallet()
 
     const [lastUrlWithNewNetwork, setLastUrlWithNewNetwork] = useState('')
     const [networkAliasToUrl, setNetworkAliasToUrl] = useState<string>('camino')
@@ -78,7 +80,8 @@ export default function RoutesSuite() {
     }, [activeNetwork])
 
     const checkFeature = async () => {
-        const enabled = await isFeatureEnabled('DACFeature', activeNetwork?.url)
+        const phases = await getUpgradePhases()
+        const enabled = await isFeatureEnabled('DACFeature', activeNetwork?.url, phases)
         setFeatureEnabled(enabled)
     }
 
