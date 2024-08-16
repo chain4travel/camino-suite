@@ -5,6 +5,7 @@ import React, { useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { useAppSelector } from '../hooks/reduxHooks'
+import useWallet from '../hooks/useWallet'
 import useWidth from '../hooks/useWidth'
 import {
     changeActiveApp,
@@ -25,6 +26,7 @@ export default function PlatformSwitcher() {
     const themeMode = theme.palette.mode === 'light' ? true : false
     const { isDesktop } = useWidth()
     const dispatch = useDispatch()
+    const { getUpgradePhases } = useWallet()
 
     const [featureEnabled, setFeatureEnabled] = useState<boolean>(false)
 
@@ -33,10 +35,12 @@ export default function PlatformSwitcher() {
     }, [activeNetwork])
 
     const checkFeature = async () => {
-        const enabled = await isFeatureEnabled('DACFeature', activeNetwork?.url)
+        const phases = await getUpgradePhases()
+        const enabled = await isFeatureEnabled('DACFeature', activeNetwork?.url, phases)
+
         setFeatureEnabled(enabled)
     }
-    
+
     return (
         <Box
             sx={{
