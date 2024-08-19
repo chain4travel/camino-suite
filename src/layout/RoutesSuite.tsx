@@ -11,6 +11,7 @@ import MountAccessComponent from '../views/access/MountAccessComponent'
 import Create from '../views/create/Create'
 import ExplorerApp from '../views/explorer/ExplorerApp'
 import LandingPage from '../views/landing/LandingPage'
+import Legal from '../views/legal/Legal'
 import LoginPage from '../views/login/LoginPage'
 import Partners from '../views/partners'
 import CreatedOffers from '../views/partners/CreatedOffers'
@@ -113,6 +114,7 @@ export default function RoutesSuite() {
                 </Route>
                 <Route path="/login" element={<LoginPage />} />
                 <Route path="/create" element={<Create />} />
+                <Route path="/legal" element={<Legal />} />
                 <Route path="/access" element={<AccessLayout />}>
                     <Route path="keystore" element={<MountAccessComponent type="Keystore" />} />
                     <Route path="mnemonic" element={<MountAccessComponent type="Mnemonic" />} />
