@@ -133,21 +133,30 @@ export const FooterLinks = [
         name: 'Camino Network',
         links: [
             {
-                text: 'Ecosystem',
+                text: 'The Network',
                 url: 'https://camino.network/ecosystem/',
             },
             {
-                text: 'Travel',
-                url: 'https://camino.network/travel/',
+                text: 'Use Cases',
+                url: 'https://camino.network/partners/',
             },
             {
                 text: 'Validators',
                 url: 'https://camino.network/validators/',
             },
             {
-                text: 'Developers',
-                url: 'https://camino.network/developer/',
+                text: 'Web3 Travel',
+                url: 'https://camino.network/travel/',
             },
+            {
+                text: 'Camino Messenger',
+                url: 'https://camino.network/messenger',
+            },
+        ],
+    },
+    {
+        name: 'Discover',
+        links: [
             {
                 text: 'Community',
                 url: 'https://camino.network/community/',
@@ -155,6 +164,14 @@ export const FooterLinks = [
             {
                 text: 'Blog',
                 url: 'https://camino.network/blog/',
+            },
+            {
+                text: 'News',
+                url: 'https://camino.network/news',
+            },
+            {
+                text: 'Entities',
+                url: 'https://camino.network/entities/',
             },
         ],
     },
@@ -187,5 +204,4 @@ export const FooterLinks = [
             },
         ],
     },
-
 ]
