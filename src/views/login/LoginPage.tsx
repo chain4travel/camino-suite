@@ -1,12 +1,13 @@
-import { Box, Button, Paper, Typography } from '@mui/material'
-import { Link, useNavigate } from 'react-router-dom'
-import React, { useEffect, useRef } from 'react'
 import { mdiFileKeyOutline, mdiListBoxOutline, mdiShieldKeyOutline } from '@mdi/js'
+import { Box, Button, Paper, Typography } from '@mui/material'
+import React, { useEffect, useRef } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
 
-import { Grid } from '@mui/material'
 import Icon from '@mdi/react'
-import { mountAccounts } from 'wallet/mountAccounts'
+import { Grid } from '@mui/material'
 import { styled } from '@mui/material/styles'
+import { mountAccounts } from 'wallet/mountAccounts'
+import { TERMS_OF_USE_URL } from '../../constants/route-paths'
 
 const StyledExternalLink = styled('a')(({ theme }) => ({
     color: theme.palette.text.primary,
@@ -161,7 +162,7 @@ export default function LoginPage() {
                         <Typography variant="caption" color="text.secondary" textAlign="center">
                             By using this application, you agree to the&nbsp;
                             <StyledExternalLink
-                                href="/legal"
+                                href={TERMS_OF_USE_URL}
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 style={{ textDecoration: 'none' }}
