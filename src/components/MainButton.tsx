@@ -1,5 +1,5 @@
+import { Button, Typography } from '@mui/material'
 import * as React from 'react'
-import { Button } from '@mui/material'
 
 function MainButton({
     variant,
@@ -17,14 +17,15 @@ function MainButton({
             variant={variant}
             onClick={onClick}
             sx={{
-                borderRadius: '12px',
-                padding: '.55rem 2rem',
+                borderRadius: '8px',
+                padding: '10px 16px',
                 backgroundColor: variant === 'outlined' ? 'transparent' : 'secondary.main',
                 color: variant === 'outlined' ? 'secondary.main' : 'white',
-                borderColor: variant === 'outlined' ? 'secondary.main' : '',
+                borderColor: variant === 'outlined' ? theme => theme.palette.grey[600] : '',
                 boxShadow: 'none',
-                borderWidth: '1.5px',
+                borderWidth: '1px',
                 '&:hover': {
+                    borderWidth: '1px',
                     boxShadow: 'none',
                     backgroundColor: variant === 'outlined' ? 'transparent' : 'secondary.main',
                     borderColor: variant === 'outlined' ? 'secondary.main' : 'white',
@@ -32,7 +33,9 @@ function MainButton({
                 ...style,
             }}
         >
-            {children}
+            <Typography variant="caption" fontWeight={600}>
+                {children}
+            </Typography>
         </Button>
     )
 }

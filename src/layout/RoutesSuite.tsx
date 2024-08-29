@@ -13,6 +13,7 @@ import ExplorerApp from '../views/explorer/ExplorerApp'
 import LandingPage from '../views/landing/LandingPage'
 import LoginPage from '../views/login/LoginPage'
 import Partners from '../views/partners'
+import Overreview from '../views/partners/Configuration'
 import CreatedOffers from '../views/partners/CreatedOffers'
 import Foundation from '../views/partners/Foundation'
 import Partner from '../views/partners/Partner'
@@ -109,6 +110,14 @@ export default function RoutesSuite() {
                 </Route>
                 <Route path="/partners" element={<PartnersLayout />}>
                     <Route index element={<Partners />} />
+                    <Route element={<Protected />}>
+                        <Route path="messenger-configuration">
+                            <Route index element={<Overreview />} />
+                            <Route path="overview" element={<Overreview />} />
+                            <Route path="distribution" element={<div>distribution</div>} />
+                            <Route path="supply" element={<div>Supply</div>} />
+                        </Route>
+                    </Route>
                     <Route path=":partnerID" element={<Partner />}></Route>
                 </Route>
                 <Route path="/login" element={<LoginPage />} />

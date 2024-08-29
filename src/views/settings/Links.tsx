@@ -4,7 +4,7 @@ import Box from '@mui/material/Box'
 import Tab from '@mui/material/Tab'
 import Tabs from '@mui/material/Tabs'
 import { useNavigate } from 'react-router'
-import { useAppDispatch } from '../../hooks/reduxHooks'
+import { useAppDispatch, useAppSelector } from '../../hooks/reduxHooks'
 import { changeActiveApp } from '../../redux/slices/app-config'
 
 function a11yProps(index: number) {
@@ -14,20 +14,33 @@ function a11yProps(index: number) {
     }
 }
 
-export default function Links() {
+export default function Links({ type = 'else' }: { type?: string }) {
     const dispatch = useAppDispatch()
     const [value, setValue] = useState(0)
+    const [secondValue, setSecondValue] = useState(0)
     const navigate = useNavigate()
     const path = window.location.pathname
-    const handleChange = (event: React.SyntheticEvent, newValue: number) => setValue(newValue)
+    const handleChange = (event: React.SyntheticEvent, newValue: number) => {
+        if (type === 'subtabs') {
+            setSecondValue(newValue)
+        } else setValue(newValue)
+    }
     useEffect(() => {
         if (path === '/settings') setValue(0)
         else if (path === '/settings/manage-multisig') setValue(1)
         else if (path === '/settings/verify-wallet') setValue(2)
+        else if (path === '/partners') setValue(0)
+        else if (path.includes('partners/messenger-configuration')) setValue(1)
+        else if (path.includes('overview')) setSecondValue(0)
+        else if (path.includes('distribution')) setSecondValue(1)
+        else if (path.includes('supply')) setSecondValue(2)
         else setValue(0)
         dispatch(changeActiveApp('Network'))
     }, [path]) // eslint-disable-line react-hooks/exhaustive-deps
-
+    const auth = useAppSelector(state => state.appConfig.isAuth)
+    useEffect(() => {
+        console.log({ secondValue })
+    }, [auth])
     const settingsTabs = [
         <Tab
             className="tab"
@@ -60,6 +73,7 @@ export default function Links() {
 
     const partnersTabs = [
         <Tab
+            onClick={() => navigate('/partners')}
             className="tab"
             disableRipple
             label="Partner showroom"
@@ -67,21 +81,92 @@ export default function Links() {
             key={0}
             sx={{ '&::after': { display: value === 0 ? 'block' : 'none' } }}
         />,
+        <Tab
+            onClick={() => navigate('/partners/messenger-configuration')}
+            className="tab"
+            disableRipple
+            label="Messenger Configuration"
+            {...a11yProps(1)}
+            key={1}
+            sx={{ '&::after': { display: value === 1 ? 'block' : 'none' } }}
+        />,
+        // <Tab
+        //     onClick={() => navigate('/partners/messenger-configuration')}
+        //     className="tab"
+        //     disableRipple
+        //     label="My Partner Profile"
+        //     {...a11yProps(1)}
+        //     key={1}
+        //     sx={{ '&::after': { display: value === 1 ? 'block' : 'none' } }}
+        // />,
     ]
 
+    const partnersSubTabs = [
+        <Tab
+            onClick={() => navigate('/partners/messenger-configuration/overview')}
+            className="tab"
+            disableRipple
+            label="Overview"
+            {...a11yProps(0)}
+            key={0}
+            sx={{ '&::after': { display: secondValue === 0 ? 'block' : 'none' } }}
+        />,
+        <Tab
+            onClick={() => navigate('/partners/messenger-configuration/distribution')}
+            className="tab"
+            disableRipple
+            label="Distribution"
+            {...a11yProps(1)}
+            key={1}
+            sx={{ '&::after': { display: secondValue === 1 ? 'block' : 'none' } }}
+        />,
+        <Tab
+            onClick={() => navigate('/partners/messenger-configuration/supply')}
+            className="tab"
+            disableRipple
+            label="Supply"
+            {...a11yProps(2)}
+            key={2}
+            sx={{ '&::after': { display: secondValue === 2 ? 'block' : 'none' } }}
+        />,
+    ]
+    // if (type === 'subtabs')
+    //     return (
+    //         <Box sx={{ display: 'flex', cursor: 'pointer', width: '100%', maxWidth: '1536px' }}>
+    //             <Tabs
+    //                 value={secondValue}
+    //                 onChange={handleChange}
+    //                 sx={{ '& .MuiTabs-indicator': { display: 'none' }, height: '61px' }}
+    //                 scrollButtons="auto"
+    //                 variant="scrollable"
+    //                 allowScrollButtonsMobile
+    //             >
+    //                 {partnersSubTabs.map((tab, index) => (tab ? tab : null))}
+    //             </Tabs>
+    //         </Box>
+    //     )
     return (
         <Box sx={{ display: 'flex', cursor: 'pointer', width: '100%', maxWidth: '1536px' }}>
             <Tabs
-                value={value}
+                value={type === 'subtabs' ? secondValue : value}
                 onChange={handleChange}
-                textColor="secondary"
-                sx={{ '& .MuiTabs-indicator': { display: 'none' }, height: '61px' }}
+                sx={{
+                    '& .MuiTabs-indicator': { display: 'none' },
+                    height: '61px',
+                }}
+                textColor="text.primary"
                 scrollButtons="auto"
                 variant="scrollable"
                 allowScrollButtonsMobile
             >
-                {path.includes('/partners')
-                    ? partnersTabs.map((tab, index) => (tab ? tab : null))
+                {type === 'subtabs'
+                    ? partnersSubTabs.map((tab, index) => (tab ? tab : null))
+                    : path.includes('/partners')
+                    ? partnersTabs.map((tab, index) => {
+                          if (index !== 1 && tab) return tab
+                          else if (index === 1 && auth) return tab
+                          return null
+                      })
                     : settingsTabs.map((tab, index) => (tab ? tab : null))}
             </Tabs>
         </Box>
