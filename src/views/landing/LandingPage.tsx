@@ -1,12 +1,14 @@
 import { Box, Grid, Typography } from '@mui/material'
 import { changeActiveApp, getAllApps } from '../../redux/slices/app-config'
 
-import LandingPageAppWidget from './LandingPageAppWidget'
-import React from 'react'
-import { getActiveNetwork } from '../../redux/slices/network'
-import { useAppSelector } from '../../hooks/reduxHooks'
+import React, { useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router'
+import { useAppSelector } from '../../hooks/reduxHooks'
+import useWallet from '../../hooks/useWallet'
+import { getActiveNetwork } from '../../redux/slices/network'
+import { isFeatureEnabled } from '../../utils/featureFlags/featureFlagUtils'
+import LandingPageAppWidget from './LandingPageAppWidget'
 
 export default function LandingPage() {
     const activeNetwork = useAppSelector(getActiveNetwork)
@@ -14,6 +16,19 @@ export default function LandingPage() {
     const navigate = useNavigate()
     const allApps = useAppSelector(getAllApps)
     const isAuth = useAppSelector(state => state.appConfig.isAuth)
+    const [featureEnabled, setFeatureEnabled] = useState<boolean>(false)
+    const { getUpgradePhases } = useWallet()
+
+    useEffect(() => {
+        checkFeature()
+    }, [activeNetwork])
+
+    const checkFeature = async () => {
+        const phases = await getUpgradePhases()
+        const enabled = await isFeatureEnabled('DACFeature', activeNetwork?.url, phases)
+        setFeatureEnabled(enabled)
+    }
+
     const handleWidgetClick = app => {
         dispatch(changeActiveApp(app?.name))
 
@@ -41,7 +56,8 @@ export default function LandingPage() {
                     {allApps?.map((app, index) => {
                         if (
                             !app.hidden &&
-                            (app.private === false || (app.name === 'Foundation' && isAuth))
+                            (app.private === false || (app.name === 'Foundation' && isAuth)) &&
+                            (app.name !== 'DAC' || featureEnabled)
                         )
                             return (
                                 <Grid item key={index} xs={12} sm={6} md>
