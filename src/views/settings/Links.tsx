@@ -23,6 +23,7 @@ export default function Links() {
     useEffect(() => {
         if (path === '/settings') setValue(0)
         else if (path === '/settings/manage-multisig') setValue(1)
+        else if (path === '/settings/verify-wallet') setValue(2)
         else setValue(0)
         dispatch(changeActiveApp('Network'))
     }, [path]) // eslint-disable-line react-hooks/exhaustive-deps
@@ -45,6 +46,15 @@ export default function Links() {
             {...a11yProps(1)}
             key={1}
             sx={{ '&::after': { display: value === 1 ? 'block' : 'none' } }}
+        />,
+        <Tab
+            className="tab"
+            disableRipple
+            label="Verify Wallet"
+            onClick={() => navigate('verify-wallet')}
+            {...a11yProps(2)}
+            key={2}
+            sx={{ '&::after': { display: value === 2 ? 'block' : 'none' } }}
         />,
     ]
 

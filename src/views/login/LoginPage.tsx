@@ -7,6 +7,8 @@ import Icon from '@mdi/react'
 import { Grid } from '@mui/material'
 import { styled } from '@mui/material/styles'
 import { mountAccounts } from 'wallet/mountAccounts'
+import { TERMS_OF_USE_URL } from '../../constants/route-paths'
+
 
 const StyledExternalLink = styled('a')(({ theme }) => ({
     color: theme.palette.text.primary,
@@ -161,7 +163,7 @@ export default function LoginPage() {
                         <Typography variant="caption" color="text.secondary" textAlign="center">
                             By using this application, you agree to the&nbsp;
                             <StyledExternalLink
-                                href="/legal"
+                                href={TERMS_OF_USE_URL}
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 style={{ textDecoration: 'none' }}

@@ -39,3 +39,5 @@ export const CCHAIN = BASE_PATH + '/c-chain'
 export const XCHAIN = BASE_PATH + '/x-chain'
 
 export const PCHAIN = BASE_PATH + '/p-chain'
+
+export const TERMS_OF_USE_URL = 'https://camino.network/terms/'

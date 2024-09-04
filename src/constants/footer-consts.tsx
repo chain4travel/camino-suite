@@ -1,13 +1,4 @@
 import {
-    DISCORD,
-    GITHUB,
-    LINKEDIN,
-    TELEGRAM_ANNOUNCEMENTS,
-    TELEGRAM_CAMINO,
-    X,
-    YOUTUBE,
-} from './route-paths'
-import {
     DiscordIcon,
     GithubIcon,
     LinkedInIcon,
@@ -16,6 +7,15 @@ import {
     XIcon,
     YoutubeIcon,
 } from '../assets'
+import {
+    DISCORD,
+    GITHUB,
+    LINKEDIN,
+    TELEGRAM_ANNOUNCEMENTS,
+    TELEGRAM_CAMINO,
+    X,
+    YOUTUBE,
+} from './route-paths'
 
 import React from 'react'
 
@@ -133,21 +133,30 @@ export const FooterLinks = [
         name: 'Camino Network',
         links: [
             {
-                text: 'Ecosystem',
+                text: 'The Network',
                 url: 'https://camino.network/ecosystem/',
             },
             {
-                text: 'Travel',
-                url: 'https://camino.network/travel/',
+                text: 'Use Cases',
+                url: 'https://camino.network/partners/',
             },
             {
                 text: 'Validators',
                 url: 'https://camino.network/validators/',
             },
             {
-                text: 'Developers',
-                url: 'https://camino.network/developer/',
+                text: 'Web3 Travel',
+                url: 'https://camino.network/travel/',
             },
+            {
+                text: 'Camino Messenger',
+                url: 'https://camino.network/messenger',
+            },
+        ],
+    },
+    {
+        name: 'Discover',
+        links: [
             {
                 text: 'Community',
                 url: 'https://camino.network/community/',
@@ -155,6 +164,14 @@ export const FooterLinks = [
             {
                 text: 'Blog',
                 url: 'https://camino.network/blog/',
+            },
+            {
+                text: 'News',
+                url: 'https://camino.network/news',
+            },
+            {
+                text: 'Entities',
+                url: 'https://camino.network/entities/',
             },
         ],
     },
@@ -184,23 +201,6 @@ export const FooterLinks = [
             {
                 text: 'Branding',
                 url: 'https://camino.network/branding/',
-            },
-        ],
-    },
-    {
-        name: 'Public Sale',
-        links: [
-            {
-                text: 'Get CAM',
-                url: 'https://camino.network/public-sale/',
-            },
-            {
-                text: 'Disclaimer',
-                url: 'https://camino.network/public-sale-disclaimer/',
-            },
-            {
-                text: 'Terms & Conditions',
-                url: 'https://camino.network/static/docs/Terms_and_Conditions_of_Use_Public_Sale_2024.pdf',
             },
         ],
     },
