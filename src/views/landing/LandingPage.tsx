@@ -1,12 +1,12 @@
 import { Box, Grid, Typography } from '@mui/material'
 import { changeActiveApp, getAllApps } from '../../redux/slices/app-config'
 
-import LandingPageAppWidget from './LandingPageAppWidget'
 import React from 'react'
-import { getActiveNetwork } from '../../redux/slices/network'
-import { useAppSelector } from '../../hooks/reduxHooks'
 import { useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router'
+import { useAppSelector } from '../../hooks/reduxHooks'
+import { getActiveNetwork } from '../../redux/slices/network'
+import LandingPageAppWidget from './LandingPageAppWidget'
 
 export default function LandingPage() {
     const activeNetwork = useAppSelector(getActiveNetwork)
@@ -28,10 +28,10 @@ export default function LandingPage() {
         <Box sx={{ py: 4 }}>
             <Box>
                 <Typography textAlign="center" variant="h2">
-                    Camino Application Suite
+                    Camino Suite
                 </Typography>
                 <Typography textAlign={'center'}>
-                    The Camino Application Suite unifies all network wide applications of the Camino
+                    The Camino Suite unifies all network wide applications of the Camino
                     Network
                 </Typography>
             </Box>
