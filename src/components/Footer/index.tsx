@@ -37,8 +37,6 @@ const Footer: React.FC = () => {
             try {
                 const response = await fetch(API_URL)
                 const data = await response.json()
-                console.log(' ============> data', data)
-
                 setFooterData(data)
             } catch (error) {
                 setError(error)
