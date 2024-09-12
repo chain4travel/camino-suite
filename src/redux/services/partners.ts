@@ -45,7 +45,18 @@ export const partnersApi = createApi({
                 return response.data[0]
             },
         }),
+        isPartner: build.query<PartnerDataType, { pChainAddress: string }>({
+            query: ({ pChainAddress }) => {
+                let query =
+                    '?populate=*&sort[0]=companyName:asc&pagination[page]=1&pagination[pageSize]=12'
+                query += `&filters[pChainAddress][$contains]=${pChainAddress}`
+                return query
+            },
+            transformResponse: (response: PartnersResponseType) => {
+                return response.data[0]
+            },
+        }),
     }),
 })
 
-export const { useListPartnersQuery, useFetchPartnerDataQuery } = partnersApi
+export const { useListPartnersQuery, useFetchPartnerDataQuery, useIsPartnerQuery } = partnersApi
