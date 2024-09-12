@@ -23,8 +23,7 @@ import {
 import { SUITE_RELEASES } from '../../constants/route-paths'
 import Version from './Version'
 
-const API_URL =
-    'https://ff3d63a02772505b6e9bdf3129f8a30a7a2cd5e938f6ead49422405-apidata.googleusercontent.com/download/storage/v1/b/camino-suite-static/o/footer-consts.json?jk=AXZI6JyRBcwqs_uZYRfuH_nxNq_HNhs1A_XjzzF_-vss2c_gulkbrJM6qRaKCzrrkgLTEB3th64bqxxC42X5S9d_e0UlxyVS9aL4atlV5sFWGdp4MIPE4rrvMLSwYkvXCVR_200g-dy9UaMJXL318HXCMPNe4UoMGQWvmqcwUO_EpEWpkNffPAuNYRPHenlHzD7dnWf-V996QslyN3_c9UBygLA1c9Pe4cKh46ujuOuEvOBLa6nLnc7wBCWmSo-3xEQgbmtsotKyYPP1IID0OtxM3hhWYQVfPjo6iGt0z9YQT1oB0w43PVjxOX0DUjTYuc2qbLXrYOBT31eUoiY1ehukEFaBQifmQDqcc5O85WnFxRpC_b9d_Ly_1JViZcyXkDSi1gaLHdatUOvLFTyMD1p209QmPTGKgzdArUymceWXlza25wlGocaF6liDl5uaEs6XUwKFQt9XFN0ptnP0MQ8Th9zlFtjG7kw-VvykOkAbruMjADyz--uUgQGwLhOfsltEA9fD_9O7W1K7CyhRfXWvH5sDtgBvy7DzzzqFKOJxLmpWESjkanvlJJGwmPqbxjnqeys7GXESAGUhxTIDyAUtYKHjou3-SaFUQRbK6gK5VvVxvQs1QfnEJprJ3E6jraWvFMhI6OdB6oYPfTCyvO2tbDfK-MTHBjGG5C1Wd5moWSj2nMpRAvnjfc8pK4M-LvVnDiw14M8JDhMgv-NHft4GuFHr6hCNYFIQl4evQ7HaSfRjmQYVW2C9Z2W3ylHSqM6hdZEhXKiH3ejKrBZg9pbJ-AfpNtgFxR64ocoiob8de_8yoXAmp-jGje88CYQwAO3kxOnYbzEqDNolBEDqyM_o0j8t2nF_4SDJ-SFUeiAkgtoM7IpDHP9AU_V7hI1wSwkHvB1TN68ktYcOHeTnbPeDMtKTAorViFiLXjCvU81dWRS3FzgJYQZ8USIEWDj4pNLQD8H0uSXsbyGO8V-pP3ppk4RpQkOXHUSrn_SNuaNRUIsw2P8cmB2Zgu8KvnMfizTQ-8og6rLE7dOlYjWjSr8kQ_z0oE1nHWYz-Bxfd_XJ7gRT1CmgpRIEvJljhiPEdTw9s2eU3qKblfcYN03iPu7IZS2UGD7QKZPr5Ut9Qxgel9NbSvcWlRu1hZvThLJjNw&isca=1'
+const API_URL = 'https://storage.googleapis.com/camino-suite-static/footer-consts.json'
 
 const Footer: React.FC = () => {
     const theme = useTheme()
@@ -38,7 +37,7 @@ const Footer: React.FC = () => {
             try {
                 const response = await fetch(API_URL)
                 const data = await response.json()
-                console.log('data', data)
+                console.log(' ============> data', data)
 
                 setFooterData(data)
             } catch (error) {
