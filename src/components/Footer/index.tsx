@@ -1,3 +1,5 @@
+import { mdiInformationOutline } from '@mdi/js'
+import Icon from '@mdi/react'
 import {
     Box,
     Container,
@@ -10,25 +12,52 @@ import {
     Typography,
     useTheme,
 } from '@mui/material'
-import { FooterButtons, FooterLinks, SocialMediaLinks } from '../../constants/footer-consts'
-
-import { mdiInformationOutline } from '@mdi/js'
-import Icon from '@mdi/react'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
+import {
+    footerButtonBoxStyles,
+    socialMediaIconBoxStyles,
+    socialMediaIcons,
+    socialMediaLinks,
+} from '../../constants/footer-consts'
 import { SUITE_RELEASES } from '../../constants/route-paths'
 import Version from './Version'
 
-export default function Footer() {
+const API_URL =
+    'https://ff3d63a02772505b6e9bdf3129f8a30a7a2cd5e938f6ead49422405-apidata.googleusercontent.com/download/storage/v1/b/camino-suite-static/o/footer-consts.json?jk=AXZI6JyRBcwqs_uZYRfuH_nxNq_HNhs1A_XjzzF_-vss2c_gulkbrJM6qRaKCzrrkgLTEB3th64bqxxC42X5S9d_e0UlxyVS9aL4atlV5sFWGdp4MIPE4rrvMLSwYkvXCVR_200g-dy9UaMJXL318HXCMPNe4UoMGQWvmqcwUO_EpEWpkNffPAuNYRPHenlHzD7dnWf-V996QslyN3_c9UBygLA1c9Pe4cKh46ujuOuEvOBLa6nLnc7wBCWmSo-3xEQgbmtsotKyYPP1IID0OtxM3hhWYQVfPjo6iGt0z9YQT1oB0w43PVjxOX0DUjTYuc2qbLXrYOBT31eUoiY1ehukEFaBQifmQDqcc5O85WnFxRpC_b9d_Ly_1JViZcyXkDSi1gaLHdatUOvLFTyMD1p209QmPTGKgzdArUymceWXlza25wlGocaF6liDl5uaEs6XUwKFQt9XFN0ptnP0MQ8Th9zlFtjG7kw-VvykOkAbruMjADyz--uUgQGwLhOfsltEA9fD_9O7W1K7CyhRfXWvH5sDtgBvy7DzzzqFKOJxLmpWESjkanvlJJGwmPqbxjnqeys7GXESAGUhxTIDyAUtYKHjou3-SaFUQRbK6gK5VvVxvQs1QfnEJprJ3E6jraWvFMhI6OdB6oYPfTCyvO2tbDfK-MTHBjGG5C1Wd5moWSj2nMpRAvnjfc8pK4M-LvVnDiw14M8JDhMgv-NHft4GuFHr6hCNYFIQl4evQ7HaSfRjmQYVW2C9Z2W3ylHSqM6hdZEhXKiH3ejKrBZg9pbJ-AfpNtgFxR64ocoiob8de_8yoXAmp-jGje88CYQwAO3kxOnYbzEqDNolBEDqyM_o0j8t2nF_4SDJ-SFUeiAkgtoM7IpDHP9AU_V7hI1wSwkHvB1TN68ktYcOHeTnbPeDMtKTAorViFiLXjCvU81dWRS3FzgJYQZ8USIEWDj4pNLQD8H0uSXsbyGO8V-pP3ppk4RpQkOXHUSrn_SNuaNRUIsw2P8cmB2Zgu8KvnMfizTQ-8og6rLE7dOlYjWjSr8kQ_z0oE1nHWYz-Bxfd_XJ7gRT1CmgpRIEvJljhiPEdTw9s2eU3qKblfcYN03iPu7IZS2UGD7QKZPr5Ut9Qxgel9NbSvcWlRu1hZvThLJjNw&isca=1'
+
+const Footer: React.FC = () => {
     const theme = useTheme()
     const year = new Date().getFullYear()
+
+    const [footerData, setFooterData] = useState<any>(null)
+    const [error, setError] = useState<any>(null)
+
+    useEffect(() => {
+        async function fetchData() {
+            try {
+                const response = await fetch(API_URL)
+                const data = await response.json()
+                console.log('data', data)
+
+                setFooterData(data)
+            } catch (error) {
+                setError(error)
+            }
+        }
+        fetchData()
+    }, [])
+
+    if (error) return <div>Error loading footer data</div>
+    if (!footerData) return <div>Loading...</div>
+
     return (
         <footer style={{ position: 'relative', marginTop: 'auto' }}>
             {theme.palette.mode !== 'light' && <Divider variant="fullWidth" />}
             <Paper
                 sx={{
-                    marginTop: '0px',
-                    marginBottom: '0px',
+                    marginTop: 0,
+                    marginBottom: 0,
                     border: 'none',
                     borderRadius: 0,
                     boxShadow: 0,
@@ -39,28 +68,24 @@ export default function Footer() {
                     maxWidth="xxl"
                     sx={{
                         marginTop: '15px',
-                        paddingLeft: '0px !important',
-                        paddingRight: '0px !important',
-                        my: '0px !important',
+                        paddingLeft: 0,
+                        paddingRight: 0,
+                        my: 0,
                     }}
                 >
-                    <Grid container spacing={4} justifyContent="space-between" sx={{ p: '24px' }}>
-                        <Grid container item xs={12} lg={6} spacing={4} justifyContent="left">
+                    <Grid container spacing={4} justifyContent="space-between" sx={{ p: 3 }}>
+                        <Grid container item xs={12} lg={6} spacing={4} justifyContent="flex-start">
                             <Grid item>
                                 <Box sx={{ height: { xs: '32px', md: '44px' }, width: 'auto' }}>
-                                    {theme.palette.mode === 'light' ? (
-                                        <img
-                                            src="/assets/LightModeLogo.svg"
-                                            style={{ height: '100%', width: '100%' }}
-                                            alt="camino logo"
-                                        />
-                                    ) : (
-                                        <img
-                                            src="/assets/DarkModeLogo.svg"
-                                            style={{ height: '100%', width: '100%' }}
-                                            alt="camino logo"
-                                        />
-                                    )}
+                                    <img
+                                        src={
+                                            theme.palette.mode === 'light'
+                                                ? '/assets/LightModeLogo.svg'
+                                                : '/assets/DarkModeLogo.svg'
+                                        }
+                                        style={{ height: '100%', width: '100%' }}
+                                        alt="camino logo"
+                                    />
                                 </Box>
                             </Grid>
                             <Grid item>
@@ -75,38 +100,23 @@ export default function Footer() {
                                     travelers and business partners.
                                 </Typography>
                             </Grid>
-                            <Grid xs={12} item>
+                            <Grid item xs={12}>
                                 <Box sx={{ display: 'flex' }}>
-                                    {SocialMediaLinks.map((link, index) => (
+                                    {footerData.SocialMediaLinks.map((link: any, index: number) => (
                                         <Link
-                                            to={link.url}
+                                            to={socialMediaLinks[link.url]}
                                             key={index}
                                             target="_blank"
                                             rel="noopener noreferrer"
                                         >
-                                            <Box
-                                                sx={{
-                                                    display: 'flex',
-                                                    alignItems: 'center',
-                                                    justifyContent: 'center',
-                                                    borderRadius: '.75rem',
-                                                    color: theme => theme.palette.text.primary,
-                                                    padding: '.5rem',
-                                                    '&:hover': {
-                                                        backgroundColor: theme =>
-                                                            theme.palette.mode === 'dark'
-                                                                ? theme.palette.grey[700]
-                                                                : theme.palette.grey[200],
-                                                    },
-                                                }}
-                                            >
-                                                {link.icon}
+                                            <Box sx={socialMediaIconBoxStyles(theme)}>
+                                                {socialMediaIcons[link.icon]}
                                             </Box>
                                         </Link>
                                     ))}
                                 </Box>
                             </Grid>
-                            <Grid xs={12} item>
+                            <Grid item xs={12}>
                                 <Box
                                     sx={{
                                         display: 'flex',
@@ -115,7 +125,7 @@ export default function Footer() {
                                         gap: 3,
                                     }}
                                 >
-                                    {FooterButtons.map((button, index) => (
+                                    {footerData.FooterButtons.map((button: any, index: number) => (
                                         <Link
                                             to={button.url}
                                             target="_blank"
@@ -123,26 +133,7 @@ export default function Footer() {
                                             key={index}
                                             style={{ textDecoration: 'none' }}
                                         >
-                                            <Box
-                                                sx={{
-                                                    p: '.5rem 1rem',
-                                                    border: `1px solid ${theme.palette.divider}`,
-                                                    color: theme => theme.palette.text.primary,
-                                                    backgroundColor: theme =>
-                                                        theme.palette.mode === 'dark'
-                                                            ? theme.palette.grey[900]
-                                                            : theme.palette.grey[100],
-                                                    borderRadius: '.75rem',
-                                                    '&:hover': {
-                                                        borderWidth: '1px',
-                                                        color: theme => theme.palette.grey[950],
-                                                        backgroundColor: theme =>
-                                                            theme.palette.mode === 'dark'
-                                                                ? '#FFF'
-                                                                : theme.palette.grey[300],
-                                                    },
-                                                }}
-                                            >
+                                            <Box sx={footerButtonBoxStyles(theme)}>
                                                 <Typography variant="body2" component="span">
                                                     {button.name}
                                                 </Typography>
@@ -152,8 +143,8 @@ export default function Footer() {
                                 </Box>
                             </Grid>
                         </Grid>
-                        <Grid container item xs={12} lg={6} spacing={2} justifyContent="left">
-                            {FooterLinks.map((link, index) => (
+                        <Grid container item xs={12} lg={6} spacing={2} justifyContent="flex-start">
+                            {footerData.FooterLinks.map((link: any, index: number) => (
                                 <Grid item md key={index}>
                                     <Typography
                                         variant="body2"
@@ -164,7 +155,7 @@ export default function Footer() {
                                         {link.name}
                                     </Typography>
                                     <ul style={{ display: 'grid', gap: '5px', marginTop: '.5rem' }}>
-                                        {link.links.map((l, i) => (
+                                        {link.links.map((l: any, i: number) => (
                                             <MenuItem
                                                 sx={{
                                                     textDecoration: 'none',
@@ -200,9 +191,8 @@ export default function Footer() {
                 </Container>
                 <Box
                     sx={{
-                        backgroundColor: theme =>
-                            theme.palette.mode === 'dark' ? '#0F182A' : '#F1F5F9',
-                        color: theme => (theme.palette.mode === 'dark' ? 'grey.300' : 'grey.700'),
+                        backgroundColor: theme.palette.mode === 'dark' ? '#0F182A' : '#F1F5F9',
+                        color: theme.palette.mode === 'dark' ? 'grey.300' : 'grey.700',
                     }}
                 >
                     <Container maxWidth="xl">
@@ -244,7 +234,6 @@ export default function Footer() {
                                 >
                                     <Icon path={mdiInformationOutline} size={0.65} />
                                 </Tooltip>
-
                                 <Link
                                     rel="noopener noreferrer"
                                     target="_blank"
@@ -263,3 +252,5 @@ export default function Footer() {
         </footer>
     )
 }
+
+export default Footer
