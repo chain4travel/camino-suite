@@ -24,6 +24,7 @@ module.exports = merge(common, {
             remotes: {
                 Explorer: 'Explorer@http://localhost:5002/remoteEntry.js',
                 wallet: 'wallet@http://localhost:5003/remoteEntry.js',
+                DAC: 'dac@http://localhost:5005/remoteEntry.js',
             },
             exposes: {},
             shared: {

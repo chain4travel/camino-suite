@@ -9,6 +9,7 @@ import { styled } from '@mui/material/styles'
 import { mountAccounts } from 'wallet/mountAccounts'
 import { TERMS_OF_USE_URL } from '../../constants/route-paths'
 
+
 const StyledExternalLink = styled('a')(({ theme }) => ({
     color: theme.palette.text.primary,
     textDecoration: 'underline !important',

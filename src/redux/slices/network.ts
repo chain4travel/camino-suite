@@ -1,6 +1,6 @@
-import { RootState } from '../store'
-import { Status } from '../../@types'
 import { createSlice } from '@reduxjs/toolkit'
+import { Status } from '../../@types'
+import { RootState } from '../store'
 
 export enum NetworkID {
     MAINNET = 1000,
