@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react'
-
+import { useTheme } from '@mui/material'
 import Box from '@mui/material/Box'
 import Tab from '@mui/material/Tab'
 import Tabs from '@mui/material/Tabs'
+import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router'
 import store from 'wallet/store'
 import { useSmartContract } from '../../helpers/useSmartContract'
@@ -27,6 +27,7 @@ export default function Links({ type = 'else' }: { type?: string }) {
             setSecondValue(newValue)
         } else setValue(newValue)
     }
+    const theme = useTheme()
     useEffect(() => {
         if (path === '/settings') setValue(0)
         else if (path === '/settings/manage-multisig') setValue(1)
@@ -41,6 +42,15 @@ export default function Links({ type = 'else' }: { type?: string }) {
     }, [path]) // eslint-disable-line react-hooks/exhaustive-deps
     const auth = useAppSelector(state => state.appConfig.isAuth)
     const sc = useSmartContract()
+
+    const tabStyle = (index: number, currentValue: number) => ({
+        '&::after': { display: currentValue === index ? 'block' : 'none' },
+        color: currentValue === index ? theme.palette.text.primary : 'inherit',
+        '&.Mui-selected': {
+            color: theme.palette.text.primary,
+        },
+    })
+
     const settingsTabs = [
         <Tab
             className="tab"
@@ -49,7 +59,7 @@ export default function Links({ type = 'else' }: { type?: string }) {
             onClick={() => navigate('/settings')}
             {...a11yProps(0)}
             key={0}
-            sx={{ '&::after': { display: value === 0 ? 'block' : 'none' } }}
+            sx={tabStyle(0, value)}
         />,
         <Tab
             className="tab"
@@ -58,7 +68,7 @@ export default function Links({ type = 'else' }: { type?: string }) {
             onClick={() => navigate('manage-multisig')}
             {...a11yProps(1)}
             key={1}
-            sx={{ '&::after': { display: value === 1 ? 'block' : 'none' } }}
+            sx={tabStyle(1, value)}
         />,
         <Tab
             className="tab"
@@ -67,7 +77,7 @@ export default function Links({ type = 'else' }: { type?: string }) {
             onClick={() => navigate('verify-wallet')}
             {...a11yProps(2)}
             key={2}
-            sx={{ '&::after': { display: value === 2 ? 'block' : 'none' } }}
+            sx={tabStyle(2, value)}
         />,
     ]
 
@@ -79,7 +89,7 @@ export default function Links({ type = 'else' }: { type?: string }) {
             label="Partner showroom"
             {...a11yProps(0)}
             key={0}
-            sx={{ '&::after': { display: value === 0 ? 'block' : 'none' } }}
+            sx={tabStyle(0, value)}
         />,
         auth && store.state.activeWallet?.type !== 'multisig' && (
             <Tab
@@ -89,20 +99,29 @@ export default function Links({ type = 'else' }: { type?: string }) {
                 label="My Partners Profile"
                 {...a11yProps(1)}
                 key={1}
-                sx={{ '&::after': { display: value === 1 ? 'block' : 'none' } }}
+                sx={tabStyle(1, value)}
             />
         ),
     ]
 
     const partnersSubTabs = [
         <Tab
+            onClick={() => navigate('/partners/messenger-configuration/mydetails')}
+            className="tab"
+            disableRipple
+            label="My Details"
+            {...a11yProps(0)}
+            key={0}
+            sx={tabStyle(0, secondValue)}
+        />,
+        <Tab
             onClick={() => navigate('/partners/messenger-configuration/messenger')}
             className="tab"
             disableRipple
             label="My Messenger Account"
-            {...a11yProps(0)}
-            key={0}
-            sx={{ '&::after': { display: secondValue === 0 ? 'block' : 'none' } }}
+            {...a11yProps(1)}
+            key={1}
+            sx={tabStyle(1, secondValue)}
         />,
         <Tab
             disabled={!!!sc?.contractCMAccountAddress}
@@ -110,9 +129,9 @@ export default function Links({ type = 'else' }: { type?: string }) {
             className="tab"
             disableRipple
             label="Offered Services"
-            {...a11yProps(1)}
-            key={1}
-            sx={{ '&::after': { display: secondValue === 1 ? 'block' : 'none' } }}
+            {...a11yProps(2)}
+            key={2}
+            sx={tabStyle(2, secondValue)}
         />,
         <Tab
             disabled={!!!sc?.contractCMAccountAddress}
@@ -120,9 +139,9 @@ export default function Links({ type = 'else' }: { type?: string }) {
             className="tab"
             disableRipple
             label="Wanted Services"
-            {...a11yProps(2)}
-            key={2}
-            sx={{ '&::after': { display: secondValue === 2 ? 'block' : 'none' } }}
+            {...a11yProps(3)}
+            key={3}
+            sx={tabStyle(3, secondValue)}
         />,
         <Tab
             disabled={!!!sc?.contractCMAccountAddress}
@@ -130,9 +149,9 @@ export default function Links({ type = 'else' }: { type?: string }) {
             className="tab"
             disableRipple
             label="Manage Bots"
-            {...a11yProps(3)}
-            key={3}
-            sx={{ '&::after': { display: secondValue === 3 ? 'block' : 'none' } }}
+            {...a11yProps(4)}
+            key={4}
+            sx={tabStyle(4, secondValue)}
         />,
     ]
 
@@ -142,7 +161,11 @@ export default function Links({ type = 'else' }: { type?: string }) {
                 <Tabs
                     value={secondValue}
                     onChange={handleChange}
-                    sx={{ '& .MuiTabs-indicator': { display: 'none' }, height: '61px' }}
+                    sx={{
+                        '& .MuiTabs-indicator': { display: 'none' },
+                        height: '61px',
+                        '& .Mui-selected': { color: 'black' },
+                    }}
                     scrollButtons="auto"
                     variant="scrollable"
                     allowScrollButtonsMobile
@@ -159,8 +182,8 @@ export default function Links({ type = 'else' }: { type?: string }) {
                 sx={{
                     '& .MuiTabs-indicator': { display: 'none' },
                     height: '61px',
+                    '& .Mui-selected': { color: 'black' },
                 }}
-                textColor="text.primary"
                 scrollButtons="auto"
                 variant="scrollable"
                 allowScrollButtonsMobile

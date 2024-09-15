@@ -174,8 +174,7 @@ export const usePartnerConfig = () => {
                         service.rackRates,
                         service.capabilities.filter(item => item !== ''),
                     )
-                    const receipt = await tx.wait()
-                    return receipt
+                    await tx.wait()
                 }
             } catch (error) {
                 console.error(error)
@@ -184,6 +183,63 @@ export const usePartnerConfig = () => {
         },
         [account, writeToContract],
     )
+
+    const setServiceCapabilities = useCallback(
+        async (service, capabilities) => {
+            if (!account) {
+                console.error('Account is not initialized')
+                return
+            }
+            try {
+                const tx = await accountWriteContract.setServiceCapabilities(service, capabilities)
+                const receipt = await tx.wait()
+                return receipt
+            } catch (error) {
+                console.error(error)
+                throw error
+            }
+        },
+        [account, writeToContract],
+    )
+    const setServiceFee = useCallback(
+        async (service, fee) => {
+            if (!account) {
+                console.error('Account is not initialized')
+                return
+            }
+            try {
+                const tx = await accountWriteContract.setServiceFee(service, fee)
+                const receipt = await tx.wait()
+                return receipt
+            } catch (error) {
+                console.error(error)
+                throw error
+            }
+        },
+        [account, writeToContract],
+    )
+
+    const setServiceRestrictedRate = useCallback(
+        async (service, restrictedRate) => {
+            if (!account) {
+                console.error('Account is not initialized')
+                return
+            }
+            try {
+                const tx = await accountWriteContract.setServiceRestrictedRate(
+                    service,
+                    restrictedRate,
+                )
+                const receipt = await tx.wait()
+                return receipt
+            } catch (error) {
+                console.error(error)
+                throw error
+            }
+        },
+        [account, writeToContract],
+    )
+
     const removeServices = useCallback(
         async services => {
             if (!account) {
@@ -193,8 +249,7 @@ export const usePartnerConfig = () => {
             try {
                 for (const service of services) {
                     const tx = await accountWriteContract.removeService(service.name)
-                    const receipt = await tx.wait()
-                    return receipt
+                    await tx.wait()
                 }
             } catch (error) {
                 console.error(error)
@@ -309,7 +364,64 @@ export const usePartnerConfig = () => {
         }
     }, [account, readFromContract])
 
+    const addSupportedToken = useCallback(
+        async tokenID => {
+            if (!account) {
+                console.error('Account is not initialized')
+                return
+            }
+            try {
+                const tx = await accountWriteContract.addSupportedToken(tokenID)
+                const receipt = await tx.wait()
+                console.log({ receipt })
+                return receipt
+            } catch (error) {
+                console.error(error)
+                throw error
+            }
+        },
+        [account, writeToContract],
+    )
+
+    const removeSupportedToken = useCallback(
+        async tokenID => {
+            if (!account) {
+                console.error('Account is not initialized')
+                return
+            }
+            try {
+                const tx = await accountWriteContract.removeSupportedToken(tokenID)
+                const receipt = await tx.wait()
+                return receipt
+            } catch (error) {
+                console.error(error)
+                throw error
+            }
+        },
+        [account, writeToContract],
+    )
+
+    const getSupportedTokens = useCallback(async () => {
+        if (!account) {
+            console.error('Account is not initialized')
+            return
+        }
+        try {
+            const supportedTokens = await readFromContract('account', 'getSupportedTokens')
+            return supportedTokens
+        } catch (error) {
+            console.error(error)
+            throw error
+        }
+    }, [account, readFromContract])
+
     return {
+        setServiceFee,
+        setServiceRestrictedRate,
+        setServiceCapabilities,
+        addSupportedToken,
+        removeSupportedToken,
+        getSupportedTokens,
         CreateConfiguration,
         account,
         removeWantedServices,

@@ -113,10 +113,11 @@ export default function RoutesSuite() {
                 </Route>
                 <Route path="/partners" element={<PartnersLayout />}>
                     <Route index element={<Partners />} />
-                    <Route path=":partnerID" element={<Partner />}></Route>
+                    <Route path=":partnerID" element={<Partner />} />
                     <Route path="messenger-configuration">
-                        <Route index element={<Overreview />} />
+                        <Route index element={<Partner />} />
                         <Route path="messenger" element={<Overreview />} />
+                        <Route path="mydetails" element={<Partner />} />
                         <Route path="distribution" element={<ConfigurDistrubitor />} />
                         <Route path="supplier" element={<ConfigurSupplier />} />
                         <Route path="bots" element={<ManageBots />} />

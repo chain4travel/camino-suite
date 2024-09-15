@@ -1,5 +1,6 @@
-import { Box, Toolbar, Typography } from '@mui/material'
+import { Box, Link, Toolbar, Typography } from '@mui/material'
 
+import { Paper } from '@mui/material'
 import React, { useEffect } from 'react'
 import { Navigate, Outlet, useNavigate } from 'react-router'
 import store from 'wallet/store'
@@ -11,6 +12,7 @@ import { getWalletName } from '../redux/slices/app-config'
 import Links from '../views/settings/Links'
 
 const ClaimProfile = () => {
+    const emailAddress = 'foundation@camino.network'
     return (
         <Box
             sx={{
@@ -24,8 +26,14 @@ const ClaimProfile = () => {
         >
             <Typography variant="h5">Claim a profile</Typography>
             <Typography variant="body2" textAlign={'center'}>
-                Get in touch with the Camino Foundation to claim a Partner page and be then be able
-                to edit it and to create/manage a Camino Messenger configuration
+                To manage and configure your Camino Messenger, you need to claim an account.
+            </Typography>
+            <Typography variant="body2" textAlign={'center'}>
+                Contact the Camino Network Foundation via{' '}
+                <Link href={`mailto:${emailAddress}`} target="_blank" rel="noopener noreferrer">
+                    email
+                </Link>{' '}
+                to proceed.
             </Typography>
         </Box>
     )
@@ -34,7 +42,9 @@ const ClaimProfile = () => {
 const PartnersLayout = () => {
     const path = window.location.pathname
     const { data, isLoading } = useIsPartnerQuery({
-        pChainAddress: 'P-camino1avxc8uyqzf9hzwa9eacgg2x8y473j85sd2jwdt',
+        cChainAddress: store?.state?.activeWallet?.ethAddress
+            ? '0x' + store?.state?.activeWallet?.ethAddress
+            : '',
     })
     const walletName = useAppSelector(getWalletName)
     const navigate = useNavigate()
@@ -113,7 +123,9 @@ const PartnersLayout = () => {
                             width: '100%',
                             maxWidth: theme => theme.customWidth.layoutMaxWitdh,
                             mb: '2rem',
+                            padding: '32px',
                         }}
+                        component={Paper}
                     >
                         {!path.includes('partners/messenger-configuration') ||
                         (path.includes('partners/messenger-configuration') && !!data) ? (

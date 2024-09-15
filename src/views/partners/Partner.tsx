@@ -7,6 +7,7 @@ import { Link, useNavigate, useParams } from 'react-router-dom'
 import PartnerBusinessFields from '../../components/Partners/PartnerBusinessFields'
 import PartnerFlag from '../../components/Partners/PartnerFlag'
 import PartnerLogo from '../../components/Partners/PartnerLogo'
+import { useSmartContract } from '../../helpers/useSmartContract'
 import { useFetchPartnerDataQuery } from '../../redux/services/partners'
 
 const ContentField = ({ label, children }) => {
@@ -43,6 +44,7 @@ const Partner = () => {
     let { partnerID } = useParams()
     const theme = useTheme()
     const isDark = theme.palette.mode === 'dark'
+    const value = useSmartContract()
     const {
         data: partner,
         isLoading,
@@ -50,6 +52,7 @@ const Partner = () => {
         error,
     } = useFetchPartnerDataQuery({
         companyName: partnerID,
+        cChainAddress: value?.wallet?.address,
     })
     const navigate = useNavigate()
     if (error || (!partner && !isFetching && !isLoading)) {
