@@ -1,4 +1,3 @@
-import { ContentCopy, RefreshOutlined } from '@mui/icons-material'
 import {
     Box,
     Button,
@@ -6,13 +5,12 @@ import {
     Divider,
     FormControl,
     FormControlLabel,
-    InputAdornment,
     MenuItem,
     Select,
     TextField,
     Typography,
 } from '@mui/material'
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import store from 'wallet/store'
 import Alert from '../../components/Alert'
 import Input from '../../components/Input'
@@ -24,6 +22,7 @@ import {
 import { usePartnerConfig } from '../../helpers/usePartnerConfig'
 import { useSmartContract } from '../../helpers/useSmartContract'
 import useWalletBalance from '../../helpers/useWalletBalance'
+import MyMessenger from './MyMessenger'
 
 const Content = () => {
     const { contractCMAccountAddress } = useSmartContract()
@@ -56,172 +55,14 @@ const Content = () => {
                 },
             })
     }
-
     async function submit() {
         setLoading(true)
         await partnerConfig.CreateConfiguration(state)
         setLoading(false)
     }
 
-    const { balance, getBalanceOfAnAddress, balanceOfAnAddress } = useWalletBalance()
-    useEffect(() => {
-        if (contractCMAccountAddress) getBalanceOfAnAddress(contractCMAccountAddress)
-    }, [contractCMAccountAddress])
-    if (contractCMAccountAddress)
-        return (
-            <>
-                <Box
-                    sx={{
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        gap: '16px',
-                        flexWrap: 'wrap',
-                    }}
-                >
-                    <Configuration>
-                        <Configuration.SubTitle>Messenger setup</Configuration.SubTitle>
-                        <Configuration.Title>Add funds to CM address</Configuration.Title>
-                        <Configuration.Paragraphe>
-                            First you need to top up the CM Account with CAM, EURSH or USDC to work
-                            properly. Transfer it to the newly generated CM address below.
-                        </Configuration.Paragraphe>
-                        <TextField
-                            disabled
-                            value={contractCMAccountAddress as string}
-                            InputProps={{
-                                sx: {
-                                    '& input': {
-                                        fontSize: '16px',
-                                    },
-                                    '& input.Mui-disabled': {
-                                        color: theme => theme.palette.text.primary,
-                                        WebkitTextFillColor: theme => theme.palette.text.primary,
-                                    },
-                                },
-                                endAdornment: (
-                                    <MainButton
-                                        endIcon={
-                                            <ContentCopy
-                                                sx={{
-                                                    color: theme =>
-                                                        `${theme.palette.text.primary} !important`,
-                                                }}
-                                            />
-                                        }
-                                        variant="outlined"
-                                        onClick={() => {
-                                            navigator.clipboard.writeText(contractCMAccountAddress)
-                                        }}
-                                    >
-                                        Copy
-                                    </MainButton>
-                                ),
-                            }}
-                        />
-                        <Configuration.Paragraphe>
-                            When the necessary balance has arrived you can continue to the next
-                            step.
-                        </Configuration.Paragraphe>
-
-                        <TextField
-                            disabled
-                            value={balanceOfAnAddress}
-                            InputProps={{
-                                sx: {
-                                    '& input': {
-                                        fontSize: '16px',
-                                    },
-                                    '& input.Mui-disabled': {
-                                        color: theme => theme.palette.text.primary,
-                                        WebkitTextFillColor: theme => theme.palette.text.primary,
-                                    },
-                                },
-                                startAdornment: (
-                                    <InputAdornment
-                                        position="start"
-                                        sx={{
-                                            width: 'fit-content',
-                                            color: theme => theme.palette.text.primary,
-                                        }}
-                                    >
-                                        <Typography variant="body2">CM Balance:</Typography>
-                                    </InputAdornment>
-                                ),
-                                endAdornment: (
-                                    <Box sx={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-                                        {balanceOfAnAddress < 100 ? (
-                                            <InputAdornment
-                                                position="end"
-                                                sx={{ width: 'fit-contnet' }}
-                                            >
-                                                <svg
-                                                    width="24"
-                                                    height="24"
-                                                    viewBox="0 0 24 24"
-                                                    fill="none"
-                                                    xmlns="http://www.w3.org/2000/svg"
-                                                >
-                                                    <path
-                                                        d="M12 2C17.53 2 22 6.47 22 12C22 17.53 17.53 22 12 22C6.47 22 2 17.53 2 12C2 6.47 6.47 2 12 2ZM15.59 7L12 10.59L8.41 7L7 8.41L10.59 12L7 15.59L8.41 17L12 13.41L15.59 17L17 15.59L13.41 12L17 8.41L15.59 7Z"
-                                                        fill="#E5431F"
-                                                    />
-                                                </svg>
-                                            </InputAdornment>
-                                        ) : (
-                                            <InputAdornment
-                                                position="end"
-                                                sx={{ width: 'fit-contnet' }}
-                                            >
-                                                <svg
-                                                    width="24"
-                                                    height="24"
-                                                    viewBox="0 0 24 24"
-                                                    fill="none"
-                                                    xmlns="http://www.w3.org/2000/svg"
-                                                >
-                                                    <path
-                                                        d="M12 2C6.5 2 2 6.5 2 12C2 17.5 6.5 22 12 22C17.5 22 22 17.5 22 12C22 6.5 17.5 2 12 2ZM10 17L5 12L6.41 10.59L10 14.17L17.59 6.58L19 8L10 17Z"
-                                                        fill="#18B728"
-                                                    />
-                                                </svg>
-                                            </InputAdornment>
-                                        )}
-                                        <MainButton
-                                            endIcon={
-                                                <RefreshOutlined
-                                                    sx={{
-                                                        color: theme =>
-                                                            `${theme.palette.text.primary} !important`,
-                                                    }}
-                                                />
-                                            }
-                                            variant="outlined"
-                                            onClick={() => {
-                                                getBalanceOfAnAddress(contractCMAccountAddress)
-                                            }}
-                                        >
-                                            Refresh
-                                        </MainButton>
-                                    </Box>
-                                ),
-                            }}
-                        />
-                        {balanceOfAnAddress !== '' && parseFloat(balanceOfAnAddress) < 100 && (
-                            <Alert variant="negative" content="Wallet has not sufficient funds." />
-                        )}
-                        <Typography color="#E5A21F" variant="overline">
-                            Min. 100 CAM / 50 EURSH / 100.30 USDC
-                        </Typography>
-                    </Configuration>
-                    <Box sx={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                        <Configuration.Infos
-                            information="This Camino Messenger wizard will assist you in generating and activating your Camino Messenger address. Once the process is complete, your Camino Messenger address will appear on your partner detail page, allowing you to communicate directly with other Camino Messenger accounts."
-                            rackRates="This Camino Messenger wizard will assist you in generating and activating your Camino Messenger address."
-                        ></Configuration.Infos>
-                    </Box>
-                </Box>
-            </>
-        )
+    const { balance } = useWalletBalance()
+    if (contractCMAccountAddress) return <MyMessenger />
     return (
         <Box
             sx={{
@@ -655,14 +496,18 @@ Configuration.Services = function Services({
     }
 
     const handleFeeChange = (event, serviceIndex) => {
-        dispatch({
-            type: actionTypes.UPDATE_FEE,
-            payload: {
-                step: state.step,
-                serviceIndex: serviceIndex,
-                newValue: event.target.value,
-            },
-        })
+        const input = event.target.value
+        const sanitizedInput = input.replace(/[^\d.]/g, '').replace(/(\..*)\./g, '$1')
+        if (sanitizedInput === '' || (!isNaN(sanitizedInput) && parseFloat(sanitizedInput) >= 0)) {
+            dispatch({
+                type: actionTypes.UPDATE_FEE,
+                payload: {
+                    step: state.step,
+                    serviceIndex: serviceIndex,
+                    newValue: sanitizedInput,
+                },
+            })
+        }
     }
 
     return (
@@ -759,7 +604,10 @@ Configuration.Services = function Services({
                                 <Box sx={{ display: 'flex', gap: '8px', flex: '1' }}>
                                     <TextField
                                         disabled={disabled}
-                                        value={state.stepsConfig[state.step].services[index].fee}
+                                        value={
+                                            state.stepsConfig[state.step].services[index]
+                                                .fee as string
+                                        }
                                         onChange={e => handleFeeChange(e, index)}
                                         sx={{
                                             flex: '1',
@@ -773,6 +621,9 @@ Configuration.Services = function Services({
                                             },
                                         }}
                                         type="number"
+                                        inputProps={{
+                                            inputMode: 'decimal',
+                                        }}
                                         InputProps={{
                                             sx: {
                                                 '& input': {
@@ -842,6 +693,7 @@ Configuration.Services = function Services({
                                                 alignItems: 'center',
                                                 justifyContent: 'space-between',
                                             }}
+                                            key={key}
                                         >
                                             <Typography sx={{ flex: '0 0 20%' }} variant="overline">
                                                 Capabilities

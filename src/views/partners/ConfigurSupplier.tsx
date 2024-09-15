@@ -33,9 +33,7 @@ function ServiceChangesPreview({ added, updated, removed }) {
 
     async function fetchChangesAndEstimateCosts() {
         const gasPrice = (await provider.getFeeData()).gasPrice
-
         let total = 0n
-        if (!added?.length && !updated?.length && !removed?.length) setCostDetails(null)
         if (added.length > 0) {
             const addCosts = await Promise.all(
                 added.map(async service => {
@@ -150,6 +148,9 @@ function ServiceChangesPreview({ added, updated, removed }) {
 
     const formatEther = wei => {
         return parseFloat(ethers.formatEther(wei)).toFixed(6)
+    }
+    if (added.length === 0 && updated.length === 0 && removed.length === 0) {
+        return null
     }
 
     if (!costDetails) return <></>
@@ -390,6 +391,9 @@ const ConfigurSupplier = () => {
             type: actionTypes.RESET_STATE,
             payload: { initialState: { ...state, step: 1 } },
         })
+        setAdded([])
+        setRemoved([])
+        setUpdated([])
         setLoading(false)
         setEditing(false)
     }
@@ -514,7 +518,9 @@ const ConfigurSupplier = () => {
                     />
                 </Box>
                 <Divider />
-                <ServiceChangesPreview added={added} removed={removed} updated={updated} />
+                {(added.length > 0 || updated.length > 0 || removed.length > 0) && (
+                    <ServiceChangesPreview added={added} removed={removed} updated={updated} />
+                )}
                 <Configuration.Buttons>
                     {!editing ? (
                         <MainButton

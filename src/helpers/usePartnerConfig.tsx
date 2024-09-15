@@ -330,6 +330,23 @@ export const usePartnerConfig = () => {
         [account, writeToContract],
     )
 
+    const withDraw = useCallback(
+        async (address, value) => {
+            if (!account) {
+                console.error('Account is not initialized')
+                return
+            }
+            try {
+                const tx = await accountWriteContract.withdraw(address, value)
+                await tx.wait()
+                return tx
+            } catch (error) {
+                console.log(error)
+            }
+        },
+        [account, accountWriteContract],
+    )
+
     const setOffChainPaymentSupported = useCallback(
         async value => {
             if (!account) {
@@ -338,6 +355,7 @@ export const usePartnerConfig = () => {
             }
             try {
                 const tx = await accountWriteContract.setOffChainPaymentSupported(value)
+                await tx.wait()
                 return tx
             } catch (error) {
                 console.error(error)
@@ -416,6 +434,7 @@ export const usePartnerConfig = () => {
     }, [account, readFromContract])
 
     return {
+        withDraw,
         setServiceFee,
         setServiceRestrictedRate,
         setServiceCapabilities,
