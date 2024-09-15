@@ -51,9 +51,8 @@ export const usePartnerConfig = () => {
 
             const parsedEvent = managerWriteContract.interface.parseLog(event)
             const cmAccountAddress = parsedEvent.args.account
-            setContractCMAccountAddress(cmAccountAddress)
             await CMAccountCreated(
-                { services, wantedServices, isOffChainPayement },
+                { services, wantedServices, isOffChainPayement, isCam },
                 cmAccountAddress,
             )
             return tx
@@ -341,7 +340,9 @@ export const usePartnerConfig = () => {
                 await tx.wait()
                 return tx
             } catch (error) {
-                console.log(error)
+                const decodedError = accountWriteContract.interface.parseError(error.data)
+                console.error('Message:', error.message)
+                console.error(`Reason: ${decodedError?.name} (${decodedError?.args})`)
             }
         },
         [account, accountWriteContract],

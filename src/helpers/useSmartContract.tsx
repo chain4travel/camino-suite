@@ -29,22 +29,21 @@ export const SmartContractProvider: React.FC<SmartContractProviderProps> = ({ ch
     const CMAccountCreated = async (state, cmAccountAddress) => {
         const accountWritableContract = new ethers.Contract(cmAccountAddress, CMAccount, wallet)
         const accountReadOnlyContract = new ethers.Contract(cmAccountAddress, CMAccount, provider)
-        setContractCMAccountAddress(cmAccountAddress)
-        setAccountReadContract(accountReadOnlyContract)
-        setAccountWriteContract(accountWritableContract)
+
         if (!account) {
             console.error('Account is not initialized')
             return { success: false, error: 'Account is not initialized' }
         }
         try {
+            console.log({ state, cmAccountAddress })
             for (const service of state.services) {
                 const tx = await accountWritableContract.addService(
                     service.name,
-                    parseInt(service.fee),
+                    service.fee,
                     service.rackRates,
                     service.capabilities,
                 )
-                const receipt = await tx.wait()
+                await tx.wait()
             }
 
             if (state.wantedServices.length > 0) {
@@ -53,15 +52,27 @@ export const SmartContractProvider: React.FC<SmartContractProviderProps> = ({ ch
                 )
                 await wantedServicesTx.wait()
             }
-
-            const offChainPaymentTx = await accountWritableContract.setOffChainPaymentSupported(
-                state.isOffChainPayement,
-            )
-            await offChainPaymentTx.wait()
-
+            if (state.isOffChainPayement) {
+                const offChainPaymentTx = await accountWritableContract.setOffChainPaymentSupported(
+                    state.isOffChainPayement,
+                )
+                await offChainPaymentTx.wait()
+            }
+            if (state.isCam) {
+                const tx = await accountWriteContract.addSupportedToken(ethers.ZeroAddress)
+                await tx.wait()
+            }
+            const WITHDRAWER_ROLE = await readFromContract('account', 'WITHDRAWER_ROLE')
+            const tx = await accountWriteContract.grantRole(WITHDRAWER_ROLE, wallet.address)
+            await tx.wait()
+            setContractCMAccountAddress(cmAccountAddress)
+            setAccountReadContract(accountReadOnlyContract)
+            setAccountWriteContract(accountWritableContract)
             return { success: true, message: 'All operations completed successfully' }
         } catch (error) {
-            console.error('Error in CMAccountCreated:', error)
+            const decodedError = accountWritableContract.interface.parseError(error.data)
+            console.error('Message:', error.message)
+            console.error(`Reason: ${decodedError?.name} (${decodedError?.args})`)
             return { success: false, error: error.message }
         }
     }

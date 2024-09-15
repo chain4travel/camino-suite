@@ -156,14 +156,16 @@ const AddressInput = ({ address, onAddressChange, onMyAddressClick }) => {
     )
 }
 
-const CamWithdraw = ({ balance }) => {
-    const { wallet } = useSmartContract()
+const CamWithdraw = () => {
+    const { wallet, contractCMAccountAddress } = useSmartContract()
     const [address, setAddress] = useState('')
     const [amount, setAmount] = useState('')
     const [confirm, setConfirm] = useState(false)
     const [isValidAddress, setIsValidAddress] = useState(false)
+    const [loading, setLoading] = useState(false)
     const [amountError, setAmountError] = useState('')
     const { withDraw } = usePartnerConfig()
+    const { getBalanceOfAnAddress, balanceOfAnAddress: balance } = useWalletBalance()
     const maxAmount = useMemo(() => {
         const balanceParsed = parseFloat(balance)
         if (isNaN(balanceParsed)) {
@@ -213,6 +215,19 @@ const CamWithdraw = ({ balance }) => {
         validateAmount(maxAmount)
     }, [maxAmount, validateAmount])
 
+    async function handleWithdraw() {
+        setLoading(true)
+        await withDraw(address, ethers.parseEther(amount))
+        getBalanceOfAnAddress(contractCMAccountAddress)
+        setAmount('')
+        setConfirm(false)
+        setAddress('')
+        setLoading(false)
+    }
+
+    useEffect(() => {
+        getBalanceOfAnAddress(contractCMAccountAddress)
+    }, [getBalanceOfAnAddress])
     return (
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
             <AddressInput
@@ -259,9 +274,7 @@ const CamWithdraw = ({ balance }) => {
             <Button
                 disabled={!confirm || !isValidAddress || !!amountError || !!!amount}
                 variant="contained"
-                onClick={() => {
-                    withDraw(address, ethers.parseEther(amount))
-                }}
+                onClick={handleWithdraw}
                 sx={{
                     width: 'fit-content',
                     padding: '6px 12px',
@@ -274,9 +287,16 @@ const CamWithdraw = ({ balance }) => {
                         boxShadow: 'none',
                     },
                     flex: '0 0 16%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
                 }}
             >
-                <Typography variant="caption">Transfer</Typography>
+                {loading ? (
+                    <CircularProgress size={20} style={{ width: 20, height: 20 }} color="inherit" />
+                ) : (
+                    <Typography variant="caption">Transfer</Typography>
+                )}
             </Button>
         </Box>
     )
@@ -349,7 +369,7 @@ const MyMessenger = () => {
         checkIfCamSupported()
         checkIfOffChainPaymentSupported()
         getBalanceOfAnAddress(contractCMAccountAddress)
-    }, [])
+    }, [getBalanceOfAnAddress])
 
     return (
         <>

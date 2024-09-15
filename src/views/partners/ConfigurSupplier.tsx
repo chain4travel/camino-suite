@@ -526,8 +526,6 @@ const ConfigurSupplier = () => {
                         <MainButton
                             variant="contained"
                             onClick={() => {
-                                // const id = '0x0000000000000000000000000000000000000001'
-                                // addSupportedToken(id)
                                 setEditing(true)
                             }}
                         >

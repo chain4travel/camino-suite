@@ -1,16 +1,27 @@
 import {
     Box,
     Button,
+    Card,
+    CardContent,
     Checkbox,
+    CircularProgress,
     Divider,
     FormControl,
     FormControlLabel,
     MenuItem,
+    Paper,
     Select,
+    Table,
+    TableBody,
+    TableCell,
+    TableContainer,
+    TableHead,
+    TableRow,
     TextField,
     Typography,
 } from '@mui/material'
-import React, { useState } from 'react'
+import { ethers } from 'ethers'
+import React, { useEffect, useState } from 'react'
 import store from 'wallet/store'
 import Alert from '../../components/Alert'
 import Input from '../../components/Input'
@@ -23,6 +34,178 @@ import { usePartnerConfig } from '../../helpers/usePartnerConfig'
 import { useSmartContract } from '../../helpers/useSmartContract'
 import useWalletBalance from '../../helpers/useWalletBalance'
 import MyMessenger from './MyMessenger'
+
+function EstimationPreview({ state }) {
+    const [costDetails, setCostDetails] = useState(null)
+    const [totalCost, setTotalCost] = useState(0n)
+    const { wallet, provider, accountWriteContract, managerWriteContract, readFromContract } =
+        useSmartContract()
+    async function fetchEstimationCosts() {
+        const gasPrice = (await provider.getFeeData()).gasPrice
+        let total = 0n
+
+        // Estimate cost for creating CM account
+        const createAccountGas = await managerWriteContract.createCMAccount.estimateGas(
+            wallet.address,
+            wallet.address,
+            {
+                value: ethers.parseEther(state.balance ? state.balance : '0'),
+            },
+        )
+        const createAccountCost = BigInt(createAccountGas) * gasPrice
+        total += createAccountCost
+
+        // Estimate costs for services
+        const serviceCosts = await Promise.all(
+            state.stepsConfig[1].services.map(async service => {
+                const gasEst = BigInt(
+                    await accountWriteContract.addService.estimateGas(
+                        service.name,
+                        ethers.parseEther(service.fee ? service.fee : '0'),
+                        service.rackRates,
+                        service.capabilities.filter(item => item !== ''),
+                    ),
+                )
+                const adjustedGasEst = (gasEst * 98n) / 100n
+                const cost = adjustedGasEst * gasPrice
+                total += cost
+                return { name: service.name, cost }
+            }),
+        )
+
+        // Estimate costs for wanted services
+        let wantedServicesCost = 0n
+        if (state.stepsConfig[2].services.length > 0) {
+            const wantedServicesGas = await accountWriteContract.addWantedServices.estimateGas(
+                state.stepsConfig[2].services.map(service => service.name),
+            )
+            wantedServicesCost = BigInt(wantedServicesGas) * gasPrice
+            total += wantedServicesCost
+        }
+
+        // Estimate cost for granting WITHDRAWER_ROLE
+        const WITHDRAWER_ROLE = await readFromContract('account', 'WITHDRAWER_ROLE')
+        const grantRoleGas = await accountWriteContract.grantRole.estimateGas(
+            WITHDRAWER_ROLE,
+            wallet.address,
+        )
+        const grantRoleCost = BigInt(grantRoleGas) * gasPrice
+        total += grantRoleCost
+
+        // Estimate costs for payment methods
+        let paymentMethodsCosts = []
+        if (state.stepsConfig[3].isOffChain) {
+            const offChainGas = await accountWriteContract.setOffChainPaymentSupported.estimateGas(
+                true,
+            )
+            const offChainCost = BigInt(offChainGas) * gasPrice
+            total += offChainCost
+            paymentMethodsCosts.push({ name: 'Offchain', cost: offChainCost })
+        }
+        if (state.stepsConfig[3].isCam) {
+            const camGas = await accountWriteContract.addSupportedToken.estimateGas(
+                ethers.ZeroAddress,
+            )
+            const camCost = BigInt(camGas) * gasPrice
+            total += camCost
+            paymentMethodsCosts.push({ name: 'CAM', cost: camCost })
+        }
+
+        setCostDetails({
+            createAccountCost,
+            serviceCosts,
+            wantedServicesCost,
+            paymentMethodsCosts,
+            grantRoleCost,
+        })
+        setTotalCost(total)
+    }
+
+    useEffect(() => {
+        fetchEstimationCosts()
+    }, [state])
+
+    const formatEther = wei => {
+        return parseFloat(ethers.formatEther(wei)).toFixed(6)
+    }
+
+    if (!costDetails) return <CircularProgress />
+
+    const CostTable = ({ title, costs }) => {
+        return (
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                <Typography variant="body2">{title}</Typography>
+                <TableContainer component={Paper}>
+                    <Table>
+                        <TableHead>
+                            <TableRow>
+                                <TableCell>
+                                    <Typography variant="caption">Name</Typography>
+                                </TableCell>
+                                <TableCell align="right">
+                                    <Typography variant="caption">Estimated Cost (CAM)</Typography>
+                                </TableCell>
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            {costs.map(item => (
+                                <TableRow key={item.name}>
+                                    <TableCell component="th" scope="row">
+                                        <Typography variant="overline">{item.name}</Typography>
+                                    </TableCell>
+                                    <TableCell align="right">
+                                        <Typography variant="overline">
+                                            {formatEther(item.cost)}
+                                        </Typography>
+                                    </TableCell>
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+                </TableContainer>
+            </Box>
+        )
+    }
+
+    return (
+        <Card>
+            <CardContent sx={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                <Typography variant="body1">Estimated Costs for CM Account Creation</Typography>
+
+                <CostTable
+                    title="Account Creation"
+                    costs={[{ name: 'Create CM Account', cost: costDetails.createAccountCost }]}
+                />
+
+                {costDetails.serviceCosts.length > 0 && (
+                    <CostTable title="Services" costs={costDetails.serviceCosts} />
+                )}
+
+                {costDetails.wantedServicesCost > 0 && (
+                    <CostTable
+                        title="Wanted Services"
+                        costs={[
+                            { name: 'Add Wanted Services', cost: costDetails.wantedServicesCost },
+                        ]}
+                    />
+                )}
+
+                {costDetails.paymentMethodsCosts.length > 0 && (
+                    <CostTable title="Payment Methods" costs={costDetails.paymentMethodsCosts} />
+                )}
+
+                <CostTable
+                    title="Role Management"
+                    costs={[{ name: 'Grant WITHDRAWER_ROLE', cost: costDetails.grantRoleCost }]}
+                />
+
+                <Typography variant="body2">
+                    Total Estimated Cost: {formatEther(totalCost)} CAM
+                </Typography>
+            </CardContent>
+        </Card>
+    )
+}
 
 const Content = () => {
     const { contractCMAccountAddress } = useSmartContract()
@@ -60,7 +243,6 @@ const Content = () => {
         await partnerConfig.CreateConfiguration(state)
         setLoading(false)
     }
-
     const { balance } = useWalletBalance()
     if (contractCMAccountAddress) return <MyMessenger />
     return (
@@ -223,7 +405,7 @@ const Content = () => {
                                         '&.MuiCheckbox-colorSecondary.Mui-checked': {
                                             color: theme => theme.palette.secondary.main,
                                         },
-                                        p: '0 8px',
+                                        m: '0 8px 0 0',
                                     }}
                                     checked={state.stepsConfig[state.step].isOffChain}
                                     onChange={() =>
@@ -244,7 +426,7 @@ const Content = () => {
                                         '&.MuiCheckbox-colorSecondary.Mui-checked': {
                                             color: theme => theme.palette.secondary.main,
                                         },
-                                        p: '0 8px',
+                                        m: '0 8px 0 0',
                                     }}
                                     checked={state.stepsConfig[state.step].isCam}
                                     onChange={() => dispatch({ type: actionTypes.UPDATE_IS_CAM })}
@@ -264,10 +446,8 @@ const Content = () => {
                                         '&.MuiCheckbox-colorSecondary.Mui-checked': {
                                             color: theme => theme.palette.secondary.main,
                                         },
-                                        p: '0 8px',
+                                        m: '0 8px 0 0',
                                     }}
-                                    checked={state.stepsConfig[state.step].isCam}
-                                    onChange={() => dispatch({ type: actionTypes.UPDATE_IS_CAM })}
                                 />
                             }
                         />
@@ -284,10 +464,8 @@ const Content = () => {
                                         '&.MuiCheckbox-colorSecondary.Mui-checked': {
                                             color: theme => theme.palette.secondary.main,
                                         },
-                                        p: '0 8px',
+                                        m: '0 8px 0 0',
                                     }}
-                                    checked={state.stepsConfig[state.step].isCam}
-                                    onChange={() => dispatch({ type: actionTypes.UPDATE_IS_CAM })}
                                 />
                             }
                         />
@@ -309,7 +487,7 @@ const Content = () => {
                                 )}
                             </Box>
                         )}
-                        {state.stepsConfig[1].isSupplier && (
+                        {state.stepsConfig[1].services?.length > 0 && (
                             <Box sx={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
                                 <Box sx={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
                                     <Typography variant="overline">Type</Typography>
@@ -351,7 +529,7 @@ const Content = () => {
                                 })}
                             </Box>
                         )}
-                        {state.stepsConfig[2].isDistributor && (
+                        {state.stepsConfig[2].services?.length > 0 && (
                             <Box sx={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
                                 <Box sx={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
                                     <Typography variant="overline">Type</Typography>
@@ -366,6 +544,7 @@ const Content = () => {
                                 })}
                             </Box>
                         )}
+                        {/* <EstimationPreview state={state} /> */}
                     </Box>
                 )}
                 <Divider />
