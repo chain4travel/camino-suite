@@ -148,7 +148,6 @@ export const usePartnerConfig = () => {
                 })
                 i++
             }
-
             return
         } catch (error) {
             throw error
@@ -329,6 +328,38 @@ export const usePartnerConfig = () => {
         [account, writeToContract],
     )
 
+    const checkWithDrawRole = useCallback(async () => {
+        if (!account) {
+            console.error('Account is not initialized')
+            return
+        }
+        try {
+            const WITHDRAWER_ROLE = await readFromContract('account', 'WITHDRAWER_ROLE')
+            const hasRole = await accountReadContract.hasRole(WITHDRAWER_ROLE, wallet.address)
+            return hasRole
+        } catch (error) {
+            const decodedError = accountWriteContract.interface.parseError(error.data)
+            console.error('Message:', error.message)
+            console.error(`Reason: ${decodedError?.name} (${decodedError?.args})`)
+        }
+    }, [account, accountWriteContract, accountReadContract])
+    const grantWithDrawRole = useCallback(async () => {
+        if (!account) {
+            console.error('Account is not initialized')
+            return
+        }
+        try {
+            const WITHDRAWER_ROLE = await readFromContract('account', 'WITHDRAWER_ROLE')
+            const tx = await accountWriteContract.grantRole(WITHDRAWER_ROLE, wallet.address)
+            await tx.wait()
+            return tx
+        } catch (error) {
+            const decodedError = accountWriteContract.interface.parseError(error.data)
+            console.error('Message:', error.message)
+            console.error(`Reason: ${decodedError?.name} (${decodedError?.args})`)
+        }
+    }, [account, accountWriteContract, readFromContract])
+
     const withDraw = useCallback(
         async (address, value) => {
             if (!account) {
@@ -392,7 +423,6 @@ export const usePartnerConfig = () => {
             try {
                 const tx = await accountWriteContract.addSupportedToken(tokenID)
                 const receipt = await tx.wait()
-                console.log({ receipt })
                 return receipt
             } catch (error) {
                 console.error(error)
@@ -435,6 +465,8 @@ export const usePartnerConfig = () => {
     }, [account, readFromContract])
 
     return {
+        checkWithDrawRole,
+        grantWithDrawRole,
         withDraw,
         setServiceFee,
         setServiceRestrictedRate,

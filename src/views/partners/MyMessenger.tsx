@@ -21,9 +21,11 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import Alert from '../../components/Alert'
 import DialogAnimate from '../../components/Animate/DialogAnimate'
 import MainButton from '../../components/MainButton'
+import { usePartnerConfigurationContext } from '../../helpers/partnerConfigurationContext'
 import { usePartnerConfig } from '../../helpers/usePartnerConfig'
 import { useSmartContract } from '../../helpers/useSmartContract'
 import useWalletBalance from '../../helpers/useWalletBalance'
+import { useFetchPartnerDataQuery } from '../../redux/services/partners'
 import { Configuration } from './Configuration'
 
 const AmountInput = ({ amount, onAmountChange, onMaxAmountClick, maxAmount }) => {
@@ -166,6 +168,7 @@ const CamWithdraw = () => {
     const [amountError, setAmountError] = useState('')
     const { withDraw } = usePartnerConfig()
     const { getBalanceOfAnAddress, balanceOfAnAddress: balance } = useWalletBalance()
+
     const maxAmount = useMemo(() => {
         const balanceParsed = parseFloat(balance)
         if (isNaN(balanceParsed)) {
@@ -303,6 +306,7 @@ const CamWithdraw = () => {
 }
 
 const MyMessenger = () => {
+    const { state, dispatch } = usePartnerConfigurationContext()
     const [open, setOpen] = useState(false)
     const [isOffChainPaymentSupported, setIsOffChainPaymentSupported] = useState(false)
     const [isCAMSupported, setCAMSupported] = useState(false)
@@ -311,7 +315,7 @@ const MyMessenger = () => {
     const [tempCAMSupported, setTempCAMSupported] = useState(false)
     const { balanceOfAnAddress, getBalanceOfAnAddress } = useWalletBalance()
     const [isLoading, setIsLoading] = useState(false)
-    const { contractCMAccountAddress } = useSmartContract()
+    const { contractCMAccountAddress, upgradeCMAccount, wallet } = useSmartContract()
     const {
         getSupportedTokens,
         getOffChainPaymentSupported,
@@ -319,7 +323,10 @@ const MyMessenger = () => {
         addSupportedToken,
         removeSupportedToken,
     } = usePartnerConfig()
-
+    const { data: partner } = useFetchPartnerDataQuery({
+        companyName: '',
+        cChainAddress: wallet.address,
+    })
     const handleOpenModal = () => {
         setOpen(true)
     }
@@ -382,11 +389,14 @@ const MyMessenger = () => {
                 }}
             >
                 <Configuration>
-                    <Configuration.Title>Partner's Name Messenger Account</Configuration.Title>
+                    <Configuration.Title>
+                        {partner?.attributes?.companyName} Messenger Account
+                    </Configuration.Title>
                     <Configuration.Paragraphe>
                         First you need to top up the CM Account with CAM, EURSH or USDC to work
                         properly. Transfer it to the newly generated CM address below.
                     </Configuration.Paragraphe>
+                    {/* <button onClick={upgradeCMAccount}>upgrade</button> */}
                     <TextField
                         disabled
                         value={contractCMAccountAddress as string}
@@ -503,7 +513,32 @@ const MyMessenger = () => {
                             ),
                         }}
                     />
-                    <Configuration.SubTitle>Accepted Currencies</Configuration.SubTitle>
+                    {state.stepsConfig[2]?.services?.length > 0 && (
+                        <Box sx={{ display: 'flex', alignItems: 'start', gap: '16px' }}>
+                            <Typography sx={{ flex: '0 0 20%' }} variant="body2">
+                                Wanted Services
+                            </Typography>
+                            <Typography variant="overline">
+                                {state.stepsConfig[2].services
+                                    .map(service => service.name)
+                                    .join(', ')}
+                            </Typography>
+                        </Box>
+                    )}
+                    {state.stepsConfig[1]?.services?.length > 0 && (
+                        <Box sx={{ display: 'flex', alignItems: 'start', gap: '16px' }}>
+                            <Typography sx={{ flex: '0 0 20%' }} variant="body2">
+                                Offered Services
+                            </Typography>
+                            <Typography variant="overline">
+                                {state.stepsConfig[1].services
+                                    .map(service => service.name)
+                                    .join(', ')}
+                            </Typography>
+                        </Box>
+                    )}
+                    <Typography variant="body2">Accepted Currencies</Typography>
+                    {/* <Configuration.SubTitle>Accepted Currencies</Configuration.SubTitle> */}
                     <Box
                         sx={{
                             display: 'flex',

@@ -9,6 +9,7 @@ import {
     FormControl,
     FormControlLabel,
     MenuItem,
+    OutlinedInput,
     Paper,
     Select,
     Table,
@@ -675,15 +676,14 @@ Configuration.Services = function Services({
     }
 
     const handleFeeChange = (event, serviceIndex) => {
-        const input = event.target.value
-        const sanitizedInput = input.replace(/[^\d.]/g, '').replace(/(\..*)\./g, '$1')
-        if (sanitizedInput === '' || (!isNaN(sanitizedInput) && parseFloat(sanitizedInput) >= 0)) {
+        const newAmount = event.target.value
+        if (newAmount === '' || /^\d*\.?\d*$/.test(newAmount)) {
             dispatch({
                 type: actionTypes.UPDATE_FEE,
                 payload: {
                     step: state.step,
                     serviceIndex: serviceIndex,
-                    newValue: sanitizedInput,
+                    newValue: newAmount,
                 },
             })
         }
@@ -781,35 +781,25 @@ Configuration.Services = function Services({
                                     FEE
                                 </Typography>
                                 <Box sx={{ display: 'flex', gap: '8px', flex: '1' }}>
-                                    <TextField
+                                    <OutlinedInput
                                         disabled={disabled}
-                                        value={
-                                            state.stepsConfig[state.step].services[index]
-                                                .fee as string
-                                        }
+                                        value={state.stepsConfig[state.step].services[index].fee}
                                         onChange={e => handleFeeChange(e, index)}
-                                        sx={{
-                                            flex: '1',
-                                            '& .MuiInputBase-root': {
-                                                height: '40px',
-                                            },
-                                            '& input': {
-                                                fontSize: '14px',
-                                                height: '100%',
-                                                padding: '8px 14px',
-                                            },
-                                        }}
-                                        type="number"
                                         inputProps={{
                                             inputMode: 'decimal',
+                                            pattern: '[0-9]*',
                                         }}
-                                        InputProps={{
-                                            sx: {
-                                                '& input': {
-                                                    fontSize: '14px',
-                                                },
+                                        sx={theme => ({
+                                            flex: '1',
+                                            height: '40px',
+                                            border: `solid 1px ${theme.palette.card.border}`,
+                                            fontSize: '14px',
+                                            lineHeight: '24px',
+                                            fontWeight: 500,
+                                            '.MuiOutlinedInput-notchedOutline': {
+                                                border: 'none',
                                             },
-                                        }}
+                                        })}
                                     />
                                     <FormControlLabel
                                         sx={{ mr: '0px !important' }}

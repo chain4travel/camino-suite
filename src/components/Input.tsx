@@ -1,48 +1,50 @@
-import { InputAdornment, Typography } from '@mui/material'
-import TextField from '@mui/material/TextField' // Import TextField if using Material-UI
+import { InputAdornment, OutlinedInput, Typography } from '@mui/material'
 import React, { useMemo } from 'react'
 import { actionTypes, usePartnerConfigurationContext } from '../helpers/partnerConfigurationContext'
 
-const Input = ({ variant = 'outlined', ...rest }) => {
+const Input = ({ ...rest }) => {
     const { state, dispatch } = usePartnerConfigurationContext()
     const error = useMemo(() => {
         if (!state.balance) return true
         let balance = parseFloat(state.balance)
-        if (balance < 100) return true
-        else return false
+        return balance < 100
     }, [state])
-    return (
-        <TextField
-            value={state.balance}
-            onChange={e => {
-                dispatch({
-                    type: actionTypes.UPDATE_BALANCE,
-                    payload: {
-                        newValue: e.target.value,
-                    },
-                })
-            }}
-            type="number"
-            error={error}
-            InputProps={{
-                sx: {
-                    '& input': {
-                        fontSize: '16px',
-                    },
+
+    const handleChange = e => {
+        const newAmount = e.target.value
+        if (newAmount === '' || /^\d*\.?\d*$/.test(newAmount)) {
+            dispatch({
+                type: actionTypes.UPDATE_BALANCE,
+                payload: {
+                    newValue: e.target.value,
                 },
-                startAdornment: (
-                    <InputAdornment
-                        position="start"
-                        sx={{
-                            width: 'fit-content',
-                            color: theme => theme.palette.text.primary,
-                        }}
-                    >
-                        <Typography variant="body2">Prefund Amount:</Typography>
-                    </InputAdornment>
-                ),
-                endAdornment: error ? (
-                    <InputAdornment position="end" sx={{ width: 'fit-contnet' }}>
+            })
+        }
+    }
+
+    return (
+        <OutlinedInput
+            value={state.balance}
+            onChange={handleChange}
+            error={error}
+            inputProps={{
+                inputMode: 'decimal',
+                pattern: '[0-9]*',
+            }}
+            startAdornment={
+                <InputAdornment
+                    position="start"
+                    sx={{
+                        width: 'fit-content',
+                        color: theme => theme.palette.text.primary,
+                    }}
+                >
+                    <Typography variant="body2">Prefund Amount:</Typography>
+                </InputAdornment>
+            }
+            endAdornment={
+                error ? (
+                    <InputAdornment position="end" sx={{ width: 'fit-content' }}>
                         <svg
                             width="24"
                             height="24"
@@ -57,7 +59,7 @@ const Input = ({ variant = 'outlined', ...rest }) => {
                         </svg>
                     </InputAdornment>
                 ) : (
-                    <InputAdornment position="end" sx={{ width: 'fit-contnet' }}>
+                    <InputAdornment position="end" sx={{ width: 'fit-content' }}>
                         <svg
                             width="24"
                             height="24"
@@ -71,8 +73,8 @@ const Input = ({ variant = 'outlined', ...rest }) => {
                             />
                         </svg>
                     </InputAdornment>
-                ),
-            }}
+                )
+            }
             {...rest}
         />
     )

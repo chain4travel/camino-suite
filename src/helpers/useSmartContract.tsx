@@ -1,10 +1,19 @@
 import { ethers } from 'ethers'
-import React, { createContext, ReactNode, useContext, useEffect, useState } from 'react'
+import React, {
+    createContext,
+    ReactNode,
+    useCallback,
+    useContext,
+    useEffect,
+    useState,
+} from 'react'
 import store from 'wallet/store'
 import { useAppSelector } from '../hooks/reduxHooks'
 import { getActiveNetwork } from '../redux/slices/network'
 import CMAccount from './CMAccountManagerModule#CMAccount.json'
 import CMAccountManager from './ManagerProxyModule#CMAccountManager.json'
+
+const IMPLEMENTATION_SLOT = '0x360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc'
 
 const SmartContractContext = createContext<any>(null)
 
@@ -96,6 +105,29 @@ export const SmartContractProvider: React.FC<SmartContractProviderProps> = ({ ch
             console.error('User denied account access:', error)
         }
     }
+
+    const upgradeCMAccount = useCallback(async () => {
+        try {
+            if (accountWriteContract) {
+                const implementation = await managerReadContract.getAccountImplementation()
+
+                const implAddrPadded = await provider.getStorage(
+                    contractCMAccountAddress,
+                    IMPLEMENTATION_SLOT,
+                )
+                const implAddr = '0x' + implAddrPadded.slice(-40)
+                console.log({ implementation, implAddr })
+                const tx = await accountWriteContract.upgradeToAndCall(implementation, '0x')
+                const receipt = await tx.wait()
+                console.log({ receipt })
+                return receipt
+            }
+        } catch (error) {
+            const decodedError = accountWriteContract.interface.parseError(error.data)
+            console.error('Message:', error.message)
+            console.error(`Reason: ${decodedError?.name} (${decodedError?.args})`)
+        }
+    }, [accountWriteContract])
     const initializeEthers = async () => {
         const selectedNetwork = store.getters['Network/selectedNetwork']
         const ethersProvider = new ethers.JsonRpcProvider(
@@ -172,6 +204,7 @@ export const SmartContractProvider: React.FC<SmartContractProviderProps> = ({ ch
     }
 
     const value = {
+        upgradeCMAccount,
         contractCMAccountAddress,
         setContractCMAccountAddress,
         wallet,

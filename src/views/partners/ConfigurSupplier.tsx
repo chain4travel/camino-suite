@@ -42,7 +42,7 @@ function ServiceChangesPreview({ added, updated, removed }) {
                             service.name,
                             ethers.parseEther(service.fee ? service.fee : '0'),
                             service.rackRates,
-                            service.capabilities.filter(item => item !== ''),
+                            service.capabilities?.filter(item => item !== ''),
                         ),
                     )
                     const adjustedGasEst = (gasEst * 98n) / 100n
@@ -290,8 +290,8 @@ const ConfigurSupplier = () => {
         const removed = []
 
         // Check for removed and updated services
-        state.stepsConfig[supplierState.step].services.forEach(origItem => {
-            const updatedItem = supplierState.stepsConfig[supplierState.step].services.find(
+        state.stepsConfig[supplierState.step].services?.forEach(origItem => {
+            const updatedItem = supplierState.stepsConfig[supplierState.step].services?.find(
                 item => item.name === origItem.name,
             )
 

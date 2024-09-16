@@ -87,28 +87,36 @@ export function reducer(state = initialState, action) {
             const { initialState } = action.payload
             return { ...state, ...initialState }
         case actionTypes.UPDATE_SUPPORTED_SERVICES: {
-            const { services } = action.payload
-            if (!services || services.length < 1) return state
-            let parsedServices = services[0].map((service, index) => {
+            try {
+                const { services } = action.payload
+                if (!services || services.length < 1) return state
+                console.log({ services1: services[1][0] })
+                console.log({ services2: services[1][1][2] })
+                let parsedServices = services[0].map((service, index) => {
+                    let capabilities = services[1][index][2].map(elem => elem)
+                    return {
+                        name: service,
+                        fee: ethers.formatEther(services[1][index][0]),
+                        rackRates: services[1][index][1],
+                        capabilities: capabilities,
+                    }
+                })
                 return {
-                    name: service,
-                    fee: ethers.formatEther(services[1][index][0]),
-                    rackRates: services[1][index][1],
-                    capabilities: services[1][index][2],
+                    ...state,
+                    stepsConfig: state.stepsConfig.map(item =>
+                        item.step === 1
+                            ? {
+                                  ...item,
+                                  isSupplier: parsedServices.length > 0 ? true : false,
+                                  services: parsedServices,
+                              }
+                            : item,
+                    ),
                 }
-            })
-            return {
-                ...state,
-                stepsConfig: state.stepsConfig.map(item =>
-                    item.step === 1
-                        ? {
-                              ...item,
-                              isSupplier: parsedServices.length > 0 ? true : false,
-                              services: parsedServices,
-                          }
-                        : item,
-                ),
+            } catch (e) {
+                console.log(e)
             }
+            return
         }
 
         case actionTypes.UPDATE_WANTED_SERVICES: {

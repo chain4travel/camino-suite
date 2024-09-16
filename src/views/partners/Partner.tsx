@@ -45,6 +45,7 @@ const Partner = () => {
     const theme = useTheme()
     const isDark = theme.palette.mode === 'dark'
     const value = useSmartContract()
+    const path = window.location.pathname
     const {
         data: partner,
         isLoading,
@@ -52,7 +53,9 @@ const Partner = () => {
         error,
     } = useFetchPartnerDataQuery({
         companyName: partnerID,
-        cChainAddress: value?.wallet?.address,
+        cChainAddress: !path.includes('partners/messenger-configuration')
+            ? ''
+            : value?.wallet?.address,
     })
     const navigate = useNavigate()
     if (error || (!partner && !isFetching && !isLoading)) {
@@ -62,21 +65,23 @@ const Partner = () => {
     if (isLoading || isFetching) return <></>
     return (
         <Box sx={{ height: '100%', mb: '2rem' }}>
-            <Box sx={{ mb: '2rem' }}>
-                <Button
-                    sx={{
-                        height: '40px',
-                        width: { xs: '100%', sm: 'fit-content' },
-                        padding: theme => theme.customPadding.defaultPadding,
-                        borderRadius: theme => theme.customShape.borderRadiusSm + ' !important',
-                        border: theme => `1px solid ${theme.palette.grey[700]}`,
-                    }}
-                    startIcon={<Icon path={mdiArrowLeft} size={0.8} />}
-                    onClick={() => navigate('/partners')}
-                >
-                    Back to all companies
-                </Button>
-            </Box>
+            {!path.includes('partners/messenger-configuration') && (
+                <Box sx={{ mb: '2rem' }}>
+                    <Button
+                        sx={{
+                            height: '40px',
+                            width: { xs: '100%', sm: 'fit-content' },
+                            padding: theme => theme.customPadding.defaultPadding,
+                            borderRadius: theme => theme.customShape.borderRadiusSm + ' !important',
+                            border: theme => `1px solid ${theme.palette.grey[700]}`,
+                        }}
+                        startIcon={<Icon path={mdiArrowLeft} size={0.8} />}
+                        onClick={() => navigate('/partners')}
+                    >
+                        Back to all companies
+                    </Button>
+                </Box>
+            )}
             <Box
                 sx={{
                     display: 'flex',
