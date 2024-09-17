@@ -23,6 +23,7 @@ import Partner from '../views/partners/Partner'
 import MultisigWallet from '../views/settings/MultisigWallet'
 import VerifyWallet from '../views/settings/VerifyWallet'
 import Settings from '../views/settings/index'
+import VoteApp from '../views/vote/VoteApp'
 import Wallet from '../views/wallet/WalletApp'
 import CreateDepositsLayout from './CreateDepositLayout'
 import PartnersLayout from './PartnersLayout'
@@ -96,6 +97,9 @@ export default function RoutesSuite() {
                             path="/explorer"
                             element={<Navigate to={`/explorer/${networkAliasToUrl}`} />}
                         />
+
+                        <Route path={`/dac/*`} element={<VoteApp />} />
+                        <Route path={`/dac`} element={<Navigate to="/dac/active" />} />
                     </>
                 ) : null}
                 <Route element={<Protected />}>
