@@ -9,6 +9,7 @@ import { SmartContractProvider } from '../helpers/useSmartContract'
 import { useAppSelector } from '../hooks/reduxHooks'
 import { useIsPartnerQuery } from '../redux/services/partners'
 import { getWalletName } from '../redux/slices/app-config'
+import { getActiveNetwork } from '../redux/slices/network'
 import Links from '../views/settings/Links'
 
 const ClaimProfile = () => {
@@ -57,8 +58,13 @@ const PartnersLayout = () => {
             navigate('/')
         }
     }, [walletName])
+    const activeNetwork = useAppSelector(getActiveNetwork)
     if (isLoading) return <></>
-    if (path.includes('partners/messenger-configuration') && !store.state.isAuth) {
+    if (
+        path.includes('partners/messenger-configuration') &&
+        !store.state.isAuth &&
+        activeNetwork.name.toLowerCase() !== 'columbus'
+    ) {
         return <Navigate to="/login" replace />
     }
     return (

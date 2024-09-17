@@ -8,6 +8,7 @@ import store from 'wallet/store'
 import { useSmartContract } from '../../helpers/useSmartContract'
 import { useAppDispatch, useAppSelector } from '../../hooks/reduxHooks'
 import { changeActiveApp } from '../../redux/slices/app-config'
+import { getActiveNetwork } from '../../redux/slices/network'
 
 function a11yProps(index: number) {
     return {
@@ -45,7 +46,7 @@ export default function Links({ type = 'else' }: { type?: string }) {
     }, [path]) // eslint-disable-line react-hooks/exhaustive-deps
     const auth = useAppSelector(state => state.appConfig.isAuth)
     const sc = useSmartContract()
-
+    const activeNetwork = useAppSelector(getActiveNetwork)
     const tabStyle = (index: number, currentValue: number) => ({
         '&::after': { display: currentValue === index ? 'block' : 'none' },
         color: currentValue === index ? theme.palette.text.primary : 'inherit',
@@ -94,17 +95,19 @@ export default function Links({ type = 'else' }: { type?: string }) {
             key={0}
             sx={tabStyle(0, value)}
         />,
-        auth && store.state.activeWallet?.type !== 'multisig' && (
-            <Tab
-                onClick={() => navigate('/partners/messenger-configuration')}
-                className="tab"
-                disableRipple
-                label="My Partners Profile"
-                {...a11yProps(1)}
-                key={1}
-                sx={tabStyle(1, value)}
-            />
-        ),
+        auth &&
+            store.state.activeWallet?.type !== 'multisig' &&
+            activeNetwork.name.toLowerCase() === 'columbus' && (
+                <Tab
+                    onClick={() => navigate('/partners/messenger-configuration')}
+                    className="tab"
+                    disableRipple
+                    label="My Partners Profile"
+                    {...a11yProps(1)}
+                    key={1}
+                    sx={tabStyle(1, value)}
+                />
+            ),
     ]
 
     const partnersSubTabs = [

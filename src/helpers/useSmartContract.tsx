@@ -157,7 +157,7 @@ export const SmartContractProvider: React.FC<SmartContractProviderProps> = ({ ch
     const activeNetwork = useAppSelector(getActiveNetwork)
 
     useEffect(() => {
-        if (auth) initializeEthers()
+        if (auth && activeNetwork.name.toLowerCase() === 'columbus') initializeEthers()
     }, [activeNetwork, auth])
 
     useEffect(() => {
