@@ -44,7 +44,6 @@ export const SmartContractProvider: React.FC<SmartContractProviderProps> = ({ ch
             return { success: false, error: 'Account is not initialized' }
         }
         try {
-            console.log({ state, cmAccountAddress })
             for (const service of state.services) {
                 const tx = await accountWritableContract.addService(
                     service.name,
@@ -68,11 +67,11 @@ export const SmartContractProvider: React.FC<SmartContractProviderProps> = ({ ch
                 await offChainPaymentTx.wait()
             }
             if (state.isCam) {
-                const tx = await accountWriteContract.addSupportedToken(ethers.ZeroAddress)
+                const tx = await accountWritableContract.addSupportedToken(ethers.ZeroAddress)
                 await tx.wait()
             }
-            const WITHDRAWER_ROLE = await readFromContract('account', 'WITHDRAWER_ROLE')
-            const tx = await accountWriteContract.grantRole(WITHDRAWER_ROLE, wallet.address)
+            const WITHDRAWER_ROLE = await accountReadOnlyContract.WITHDRAWER_ROLE()
+            const tx = await accountWritableContract.grantRole(WITHDRAWER_ROLE, wallet.address)
             await tx.wait()
             setContractCMAccountAddress(cmAccountAddress)
             setAccountReadContract(accountReadOnlyContract)
@@ -128,6 +127,7 @@ export const SmartContractProvider: React.FC<SmartContractProviderProps> = ({ ch
             console.error(`Reason: ${decodedError?.name} (${decodedError?.args})`)
         }
     }, [accountWriteContract])
+
     const initializeEthers = async () => {
         const selectedNetwork = store.getters['Network/selectedNetwork']
         const ethersProvider = new ethers.JsonRpcProvider(
@@ -163,6 +163,58 @@ export const SmartContractProvider: React.FC<SmartContractProviderProps> = ({ ch
     useEffect(() => {
         if (contractCMAccountAddress) initializeCMAccountContract()
     }, [provider, contractCMAccountAddress])
+
+    const getCMAccountMappings = useCallback(async () => {
+        try {
+            const mappings = new Map()
+            const CMACCOUNT_ROLE = await readFromContract('manager', 'CMACCOUNT_ROLE')
+            const roleMemberCount = await readFromContract(
+                'manager',
+                'getRoleMemberCount',
+                CMACCOUNT_ROLE,
+            )
+
+            const promises = []
+            for (let i = 0; i < roleMemberCount; i++) {
+                promises.push(
+                    managerReadContract.getRoleMember(CMACCOUNT_ROLE, i).then(async role => {
+                        const creator = await readFromContract(
+                            'manager',
+                            'getCMAccountCreator',
+                            role,
+                        )
+                        return { role, creator }
+                    }),
+                )
+            }
+
+            const results = await Promise.all(promises)
+            results.forEach(({ role, creator }) => {
+                mappings.set(role.toLowerCase(), creator.toLowerCase())
+            })
+
+            const findAddress = query => {
+                query = query.toLowerCase()
+                if (mappings.has(query)) {
+                    return { role: query, creator: mappings.get(query) }
+                }
+                for (const [role, creator] of mappings) {
+                    if (creator === query) {
+                        return { role, creator: query }
+                    }
+                }
+                return null
+            }
+
+            return {
+                findAddress,
+                getAllMappings: () => Object.fromEntries(mappings),
+            }
+        } catch (error) {
+            console.error('Error in getCMAccountMappings:', error)
+            throw error
+        }
+    }, [managerReadContract])
 
     const readFromContract = async (
         contractType: 'manager' | 'account',
@@ -204,6 +256,7 @@ export const SmartContractProvider: React.FC<SmartContractProviderProps> = ({ ch
     }
 
     const value = {
+        getCMAccountMappings,
         upgradeCMAccount,
         contractCMAccountAddress,
         setContractCMAccountAddress,

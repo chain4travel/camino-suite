@@ -26,6 +26,7 @@ import { usePartnerConfig } from '../../helpers/usePartnerConfig'
 import { useSmartContract } from '../../helpers/useSmartContract'
 import useWalletBalance from '../../helpers/useWalletBalance'
 import { useFetchPartnerDataQuery } from '../../redux/services/partners'
+import { transformServiceNames } from '../../utils/display-utils'
 import { Configuration } from './Configuration'
 
 const AmountInput = ({ amount, onAmountChange, onMaxAmountClick, maxAmount }) => {
@@ -518,10 +519,8 @@ const MyMessenger = () => {
                             <Typography sx={{ flex: '0 0 20%' }} variant="body2">
                                 Wanted Services
                             </Typography>
-                            <Typography variant="overline">
-                                {state.stepsConfig[2].services
-                                    .map(service => service.name)
-                                    .join(', ')}
+                            <Typography variant="caption">
+                                {transformServiceNames(state.stepsConfig[2].services)}
                             </Typography>
                         </Box>
                     )}
@@ -530,10 +529,8 @@ const MyMessenger = () => {
                             <Typography sx={{ flex: '0 0 20%' }} variant="body2">
                                 Offered Services
                             </Typography>
-                            <Typography variant="overline">
-                                {state.stepsConfig[1].services
-                                    .map(service => service.name)
-                                    .join(', ')}
+                            <Typography variant="caption">
+                                {transformServiceNames(state.stepsConfig[1].services)}
                             </Typography>
                         </Box>
                     )}

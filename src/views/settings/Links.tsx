@@ -33,11 +33,14 @@ export default function Links({ type = 'else' }: { type?: string }) {
         else if (path === '/settings/manage-multisig') setValue(1)
         else if (path === '/settings/verify-wallet') setValue(2)
         else if (path === '/partners') setValue(0)
-        else if (path.includes('partners/messenger-configuration')) setValue(1)
-        else if (path.includes('overview')) setSecondValue(0)
-        else if (path.includes('distribution')) setSecondValue(1)
-        else if (path.includes('supply')) setSecondValue(2)
-        else setValue(0)
+        else if (path.includes('partners/messenger-configuration')) {
+            setValue(1)
+            if (path.includes('mymessenger')) setSecondValue(1)
+            else if (path.includes('mydetails')) setSecondValue(0)
+            else if (path.includes('distribution')) setSecondValue(3)
+            else if (path.includes('supply')) setSecondValue(2)
+            else if (path.includes('bots')) setSecondValue(4)
+        } else setValue(0)
         dispatch(changeActiveApp('Network'))
     }, [path]) // eslint-disable-line react-hooks/exhaustive-deps
     const auth = useAppSelector(state => state.appConfig.isAuth)
@@ -115,7 +118,7 @@ export default function Links({ type = 'else' }: { type?: string }) {
             sx={tabStyle(0, secondValue)}
         />,
         <Tab
-            onClick={() => navigate('/partners/messenger-configuration/messenger')}
+            onClick={() => navigate('/partners/messenger-configuration/mymessenger')}
             className="tab"
             disableRipple
             label="My Messenger Account"

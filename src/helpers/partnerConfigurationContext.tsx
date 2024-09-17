@@ -90,8 +90,6 @@ export function reducer(state = initialState, action) {
             try {
                 const { services } = action.payload
                 if (!services || services.length < 1) return state
-                console.log({ services1: services[1][0] })
-                console.log({ services2: services[1][1][2] })
                 let parsedServices = services[0].map((service, index) => {
                     let capabilities = services[1][index][2].map(elem => elem)
                     return {
