@@ -36,11 +36,6 @@ module.exports = merge(common, {
                     singleton: true,
                     requiredVersion: deps['react-dom'],
                 },
-                ethers: {
-                    singleton: true,
-                    eager: true,
-                    requiredVersion: deps['ethers'],
-                },
             },
         }),
     ],

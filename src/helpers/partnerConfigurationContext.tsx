@@ -119,7 +119,6 @@ export function reducer(state = initialState, action) {
 
         case actionTypes.UPDATE_WANTED_SERVICES: {
             const { wantedServices } = action.payload
-            if (!wantedServices || wantedServices.length < 1) return state
             return {
                 ...state,
                 stepsConfig: state.stepsConfig.map(item =>

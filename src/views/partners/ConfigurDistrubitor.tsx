@@ -36,32 +36,36 @@ function ServiceChangesPreview({ added, removed }) {
         const gasPrice = (await provider.getFeeData()).gasPrice
         let total = 0n
 
-        if (added.length > 0) {
-            const addedServices = added.map(service => service.name)
-            const gasEst = BigInt(
-                await accountWriteContract.addWantedServices.estimateGas(addedServices),
-            )
-            const adjustedGasEst = (gasEst * 98n) / 100n
-            const cost = adjustedGasEst * gasPrice
-            total += cost
-            setCostDetails(prevDetails => ({
-                ...prevDetails,
-                addCosts: { services: addedServices, totalCost: cost },
-            }))
-        }
-
         if (removed.length > 0) {
             const removedServices = removed.map(service => service.name)
-            const gasEst = BigInt(
-                await accountWriteContract.removeWantedServices.estimateGas(removedServices),
-            )
-            const adjustedGasEst = (gasEst * 98n) / 100n
-            const cost = adjustedGasEst * gasPrice
-            total += cost
-            setCostDetails(prevDetails => ({
-                ...prevDetails,
-                removeCosts: { services: removedServices, totalCost: cost },
-            }))
+            if (removedServices.length > 0) {
+                const gasEst = BigInt(
+                    await accountWriteContract.removeWantedServices.estimateGas(removedServices),
+                )
+                const adjustedGasEst = (gasEst * 98n) / 100n
+                const cost = adjustedGasEst * gasPrice
+                total += cost
+                setCostDetails(prevDetails => ({
+                    ...prevDetails,
+                    removeCosts: { services: removedServices, totalCost: cost },
+                }))
+            }
+        }
+
+        if (added.length > 0) {
+            const addedServices = added.map(service => service.name)
+            if (addedServices.length > 0) {
+                const gasEst = BigInt(
+                    await accountWriteContract.addWantedServices.estimateGas(addedServices),
+                )
+                const adjustedGasEst = (gasEst * 98n) / 100n
+                const cost = adjustedGasEst * gasPrice
+                total += cost
+                setCostDetails(prevDetails => ({
+                    ...prevDetails,
+                    addCosts: { services: addedServices, totalCost: cost },
+                }))
+            }
         }
         setTotalCost(total)
     }
@@ -204,6 +208,8 @@ const ConfigurDistrubitor = () => {
             type: actionTypes.UPDATE_WANTED_SERVICES,
             payload: { wantedServices: res },
         })
+        setAdded([])
+        setRemoved([])
         setLoading(false)
         setEditing(false)
     }
