@@ -1,9 +1,19 @@
 {
     "compilerOptions": {
+        "target": "ES2018",
+        "lib": ["ES2018", "DOM"],
         "jsx": "react",
-        "esModuleInterop": true
+        "resolveJsonModule": true,
+        "moduleResolution": "node",
+        "esModuleInterop": true,
+        "skipLibCheck": true,
+        "typeRoots": ["node_modules/@types"],
+        "types": ["cypress", "node"],
+        "paths": {
+            "ethers": ["./node_modules/ethers"]
+        }
     },
-    "include": ["src"],
+    "include": ["src", "cypress"],
     "ts-node": {
         "compilerOptions": {
             "jsx": "react",

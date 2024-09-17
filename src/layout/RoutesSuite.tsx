@@ -13,8 +13,12 @@ import ExplorerApp from '../views/explorer/ExplorerApp'
 import LandingPage from '../views/landing/LandingPage'
 import LoginPage from '../views/login/LoginPage'
 import Partners from '../views/partners'
+import ConfigurDistrubitor from '../views/partners/ConfigurDistrubitor'
+import ConfigurSupplier from '../views/partners/ConfigurSupplier'
+import Overreview from '../views/partners/Configuration'
 import CreatedOffers from '../views/partners/CreatedOffers'
 import Foundation from '../views/partners/Foundation'
+import ManageBots from '../views/partners/ManageBots'
 import Partner from '../views/partners/Partner'
 import MultisigWallet from '../views/settings/MultisigWallet'
 import VerifyWallet from '../views/settings/VerifyWallet'
@@ -109,8 +113,17 @@ export default function RoutesSuite() {
                 </Route>
                 <Route path="/partners" element={<PartnersLayout />}>
                     <Route index element={<Partners />} />
-                    <Route path=":partnerID" element={<Partner />}></Route>
+                    <Route path=":partnerID" element={<Partner />} />
+                    <Route path="messenger-configuration">
+                        <Route index element={<Partner />} />
+                        <Route path="mymessenger" element={<Overreview />} />
+                        <Route path="mydetails" element={<Partner />} />
+                        <Route path="distribution" element={<ConfigurDistrubitor />} />
+                        <Route path="supplier" element={<ConfigurSupplier />} />
+                        <Route path="bots" element={<ManageBots />} />
+                    </Route>
                 </Route>
+                <Route path=":partnerID" element={<Partner />}></Route>
                 <Route path="/login" element={<LoginPage />} />
                 <Route path="/create" element={<Create />} />
                 <Route path="/access" element={<AccessLayout />}>

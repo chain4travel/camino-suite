@@ -2,7 +2,8 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 import { PartnerDataType, PartnersResponseType } from '../../@types/partners'
 import { StatePartnersType } from '../../helpers/partnersReducer'
 
-const baseUrl = 'https://api.strapi.camino.network/partners'
+const baseUrl = 'https://dev.strapi.camino.network/api/partners'
+// const baseUrl = 'https://api.strapi.camino.network/partners'
 
 export const partnersApi = createApi({
     baseQuery: fetchBaseQuery({ baseUrl: baseUrl }),
@@ -34,8 +35,17 @@ export const partnersApi = createApi({
                 return query
             },
         }),
-        fetchPartnerData: build.query<PartnerDataType, { companyName: string }>({
-            query: ({ companyName }) => {
+        fetchPartnerData: build.query<
+            PartnerDataType,
+            { companyName: string; cChainAddress?: string }
+        >({
+            query: ({ companyName, cChainAddress }) => {
+                if (cChainAddress) {
+                    let query =
+                        '?populate=*&sort[0]=companyName:asc&pagination[page]=1&pagination[pageSize]=12'
+                    query += `&filters[cChainAddress][$eq]=${cChainAddress}`
+                    return query
+                }
                 let query =
                     '?populate=*&sort[0]=companyName:asc&pagination[page]=1&pagination[pageSize]=12'
                 query += `&filters[companyName][$contains]=${companyName}`
@@ -45,7 +55,18 @@ export const partnersApi = createApi({
                 return response.data[0]
             },
         }),
+        isPartner: build.query<PartnerDataType, { cChainAddress: string }>({
+            query: ({ cChainAddress }) => {
+                let query =
+                    '?populate=*&sort[0]=companyName:asc&pagination[page]=1&pagination[pageSize]=12'
+                query += `&filters[cChainAddress][$eq]=${cChainAddress}`
+                return query
+            },
+            transformResponse: (response: PartnersResponseType) => {
+                return response.data[0]
+            },
+        }),
     }),
 })
 
-export const { useListPartnersQuery, useFetchPartnerDataQuery } = partnersApi
+export const { useListPartnersQuery, useFetchPartnerDataQuery, useIsPartnerQuery } = partnersApi
