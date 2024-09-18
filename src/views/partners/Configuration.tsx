@@ -1,28 +1,15 @@
 import {
     Box,
     Button,
-    Card,
-    CardContent,
     Checkbox,
-    CircularProgress,
     Divider,
-    FormControl,
     FormControlLabel,
-    MenuItem,
+    InputAdornment,
     OutlinedInput,
-    Paper,
-    Select,
-    Table,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TableHead,
-    TableRow,
     TextField,
     Typography,
 } from '@mui/material'
-import { ethers } from 'ethers'
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import store from 'wallet/store'
 import Alert from '../../components/Alert'
 import Input from '../../components/Input'
@@ -36,209 +23,11 @@ import { useSmartContract } from '../../helpers/useSmartContract'
 import useWalletBalance from '../../helpers/useWalletBalance'
 import MyMessenger from './MyMessenger'
 
-function EstimationPreview({ state }) {
-    const [costDetails, setCostDetails] = useState(null)
-    const [totalCost, setTotalCost] = useState(0n)
-    const { wallet, provider, accountWriteContract, managerWriteContract, readFromContract } =
-        useSmartContract()
-    async function fetchEstimationCosts() {
-        const gasPrice = (await provider.getFeeData()).gasPrice
-        let total = 0n
-
-        // Estimate cost for creating CM account
-        const createAccountGas = await managerWriteContract.createCMAccount.estimateGas(
-            wallet.address,
-            wallet.address,
-            {
-                value: ethers.parseEther(state.balance ? state.balance : '0'),
-            },
-        )
-        const createAccountCost = BigInt(createAccountGas) * gasPrice
-        total += createAccountCost
-
-        // Estimate costs for services
-        const serviceCosts = await Promise.all(
-            state.stepsConfig[1].services.map(async service => {
-                const gasEst = BigInt(
-                    await accountWriteContract.addService.estimateGas(
-                        service.name,
-                        ethers.parseEther(service.fee ? service.fee : '0'),
-                        service.rackRates,
-                        service.capabilities.filter(item => item !== ''),
-                    ),
-                )
-                const adjustedGasEst = (gasEst * 98n) / 100n
-                const cost = adjustedGasEst * gasPrice
-                total += cost
-                return { name: service.name, cost }
-            }),
-        )
-
-        // Estimate costs for wanted services
-        let wantedServicesCost = 0n
-        if (state.stepsConfig[2].services.length > 0) {
-            const wantedServicesGas = await accountWriteContract.addWantedServices.estimateGas(
-                state.stepsConfig[2].services.map(service => service.name),
-            )
-            wantedServicesCost = BigInt(wantedServicesGas) * gasPrice
-            total += wantedServicesCost
-        }
-
-        // Estimate cost for granting WITHDRAWER_ROLE
-        const WITHDRAWER_ROLE = await readFromContract('account', 'WITHDRAWER_ROLE')
-        const grantRoleGas = await accountWriteContract.grantRole.estimateGas(
-            WITHDRAWER_ROLE,
-            wallet.address,
-        )
-        const grantRoleCost = BigInt(grantRoleGas) * gasPrice
-        total += grantRoleCost
-
-        // Estimate costs for payment methods
-        let paymentMethodsCosts = []
-        if (state.stepsConfig[3].isOffChain) {
-            const offChainGas = await accountWriteContract.setOffChainPaymentSupported.estimateGas(
-                true,
-            )
-            const offChainCost = BigInt(offChainGas) * gasPrice
-            total += offChainCost
-            paymentMethodsCosts.push({ name: 'Offchain', cost: offChainCost })
-        }
-        if (state.stepsConfig[3].isCam) {
-            const camGas = await accountWriteContract.addSupportedToken.estimateGas(
-                ethers.ZeroAddress,
-            )
-            const camCost = BigInt(camGas) * gasPrice
-            total += camCost
-            paymentMethodsCosts.push({ name: 'CAM', cost: camCost })
-        }
-
-        setCostDetails({
-            createAccountCost,
-            serviceCosts,
-            wantedServicesCost,
-            paymentMethodsCosts,
-            grantRoleCost,
-        })
-        setTotalCost(total)
-    }
-
-    useEffect(() => {
-        fetchEstimationCosts()
-    }, [state])
-
-    const formatEther = wei => {
-        return parseFloat(ethers.formatEther(wei)).toFixed(6)
-    }
-
-    if (!costDetails) return <CircularProgress />
-
-    const CostTable = ({ title, costs }) => {
-        return (
-            <Box sx={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                <Typography variant="body2">{title}</Typography>
-                <TableContainer component={Paper}>
-                    <Table>
-                        <TableHead>
-                            <TableRow>
-                                <TableCell>
-                                    <Typography variant="caption">Name</Typography>
-                                </TableCell>
-                                <TableCell align="right">
-                                    <Typography variant="caption">Estimated Cost (CAM)</Typography>
-                                </TableCell>
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            {costs.map(item => (
-                                <TableRow key={item.name}>
-                                    <TableCell component="th" scope="row">
-                                        <Typography variant="overline">{item.name}</Typography>
-                                    </TableCell>
-                                    <TableCell align="right">
-                                        <Typography variant="overline">
-                                            {formatEther(item.cost)}
-                                        </Typography>
-                                    </TableCell>
-                                </TableRow>
-                            ))}
-                        </TableBody>
-                    </Table>
-                </TableContainer>
-            </Box>
-        )
-    }
-
-    return (
-        <Card>
-            <CardContent sx={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                <Typography variant="body1">Estimated Costs for CM Account Creation</Typography>
-
-                <CostTable
-                    title="Account Creation"
-                    costs={[{ name: 'Create CM Account', cost: costDetails.createAccountCost }]}
-                />
-
-                {costDetails.serviceCosts.length > 0 && (
-                    <CostTable title="Services" costs={costDetails.serviceCosts} />
-                )}
-
-                {costDetails.wantedServicesCost > 0 && (
-                    <CostTable
-                        title="Wanted Services"
-                        costs={[
-                            { name: 'Add Wanted Services', cost: costDetails.wantedServicesCost },
-                        ]}
-                    />
-                )}
-
-                {costDetails.paymentMethodsCosts.length > 0 && (
-                    <CostTable title="Payment Methods" costs={costDetails.paymentMethodsCosts} />
-                )}
-
-                <CostTable
-                    title="Role Management"
-                    costs={[{ name: 'Grant WITHDRAWER_ROLE', cost: costDetails.grantRoleCost }]}
-                />
-
-                <Typography variant="body2">
-                    Total Estimated Cost: {formatEther(totalCost)} CAM
-                </Typography>
-            </CardContent>
-        </Card>
-    )
-}
-
 const Content = () => {
     const { contractCMAccountAddress } = useSmartContract()
     const { state, dispatch } = usePartnerConfigurationContext()
     const [loading, setLoading] = useState(false)
-    const handleChange = event => {
-        addService(event.target.value)
-    }
     const partnerConfig = usePartnerConfig()
-    const nextStep = () => {
-        if (state.step < state.stepsConfig.length - 1)
-            dispatch({ type: actionTypes.UPDATE_STEP, payload: { step: state.step + 1 } })
-    }
-    const prevStep = () => {
-        if (state.step > 0)
-            dispatch({ type: actionTypes.UPDATE_STEP, payload: { step: state.step - 1 } })
-    }
-    const addService = service => {
-        if (!state.stepsConfig[state.step].services.find(elem => elem.name === service))
-            dispatch({
-                type: actionTypes.ADD_SERVICE,
-                payload: {
-                    step: state.step,
-                    newService: {
-                        name: state.registredServices.find(elem => elem === service),
-                        fee: '0',
-                        capabilities: [''],
-                        rackRates: true,
-                    },
-                },
-            })
-    }
     async function submit() {
         setLoading(true)
         await partnerConfig.CreateConfiguration(state)
@@ -274,312 +63,11 @@ const Content = () => {
                         )}
                     </>
                 )}
-                {(state.step === 1 || state.step === 2) && (
-                    <Box sx={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                        <FormControlLabel
-                            label={
-                                <Typography variant="body2">
-                                    Are you a {state.stepsConfig[state.step].type}?
-                                </Typography>
-                            }
-                            control={
-                                <Checkbox
-                                    sx={{
-                                        color: theme => theme.palette.secondary.main,
-                                        '&.Mui-checked': {
-                                            color: theme => theme.palette.secondary.main,
-                                        },
-                                        '&.MuiCheckbox-colorSecondary.Mui-checked': {
-                                            color: theme => theme.palette.secondary.main,
-                                        },
-                                    }}
-                                    checked={
-                                        state.step === 1
-                                            ? state.stepsConfig[state.step].isSupplier
-                                            : state.stepsConfig[state.step].isDistributor
-                                    }
-                                    onChange={() =>
-                                        dispatch({ type: actionTypes.UPDATE_IS_SUPPLIER })
-                                    }
-                                />
-                            }
-                        />
-                        {((state.step === 1 && state.stepsConfig[state.step].isSupplier) ||
-                            (state.step === 2 && state.stepsConfig[state.step].isDistributor)) && (
-                            <>
-                                <Box sx={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                                    <Typography variant="overline">services</Typography>
-                                    <FormControl>
-                                        <Select
-                                            sx={{
-                                                fontFamily: 'Inter',
-                                                fontSize: '14px',
-                                                fontWeight: 400,
-                                                lineHeight: '20px',
-                                                textAlign: 'left',
-                                                height: '40px',
-                                                gap: '4px',
-                                                borderRadius: '8px',
-                                                border: '1px solid transparent',
-                                                borderBottom: 'none',
-                                                opacity: 1,
-                                                paddingRight: '0px !important',
-                                                maxWidth: '100%',
-                                                overflow: 'hidden',
-                                                '.MuiSelect-select ': {
-                                                    boxSizing: 'border-box',
-                                                    height: '40px',
-                                                    padding: '10px 16px 10px 16px',
-                                                    borderRadius: '12px',
-                                                    display: 'flex',
-                                                    alignItems: 'center',
-                                                    border: theme =>
-                                                        `solid 1px ${theme.palette.card.border}`,
-                                                },
-                                                '& .MuiPopover-paper ul': {
-                                                    paddingRight: 'unset !important',
-                                                    width: '100% !important',
-                                                },
-                                                '.MuiOutlinedInput-notchedOutline': {
-                                                    border: 'none !important',
-                                                },
-                                                '& [aria-expanded=true]': {
-                                                    boxSizing: 'border-box',
-                                                    height: '40px',
-                                                },
-                                            }}
-                                            value="service"
-                                            onChange={handleChange}
-                                            MenuProps={{
-                                                PaperProps: {
-                                                    style: {
-                                                        maxHeight: '120px',
-                                                        overflow: 'auto',
-                                                    },
-                                                },
-                                            }}
-                                        >
-                                            <MenuItem sx={{ display: 'none' }} value={'service'}>
-                                                Services
-                                            </MenuItem>
-                                            {state.registredServices.map((item, index) => (
-                                                <MenuItem
-                                                    key={index}
-                                                    sx={{
-                                                        fontFamily: 'Inter',
-                                                        fontSize: '14px',
-                                                        fontWeight: 400,
-                                                        lineHeight: '20px',
-                                                        textAlign: 'left',
-                                                        height: '40px',
-                                                        padding: '10px 16px',
-                                                        gap: '4px',
-                                                        borderRadius: '8px',
-                                                        border: '1px solid transparent',
-                                                        borderBottom: 'none',
-                                                        opacity: 1,
-                                                    }}
-                                                    value={item}
-                                                >
-                                                    {item}
-                                                </MenuItem>
-                                            ))}
-                                        </Select>
-                                    </FormControl>
-                                </Box>
-                                <Configuration.Services state={state} dispatch={dispatch} />
-                            </>
-                        )}
-                    </Box>
-                )}
-                {state.step === 3 && (
-                    <>
-                        <FormControlLabel
-                            label={<Typography variant="body2">Offchain</Typography>}
-                            control={
-                                <Checkbox
-                                    sx={{
-                                        color: theme => theme.palette.secondary.main,
-                                        '&.Mui-checked': {
-                                            color: theme => theme.palette.secondary.main,
-                                        },
-                                        '&.MuiCheckbox-colorSecondary.Mui-checked': {
-                                            color: theme => theme.palette.secondary.main,
-                                        },
-                                        m: '0 8px 0 0',
-                                    }}
-                                    checked={state.stepsConfig[state.step].isOffChain}
-                                    onChange={() =>
-                                        dispatch({ type: actionTypes.UPDATE_IS_OFF_CHAIN })
-                                    }
-                                />
-                            }
-                        />
-                        <FormControlLabel
-                            label={<Typography variant="body2">CAM</Typography>}
-                            control={
-                                <Checkbox
-                                    sx={{
-                                        color: theme => theme.palette.secondary.main,
-                                        '&.Mui-checked': {
-                                            color: theme => theme.palette.secondary.main,
-                                        },
-                                        '&.MuiCheckbox-colorSecondary.Mui-checked': {
-                                            color: theme => theme.palette.secondary.main,
-                                        },
-                                        m: '0 8px 0 0',
-                                    }}
-                                    checked={state.stepsConfig[state.step].isCam}
-                                    onChange={() => dispatch({ type: actionTypes.UPDATE_IS_CAM })}
-                                />
-                            }
-                        />
-                        <FormControlLabel
-                            label={<Typography variant="body2">USDC* (coming soon) </Typography>}
-                            disabled
-                            control={
-                                <Checkbox
-                                    sx={{
-                                        color: theme => theme.palette.secondary.main,
-                                        '&.Mui-checked': {
-                                            color: theme => theme.palette.secondary.main,
-                                        },
-                                        '&.MuiCheckbox-colorSecondary.Mui-checked': {
-                                            color: theme => theme.palette.secondary.main,
-                                        },
-                                        m: '0 8px 0 0',
-                                    }}
-                                />
-                            }
-                        />
-                        <FormControlLabel
-                            disabled
-                            label={<Typography variant="body2">EURC* (coming soon)</Typography>}
-                            control={
-                                <Checkbox
-                                    sx={{
-                                        color: theme => theme.palette.secondary.main,
-                                        '&.Mui-checked': {
-                                            color: theme => theme.palette.secondary.main,
-                                        },
-                                        '&.MuiCheckbox-colorSecondary.Mui-checked': {
-                                            color: theme => theme.palette.secondary.main,
-                                        },
-                                        m: '0 8px 0 0',
-                                    }}
-                                />
-                            }
-                        />
-                    </>
-                )}
-                {state.step === 4 && (
-                    <Box sx={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                        {(state.stepsConfig[3].isOffChain || state.stepsConfig[3].isCam) && (
-                            <Box sx={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                                <Typography variant="overline">Payment methods</Typography>
-                                {state.stepsConfig[3].isOffChain && !state.stepsConfig[3].isCam && (
-                                    <Typography variant="caption">Offchain</Typography>
-                                )}
-                                {!state.stepsConfig[3].isOffChain && state.stepsConfig[3].isCam && (
-                                    <Typography variant="caption">CAM</Typography>
-                                )}
-                                {state.stepsConfig[3].isOffChain && state.stepsConfig[3].isCam && (
-                                    <Typography variant="caption">Offchain, CAM</Typography>
-                                )}
-                            </Box>
-                        )}
-                        {state.stepsConfig[1].services?.length > 0 && (
-                            <Box sx={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                                <Box sx={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                                    <Typography variant="overline">Type</Typography>
-                                    <Typography variant="caption">Supplier</Typography>
-                                </Box>
-                                {state.stepsConfig[1].services.map((elem, index) => {
-                                    return (
-                                        <Box
-                                            key={index}
-                                            sx={{
-                                                display: 'flex',
-                                                flexDirection: 'column',
-                                                gap: '4px',
-                                            }}
-                                        >
-                                            <Typography variant="overline">{elem.name}</Typography>
-                                            <Typography variant="caption">
-                                                Fee:
-                                                {elem.fee + (elem.rackRates ? ', Rack Rates' : '')}
-                                            </Typography>
-                                            {!elem.capabilities.filter(str => str.trim() !== '')
-                                                .length ? (
-                                                <Typography variant="caption">
-                                                    Capabilities: No Capabilities
-                                                </Typography>
-                                            ) : (
-                                                elem.capabilities
-                                                    .filter(str => str.trim() !== '')
-                                                    .map((capability, cp) => {
-                                                        return capability ? (
-                                                            <Typography key={cp} variant="caption">
-                                                                Capability: {capability}
-                                                            </Typography>
-                                                        ) : null
-                                                    })
-                                            )}
-                                        </Box>
-                                    )
-                                })}
-                            </Box>
-                        )}
-                        {state.stepsConfig[2].services?.length > 0 && (
-                            <Box sx={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                                <Box sx={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                                    <Typography variant="overline">Type</Typography>
-                                    <Typography variant="caption">Distributor</Typography>
-                                </Box>
-                                {state.stepsConfig[2].services.map((elem, index) => {
-                                    return (
-                                        <Typography variant="overline" key={index}>
-                                            {elem.name}
-                                        </Typography>
-                                    )
-                                })}
-                            </Box>
-                        )}
-                        {/* <EstimationPreview state={state} /> */}
-                    </Box>
-                )}
                 <Divider />
                 <Configuration.Buttons>
-                    <MainButton
-                        disabled={state.step === 0 || loading}
-                        variant="outlined"
-                        onClick={prevStep}
-                    >
-                        Previous Step
+                    <MainButton loading={loading} variant="contained" onClick={submit}>
+                        Create Configuration
                     </MainButton>
-                    {(state.step === 1 && !state.stepsConfig[state.step].isSupplier) ||
-                    (state.step === 2 && !state.stepsConfig[state.step].isDistributor) ? (
-                        <MainButton variant="contained" onClick={nextStep}>
-                            Skip this step
-                        </MainButton>
-                    ) : state.step !== 4 ? (
-                        <MainButton
-                            disabled={
-                                !!!state.balance ||
-                                parseFloat(state.balance) < 100 ||
-                                parseFloat(balance) < 100 ||
-                                !store.getters['Accounts/kycStatus']
-                            }
-                            variant="contained"
-                            onClick={nextStep}
-                        >
-                            Next Step
-                        </MainButton>
-                    ) : (
-                        <MainButton loading={loading} variant="contained" onClick={submit}>
-                            Create Configuration
-                        </MainButton>
-                    )}
                 </Configuration.Buttons>
             </Configuration>
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
@@ -789,6 +277,25 @@ Configuration.Services = function Services({
                                             inputMode: 'decimal',
                                             pattern: '[0-9]*',
                                         }}
+                                        endAdornment={
+                                            <InputAdornment position="end">
+                                                <Box
+                                                    sx={{
+                                                        borderLeft: '1px solid',
+                                                        borderColor: theme =>
+                                                            theme.palette.card.border,
+                                                        height: '100%',
+                                                        display: 'flex',
+                                                        alignItems: 'center',
+                                                        paddingLeft: '16px',
+                                                        paddingRight: '16px',
+                                                        color: theme => theme.palette.text.primary,
+                                                    }}
+                                                >
+                                                    CAM
+                                                </Box>
+                                            </InputAdornment>
+                                        }
                                         sx={theme => ({
                                             flex: '1',
                                             height: '40px',
@@ -796,8 +303,13 @@ Configuration.Services = function Services({
                                             fontSize: '14px',
                                             lineHeight: '24px',
                                             fontWeight: 500,
+                                            paddingRight: '0px',
                                             '.MuiOutlinedInput-notchedOutline': {
                                                 border: 'none',
+                                            },
+                                            '& .MuiInputAdornment-root': {
+                                                height: '100%',
+                                                maxHeight: 'none',
                                             },
                                         })}
                                     />

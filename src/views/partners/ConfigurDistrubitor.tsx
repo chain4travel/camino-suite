@@ -1,18 +1,18 @@
 import {
+    Autocomplete,
     Box,
     Card,
     CardContent,
     Divider,
     FormControl,
-    MenuItem,
     Paper,
-    Select,
     Table,
     TableBody,
     TableCell,
     TableContainer,
     TableHead,
     TableRow,
+    TextField,
     Typography,
 } from '@mui/material'
 import { ethers } from 'ethers'
@@ -150,8 +150,10 @@ const ConfigurDistrubitor = () => {
     const [added, setAdded] = useState([])
     const [removed, setRemoved] = useState([])
 
-    const handleChange = event => {
-        addService(event.target.value)
+    const handleChange = (event, newValue) => {
+        if (newValue) {
+            addService(newValue)
+        }
     }
 
     const addService = service => {
@@ -249,81 +251,62 @@ const ConfigurDistrubitor = () => {
                     <Box sx={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                         <Typography variant="overline">services</Typography>
                         <FormControl>
-                            <Select
+                            <Autocomplete
                                 disabled={!editing}
-                                sx={{
-                                    fontFamily: 'Inter',
-                                    fontSize: '14px',
-                                    fontWeight: 400,
-                                    lineHeight: '20px',
-                                    textAlign: 'left',
-                                    height: '40px',
-                                    gap: '4px',
-                                    borderRadius: '8px',
-                                    border: '1px solid transparent',
-                                    borderBottom: 'none',
-                                    opacity: 1,
-                                    paddingRight: '0px !important',
-                                    maxWidth: '100%',
-                                    overflow: 'hidden',
-                                    '.MuiSelect-select ': {
-                                        boxSizing: 'border-box',
-                                        height: '40px',
-                                        padding: '10px 16px 10px 16px',
-                                        borderRadius: '12px',
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        border: theme => `solid 1px ${theme.palette.card.border}`,
-                                    },
-                                    '& .MuiPopover-paper ul': {
-                                        paddingRight: 'unset !important',
-                                        width: '100% !important',
-                                    },
-                                    '.MuiOutlinedInput-notchedOutline': {
-                                        border: 'none !important',
-                                    },
-                                    '& [aria-expanded=true]': {
-                                        boxSizing: 'border-box',
-                                        height: '40px',
-                                    },
-                                }}
-                                value="service"
+                                options={state.registredServices.filter(
+                                    service =>
+                                        !distrubitorState.stepsConfig[
+                                            distrubitorState.step
+                                        ].services.find(elem => elem.name === service),
+                                )}
+                                renderInput={params => (
+                                    <TextField
+                                        {...params}
+                                        placeholder="Select a service"
+                                        InputProps={{
+                                            ...params.InputProps,
+                                            style: { height: '40px' },
+                                        }}
+                                    />
+                                )}
+                                renderOption={(props, option) => (
+                                    <li {...props}>
+                                        <Typography variant="caption">{option}</Typography>
+                                    </li>
+                                )}
                                 onChange={handleChange}
-                                MenuProps={{
-                                    PaperProps: {
-                                        style: {
-                                            maxHeight: '120px',
-                                            overflow: 'auto',
+                                filterOptions={(options, { inputValue }) =>
+                                    options.filter(option =>
+                                        option.toLowerCase().includes(inputValue.toLowerCase()),
+                                    )
+                                }
+                                sx={{
+                                    width: '100%',
+                                    '& .MuiOutlinedInput-root': {
+                                        height: '40px',
+                                        fontFamily: 'Inter',
+                                        fontSize: '14px',
+                                        fontWeight: 400,
+                                        lineHeight: '20px',
+                                        padding: '0 14px',
+                                        '& fieldset': {
+                                            borderColor: theme => theme.palette.card.border,
+                                            borderRadius: '12px',
                                         },
                                     },
+                                    '& .MuiAutocomplete-input': {
+                                        padding: '0 !important',
+                                        height: '40px',
+                                    },
+                                    '& .MuiAutocomplete-endAdornment': {
+                                        top: '50%',
+                                        transform: 'translateY(-50%)',
+                                    },
+                                    '& .MuiAutocomplete-option': {
+                                        padding: '6px 16px',
+                                    },
                                 }}
-                            >
-                                <MenuItem sx={{ display: 'none' }} value={'service'}>
-                                    Services
-                                </MenuItem>
-                                {state.registredServices.map((item, index) => (
-                                    <MenuItem
-                                        key={index}
-                                        sx={{
-                                            fontFamily: 'Inter',
-                                            fontSize: '14px',
-                                            fontWeight: 400,
-                                            lineHeight: '20px',
-                                            textAlign: 'left',
-                                            height: '40px',
-                                            padding: '10px 16px',
-                                            gap: '4px',
-                                            borderRadius: '8px',
-                                            border: '1px solid transparent',
-                                            borderBottom: 'none',
-                                            opacity: 1,
-                                        }}
-                                        value={item}
-                                    >
-                                        {item}
-                                    </MenuItem>
-                                ))}
-                            </Select>
+                            />
                         </FormControl>
                     </Box>
 

@@ -35,7 +35,7 @@ export const SmartContractProvider: React.FC<SmartContractProviderProps> = ({ ch
     const auth = useAppSelector(state => state.appConfig.isAuth)
     const contractCMAccountManagerAddress = '0xE5B2f76C778D082b07BDd7D51FFe83E3E055B47F'
 
-    const CMAccountCreated = async (state, cmAccountAddress) => {
+    const CMAccountCreated = async cmAccountAddress => {
         const accountWritableContract = new ethers.Contract(cmAccountAddress, CMAccount, wallet)
         const accountReadOnlyContract = new ethers.Contract(cmAccountAddress, CMAccount, provider)
 
@@ -44,32 +44,6 @@ export const SmartContractProvider: React.FC<SmartContractProviderProps> = ({ ch
             return { success: false, error: 'Account is not initialized' }
         }
         try {
-            for (const service of state.services) {
-                const tx = await accountWritableContract.addService(
-                    service.name,
-                    service.fee,
-                    service.rackRates,
-                    service.capabilities,
-                )
-                await tx.wait()
-            }
-
-            if (state.wantedServices.length > 0) {
-                const wantedServicesTx = await accountWritableContract.addWantedServices(
-                    state.wantedServices,
-                )
-                await wantedServicesTx.wait()
-            }
-            if (state.isOffChainPayement) {
-                const offChainPaymentTx = await accountWritableContract.setOffChainPaymentSupported(
-                    state.isOffChainPayement,
-                )
-                await offChainPaymentTx.wait()
-            }
-            if (state.isCam) {
-                const tx = await accountWritableContract.addSupportedToken(ethers.ZeroAddress)
-                await tx.wait()
-            }
             const WITHDRAWER_ROLE = await accountReadOnlyContract.WITHDRAWER_ROLE()
             const tx = await accountWritableContract.grantRole(WITHDRAWER_ROLE, wallet.address)
             await tx.wait()
