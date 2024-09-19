@@ -4,6 +4,7 @@ export interface PartnerDataType {
 }
 
 export interface AttributesType {
+    cChainAddress?: string
     contactEmail?: string
     companyName?: string
     companyCountry?: string

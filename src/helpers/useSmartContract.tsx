@@ -108,22 +108,27 @@ export const SmartContractProvider: React.FC<SmartContractProviderProps> = ({ ch
             `${selectedNetwork.protocol}://${selectedNetwork.ip}:${selectedNetwork.port}/ext/bc/C/rpc`,
         )
         try {
-            const wallet = new ethers.Wallet(store.state.activeWallet?.ethKey, ethersProvider)
-            const managerWritableContract = new ethers.Contract(
-                contractCMAccountManagerAddress,
-                CMAccountManager.abi,
-                wallet,
-            )
+            if (auth) {
+                const wallet = new ethers.Wallet(store.state.activeWallet?.ethKey, ethersProvider)
+                const managerWritableContract = new ethers.Contract(
+                    contractCMAccountManagerAddress,
+                    CMAccountManager.abi,
+                    wallet,
+                )
+                setManagerWriteContract(managerWritableContract)
+                setWallet(wallet)
+                setAccount(wallet.address)
+            }
             const managerReadOnlyContract = new ethers.Contract(
                 contractCMAccountManagerAddress,
                 CMAccountManager.abi,
                 ethersProvider,
             )
-            setWallet(wallet)
             setProvider(ethersProvider)
             setManagerReadContract(managerReadOnlyContract)
-            setManagerWriteContract(managerWritableContract)
-            setAccount(wallet.address)
+            // const allCMAccounts = await getCMAccountMappings()
+            // let result = allCMAccounts.getAllMappings()
+            // console.log(result)
         } catch (error) {
             console.error('User denied account access:', error)
         }
@@ -131,7 +136,7 @@ export const SmartContractProvider: React.FC<SmartContractProviderProps> = ({ ch
     const activeNetwork = useAppSelector(getActiveNetwork)
 
     useEffect(() => {
-        if (auth && activeNetwork.name.toLowerCase() === 'columbus') initializeEthers()
+        if (activeNetwork.name.toLowerCase() === 'columbus') initializeEthers()
     }, [activeNetwork, auth])
 
     useEffect(() => {
@@ -140,6 +145,7 @@ export const SmartContractProvider: React.FC<SmartContractProviderProps> = ({ ch
 
     const getCMAccountMappings = useCallback(async () => {
         try {
+            console.log('called?')
             const mappings = new Map()
             const CMACCOUNT_ROLE = await readFromContract('manager', 'CMACCOUNT_ROLE')
             const roleMemberCount = await readFromContract(

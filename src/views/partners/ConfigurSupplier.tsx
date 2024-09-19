@@ -15,6 +15,7 @@ import {
 } from '@mui/material'
 import { ethers } from 'ethers'
 import React, { useEffect, useMemo, useReducer, useState } from 'react'
+import { useParams } from 'react-router'
 import MainButton from '../../components/MainButton'
 import UpdatedSelectComponent from '../../components/Partners/UpdatedSelectComponent'
 import {
@@ -24,6 +25,7 @@ import {
 } from '../../helpers/partnerConfigurationContext'
 import { usePartnerConfig } from '../../helpers/usePartnerConfig'
 import { useSmartContract } from '../../helpers/useSmartContract'
+import { useFetchPartnerDataQuery } from '../../redux/services/partners'
 import { Configuration } from './Configuration'
 
 function ServiceChangesPreview({ added, updated, removed }) {
@@ -280,6 +282,52 @@ const isEqual = (a, b) => {
         a.rackRates === b.rackRates &&
         JSON.stringify(a.capabilities.filter(item => item !== '')) ===
             JSON.stringify(b.capabilities.filter(item => item !== ''))
+    )
+}
+
+export const BasicSupportedServices = () => {
+    const { partnerID } = useParams()
+    const { state, dispatch } = usePartnerConfigurationContext()
+    const [supplierState, dispatchSupplierState] = useReducer(reducer, { ...state, step: 1 })
+    const { data: partner } = useFetchPartnerDataQuery({
+        companyName: partnerID,
+    })
+    useEffect(() => {
+        if (partner) {
+            console.log({ supportedServices: partner.supportedServices })
+            dispatchSupplierState({
+                type: actionTypes.UPDATE_SUPPORTED_SERVICES,
+                payload: { services: partner.supportedServices, reset: true },
+            })
+        }
+    }, [partner])
+    return (
+        <Box
+            sx={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                gap: '16px',
+                flexWrap: 'wrap',
+            }}
+        >
+            <Configuration>
+                <Configuration.Title>Offered Services</Configuration.Title>
+                <Box sx={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                    <Configuration.Services
+                        disabled={true}
+                        state={supplierState}
+                        dispatch={dispatchSupplierState}
+                    />
+                </Box>
+                <Divider />
+            </Configuration>
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                <Configuration.Infos
+                    information="This Camino Messenger wizard will assist you in generating and activating your Camino Messenger address. Once the process is complete, your Camino Messenger address will appear on your partner detail page, allowing you to communicate directly with other Camino Messenger accounts."
+                    rackRates="This Camino Messenger wizard will assist you in generating and activating your Camino Messenger address."
+                ></Configuration.Infos>
+            </Box>
+        </Box>
     )
 }
 

@@ -452,10 +452,7 @@ const MyMessenger = () => {
                         </Typography>
                         <Typography variant="caption">
                             {bots.length === 0 ? (
-                                <>
-                                    You don't have any bot configured. You need to configure it in
-                                    manage bots.
-                                </>
+                                <>None</>
                             ) : (
                                 <>
                                     You have {bots.length} configured{' '}

@@ -1,13 +1,17 @@
 import { Box, Link, Toolbar, Typography } from '@mui/material'
 
 import { Paper } from '@mui/material'
+import { ethers } from 'ethers'
 import React, { useEffect } from 'react'
-import { Navigate, Outlet, useNavigate } from 'react-router'
+import { Navigate, Outlet, useNavigate, useParams } from 'react-router'
 import store from 'wallet/store'
+import CMAccount from '../helpers/CMAccountManagerModule#CMAccount.json'
+import CMAccountManager from '../helpers/ManagerProxyModule#CMAccountManager.json'
 import { PartnerConfigurationProvider } from '../helpers/partnerConfigurationContext'
-import { SmartContractProvider } from '../helpers/useSmartContract'
+import { SmartContractProvider, useSmartContract } from '../helpers/useSmartContract'
 import { useAppSelector } from '../hooks/reduxHooks'
-import { useIsPartnerQuery } from '../redux/services/partners'
+import { useEffectOnce } from '../hooks/useEffectOnce'
+import { useFetchPartnerDataQuery, useIsPartnerQuery } from '../redux/services/partners'
 import { getWalletName } from '../redux/slices/app-config'
 import { getActiveNetwork } from '../redux/slices/network'
 import Links from '../views/settings/Links'
@@ -40,6 +44,23 @@ const ClaimProfile = () => {
     )
 }
 
+// Function to create a contract instance
+function getPartnerContract(address, provider) {
+    return new ethers.Contract(address, CMAccount, provider)
+}
+
+// Main function to get services from multiple partner contracts
+// async function getPartnerServices(partnerAddresses: string[], providerUrl: string) {
+//     const provider = new ethers.JsonRpcProvider(providerUrl)
+//     for (const address of partnerAddresses) {
+//         const contract = getPartnerContract(address, provider)
+//         try {
+//             const result = await contract.getSupportedServices()
+//             console.log(result)
+//         } catch (error) {}
+//     }
+// }
+
 const PartnersLayout = () => {
     const path = window.location.pathname
     const { data, isLoading } = useIsPartnerQuery({
@@ -47,6 +68,15 @@ const PartnersLayout = () => {
             ? '0x' + store?.state?.activeWallet?.ethAddress
             : '',
     })
+    let { partnerID } = useParams()
+    const {
+        data: partner,
+        isFetching,
+        error,
+    } = useFetchPartnerDataQuery({
+        companyName: partnerID,
+    })
+    const value = useSmartContract()
     const walletName = useAppSelector(getWalletName)
     const navigate = useNavigate()
     useEffect(() => {
@@ -58,6 +88,63 @@ const PartnersLayout = () => {
             navigate('/')
         }
     }, [walletName])
+
+    async function s() {
+        const selectedNetwork = store.getters['Network/selectedNetwork']
+        const providerUrl = `${selectedNetwork.protocol}://${selectedNetwork.ip}:${selectedNetwork.port}/ext/bc/C/rpc`
+        const provider = new ethers.JsonRpcProvider(providerUrl)
+        const managerReadOnlyContract = new ethers.Contract(
+            '0xE5B2f76C778D082b07BDd7D51FFe83E3E055B47F',
+            CMAccountManager.abi,
+            provider,
+        )
+        const mappings = new Map()
+        const CMACCOUNT_ROLE = await managerReadOnlyContract.CMACCOUNT_ROLE()
+        const roleMemberCount = await managerReadOnlyContract.getRoleMemberCount(CMACCOUNT_ROLE)
+
+        const promises = []
+        for (let i = 0; i < roleMemberCount; i++) {
+            promises.push(
+                managerReadOnlyContract.getRoleMember(CMACCOUNT_ROLE, i).then(async role => {
+                    const creator = await managerReadOnlyContract.getCMAccountCreator(role)
+                    return { role, creator }
+                }),
+            )
+        }
+
+        const results = await Promise.all(promises)
+        results.forEach(({ role, creator }) => {
+            mappings.set(role.toLowerCase(), creator.toLowerCase())
+        })
+        await getPartnerServices(providerUrl, Object.fromEntries(mappings))
+    }
+    async function getPartnerServices(providerUrl: string, partnerContractMapping) {
+        const provider = new ethers.JsonRpcProvider(providerUrl)
+
+        for (const [contractAddress, partnerAddress] of Object.entries(partnerContractMapping)) {
+            const contract = getPartnerContract(contractAddress, provider)
+            try {
+                const supportedServices = await contract.getSupportedServices()
+                console.log(
+                    `Partner at ${partnerAddress} (contract: ${contractAddress}) supports:`,
+                    supportedServices,
+                )
+                const wantedServices = await contract.getSupportedServices()
+                console.log(
+                    `Partner at ${partnerAddress} (contract: ${contractAddress}) supports:`,
+                    wantedServices,
+                )
+            } catch (error) {
+                console.error(
+                    `Error reading services from ${partnerAddress} (contract: ${contractAddress}):`,
+                    error,
+                )
+            }
+        }
+    }
+    useEffectOnce(() => {
+        // s()
+    })
     const activeNetwork = useAppSelector(getActiveNetwork)
     if (isLoading) return <></>
     if (
@@ -98,7 +185,8 @@ const PartnersLayout = () => {
                     >
                         <Links />
                     </Toolbar>
-                    {path.includes('partners/messenger-configuration') && !!data && (
+                    {((path.includes('partners/messenger-configuration') && !!data) ||
+                        partner?.contractAddress) && (
                         <Toolbar
                             sx={{
                                 borderBottom: '1px solid',
@@ -116,13 +204,14 @@ const PartnersLayout = () => {
                                 right: 0,
                             }}
                         >
-                            <Links type="subtabs" />
+                            <Links type="subtabs" partner={partner} />
                         </Toolbar>
                     )}
                     <Box
                         sx={{
                             mt:
-                                path.includes('partners/messenger-configuration') && !!data
+                                (path.includes('partners/messenger-configuration') && !!data) ||
+                                partner?.contractAddress
                                     ? '9rem'
                                     : '5rem',
                             height: '100%',

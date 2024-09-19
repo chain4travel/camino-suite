@@ -3,20 +3,17 @@ import { Box, Button, Divider, IconButton, Typography, useTheme } from '@mui/mat
 import { mdiArrowLeft } from '@mdi/js'
 import Icon from '@mdi/react'
 import { ContentCopy } from '@mui/icons-material'
-import React from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import PartnerBusinessFields from '../../components/Partners/PartnerBusinessFields'
 import PartnerFlag from '../../components/Partners/PartnerFlag'
 import PartnerLogo from '../../components/Partners/PartnerLogo'
 import { usePartnerConfigurationContext } from '../../helpers/partnerConfigurationContext'
+import { usePartnerConfig } from '../../helpers/usePartnerConfig'
 import { useSmartContract } from '../../helpers/useSmartContract'
 import { useAppSelector } from '../../hooks/reduxHooks'
 import { useFetchPartnerDataQuery } from '../../redux/services/partners'
-import {
-    displayFirstPartLongString,
-    displaySecondPartLongString,
-    transformServiceNames,
-} from '../../utils/display-utils'
+import { displayFirstPartLongString, displaySecondPartLongString } from '../../utils/display-utils'
 
 const ContentField = ({ label, children }) => {
     return (
@@ -48,6 +45,181 @@ const ContentField = ({ label, children }) => {
     )
 }
 
+const getServiceType = service => {
+    const parts = service.split('.')
+    return parts[2]
+}
+
+function getServiceName(fullName: unknown): string {
+    if (typeof fullName !== 'string') {
+        console.error(`Expected string, but got ${typeof fullName}:`, fullName)
+        return ''
+    }
+    const parts = fullName.split('.')
+    return parts[parts.length - 1] || ''
+}
+
+const Widget = ({ supportedServices, CMAccountAddress, wantedServices }) => {
+    const auth = useAppSelector(state => state.appConfig.isAuth)
+    const value = useSmartContract()
+    const navigate = useNavigate()
+    const [match, setMatch] = useState(false)
+    const wantedServiceTypes = useMemo(() => {
+        return [...new Set(wantedServices.map(elem => getServiceType(elem?.name ? elem.name : '')))]
+    }, [])
+    const supportedServiceTypes = useMemo(() => {
+        return [
+            ...new Set(supportedServices.map(elem => getServiceType(elem?.name ? elem.name : ''))),
+        ]
+    }, [])
+
+    const partnerConf = usePartnerConfig()
+
+    function checkMatch(data): boolean {
+        const supportedResult = new Set(data.supportedResult.map(getServiceName))
+        const wantedResult = new Set(data.wantedResult.map(getServiceName))
+
+        const wantedServices = new Set(
+            data.wantedServices.map(service => getServiceName(service.name)),
+        )
+        const supportedServices = new Set(
+            data.supportedServices.map(service => getServiceName(service.name)),
+        )
+
+        const match1 = Array.from(supportedResult).some(service => wantedServices.has(service))
+        const match2 = Array.from(wantedResult).some(service => supportedServices.has(service))
+
+        return match1 || match2
+    }
+    const matchingPartners = useCallback(async () => {
+        if (partnerConf) {
+            const supportedResult = await partnerConf.getSupportedServices()
+            const wantedResult = await partnerConf.getWantedServices()
+            console.log({
+                supportedResult: supportedResult[0],
+                wantedResult: wantedResult,
+                supportedServices,
+                wantedServices,
+            })
+            const result = checkMatch({
+                supportedResult: supportedResult[0],
+                wantedResult,
+                supportedServices,
+                wantedServices,
+            })
+            if (result) setMatch(true)
+            else setMatch(false)
+        }
+    }, [partnerConf, auth])
+
+    useEffect(() => {
+        matchingPartners()
+    }, [])
+    return (
+        <>
+            <Typography variant="h6" fontWeight={600}>
+                Camino Messenger
+            </Typography>
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                <Typography fontSize={12} fontWeight={400} lineHeight={'16px'} color={'#B3DAFF'}>
+                    Wanted Services
+                </Typography>
+                {wantedServiceTypes.length > 0 ? (
+                    <ul style={{ marginLeft: '16px' }}>
+                        {wantedServiceTypes.map((type, index) => (
+                            <li key={index} className="service-type-item">
+                                <Typography fontSize={14} fontWeight={600} lineHeight={'20px'}>
+                                    {type}
+                                </Typography>
+                            </li>
+                        ))}
+                    </ul>
+                ) : (
+                    <Typography fontSize={14} fontWeight={600} lineHeight={'20px'}>
+                        None.
+                    </Typography>
+                )}
+            </Box>
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                <Typography fontSize={12} fontWeight={400} lineHeight={'16px'} color={'#B3DAFF'}>
+                    Offered Services
+                </Typography>
+                {supportedServiceTypes.length > 0 ? (
+                    <ul style={{ marginLeft: '16px' }}>
+                        {supportedServiceTypes.map((type, index) => (
+                            <li key={index} className="service-type-item">
+                                <Typography fontSize={14} fontWeight={600} lineHeight={'20px'}>
+                                    {type}
+                                </Typography>
+                            </li>
+                        ))}
+                    </ul>
+                ) : (
+                    <Typography fontSize={14} fontWeight={600} lineHeight={'20px'}>
+                        None.
+                    </Typography>
+                )}
+            </Box>
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                <Typography fontSize={12} fontWeight={400} lineHeight={'16px'} color={'#B3DAFF'}>
+                    Partner address
+                </Typography>
+                <Box display="flex" alignItems="center" justifyContent="space-between">
+                    <Typography fontSize={14} fontWeight={600} lineHeight="20px" component="span">
+                        {displayFirstPartLongString(CMAccountAddress, 28)}&hellip;
+                        {displaySecondPartLongString(CMAccountAddress, 28)}
+                    </Typography>
+                    <IconButton
+                        onClick={() => navigator.clipboard.writeText(CMAccountAddress)}
+                        size="small"
+                        sx={{
+                            color: theme => `${theme.palette.text.primary} !important`,
+                        }}
+                    >
+                        <ContentCopy fontSize="small" />
+                    </IconButton>
+                </Box>
+            </Box>
+            {auth &&
+                CMAccountAddress.toLocaleLowerCase() ===
+                    value?.contractCMAccountAddress.toLocaleLowerCase() && (
+                    <Button
+                        onClick={() => navigate('/partners/messenger-configuration/mymessenger')}
+                        sx={{
+                            padding: '10px 16px',
+                            borderRadius: '8px',
+                            border: '1px solid #475569',
+                            backgroundColor: theme =>
+                                theme.palette.mode === 'dark' ? '#020617' : '#F1F5F9',
+                        }}
+                    >
+                        <Typography fontSize={14} fontWeight={600} lineHeight={'20px'}>
+                            Configure Messenger
+                        </Typography>
+                    </Button>
+                )}
+            {auth &&
+                CMAccountAddress.toLocaleLowerCase() !==
+                    value?.contractCMAccountAddress.toLocaleLowerCase() && (
+                    <Button
+                        // onClick={() => navigate('/partners/messenger-configuration/mymessenger')}
+                        sx={{
+                            padding: '10px 16px',
+                            borderRadius: '8px',
+                            background: 'linear-gradient(90deg, #0085FF 0%, #B440FC 100%)',
+                            backgroundColor: theme =>
+                                theme.palette.mode === 'dark' ? '#020617' : '#F1F5F9',
+                        }}
+                    >
+                        <Typography fontSize={14} fontWeight={600} lineHeight={'20px'}>
+                            Contact
+                        </Typography>
+                    </Button>
+                )}
+        </>
+    )
+}
+
 const Partner = () => {
     const auth = useAppSelector(state => state.appConfig.isAuth)
     let { partnerID } = useParams()
@@ -72,6 +244,7 @@ const Partner = () => {
         navigate('/partners')
         return null
     }
+    // console.log({ partner })
 
     const OwnBusinsessNotOnMessenger = (
         <>
@@ -95,75 +268,75 @@ const Partner = () => {
         </>
     )
 
-    const OwnBusinessOnMessensger = (
-        <>
-            <Typography variant="h6" fontWeight={600}>
-                Camino Messenger
-            </Typography>
-            <Box sx={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                <Typography fontSize={12} fontWeight={400} lineHeight={'16px'} color={'#B3DAFF'}>
-                    Wanted Services
-                </Typography>
-                <Typography fontSize={14} fontWeight={600} lineHeight={'20px'}>
-                    {transformServiceNames(state.stepsConfig[2].services)}
-                </Typography>
-            </Box>
-            <Box sx={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                <Typography fontSize={12} fontWeight={400} lineHeight={'16px'} color={'#B3DAFF'}>
-                    Offered Services
-                </Typography>
-                <Typography fontSize={14} fontWeight={600} lineHeight={'20px'}>
-                    {transformServiceNames(state.stepsConfig[1].services)}
-                </Typography>
-            </Box>
-            {value?.wallet?.address && (
-                <Box sx={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                    <Typography
-                        fontSize={12}
-                        fontWeight={400}
-                        lineHeight={'16px'}
-                        color={'#B3DAFF'}
-                    >
-                        Partner address
-                    </Typography>
-                    <Box display="flex" alignItems="center" justifyContent="space-between">
-                        <Typography
-                            fontSize={14}
-                            fontWeight={600}
-                            lineHeight="20px"
-                            component="span"
-                        >
-                            {displayFirstPartLongString(value?.wallet?.address, 28)}&hellip;
-                            {displaySecondPartLongString(value?.wallet?.address, 28)}
-                        </Typography>
-                        <IconButton
-                            onClick={() => navigator.clipboard.writeText(value.wallet.address)}
-                            size="small"
-                            sx={{
-                                color: theme => `${theme.palette.text.primary} !important`,
-                            }}
-                        >
-                            <ContentCopy fontSize="small" />
-                        </IconButton>
-                    </Box>
-                </Box>
-            )}
-            <Button
-                onClick={() => navigate('/partners/messenger-configuration/mymessenger')}
-                sx={{
-                    padding: '10px 16px',
-                    borderRadius: '8px',
-                    border: '1px solid #475569',
-                    backgroundColor: theme =>
-                        theme.palette.mode === 'dark' ? '#020617' : '#F1F5F9',
-                }}
-            >
-                <Typography fontSize={14} fontWeight={600} lineHeight={'20px'}>
-                    Configure Messenger
-                </Typography>
-            </Button>
-        </>
-    )
+    // const OwnBusinessOnMessensger = (
+    //     <>
+    //         <Typography variant="h6" fontWeight={600}>
+    //             Camino Messenger
+    //         </Typography>
+    //         <Box sx={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+    //             <Typography fontSize={12} fontWeight={400} lineHeight={'16px'} color={'#B3DAFF'}>
+    //                 Wanted Services
+    //             </Typography>
+    //             <Typography fontSize={14} fontWeight={600} lineHeight={'20px'}>
+    //                 {transformServiceNames(state.stepsConfig[2].services)}
+    //             </Typography>
+    //         </Box>
+    //         <Box sx={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+    //             <Typography fontSize={12} fontWeight={400} lineHeight={'16px'} color={'#B3DAFF'}>
+    //                 Offered Services
+    //             </Typography>
+    //             <Typography fontSize={14} fontWeight={600} lineHeight={'20px'}>
+    //                 {transformServiceNames(state.stepsConfig[1].services)}
+    //             </Typography>
+    //         </Box>
+    //         {value?.wallet?.address && (
+    //             <Box sx={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+    //                 <Typography
+    //                     fontSize={12}
+    //                     fontWeight={400}
+    //                     lineHeight={'16px'}
+    //                     color={'#B3DAFF'}
+    //                 >
+    //                     Partner address
+    //                 </Typography>
+    //                 <Box display="flex" alignItems="center" justifyContent="space-between">
+    //                     <Typography
+    //                         fontSize={14}
+    //                         fontWeight={600}
+    //                         lineHeight="20px"
+    //                         component="span"
+    //                     >
+    //                         {displayFirstPartLongString(value?.wallet?.address, 28)}&hellip;
+    //                         {displaySecondPartLongString(value?.wallet?.address, 28)}
+    //                     </Typography>
+    //                     <IconButton
+    //                         onClick={() => navigator.clipboard.writeText(value.wallet.address)}
+    //                         size="small"
+    //                         sx={{
+    //                             color: theme => `${theme.palette.text.primary} !important`,
+    //                         }}
+    //                     >
+    //                         <ContentCopy fontSize="small" />
+    //                     </IconButton>
+    //                 </Box>
+    //             </Box>
+    //         )}
+    //         <Button
+    //             onClick={() => navigate('/partners/messenger-configuration/mymessenger')}
+    //             sx={{
+    //                 padding: '10px 16px',
+    //                 borderRadius: '8px',
+    //                 border: '1px solid #475569',
+    //                 backgroundColor: theme =>
+    //                     theme.palette.mode === 'dark' ? '#020617' : '#F1F5F9',
+    //             }}
+    //         >
+    //             <Typography fontSize={14} fontWeight={600} lineHeight={'20px'}>
+    //                 Configure Messenger
+    //             </Typography>
+    //         </Button>
+    //     </>
+    // )
     if (isLoading || isFetching) return <></>
     return (
         <Box sx={{ height: '100%', mb: '2rem' }}>
@@ -247,12 +420,12 @@ const Partner = () => {
                         minWidth: { xs: '100%', md: '300px' },
                     }}
                 >
-                    {auth && path.includes('partners/messenger-configuration') && (
+                    {auth && path.includes('partners/messenger-configuration') ? (
                         <Box
                             sx={{
                                 display: 'flex',
                                 flexDirection: 'column',
-                                gap: value.contractCMAccountAddress ? '16px' : '8px',
+                                gap: '8px',
                                 padding: '20px',
                                 borderRadius: '12px',
                                 position: 'relative',
@@ -276,10 +449,55 @@ const Partner = () => {
                                 },
                             }}
                         >
-                            {value?.contractCMAccountAddress
-                                ? OwnBusinessOnMessensger
-                                : OwnBusinsessNotOnMessenger}
+                            {value?.contractCMAccountAddress ? (
+                                <Widget
+                                    wantedServices={state.stepsConfig[2].services}
+                                    supportedServices={state.stepsConfig[1].services}
+                                    CMAccountAddress={value?.contractCMAccountAddress}
+                                />
+                            ) : (
+                                OwnBusinsessNotOnMessenger
+                            )}
                         </Box>
+                    ) : (
+                        // <></>
+                        partner.contractAddress && (
+                            <Box
+                                sx={{
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    gap: '16px',
+                                    padding: '20px',
+                                    borderRadius: '12px',
+                                    position: 'relative',
+                                    backgroundColor: theme =>
+                                        theme.palette.mode === 'dark' ? '#0F182A' : '#F1F5F9',
+                                    '&::before': {
+                                        content: '""',
+                                        position: 'absolute',
+                                        top: 0,
+                                        left: 0,
+                                        right: 0,
+                                        bottom: 0,
+                                        borderRadius: '12px',
+                                        padding: '2px',
+                                        background:
+                                            'linear-gradient(135deg, #B440FC 0%, #35E9AD 100%)',
+                                        WebkitMask:
+                                            'linear-gradient(#fff 0 0) content-box, ' +
+                                            'linear-gradient(#fff 0 0)',
+                                        WebkitMaskComposite: 'xor',
+                                        maskComposite: 'exclude',
+                                    },
+                                }}
+                            >
+                                <Widget
+                                    wantedServices={partner.wantedServices}
+                                    supportedServices={partner.supportedServices}
+                                    CMAccountAddress={partner.contractAddress}
+                                />
+                            </Box>
+                        )
                     )}
                     <Box
                         sx={[

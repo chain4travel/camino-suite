@@ -10,6 +10,7 @@ import {
     Typography,
 } from '@mui/material'
 import React, { useState } from 'react'
+import { useParams } from 'react-router'
 import store from 'wallet/store'
 import Alert from '../../components/Alert'
 import Input from '../../components/Input'
@@ -131,6 +132,7 @@ Configuration.Services = function Services({
     dispatch: any
     disabled?: boolean
 }) {
+    let { partnerID } = useParams()
     const removeService = serviceIndex => {
         dispatch({
             type: actionTypes.REMOVE_SERVICE,
@@ -203,19 +205,42 @@ Configuration.Services = function Services({
                         }}
                     >
                         <Typography variant="body2">{service.name}</Typography>
-                        <Box
-                            sx={{
-                                display: 'flex',
-                                gap: '12px',
-                                alignItems: 'center',
-                                flexShrink: '0',
-                            }}
-                        >
-                            {state.step === 1 && (
+                        {!!!partnerID && (
+                            <Box
+                                sx={{
+                                    display: 'flex',
+                                    gap: '12px',
+                                    alignItems: 'center',
+                                    flexShrink: '0',
+                                }}
+                            >
+                                {state.step === 1 && (
+                                    <Button
+                                        disabled={disabled}
+                                        variant="outlined"
+                                        onClick={() => addCapability(index)}
+                                        sx={{
+                                            padding: '6px 12px',
+                                            gap: '6px',
+                                            borderRadius: '8px',
+                                            border: '1px solid #475569',
+                                            backgroundColor: theme =>
+                                                theme.palette.mode === 'dark'
+                                                    ? '#020617'
+                                                    : '#F1F5F9',
+                                            borderWidth: '1px',
+                                            '&:hover': {
+                                                borderWidth: '1px',
+                                                boxShadow: 'none',
+                                            },
+                                        }}
+                                    >
+                                        <Typography variant="caption">Add capability</Typography>
+                                    </Button>
+                                )}
                                 <Button
                                     disabled={disabled}
                                     variant="outlined"
-                                    onClick={() => addCapability(index)}
                                     sx={{
                                         padding: '6px 12px',
                                         gap: '6px',
@@ -229,141 +254,165 @@ Configuration.Services = function Services({
                                             boxShadow: 'none',
                                         },
                                     }}
+                                    onClick={() => removeService(index)}
                                 >
-                                    <Typography variant="caption">Add capability</Typography>
+                                    <Typography variant="caption">Remove service</Typography>
                                 </Button>
-                            )}
-                            <Button
-                                disabled={disabled}
-                                variant="outlined"
-                                sx={{
-                                    padding: '6px 12px',
-                                    gap: '6px',
-                                    borderRadius: '8px',
-                                    border: '1px solid #475569',
-                                    backgroundColor: theme =>
-                                        theme.palette.mode === 'dark' ? '#020617' : '#F1F5F9',
-                                    borderWidth: '1px',
-                                    '&:hover': {
-                                        borderWidth: '1px',
-                                        boxShadow: 'none',
-                                    },
-                                }}
-                                onClick={() => removeService(index)}
-                            >
-                                <Typography variant="caption">Remove service</Typography>
-                            </Button>
-                        </Box>
+                            </Box>
+                        )}
                     </Box>
                     {state.step === 1 && (
                         <>
-                            <Box
-                                sx={{
-                                    display: 'flex',
-                                    gap: '8px',
-                                    alignItems: 'center',
-                                    justifyContent: 'space-between',
-                                }}
-                            >
-                                <Typography sx={{ flex: '0 0 20%' }} variant="overline">
-                                    FEE
-                                </Typography>
-                                <Box sx={{ display: 'flex', gap: '8px', flex: '1' }}>
-                                    <OutlinedInput
-                                        disabled={disabled}
-                                        value={state.stepsConfig[state.step].services[index].fee}
-                                        onChange={e => handleFeeChange(e, index)}
-                                        inputProps={{
-                                            inputMode: 'decimal',
-                                            pattern: '[0-9]*',
-                                        }}
-                                        endAdornment={
-                                            <InputAdornment position="end">
-                                                <Box
-                                                    sx={{
-                                                        borderLeft: '1px solid',
-                                                        borderColor: theme =>
-                                                            theme.palette.card.border,
-                                                        height: '100%',
-                                                        display: 'flex',
-                                                        alignItems: 'center',
-                                                        paddingLeft: '16px',
-                                                        paddingRight: '16px',
-                                                        color: theme => theme.palette.text.primary,
-                                                    }}
-                                                >
-                                                    CAM
-                                                </Box>
-                                            </InputAdornment>
-                                        }
-                                        sx={theme => ({
-                                            flex: '1',
-                                            height: '40px',
-                                            border: `solid 1px ${theme.palette.card.border}`,
-                                            fontSize: '14px',
-                                            lineHeight: '24px',
-                                            fontWeight: 500,
-                                            paddingRight: '0px',
-                                            '.MuiOutlinedInput-notchedOutline': {
-                                                border: 'none',
-                                            },
-                                            '& .MuiInputAdornment-root': {
-                                                height: '100%',
-                                                maxHeight: 'none',
-                                            },
-                                        })}
-                                    />
-                                    <FormControlLabel
-                                        sx={{ mr: '0px !important' }}
-                                        label={
-                                            <Typography variant="caption">Rack Rates</Typography>
-                                        }
-                                        control={
-                                            <Checkbox
-                                                disabled={disabled}
-                                                sx={{
+                            {!!partnerID && (
+                                <FormControlLabel
+                                    sx={{ mr: '0px !important' }}
+                                    label={<Typography variant="caption">Rack Rates</Typography>}
+                                    control={
+                                        <Checkbox
+                                            disabled={disabled}
+                                            sx={{
+                                                color: theme => theme.palette.secondary.main,
+                                                '&.Mui-checked': {
                                                     color: theme => theme.palette.secondary.main,
-                                                    '&.Mui-checked': {
-                                                        color: theme =>
-                                                            theme.palette.secondary.main,
+                                                },
+                                                '&.MuiCheckbox-colorSecondary.Mui-checked': {
+                                                    color: theme => theme.palette.secondary.main,
+                                                },
+                                            }}
+                                            checked={
+                                                state.stepsConfig[state.step].services[index]
+                                                    .rackRates
+                                            }
+                                            onChange={() =>
+                                                dispatch({
+                                                    type: actionTypes.UPDATE_RACK_RATES,
+                                                    payload: {
+                                                        step: state.step,
+                                                        serviceIndex: index,
                                                     },
-                                                    '&.MuiCheckbox-colorSecondary.Mui-checked': {
-                                                        color: theme =>
-                                                            theme.palette.secondary.main,
-                                                    },
-                                                }}
-                                                checked={
-                                                    state.stepsConfig[state.step].services[index]
-                                                        .rackRates
-                                                }
-                                                onChange={() =>
-                                                    dispatch({
-                                                        type: actionTypes.UPDATE_RACK_RATES,
-                                                        payload: {
-                                                            step: state.step,
-                                                            serviceIndex: index,
-                                                        },
-                                                    })
-                                                }
-                                            />
-                                        }
-                                    />
-                                </Box>
-                                <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                                    <svg
-                                        width="24"
-                                        height="24"
-                                        viewBox="0 0 24 24"
-                                        fill="none"
-                                        xmlns="http://www.w3.org/2000/svg"
-                                    >
-                                        <path
-                                            d="M12 22C17.5 22 22 17.5 22 12C22 6.5 17.5 2 12 2C6.5 2 2 6.5 2 12C2 17.5 6.5 22 12 22ZM11 7H13V9H11V7ZM14 17H10V15H11V13H10V11H13V15H14V17Z"
-                                            fill="#0085FF"
+                                                })
+                                            }
                                         />
-                                    </svg>
+                                    }
+                                />
+                            )}
+                            {!!!partnerID && (
+                                <Box
+                                    sx={{
+                                        display: 'flex',
+                                        gap: '8px',
+                                        alignItems: 'center',
+                                        justifyContent: 'space-between',
+                                    }}
+                                >
+                                    <Typography sx={{ flex: '0 0 20%' }} variant="overline">
+                                        FEE
+                                    </Typography>
+                                    <Box sx={{ display: 'flex', gap: '8px', flex: '1' }}>
+                                        <OutlinedInput
+                                            disabled={disabled}
+                                            value={
+                                                state.stepsConfig[state.step].services[index].fee
+                                            }
+                                            onChange={e => handleFeeChange(e, index)}
+                                            inputProps={{
+                                                inputMode: 'decimal',
+                                                pattern: '[0-9]*',
+                                            }}
+                                            endAdornment={
+                                                <InputAdornment position="end">
+                                                    <Box
+                                                        sx={{
+                                                            borderLeft: '1px solid',
+                                                            borderColor: theme =>
+                                                                theme.palette.card.border,
+                                                            height: '100%',
+                                                            display: 'flex',
+                                                            alignItems: 'center',
+                                                            paddingLeft: '16px',
+                                                            paddingRight: '16px',
+                                                            color: theme =>
+                                                                theme.palette.text.primary,
+                                                        }}
+                                                    >
+                                                        CAM
+                                                    </Box>
+                                                </InputAdornment>
+                                            }
+                                            sx={theme => ({
+                                                flex: '1',
+                                                height: '40px',
+                                                border: `solid 1px ${theme.palette.card.border}`,
+                                                fontSize: '14px',
+                                                lineHeight: '24px',
+                                                fontWeight: 500,
+                                                paddingRight: '0px',
+                                                '.MuiOutlinedInput-notchedOutline': {
+                                                    border: 'none',
+                                                },
+                                                '& .MuiInputAdornment-root': {
+                                                    height: '100%',
+                                                    maxHeight: 'none',
+                                                },
+                                            })}
+                                        />
+                                        <FormControlLabel
+                                            sx={{ mr: '0px !important' }}
+                                            label={
+                                                <Typography variant="caption">
+                                                    Rack Rates
+                                                </Typography>
+                                            }
+                                            control={
+                                                <Checkbox
+                                                    disabled={disabled}
+                                                    sx={{
+                                                        color: theme =>
+                                                            theme.palette.secondary.main,
+                                                        '&.Mui-checked': {
+                                                            color: theme =>
+                                                                theme.palette.secondary.main,
+                                                        },
+                                                        '&.MuiCheckbox-colorSecondary.Mui-checked':
+                                                            {
+                                                                color: theme =>
+                                                                    theme.palette.secondary.main,
+                                                            },
+                                                    }}
+                                                    checked={
+                                                        state.stepsConfig[state.step].services[
+                                                            index
+                                                        ].rackRates
+                                                    }
+                                                    onChange={() =>
+                                                        dispatch({
+                                                            type: actionTypes.UPDATE_RACK_RATES,
+                                                            payload: {
+                                                                step: state.step,
+                                                                serviceIndex: index,
+                                                            },
+                                                        })
+                                                    }
+                                                />
+                                            }
+                                        />
+                                    </Box>
+                                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                                        <svg
+                                            width="24"
+                                            height="24"
+                                            viewBox="0 0 24 24"
+                                            fill="none"
+                                            xmlns="http://www.w3.org/2000/svg"
+                                        >
+                                            <path
+                                                d="M12 22C17.5 22 22 17.5 22 12C22 6.5 17.5 2 12 2C6.5 2 2 6.5 2 12C2 17.5 6.5 22 12 22ZM11 7H13V9H11V7ZM14 17H10V15H11V13H10V11H13V15H14V17Z"
+                                                fill="#0085FF"
+                                            />
+                                        </svg>
+                                    </Box>
                                 </Box>
-                            </Box>
+                            )}
                             {state.stepsConfig[state.step].services[index].capabilities.map(
                                 (elem, key) => {
                                     return (

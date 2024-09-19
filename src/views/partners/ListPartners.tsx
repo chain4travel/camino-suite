@@ -29,33 +29,11 @@ const ListPartners: React.FC<ListPartnersProps> = ({ partners }) => {
             {partners.data.map((partner, index) => (
                 <PartnerCard
                     onClick={() => {
-                        if (
-                            !!(
-                                partner.attributes.companyName &&
-                                partner.attributes.companyLongDescription &&
-                                partner.attributes.companyWebsite &&
-                                partner.attributes.contactEmail &&
-                                partner.attributes.contactFirstname &&
-                                partner.attributes.contactLastname &&
-                                partner.attributes.contactPhone
-                            )
-                        ) {
-                            navigate(partner.attributes.companyName)
-                        }
+                        navigate(partner.attributes.companyName)
                     }}
                     partner={partner}
                     key={partner.attributes.companyName}
-                    clickable={
-                        !!(
-                            partner.attributes.companyName &&
-                            partner.attributes.companyLongDescription &&
-                            partner.attributes.companyWebsite &&
-                            partner.attributes.contactEmail &&
-                            partner.attributes.contactFirstname &&
-                            partner.attributes.contactLastname &&
-                            partner.attributes.contactPhone
-                        )
-                    }
+                    clickable={true}
                     index={index}
                 />
             ))}

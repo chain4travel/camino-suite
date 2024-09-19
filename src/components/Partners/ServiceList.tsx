@@ -94,20 +94,28 @@ const ServiceList = ({ listName, services }) => {
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
-                                    {services.map((service, serviceIndex) => (
-                                        <TableRow key={serviceIndex}>
-                                            <TableCell sx={{ p: '0' }} component="th" scope="row">
-                                                <Typography variant="caption">
-                                                    {service.name}
-                                                </Typography>
-                                            </TableCell>
-                                            <TableCell>
-                                                <Typography variant="caption">
-                                                    {service.version}
-                                                </Typography>
-                                            </TableCell>
-                                        </TableRow>
-                                    ))}
+                                    {services.length > 0 ? (
+                                        services.map((service, serviceIndex) => (
+                                            <TableRow key={serviceIndex}>
+                                                <TableCell
+                                                    sx={{ p: '0' }}
+                                                    component="th"
+                                                    scope="row"
+                                                >
+                                                    <Typography variant="caption">
+                                                        {service.name}
+                                                    </Typography>
+                                                </TableCell>
+                                                <TableCell>
+                                                    <Typography variant="caption">
+                                                        {service.version}
+                                                    </Typography>
+                                                </TableCell>
+                                            </TableRow>
+                                        ))
+                                    ) : (
+                                        <Typography variant="caption">None</Typography>
+                                    )}
                                 </TableBody>
                             </Table>
                         </TableContainer>

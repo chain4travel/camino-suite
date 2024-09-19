@@ -88,7 +88,20 @@ export function reducer(state = initialState, action) {
             return { ...state, ...initialState }
         case actionTypes.UPDATE_SUPPORTED_SERVICES: {
             try {
-                const { services } = action.payload
+                const { services, reset } = action.payload
+                if (reset)
+                    return {
+                        ...state,
+                        stepsConfig: state.stepsConfig.map(item =>
+                            item.step === 1
+                                ? {
+                                      ...item,
+                                      isSupplier: services.length > 0 ? true : false,
+                                      services: services,
+                                  }
+                                : item,
+                        ),
+                    }
                 if (!services || services.length < 1) return state
                 let parsedServices = services[0].map((service, index) => {
                     let capabilities = services[1][index][2].map(elem => elem)
@@ -118,7 +131,20 @@ export function reducer(state = initialState, action) {
         }
 
         case actionTypes.UPDATE_WANTED_SERVICES: {
-            const { wantedServices } = action.payload
+            const { wantedServices, reset } = action.payload
+            if (reset)
+                return {
+                    ...state,
+                    stepsConfig: state.stepsConfig.map(item =>
+                        item.step === 2
+                            ? {
+                                  ...item,
+                                  isDistributor: wantedServices.length > 0 ? true : false,
+                                  services: wantedServices,
+                              }
+                            : item,
+                    ),
+                }
             return {
                 ...state,
                 stepsConfig: state.stepsConfig.map(item =>
