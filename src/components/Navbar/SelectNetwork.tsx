@@ -1,7 +1,8 @@
+import { Box, Chip, Typography } from '@mui/material'
 import React from 'react'
-import { Box, Typography, Chip } from '@mui/material'
 import { useAppSelector } from '../../hooks/reduxHooks'
 import { NetworkID, getActiveNetwork, selectNetworkStatus } from '../../redux/slices/network'
+import CamBadge from '../CamBadge'
 
 const networkStatusColor = (status: string) => {
     switch (status) {
@@ -47,13 +48,11 @@ export default function SelectedNetwork() {
             >
                 {activeNetwork?.name}
             </Typography>
-            <Chip
-                color="secondary"
+            <CamBadge
                 size="small"
+                variant="verified"
                 sx={{
                     position: 'absolute',
-                    fontSize: '12px',
-                    height: '16px',
                     top: 0,
                     right: 0,
                 }}

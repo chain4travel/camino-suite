@@ -136,6 +136,9 @@ export const getPChainAddress = (state: RootState) => state.appConfig.pChainAddr
 // getWalletName
 export const getWalletName = (state: RootState) => state.appConfig.walletName
 
+// get wallet store
+export const getWalletStore = (state: RootState) => state.appConfig.walletStore
+
 export const selectValidators = (state: RootState) => state.appConfig.validators
 
 export const {
