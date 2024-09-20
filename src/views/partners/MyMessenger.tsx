@@ -11,7 +11,6 @@ import {
     Divider,
     FormControlLabel,
     IconButton,
-    InputAdornment,
     OutlinedInput,
     TextField,
     Typography,
@@ -26,7 +25,6 @@ import { usePartnerConfig } from '../../helpers/usePartnerConfig'
 import { useSmartContract } from '../../helpers/useSmartContract'
 import useWalletBalance from '../../helpers/useWalletBalance'
 import { useFetchPartnerDataQuery } from '../../redux/services/partners'
-import { transformServiceNames } from '../../utils/display-utils'
 import { Configuration } from './Configuration'
 
 const AmountInput = ({ amount, onAmountChange, onMaxAmountClick, maxAmount }) => {
@@ -316,13 +314,15 @@ const MyMessenger = () => {
     const [tempCAMSupported, setTempCAMSupported] = useState(false)
     const { balanceOfAnAddress, getBalanceOfAnAddress } = useWalletBalance()
     const [isLoading, setIsLoading] = useState(false)
-    const { contractCMAccountAddress, upgradeCMAccount, wallet } = useSmartContract()
+    const [bots, setBots] = useState([])
+    const { contractCMAccountAddress, wallet } = useSmartContract()
     const {
         getSupportedTokens,
         getOffChainPaymentSupported,
         setOffChainPaymentSupported,
         addSupportedToken,
         removeSupportedToken,
+        getListOfBots,
     } = usePartnerConfig()
     const { data: partner } = useFetchPartnerDataQuery({
         companyName: '',
@@ -372,12 +372,31 @@ const MyMessenger = () => {
             setIsLoading(false)
         }
     }
-
+    async function fetchBots() {
+        const res = await getListOfBots()
+        setBots(res)
+    }
     useEffect(() => {
         checkIfCamSupported()
         checkIfOffChainPaymentSupported()
         getBalanceOfAnAddress(contractCMAccountAddress)
     }, [getBalanceOfAnAddress])
+
+    useEffect(() => {
+        fetchBots()
+    }, [])
+
+    function getServicesNames(services) {
+        if (!services || services.length === '0') return 'None.'
+        let array = services.map(elem => {
+            const parts = elem.name.split('.')
+            let name = parts[parts.length - 1]
+            name = name.endsWith('Service') ? name.slice(0, -7) : name
+            return name // elem.name
+        })
+        let result = array.join(', ')
+        return result
+    }
 
     return (
         <>
@@ -397,7 +416,6 @@ const MyMessenger = () => {
                         First you need to top up the CM Account with CAM, EURSH or USDC to work
                         properly. Transfer it to the newly generated CM address below.
                     </Configuration.Paragraphe>
-                    {/* <button onClick={upgradeCMAccount}>upgrade</button> */}
                     <TextField
                         disabled
                         value={contractCMAccountAddress as string}
@@ -431,111 +449,53 @@ const MyMessenger = () => {
                             ),
                         }}
                     />
-                    <TextField
-                        disabled
-                        value={balanceOfAnAddress}
-                        InputProps={{
-                            sx: {
-                                '& input': {
-                                    fontSize: '16px',
-                                },
-                                '& input.Mui-disabled': {
-                                    color: theme => theme.palette.text.primary,
-                                    WebkitTextFillColor: theme => theme.palette.text.primary,
-                                },
-                            },
-                            startAdornment: (
-                                <InputAdornment
-                                    position="start"
-                                    sx={{
-                                        width: 'fit-content',
-                                        color: theme => theme.palette.text.primary,
-                                    }}
-                                >
-                                    <Typography variant="body2">CM Balance:</Typography>
-                                </InputAdornment>
-                            ),
-                            endAdornment: (
-                                <Box sx={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-                                    {parseFloat(balanceOfAnAddress) < 100 ? (
-                                        <InputAdornment
-                                            position="end"
-                                            sx={{ width: 'fit-contnet' }}
-                                        >
-                                            <svg
-                                                width="24"
-                                                height="24"
-                                                viewBox="0 0 24 24"
-                                                fill="none"
-                                                xmlns="http://www.w3.org/2000/svg"
-                                            >
-                                                <path
-                                                    d="M12 2C17.53 2 22 6.47 22 12C22 17.53 17.53 22 12 22C6.47 22 2 17.53 2 12C2 6.47 6.47 2 12 2ZM15.59 7L12 10.59L8.41 7L7 8.41L10.59 12L7 15.59L8.41 17L12 13.41L15.59 17L17 15.59L13.41 12L17 8.41L15.59 7Z"
-                                                    fill="#E5431F"
-                                                />
-                                            </svg>
-                                        </InputAdornment>
-                                    ) : (
-                                        <InputAdornment
-                                            position="end"
-                                            sx={{ width: 'fit-contnet' }}
-                                        >
-                                            <svg
-                                                width="24"
-                                                height="24"
-                                                viewBox="0 0 24 24"
-                                                fill="none"
-                                                xmlns="http://www.w3.org/2000/svg"
-                                            >
-                                                <path
-                                                    d="M12 2C6.5 2 2 6.5 2 12C2 17.5 6.5 22 12 22C17.5 22 22 17.5 22 12C22 6.5 17.5 2 12 2ZM10 17L5 12L6.41 10.59L10 14.17L17.59 6.58L19 8L10 17Z"
-                                                    fill="#18B728"
-                                                />
-                                            </svg>
-                                        </InputAdornment>
-                                    )}
-                                    <MainButton
-                                        endIcon={
-                                            <RefreshOutlined
-                                                sx={{
-                                                    color: theme =>
-                                                        `${theme.palette.text.primary} !important`,
-                                                }}
-                                            />
-                                        }
-                                        variant="outlined"
-                                        onClick={() => {
-                                            getBalanceOfAnAddress(contractCMAccountAddress)
-                                        }}
-                                    >
-                                        Refresh
-                                    </MainButton>
-                                </Box>
-                            ),
-                        }}
+                    <Box sx={{ display: 'flex', alignItems: 'start', gap: '16px' }}>
+                        <Typography sx={{ flex: '0 0 20%' }} variant="body2">
+                            Offered Services
+                        </Typography>
+                        <Typography variant="caption">
+                            {state.stepsConfig[1]?.services.length > 0 ? (
+                                getServicesNames(state.stepsConfig[1]?.services)
+                            ) : (
+                                <>None</>
+                            )}
+                        </Typography>
+                    </Box>
+                    <Box sx={{ display: 'flex', alignItems: 'start', gap: '16px' }}>
+                        <Typography sx={{ flex: '0 0 20%' }} variant="body2">
+                            Wanted Services
+                        </Typography>
+                        <Typography variant="caption">
+                            {state.stepsConfig[2]?.services.length > 0 ? (
+                                getServicesNames(state.stepsConfig[2]?.services)
+                            ) : (
+                                <>None</>
+                            )}
+                        </Typography>
+                    </Box>
+                    {/* <ServiceList
+                        listName="Wanted Services"
+                        services={state.stepsConfig[2]?.services.map(elem => elem.name)}
                     />
-                    {state.stepsConfig[2]?.services?.length > 0 && (
-                        <Box sx={{ display: 'flex', alignItems: 'start', gap: '16px' }}>
-                            <Typography sx={{ flex: '0 0 20%' }} variant="body2">
-                                Wanted Services
-                            </Typography>
-                            <Typography variant="caption">
-                                {transformServiceNames(state.stepsConfig[2].services)}
-                            </Typography>
-                        </Box>
-                    )}
-                    {state.stepsConfig[1]?.services?.length > 0 && (
-                        <Box sx={{ display: 'flex', alignItems: 'start', gap: '16px' }}>
-                            <Typography sx={{ flex: '0 0 20%' }} variant="body2">
-                                Offered Services
-                            </Typography>
-                            <Typography variant="caption">
-                                {transformServiceNames(state.stepsConfig[1].services)}
-                            </Typography>
-                        </Box>
-                    )}
-                    <Typography variant="body2">Accepted Currencies</Typography>
-                    {/* <Configuration.SubTitle>Accepted Currencies</Configuration.SubTitle> */}
+                    <ServiceList
+                        listName="Offered Services"
+                        services={state.stepsConfig[1]?.services.map(elem => elem.name)}
+                    /> */}
+                    <Box sx={{ display: 'flex', alignItems: 'start', gap: '16px' }}>
+                        <Typography sx={{ flex: '0 0 20%' }} variant="body2">
+                            Configured Bots
+                        </Typography>
+                        <Typography variant="caption">
+                            {bots.length === 0 ? (
+                                <>None</>
+                            ) : (
+                                <>
+                                    You have {bots.length} configured{' '}
+                                    {bots.length === 1 ? 'bot.' : 'bots.'}
+                                </>
+                            )}
+                        </Typography>
+                    </Box>
                     <Box
                         sx={{
                             display: 'flex',
@@ -544,6 +504,23 @@ const MyMessenger = () => {
                             width: 'fit-content',
                         }}
                     >
+                        <Box
+                            sx={{
+                                display: 'flex',
+                                justifyContent: 'space-between',
+                                alignItems: 'center',
+                            }}
+                        >
+                            <Typography variant="body2">Accepted Currencies</Typography>
+                            <RefreshOutlined
+                                onClick={() => {
+                                    getBalanceOfAnAddress(contractCMAccountAddress)
+                                }}
+                                sx={{
+                                    color: theme => `${theme.palette.text.primary} !important`,
+                                }}
+                            />
+                        </Box>
                         <FormControlLabel
                             disabled={!isEditMode}
                             label={<Typography variant="body2">Fiat: off-chain</Typography>}
@@ -580,7 +557,11 @@ const MyMessenger = () => {
                         >
                             <FormControlLabel
                                 disabled={!isEditMode}
-                                label={<Typography variant="body2">CAM</Typography>}
+                                label={
+                                    <Typography variant="body2">
+                                        CAM: {balanceOfAnAddress}
+                                    </Typography>
+                                }
                                 control={
                                     <Checkbox
                                         sx={{
@@ -684,13 +665,18 @@ const MyMessenger = () => {
                             ) : (
                                 <>
                                     <Button
+                                        disabled={isLoading}
                                         variant="outlined"
                                         onClick={handleCancelEdit}
                                         sx={{ mr: '8px' }}
                                     >
                                         Cancel
                                     </Button>
-                                    <Button variant="contained" onClick={handleConfirmEdit}>
+                                    <Button
+                                        disabled={isLoading}
+                                        variant="contained"
+                                        onClick={handleConfirmEdit}
+                                    >
                                         {isLoading ? (
                                             <CircularProgress size={24} color="inherit" />
                                         ) : (
@@ -701,6 +687,27 @@ const MyMessenger = () => {
                             )}
                         </Box>
                     </Box>
+                    {state.stepsConfig[1]?.services.length == 0 && (
+                        <Alert
+                            sx={{ maxWidth: 'none', width: 'fit-content' }}
+                            variant="warning"
+                            content="Visit the relevant tab to add offered services"
+                        />
+                    )}
+                    {state.stepsConfig[2]?.services.length == 0 && (
+                        <Alert
+                            sx={{ maxWidth: 'none', width: 'fit-content' }}
+                            variant="warning"
+                            content="Visit the relevant tab to add wanted services"
+                        />
+                    )}
+                    {bots.length == 0 && (
+                        <Alert
+                            sx={{ maxWidth: 'none', width: 'fit-content' }}
+                            variant="warning"
+                            content="Visit the relevant tab to add bots"
+                        />
+                    )}
                 </Configuration>
                 <Box sx={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
                     <Configuration.Infos

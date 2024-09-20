@@ -1,13 +1,15 @@
 import { Box, Link, Toolbar, Typography } from '@mui/material'
 
 import { Paper } from '@mui/material'
+import { ethers } from 'ethers'
 import React, { useEffect } from 'react'
-import { Navigate, Outlet, useNavigate } from 'react-router'
+import { Navigate, Outlet, useNavigate, useParams } from 'react-router'
 import store from 'wallet/store'
+import CMAccount from '../helpers/CMAccountManagerModule#CMAccount.json'
 import { PartnerConfigurationProvider } from '../helpers/partnerConfigurationContext'
 import { SmartContractProvider } from '../helpers/useSmartContract'
 import { useAppSelector } from '../hooks/reduxHooks'
-import { useIsPartnerQuery } from '../redux/services/partners'
+import { useFetchPartnerDataQuery, useIsPartnerQuery } from '../redux/services/partners'
 import { getWalletName } from '../redux/slices/app-config'
 import { getActiveNetwork } from '../redux/slices/network'
 import Links from '../views/settings/Links'
@@ -40,6 +42,23 @@ const ClaimProfile = () => {
     )
 }
 
+// Function to create a contract instance
+function getPartnerContract(address, provider) {
+    return new ethers.Contract(address, CMAccount, provider)
+}
+
+// Main function to get services from multiple partner contracts
+// async function getPartnerServices(partnerAddresses: string[], providerUrl: string) {
+//     const provider = new ethers.JsonRpcProvider(providerUrl)
+//     for (const address of partnerAddresses) {
+//         const contract = getPartnerContract(address, provider)
+//         try {
+//             const result = await contract.getSupportedServices()
+//             console.log(result)
+//         } catch (error) {}
+//     }
+// }
+
 const PartnersLayout = () => {
     const path = window.location.pathname
     const { data, isLoading } = useIsPartnerQuery({
@@ -47,8 +66,13 @@ const PartnersLayout = () => {
             ? '0x' + store?.state?.activeWallet?.ethAddress
             : '',
     })
+    let { partnerID } = useParams()
+    const { data: partner } = useFetchPartnerDataQuery({
+        companyName: partnerID,
+    })
     const walletName = useAppSelector(getWalletName)
     const navigate = useNavigate()
+
     useEffect(() => {
         if (
             walletName &&
@@ -58,6 +82,7 @@ const PartnersLayout = () => {
             navigate('/')
         }
     }, [walletName])
+
     const activeNetwork = useAppSelector(getActiveNetwork)
     if (isLoading) return <></>
     if (
@@ -98,7 +123,12 @@ const PartnersLayout = () => {
                     >
                         <Links />
                     </Toolbar>
-                    {path.includes('partners/messenger-configuration') && !!data && (
+                    {((path.includes('partners/messenger-configuration') &&
+                        !!data &&
+                        data?.attributes?.cChainAddress) ||
+                        (partner &&
+                            partner?.contractAddress &&
+                            partnerID === partner.attributes.companyName)) && (
                         <Toolbar
                             sx={{
                                 borderBottom: '1px solid',
@@ -116,13 +146,16 @@ const PartnersLayout = () => {
                                 right: 0,
                             }}
                         >
-                            <Links type="subtabs" />
+                            <Links type="subtabs" partner={partner} />
                         </Toolbar>
                     )}
                     <Box
                         sx={{
                             mt:
-                                path.includes('partners/messenger-configuration') && !!data
+                                (path.includes('partners/messenger-configuration') &&
+                                    !!data &&
+                                    data?.attributes?.cChainAddress) ||
+                                (path !== '/partners' && partner?.contractAddress)
                                     ? '9rem'
                                     : '5rem',
                             height: '100%',
@@ -134,7 +167,9 @@ const PartnersLayout = () => {
                         component={Paper}
                     >
                         {!path.includes('partners/messenger-configuration') ||
-                        (path.includes('partners/messenger-configuration') && !!data) ? (
+                        (path.includes('partners/messenger-configuration') &&
+                            !!data &&
+                            data?.attributes?.cChainAddress) ? (
                             <Outlet />
                         ) : (
                             <ClaimProfile />

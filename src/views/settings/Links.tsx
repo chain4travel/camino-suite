@@ -3,7 +3,7 @@ import Box from '@mui/material/Box'
 import Tab from '@mui/material/Tab'
 import Tabs from '@mui/material/Tabs'
 import React, { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router'
+import { useNavigate, useParams } from 'react-router'
 import store from 'wallet/store'
 import { useSmartContract } from '../../helpers/useSmartContract'
 import { useAppDispatch, useAppSelector } from '../../hooks/reduxHooks'
@@ -17,7 +17,7 @@ function a11yProps(index: number) {
     }
 }
 
-export default function Links({ type = 'else' }: { type?: string }) {
+export default function Links({ type = 'else', partner }: { type?: string; partner?: any }) {
     const dispatch = useAppDispatch()
     const [value, setValue] = useState(0)
     const [secondValue, setSecondValue] = useState(0)
@@ -39,8 +39,9 @@ export default function Links({ type = 'else' }: { type?: string }) {
             if (path.includes('mymessenger')) setSecondValue(1)
             else if (path.includes('mydetails')) setSecondValue(0)
             else if (path.includes('distribution')) setSecondValue(3)
-            else if (path.includes('supply')) setSecondValue(2)
+            else if (path.includes('supplier')) setSecondValue(2)
             else if (path.includes('bots')) setSecondValue(4)
+            else setSecondValue(0)
         } else setValue(0)
         dispatch(changeActiveApp('Network'))
     }, [path]) // eslint-disable-line react-hooks/exhaustive-deps
@@ -54,7 +55,7 @@ export default function Links({ type = 'else' }: { type?: string }) {
             color: theme.palette.text.primary,
         },
     })
-
+    let { partnerID } = useParams()
     const settingsTabs = [
         <Tab
             className="tab"
@@ -161,6 +162,45 @@ export default function Links({ type = 'else' }: { type?: string }) {
         />,
     ]
 
+    const partnersSubTabsGuest = [
+        <Tab
+            onClick={() => navigate('/partners/' + partnerID)}
+            className="tab"
+            disableRipple
+            label="Details"
+            {...a11yProps(0)}
+            key={0}
+            sx={tabStyle(0, secondValue)}
+        />,
+        <Tab
+            onClick={() => navigate('/partners/' + partnerID + '/supplier')}
+            className="tab"
+            disableRipple
+            label="Offered Services"
+            {...a11yProps(1)}
+            key={1}
+            sx={tabStyle(1, secondValue)}
+        />,
+        <Tab
+            onClick={() => navigate('/partners/' + partnerID + '/distribution')}
+            className="tab"
+            disableRipple
+            label="Wanted Services"
+            {...a11yProps(2)}
+            key={2}
+            sx={tabStyle(2, secondValue)}
+        />,
+        <Tab
+            onClick={() => navigate('/partners/' + partnerID + '/bots')}
+            className="tab"
+            disableRipple
+            label="Bots"
+            {...a11yProps(3)}
+            key={3}
+            sx={tabStyle(3, secondValue)}
+        />,
+    ]
+
     if (type === 'subtabs')
         return (
             <Box sx={{ display: 'flex', cursor: 'pointer', width: '100%', maxWidth: '1536px' }}>
@@ -176,7 +216,11 @@ export default function Links({ type = 'else' }: { type?: string }) {
                     variant="scrollable"
                     allowScrollButtonsMobile
                 >
-                    {partnersSubTabs.map((tab, index) => (tab ? tab : null))}
+                    {partner?.contractAddress.toLocaleLowerCase() ===
+                        sc?.contractCMAccountAddress.toLocaleLowerCase() ||
+                    path.includes('partners/messenger-configuration')
+                        ? partnersSubTabs.map((tab, index) => (tab ? tab : null))
+                        : partnersSubTabsGuest.map((tab, index) => (tab ? tab : null))}
                 </Tabs>
             </Box>
         )

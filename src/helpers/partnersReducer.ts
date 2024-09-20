@@ -10,6 +10,7 @@ export interface StatePartnersType {
     companyName: string
     businessField: BusinessField[]
     validators: boolean
+    onMessenger: boolean
 }
 
 export const initialStatePartners: StatePartnersType = {
@@ -19,6 +20,7 @@ export const initialStatePartners: StatePartnersType = {
         return { name: elem, active: false }
     }),
     validators: false,
+    onMessenger: false,
 }
 
 export enum partnersActions {
@@ -26,6 +28,7 @@ export enum partnersActions {
     'UPDATE_COMPANY_NAME',
     'UPDATE_BUSINESS_FIELD',
     'TOGGLE_VALIDATORS',
+    'TOGGLE_ON_MESSENGER',
 }
 
 export interface ActionType {
@@ -66,6 +69,12 @@ export const partnersReducer = (
                 ...state,
                 page: 1,
                 validators: !state.validators,
+            }
+        case partnersActions.TOGGLE_ON_MESSENGER:
+            return {
+                ...state,
+                page: 1,
+                onMessenger: !state.onMessenger,
             }
         default:
             return state

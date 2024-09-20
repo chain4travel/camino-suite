@@ -27,16 +27,6 @@ export const usePartnerConfig = () => {
         }
         try {
             let balance = ethers.parseEther(state.balance ? state.balance : '0')
-            let services = state.stepsConfig[1].services.map(elem => {
-                return {
-                    ...elem,
-                    fee: ethers.parseEther(elem.fee ? elem.fee : '0'),
-                    capabilities: elem.capabilities.filter(item => item !== ''),
-                }
-            })
-            let wantedServices = state.stepsConfig[2].services.map(elem => elem.name)
-            let isOffChainPayement = state.stepsConfig[3].isOffChain
-            let isCam = state.stepsConfig[3].isCam
 
             const tx = await writeToContract('manager', 'createCMAccount', account, account, {
                 value: balance,
@@ -51,10 +41,7 @@ export const usePartnerConfig = () => {
 
             const parsedEvent = managerWriteContract.interface.parseLog(event)
             const cmAccountAddress = parsedEvent.args.account
-            await CMAccountCreated(
-                { services, wantedServices, isOffChainPayement, isCam },
-                cmAccountAddress,
-            )
+            await CMAccountCreated(cmAccountAddress)
             return tx
         } catch (error) {
             console.error(error)
@@ -155,7 +142,7 @@ export const usePartnerConfig = () => {
     }, [account, managerReadContract])
 
     useEffect(() => {
-        isCMAccount()
+        if (wallet) isCMAccount()
     }, [wallet])
 
     const addServices = useCallback(

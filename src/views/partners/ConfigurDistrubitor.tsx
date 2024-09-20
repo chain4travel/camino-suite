@@ -4,9 +4,7 @@ import {
     CardContent,
     Divider,
     FormControl,
-    MenuItem,
     Paper,
-    Select,
     Table,
     TableBody,
     TableCell,
@@ -17,7 +15,9 @@ import {
 } from '@mui/material'
 import { ethers } from 'ethers'
 import React, { useEffect, useMemo, useReducer, useState } from 'react'
+import { useParams } from 'react-router'
 import MainButton from '../../components/MainButton'
+import UpdatedSelectComponent from '../../components/Partners/UpdatedSelectComponent'
 import {
     actionTypes,
     reducer,
@@ -25,6 +25,7 @@ import {
 } from '../../helpers/partnerConfigurationContext'
 import { usePartnerConfig } from '../../helpers/usePartnerConfig'
 import { useSmartContract } from '../../helpers/useSmartContract'
+import { useFetchPartnerDataQuery } from '../../redux/services/partners'
 import { Configuration } from './Configuration'
 
 function ServiceChangesPreview({ added, removed }) {
@@ -141,6 +142,50 @@ function ServiceChangesPreview({ added, removed }) {
     )
 }
 
+export const BasicWantedServices = () => {
+    const { partnerID } = useParams()
+    const { state, dispatch } = usePartnerConfigurationContext()
+    const [distrubitorState, dispatchDistrubitorState] = useReducer(reducer, { ...state, step: 2 })
+    const { data: partner } = useFetchPartnerDataQuery({
+        companyName: partnerID,
+    })
+    useEffect(() => {
+        if (partner)
+            dispatchDistrubitorState({
+                type: actionTypes.UPDATE_WANTED_SERVICES,
+                payload: { wantedServices: partner.wantedServices, reset: true },
+            })
+    }, [partner])
+    return (
+        <Box
+            sx={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                gap: '16px',
+                flexWrap: 'wrap',
+            }}
+        >
+            <Configuration>
+                <Configuration.Title>Wanted Services</Configuration.Title>
+                <Box sx={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                    <Configuration.Services
+                        state={distrubitorState}
+                        dispatch={dispatchDistrubitorState}
+                        disabled={true}
+                    />
+                </Box>
+                <Divider />
+            </Configuration>
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                <Configuration.Infos
+                    information="This Camino Messenger wizard will assist you in generating and activating your Camino Messenger address. Once the process is complete, your Camino Messenger address will appear on your partner detail page, allowing you to communicate directly with other Camino Messenger accounts."
+                    rackRates="This Camino Messenger wizard will assist you in generating and activating your Camino Messenger address."
+                ></Configuration.Infos>
+            </Box>
+        </Box>
+    )
+}
+
 const ConfigurDistrubitor = () => {
     const { removeWantedServices, addWantedServices, getWantedServices } = usePartnerConfig()
     const { state, dispatch } = usePartnerConfigurationContext()
@@ -150,8 +195,10 @@ const ConfigurDistrubitor = () => {
     const [added, setAdded] = useState([])
     const [removed, setRemoved] = useState([])
 
-    const handleChange = event => {
-        addService(event.target.value)
+    const handleChange = (event, newValue) => {
+        if (newValue) {
+            addService(newValue)
+        }
     }
 
     const addService = service => {
@@ -219,6 +266,7 @@ const ConfigurDistrubitor = () => {
             type: actionTypes.RESET_STATE,
             payload: { initialState: { ...state, step: 2 } },
         })
+
         setEditing(false)
     }
 
@@ -249,81 +297,12 @@ const ConfigurDistrubitor = () => {
                     <Box sx={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                         <Typography variant="overline">services</Typography>
                         <FormControl>
-                            <Select
-                                disabled={!editing}
-                                sx={{
-                                    fontFamily: 'Inter',
-                                    fontSize: '14px',
-                                    fontWeight: 400,
-                                    lineHeight: '20px',
-                                    textAlign: 'left',
-                                    height: '40px',
-                                    gap: '4px',
-                                    borderRadius: '8px',
-                                    border: '1px solid transparent',
-                                    borderBottom: 'none',
-                                    opacity: 1,
-                                    paddingRight: '0px !important',
-                                    maxWidth: '100%',
-                                    overflow: 'hidden',
-                                    '.MuiSelect-select ': {
-                                        boxSizing: 'border-box',
-                                        height: '40px',
-                                        padding: '10px 16px 10px 16px',
-                                        borderRadius: '12px',
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        border: theme => `solid 1px ${theme.palette.card.border}`,
-                                    },
-                                    '& .MuiPopover-paper ul': {
-                                        paddingRight: 'unset !important',
-                                        width: '100% !important',
-                                    },
-                                    '.MuiOutlinedInput-notchedOutline': {
-                                        border: 'none !important',
-                                    },
-                                    '& [aria-expanded=true]': {
-                                        boxSizing: 'border-box',
-                                        height: '40px',
-                                    },
-                                }}
-                                value="service"
-                                onChange={handleChange}
-                                MenuProps={{
-                                    PaperProps: {
-                                        style: {
-                                            maxHeight: '120px',
-                                            overflow: 'auto',
-                                        },
-                                    },
-                                }}
-                            >
-                                <MenuItem sx={{ display: 'none' }} value={'service'}>
-                                    Services
-                                </MenuItem>
-                                {state.registredServices.map((item, index) => (
-                                    <MenuItem
-                                        key={index}
-                                        sx={{
-                                            fontFamily: 'Inter',
-                                            fontSize: '14px',
-                                            fontWeight: 400,
-                                            lineHeight: '20px',
-                                            textAlign: 'left',
-                                            height: '40px',
-                                            padding: '10px 16px',
-                                            gap: '4px',
-                                            borderRadius: '8px',
-                                            border: '1px solid transparent',
-                                            borderBottom: 'none',
-                                            opacity: 1,
-                                        }}
-                                        value={item}
-                                    >
-                                        {item}
-                                    </MenuItem>
-                                ))}
-                            </Select>
+                            <UpdatedSelectComponent
+                                editing={editing}
+                                supplierState={distrubitorState}
+                                dispatchSupplierState={dispatchDistrubitorState}
+                                actionTypes={actionTypes}
+                            />
                         </FormControl>
                     </Box>
 
@@ -337,6 +316,7 @@ const ConfigurDistrubitor = () => {
                 {editing && (added.length > 0 || removed.length > 0) && (
                     <ServiceChangesPreview added={added} removed={removed} />
                 )}
+
                 <Configuration.Buttons>
                     {!editing ? (
                         <MainButton
