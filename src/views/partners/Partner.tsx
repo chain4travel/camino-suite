@@ -12,7 +12,9 @@ import { usePartnerConfigurationContext } from '../../helpers/partnerConfigurati
 import { usePartnerConfig } from '../../helpers/usePartnerConfig'
 import { useSmartContract } from '../../helpers/useSmartContract'
 import { useAppSelector } from '../../hooks/reduxHooks'
+import useWallet from '../../hooks/useWallet'
 import { useFetchPartnerDataQuery } from '../../redux/services/partners'
+import { selectValidators } from '../../redux/slices/app-config'
 import { displayFirstPartLongString, displaySecondPartLongString } from '../../utils/display-utils'
 
 const ContentField = ({ label, children }) => {
@@ -47,7 +49,7 @@ const ContentField = ({ label, children }) => {
 
 const getServiceType = service => {
     const parts = service.split('.')
-    return parts[2]
+    return parts[4]
 }
 
 function getServiceName(fullName: unknown): string {
@@ -59,7 +61,7 @@ function getServiceName(fullName: unknown): string {
     return parts[parts.length - 1] || ''
 }
 
-const Widget = ({ supportedServices, CMAccountAddress, wantedServices }) => {
+const Widget = ({ supportedServices, CMAccountAddress, wantedServices, supportedCurrencies }) => {
     const auth = useAppSelector(state => state.appConfig.isAuth)
     const value = useSmartContract()
     const navigate = useNavigate()
@@ -92,15 +94,14 @@ const Widget = ({ supportedServices, CMAccountAddress, wantedServices }) => {
         return match1 || match2
     }
     const matchingPartners = useCallback(async () => {
-        if (partnerConf) {
+        if (
+            partnerConf &&
+            partnerConf.account &&
+            CMAccountAddress.toLocaleLowerCase() !==
+                value?.contractCMAccountAddress.toLocaleLowerCase()
+        ) {
             const supportedResult = await partnerConf.getSupportedServices()
             const wantedResult = await partnerConf.getWantedServices()
-            console.log({
-                supportedResult: supportedResult[0],
-                wantedResult: wantedResult,
-                supportedServices,
-                wantedServices,
-            })
             const result = checkMatch({
                 supportedResult: supportedResult[0],
                 wantedResult,
@@ -122,6 +123,30 @@ const Widget = ({ supportedServices, CMAccountAddress, wantedServices }) => {
             </Typography>
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
                 <Typography fontSize={12} fontWeight={400} lineHeight={'16px'} color={'#B3DAFF'}>
+                    Offered Services
+                </Typography>
+                {supportedServiceTypes.length > 0 ? (
+                    <ul style={{ marginLeft: '16px' }}>
+                        {supportedServiceTypes.map((type, index) => (
+                            <li key={index} className="service-type-item">
+                                <Typography fontSize={14} fontWeight={600} lineHeight={'20px'}>
+                                    {type}
+                                </Typography>
+                            </li>
+                        ))}
+                    </ul>
+                ) : (
+                    <ul style={{ marginLeft: '16px' }}>
+                        <li className="service-type-item">
+                            <Typography fontSize={14} fontWeight={600} lineHeight={'20px'}>
+                                None.
+                            </Typography>
+                        </li>
+                    </ul>
+                )}
+            </Box>
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                <Typography fontSize={12} fontWeight={400} lineHeight={'16px'} color={'#B3DAFF'}>
                     Wanted Services
                 </Typography>
                 {wantedServiceTypes.length > 0 ? (
@@ -135,24 +160,41 @@ const Widget = ({ supportedServices, CMAccountAddress, wantedServices }) => {
                         ))}
                     </ul>
                 ) : (
-                    <Typography fontSize={14} fontWeight={600} lineHeight={'20px'}>
-                        None.
-                    </Typography>
+                    <ul style={{ marginLeft: '16px' }}>
+                        <li className="service-type-item">
+                            <Typography fontSize={14} fontWeight={600} lineHeight={'20px'}>
+                                None.
+                            </Typography>
+                        </li>
+                    </ul>
                 )}
             </Box>
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
                 <Typography fontSize={12} fontWeight={400} lineHeight={'16px'} color={'#B3DAFF'}>
-                    Offered Services
+                    Supported Currencies
                 </Typography>
-                {supportedServiceTypes.length > 0 ? (
+                {supportedCurrencies ? (
                     <ul style={{ marginLeft: '16px' }}>
-                        {supportedServiceTypes.map((type, index) => (
-                            <li key={index} className="service-type-item">
+                        {supportedCurrencies?.isCam && (
+                            <li className="service-type-item">
                                 <Typography fontSize={14} fontWeight={600} lineHeight={'20px'}>
-                                    {type}
+                                    Cam
                                 </Typography>
                             </li>
-                        ))}
+                        )}
+                        {supportedCurrencies?.offChainPaymentSupported && (
+                            <li className="service-type-item">
+                                <Typography fontSize={14} fontWeight={600} lineHeight={'20px'}>
+                                    OffChainPaymentSupported
+                                </Typography>
+                            </li>
+                        )}
+                        {!supportedCurrencies?.offChainPaymentSupported &&
+                            !supportedCurrencies?.isCam && (
+                                <Typography fontSize={14} fontWeight={600} lineHeight={'20px'}>
+                                    None.
+                                </Typography>
+                            )}
                     </ul>
                 ) : (
                     <Typography fontSize={14} fontWeight={600} lineHeight={'20px'}>
@@ -180,6 +222,16 @@ const Widget = ({ supportedServices, CMAccountAddress, wantedServices }) => {
                     </IconButton>
                 </Box>
             </Box>
+            {match && (
+                <Box sx={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                    <Divider />
+                    <Typography variant="subtitle2">Its a match</Typography>
+                    <Typography variant="caption">
+                        This distributor seems to fit perfectly for you supplier company model. You
+                        can connect to each other via the messenger
+                    </Typography>
+                </Box>
+            )}
             {auth &&
                 CMAccountAddress.toLocaleLowerCase() ===
                     value?.contractCMAccountAddress.toLocaleLowerCase() && (
@@ -226,6 +278,7 @@ const Partner = () => {
     const theme = useTheme()
     const isDark = theme.palette.mode === 'dark'
     const value = useSmartContract()
+    const [isValidator, setIsValidator] = useState(false)
     const path = window.location.pathname
     const {
         data: partner,
@@ -239,12 +292,25 @@ const Partner = () => {
             : value?.wallet?.address,
     })
     const navigate = useNavigate()
+    const { getRegisteredNode, getAddress } = useWallet()
+    const validators = useAppSelector(selectValidators)
     const { state, dispatch } = usePartnerConfigurationContext()
+
+    const chackValidatorStatus = async (address: string) => {
+        if (!partner.attributes.pChainAddress) setIsValidator(false)
+        let nodeID = await getRegisteredNode(getAddress(address))
+        setIsValidator(!!validators.find(v => v.nodeID === nodeID))
+    }
+
+    useEffect(() => {
+        if (partner?.attributes.pChainAddress)
+            chackValidatorStatus(partner.attributes.pChainAddress)
+    }, [partner, validators])
+
     if (error || (!partner && !isFetching && !isLoading)) {
         navigate('/partners')
         return null
     }
-    // console.log({ partner })
 
     const OwnBusinsessNotOnMessenger = (
         <>
@@ -268,76 +334,7 @@ const Partner = () => {
         </>
     )
 
-    // const OwnBusinessOnMessensger = (
-    //     <>
-    //         <Typography variant="h6" fontWeight={600}>
-    //             Camino Messenger
-    //         </Typography>
-    //         <Box sx={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-    //             <Typography fontSize={12} fontWeight={400} lineHeight={'16px'} color={'#B3DAFF'}>
-    //                 Wanted Services
-    //             </Typography>
-    //             <Typography fontSize={14} fontWeight={600} lineHeight={'20px'}>
-    //                 {transformServiceNames(state.stepsConfig[2].services)}
-    //             </Typography>
-    //         </Box>
-    //         <Box sx={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-    //             <Typography fontSize={12} fontWeight={400} lineHeight={'16px'} color={'#B3DAFF'}>
-    //                 Offered Services
-    //             </Typography>
-    //             <Typography fontSize={14} fontWeight={600} lineHeight={'20px'}>
-    //                 {transformServiceNames(state.stepsConfig[1].services)}
-    //             </Typography>
-    //         </Box>
-    //         {value?.wallet?.address && (
-    //             <Box sx={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-    //                 <Typography
-    //                     fontSize={12}
-    //                     fontWeight={400}
-    //                     lineHeight={'16px'}
-    //                     color={'#B3DAFF'}
-    //                 >
-    //                     Partner address
-    //                 </Typography>
-    //                 <Box display="flex" alignItems="center" justifyContent="space-between">
-    //                     <Typography
-    //                         fontSize={14}
-    //                         fontWeight={600}
-    //                         lineHeight="20px"
-    //                         component="span"
-    //                     >
-    //                         {displayFirstPartLongString(value?.wallet?.address, 28)}&hellip;
-    //                         {displaySecondPartLongString(value?.wallet?.address, 28)}
-    //                     </Typography>
-    //                     <IconButton
-    //                         onClick={() => navigator.clipboard.writeText(value.wallet.address)}
-    //                         size="small"
-    //                         sx={{
-    //                             color: theme => `${theme.palette.text.primary} !important`,
-    //                         }}
-    //                     >
-    //                         <ContentCopy fontSize="small" />
-    //                     </IconButton>
-    //                 </Box>
-    //             </Box>
-    //         )}
-    //         <Button
-    //             onClick={() => navigate('/partners/messenger-configuration/mymessenger')}
-    //             sx={{
-    //                 padding: '10px 16px',
-    //                 borderRadius: '8px',
-    //                 border: '1px solid #475569',
-    //                 backgroundColor: theme =>
-    //                     theme.palette.mode === 'dark' ? '#020617' : '#F1F5F9',
-    //             }}
-    //         >
-    //             <Typography fontSize={14} fontWeight={600} lineHeight={'20px'}>
-    //                 Configure Messenger
-    //             </Typography>
-    //         </Button>
-    //     </>
-    // )
-    if (isLoading || isFetching) return <></>
+    if (isLoading || isFetching || !partner) return <></>
     return (
         <Box sx={{ height: '100%', mb: '2rem' }}>
             {!path.includes('partners/messenger-configuration') && (
@@ -393,6 +390,49 @@ const Partner = () => {
                                 <Typography sx={{ color: 'common.white' }}>Validator</Typography>
                             </Box>
                         )} */}
+                    </Box>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                        {!!isValidator && (
+                            <Box
+                                sx={{
+                                    width: '96px',
+                                    height: '20px',
+                                    background: theme => theme.palette.blue[50],
+                                    padding: '0px, 8px, 0px, 8px',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    borderRadius: '4px',
+                                    letterSpacing: '1.6px',
+                                }}
+                            >
+                                <Typography
+                                    sx={{ color: theme => theme.palette.grey[950] }}
+                                    variant="overline"
+                                >
+                                    Validator
+                                </Typography>
+                            </Box>
+                        )}
+                        {partner.contractAddress && (
+                            <Box
+                                sx={{
+                                    width: '129px',
+                                    height: '20px',
+                                    background: '#09DE6B33',
+                                    padding: '0px, 8px, 0px, 8px',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    borderRadius: '4px',
+                                    letterSpacing: '1.6px',
+                                }}
+                            >
+                                <Typography sx={{ color: '#18B728' }} variant="overline">
+                                    On messenger
+                                </Typography>
+                            </Box>
+                        )}
                     </Box>
                     <Typography variant="caption">
                         {partner.attributes.companyShortDescription}
@@ -495,6 +535,7 @@ const Partner = () => {
                                     wantedServices={partner.wantedServices}
                                     supportedServices={partner.supportedServices}
                                     CMAccountAddress={partner.contractAddress}
+                                    supportedCurrencies={partner.supportedCurrencies}
                                 />
                             </Box>
                         )

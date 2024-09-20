@@ -39,8 +39,9 @@ export default function Links({ type = 'else', partner }: { type?: string; partn
             if (path.includes('mymessenger')) setSecondValue(1)
             else if (path.includes('mydetails')) setSecondValue(0)
             else if (path.includes('distribution')) setSecondValue(3)
-            else if (path.includes('supply')) setSecondValue(2)
+            else if (path.includes('supplier')) setSecondValue(2)
             else if (path.includes('bots')) setSecondValue(4)
+            else setSecondValue(0)
         } else setValue(0)
         dispatch(changeActiveApp('Network'))
     }, [path]) // eslint-disable-line react-hooks/exhaustive-deps
@@ -190,8 +191,7 @@ export default function Links({ type = 'else', partner }: { type?: string; partn
             sx={tabStyle(2, secondValue)}
         />,
         <Tab
-            disabled={!!!sc?.contractCMAccountAddress}
-            onClick={() => navigate('/partners/messenger-configuration/bots')}
+            onClick={() => navigate('/partners/' + partnerID + '/bots')}
             className="tab"
             disableRipple
             label="Bots"

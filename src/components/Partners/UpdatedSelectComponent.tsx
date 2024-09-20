@@ -1,5 +1,4 @@
 import { Autocomplete, TextField, Typography } from '@mui/material'
-import PropTypes from 'prop-types'
 import React, { useMemo } from 'react'
 
 const UpdatedSelectComponent = React.memo(
@@ -31,19 +30,36 @@ const UpdatedSelectComponent = React.memo(
             }
         }
 
+        const groupServices = services => {
+            return services.reduce((acc, service) => {
+                const parts = service.split('.')
+                const type = parts[2] // The word before the version
+                if (!acc[type]) {
+                    acc[type] = []
+                }
+                acc[type].push(service)
+                return acc
+            }, {})
+        }
+
         const availableServices = useMemo(() => {
-            return supplierState.registredServices.filter(
+            const filteredServices = supplierState.registredServices.filter(
                 service =>
                     !supplierState.stepsConfig[supplierState.step].services.find(
                         elem => elem.name === service,
                     ),
             )
+            return groupServices(filteredServices)
         }, [supplierState.registredServices, supplierState.stepsConfig, supplierState.step])
+
+        const options = useMemo(() => {
+            return Object.values(availableServices).flat()
+        }, [availableServices])
 
         return (
             <Autocomplete
                 disabled={!editing}
-                options={availableServices}
+                options={options}
                 renderInput={params => (
                     <TextField
                         {...params}
@@ -55,9 +71,9 @@ const UpdatedSelectComponent = React.memo(
                     />
                 )}
                 renderOption={(props, option) => (
-                    <li {...props}>
-                        <Typography variant="caption">{option}</Typography>
-                    </li>
+                    <Typography key={option} variant="caption" component="li" {...props}>
+                        {option}
+                    </Typography>
                 )}
                 onChange={handleChange}
                 filterOptions={(options, { inputValue }) =>
@@ -65,6 +81,18 @@ const UpdatedSelectComponent = React.memo(
                         option.toLowerCase().includes(inputValue.toLowerCase()),
                     )
                 }
+                groupBy={option => option.split('.')[2]}
+                renderGroup={params => (
+                    <li key={params.key}>
+                        <Typography
+                            variant="overline"
+                            style={{ fontWeight: 'bold', padding: '8px 16px' }}
+                        >
+                            {params.group}
+                        </Typography>
+                        <ul style={{ padding: 0 }}>{params.children}</ul>
+                    </li>
+                )}
                 sx={{
                     width: '100%',
                     '& .MuiOutlinedInput-root': {
@@ -95,22 +123,5 @@ const UpdatedSelectComponent = React.memo(
         )
     },
 )
-
-UpdatedSelectComponent.propTypes = {
-    editing: PropTypes.bool,
-    supplierState: PropTypes.shape({
-        registredServices: PropTypes.array.isRequired,
-        stepsConfig: PropTypes.object.isRequired,
-        step: PropTypes.number.isRequired,
-    }).isRequired,
-    dispatchSupplierState: PropTypes.func.isRequired,
-    actionTypes: PropTypes.object.isRequired,
-}
-
-UpdatedSelectComponent.defaultProps = {
-    editing: true,
-}
-
-UpdatedSelectComponent.displayName = 'UpdatedSelectComponent'
 
 export default UpdatedSelectComponent

@@ -37,6 +37,7 @@ const PartnerCard: React.FC<PartnerCardProps> = ({ partner, clickable, onClick }
             country_flag,
             logoBox,
             pChainAddress,
+            pChainAddresses,
         },
     } = partner
     useEffect(() => {
@@ -61,25 +62,6 @@ const PartnerCard: React.FC<PartnerCardProps> = ({ partner, clickable, onClick }
                 overflow: 'hidden',
             }}
         >
-            {!!isValidator && (
-                <Box
-                    sx={{
-                        position: 'absolute',
-                        background: theme => theme.palette.blue[50],
-                        padding: '10px 14px 8px 12px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        borderBottomLeftRadius: '8px',
-                        right: '0',
-                        top: '0',
-                    }}
-                >
-                    <Typography sx={{ color: theme => theme.palette.grey[950] }} variant="overline">
-                        Validator
-                    </Typography>
-                </Box>
-            )}
             {!!companyLogoColor && !!companyName && (
                 <PartnerLogo
                     colorLogo={companyLogoColor}
@@ -89,6 +71,49 @@ const PartnerCard: React.FC<PartnerCardProps> = ({ partner, clickable, onClick }
             )}
             <Box sx={{ height: 'auto' }}>
                 {!!companyName && <Typography variant="h5">{companyName}</Typography>}
+            </Box>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                {!!isValidator && (
+                    <Box
+                        sx={{
+                            width: '96px',
+                            height: '20px',
+                            background: theme => theme.palette.blue[50],
+                            padding: '0px, 8px, 0px, 8px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            borderRadius: '4px',
+                            letterSpacing: '1.6px',
+                        }}
+                    >
+                        <Typography
+                            sx={{ color: theme => theme.palette.grey[950] }}
+                            variant="overline"
+                        >
+                            Validator
+                        </Typography>
+                    </Box>
+                )}
+                {partner.contractAddress && (
+                    <Box
+                        sx={{
+                            width: '129px',
+                            height: '20px',
+                            background: '#09DE6B33',
+                            padding: '0px, 8px, 0px, 8px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            borderRadius: '4px',
+                            letterSpacing: '1.6px',
+                        }}
+                    >
+                        <Typography sx={{ color: '#18B728' }} variant="overline">
+                            On messenger
+                        </Typography>
+                    </Box>
+                )}
             </Box>
             <Box
                 sx={{

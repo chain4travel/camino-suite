@@ -6,11 +6,9 @@ import React, { useEffect } from 'react'
 import { Navigate, Outlet, useNavigate, useParams } from 'react-router'
 import store from 'wallet/store'
 import CMAccount from '../helpers/CMAccountManagerModule#CMAccount.json'
-import CMAccountManager from '../helpers/ManagerProxyModule#CMAccountManager.json'
 import { PartnerConfigurationProvider } from '../helpers/partnerConfigurationContext'
-import { SmartContractProvider, useSmartContract } from '../helpers/useSmartContract'
+import { SmartContractProvider } from '../helpers/useSmartContract'
 import { useAppSelector } from '../hooks/reduxHooks'
-import { useEffectOnce } from '../hooks/useEffectOnce'
 import { useFetchPartnerDataQuery, useIsPartnerQuery } from '../redux/services/partners'
 import { getWalletName } from '../redux/slices/app-config'
 import { getActiveNetwork } from '../redux/slices/network'
@@ -69,16 +67,12 @@ const PartnersLayout = () => {
             : '',
     })
     let { partnerID } = useParams()
-    const {
-        data: partner,
-        isFetching,
-        error,
-    } = useFetchPartnerDataQuery({
+    const { data: partner } = useFetchPartnerDataQuery({
         companyName: partnerID,
     })
-    const value = useSmartContract()
     const walletName = useAppSelector(getWalletName)
     const navigate = useNavigate()
+
     useEffect(() => {
         if (
             walletName &&
@@ -89,62 +83,6 @@ const PartnersLayout = () => {
         }
     }, [walletName])
 
-    async function s() {
-        const selectedNetwork = store.getters['Network/selectedNetwork']
-        const providerUrl = `${selectedNetwork.protocol}://${selectedNetwork.ip}:${selectedNetwork.port}/ext/bc/C/rpc`
-        const provider = new ethers.JsonRpcProvider(providerUrl)
-        const managerReadOnlyContract = new ethers.Contract(
-            '0xE5B2f76C778D082b07BDd7D51FFe83E3E055B47F',
-            CMAccountManager.abi,
-            provider,
-        )
-        const mappings = new Map()
-        const CMACCOUNT_ROLE = await managerReadOnlyContract.CMACCOUNT_ROLE()
-        const roleMemberCount = await managerReadOnlyContract.getRoleMemberCount(CMACCOUNT_ROLE)
-
-        const promises = []
-        for (let i = 0; i < roleMemberCount; i++) {
-            promises.push(
-                managerReadOnlyContract.getRoleMember(CMACCOUNT_ROLE, i).then(async role => {
-                    const creator = await managerReadOnlyContract.getCMAccountCreator(role)
-                    return { role, creator }
-                }),
-            )
-        }
-
-        const results = await Promise.all(promises)
-        results.forEach(({ role, creator }) => {
-            mappings.set(role.toLowerCase(), creator.toLowerCase())
-        })
-        await getPartnerServices(providerUrl, Object.fromEntries(mappings))
-    }
-    async function getPartnerServices(providerUrl: string, partnerContractMapping) {
-        const provider = new ethers.JsonRpcProvider(providerUrl)
-
-        for (const [contractAddress, partnerAddress] of Object.entries(partnerContractMapping)) {
-            const contract = getPartnerContract(contractAddress, provider)
-            try {
-                const supportedServices = await contract.getSupportedServices()
-                console.log(
-                    `Partner at ${partnerAddress} (contract: ${contractAddress}) supports:`,
-                    supportedServices,
-                )
-                const wantedServices = await contract.getSupportedServices()
-                console.log(
-                    `Partner at ${partnerAddress} (contract: ${contractAddress}) supports:`,
-                    wantedServices,
-                )
-            } catch (error) {
-                console.error(
-                    `Error reading services from ${partnerAddress} (contract: ${contractAddress}):`,
-                    error,
-                )
-            }
-        }
-    }
-    useEffectOnce(() => {
-        // s()
-    })
     const activeNetwork = useAppSelector(getActiveNetwork)
     if (isLoading) return <></>
     if (
@@ -185,8 +123,12 @@ const PartnersLayout = () => {
                     >
                         <Links />
                     </Toolbar>
-                    {((path.includes('partners/messenger-configuration') && !!data) ||
-                        partner?.contractAddress) && (
+                    {((path.includes('partners/messenger-configuration') &&
+                        !!data &&
+                        data?.attributes?.cChainAddress) ||
+                        (partner &&
+                            partner?.contractAddress &&
+                            partnerID === partner.attributes.companyName)) && (
                         <Toolbar
                             sx={{
                                 borderBottom: '1px solid',
@@ -210,8 +152,10 @@ const PartnersLayout = () => {
                     <Box
                         sx={{
                             mt:
-                                (path.includes('partners/messenger-configuration') && !!data) ||
-                                partner?.contractAddress
+                                (path.includes('partners/messenger-configuration') &&
+                                    !!data &&
+                                    data?.attributes?.cChainAddress) ||
+                                (path !== '/partners' && partner?.contractAddress)
                                     ? '9rem'
                                     : '5rem',
                             height: '100%',
@@ -223,7 +167,9 @@ const PartnersLayout = () => {
                         component={Paper}
                     >
                         {!path.includes('partners/messenger-configuration') ||
-                        (path.includes('partners/messenger-configuration') && !!data) ? (
+                        (path.includes('partners/messenger-configuration') &&
+                            !!data &&
+                            data?.attributes?.cChainAddress) ? (
                             <Outlet />
                         ) : (
                             <ClaimProfile />

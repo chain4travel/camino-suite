@@ -1,5 +1,4 @@
 import {
-    Autocomplete,
     Box,
     Card,
     CardContent,
@@ -12,13 +11,13 @@ import {
     TableContainer,
     TableHead,
     TableRow,
-    TextField,
     Typography,
 } from '@mui/material'
 import { ethers } from 'ethers'
 import React, { useEffect, useMemo, useReducer, useState } from 'react'
 import { useParams } from 'react-router'
 import MainButton from '../../components/MainButton'
+import UpdatedSelectComponent from '../../components/Partners/UpdatedSelectComponent'
 import {
     actionTypes,
     reducer,
@@ -298,61 +297,11 @@ const ConfigurDistrubitor = () => {
                     <Box sx={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                         <Typography variant="overline">services</Typography>
                         <FormControl>
-                            <Autocomplete
-                                disabled={!editing}
-                                options={state.registredServices.filter(
-                                    service =>
-                                        !distrubitorState.stepsConfig[
-                                            distrubitorState.step
-                                        ].services.find(elem => elem.name === service),
-                                )}
-                                renderInput={params => (
-                                    <TextField
-                                        {...params}
-                                        placeholder="Select a service"
-                                        InputProps={{
-                                            ...params.InputProps,
-                                            style: { height: '40px' },
-                                        }}
-                                    />
-                                )}
-                                renderOption={(props, option) => (
-                                    <li {...props}>
-                                        <Typography variant="caption">{option}</Typography>
-                                    </li>
-                                )}
-                                onChange={handleChange}
-                                filterOptions={(options, { inputValue }) =>
-                                    options.filter(option =>
-                                        option.toLowerCase().includes(inputValue.toLowerCase()),
-                                    )
-                                }
-                                sx={{
-                                    width: '100%',
-                                    '& .MuiOutlinedInput-root': {
-                                        height: '40px',
-                                        fontFamily: 'Inter',
-                                        fontSize: '14px',
-                                        fontWeight: 400,
-                                        lineHeight: '20px',
-                                        padding: '0 14px',
-                                        '& fieldset': {
-                                            borderColor: theme => theme.palette.card.border,
-                                            borderRadius: '12px',
-                                        },
-                                    },
-                                    '& .MuiAutocomplete-input': {
-                                        padding: '0 !important',
-                                        height: '40px',
-                                    },
-                                    '& .MuiAutocomplete-endAdornment': {
-                                        top: '50%',
-                                        transform: 'translateY(-50%)',
-                                    },
-                                    '& .MuiAutocomplete-option': {
-                                        padding: '6px 16px',
-                                    },
-                                }}
+                            <UpdatedSelectComponent
+                                editing={editing}
+                                supplierState={distrubitorState}
+                                dispatchSupplierState={dispatchDistrubitorState}
+                                actionTypes={actionTypes}
                             />
                         </FormControl>
                     </Box>

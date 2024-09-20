@@ -12,6 +12,7 @@ export interface AttributesType {
     contactFirstname?: string
     contactLastname?: string
     contactPhone?: string
+    pChainAddresses?: string[]
     pChainAddress?: string
     companyShortDescription?: string
     companyLongDescription?: string

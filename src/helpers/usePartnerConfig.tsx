@@ -142,7 +142,7 @@ export const usePartnerConfig = () => {
     }, [account, managerReadContract])
 
     useEffect(() => {
-        isCMAccount()
+        if (wallet) isCMAccount()
     }, [wallet])
 
     const addServices = useCallback(

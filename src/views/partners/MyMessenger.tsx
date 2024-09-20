@@ -20,7 +20,6 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import Alert from '../../components/Alert'
 import DialogAnimate from '../../components/Animate/DialogAnimate'
 import MainButton from '../../components/MainButton'
-import ServiceList from '../../components/Partners/ServiceList'
 import { usePartnerConfigurationContext } from '../../helpers/partnerConfigurationContext'
 import { usePartnerConfig } from '../../helpers/usePartnerConfig'
 import { useSmartContract } from '../../helpers/useSmartContract'
@@ -387,6 +386,18 @@ const MyMessenger = () => {
         fetchBots()
     }, [])
 
+    function getServicesNames(services) {
+        if (!services || services.length === '0') return 'None.'
+        let array = services.map(elem => {
+            const parts = elem.name.split('.')
+            let name = parts[parts.length - 1]
+            name = name.endsWith('Service') ? name.slice(0, -7) : name
+            return name // elem.name
+        })
+        let result = array.join(', ')
+        return result
+    }
+
     return (
         <>
             <Box
@@ -438,14 +449,30 @@ const MyMessenger = () => {
                             ),
                         }}
                     />
-                    <ServiceList
+                    <Box sx={{ display: 'flex', alignItems: 'start', gap: '16px' }}>
+                        <Typography sx={{ flex: '0 0 20%' }} variant="body2">
+                            Offered Services
+                        </Typography>
+                        <Typography variant="caption">
+                            {getServicesNames(state.stepsConfig[1]?.services)}
+                        </Typography>
+                    </Box>
+                    <Box sx={{ display: 'flex', alignItems: 'start', gap: '16px' }}>
+                        <Typography sx={{ flex: '0 0 20%' }} variant="body2">
+                            Wanted Services
+                        </Typography>
+                        <Typography variant="caption">
+                            {getServicesNames(state.stepsConfig[2]?.services)}
+                        </Typography>
+                    </Box>
+                    {/* <ServiceList
                         listName="Wanted Services"
                         services={state.stepsConfig[2]?.services.map(elem => elem.name)}
                     />
                     <ServiceList
                         listName="Offered Services"
                         services={state.stepsConfig[1]?.services.map(elem => elem.name)}
-                    />
+                    /> */}
                     <Box sx={{ display: 'flex', alignItems: 'start', gap: '16px' }}>
                         <Typography sx={{ flex: '0 0 20%' }} variant="body2">
                             Configured Bots
