@@ -1,8 +1,9 @@
 import { Box, Typography } from '@mui/material'
-import React from 'react'
+import React, { useMemo } from 'react'
 import { useNavigate } from 'react-router'
 import PartnerCard from '../../components/Partners/PartnerCard'
 import { usePartnerConfigurationContext } from '../../helpers/partnerConfigurationContext'
+import { useSmartContract } from '../../helpers/useSmartContract'
 import { useListMatchingPartnersQuery } from '../../redux/services/partners'
 
 const MatchingPartners = ({ state }) => {
@@ -17,8 +18,21 @@ const MatchingPartners = ({ state }) => {
         supportedResult: value?.state?.stepsConfig[1]?.services,
         wantedResult: value?.state?.stepsConfig[2]?.services,
     })
+    const sc = useSmartContract()
+    const matchingPartnersFiltred = useMemo(() => {
+        return partners?.data
+            ? partners?.data?.filter(elem => elem.attributes.cChainAddress != sc?.wallet?.address)
+            : []
+    }, [partners])
     const navigate = useNavigate()
-    if (isLoading || isFetching || error || !partners || partners?.data?.length === 0) return <></>
+    if (
+        isLoading ||
+        isFetching ||
+        error ||
+        !matchingPartnersFiltred ||
+        matchingPartnersFiltred?.data?.length === 0
+    )
+        return <></>
     return (
         <>
             <Typography variant="h5">Matching Partners</Typography>
@@ -30,8 +44,8 @@ const MatchingPartners = ({ state }) => {
                     maxWidth: theme => theme.customWidth.layoutMaxWitdh,
                 }}
             >
-                {partners.data &&
-                    partners.data.map((partner, index) => (
+                {matchingPartnersFiltred &&
+                    matchingPartnersFiltred.map((partner, index) => (
                         <PartnerCard
                             onClick={() => {
                                 navigate(partner.attributes.companyName)
