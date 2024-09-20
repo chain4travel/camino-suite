@@ -126,9 +126,6 @@ export const SmartContractProvider: React.FC<SmartContractProviderProps> = ({ ch
             )
             setProvider(ethersProvider)
             setManagerReadContract(managerReadOnlyContract)
-            // const allCMAccounts = await getCMAccountMappings()
-            // let result = allCMAccounts.getAllMappings()
-            // console.log(result)
         } catch (error) {
             console.error('User denied account access:', error)
         }

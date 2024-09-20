@@ -294,7 +294,6 @@ export const BasicSupportedServices = () => {
     })
     useEffect(() => {
         if (partner) {
-            console.log({ supportedServices: partner.supportedServices })
             dispatchSupplierState({
                 type: actionTypes.UPDATE_SUPPORTED_SERVICES,
                 payload: { services: partner.supportedServices, reset: true },

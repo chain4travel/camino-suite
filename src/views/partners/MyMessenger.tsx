@@ -454,7 +454,11 @@ const MyMessenger = () => {
                             Offered Services
                         </Typography>
                         <Typography variant="caption">
-                            {getServicesNames(state.stepsConfig[1]?.services)}
+                            {state.stepsConfig[1]?.services.length > 0 ? (
+                                getServicesNames(state.stepsConfig[1]?.services)
+                            ) : (
+                                <>None</>
+                            )}
                         </Typography>
                     </Box>
                     <Box sx={{ display: 'flex', alignItems: 'start', gap: '16px' }}>
@@ -462,7 +466,11 @@ const MyMessenger = () => {
                             Wanted Services
                         </Typography>
                         <Typography variant="caption">
-                            {getServicesNames(state.stepsConfig[2]?.services)}
+                            {state.stepsConfig[2]?.services.length > 0 ? (
+                                getServicesNames(state.stepsConfig[2]?.services)
+                            ) : (
+                                <>None</>
+                            )}
                         </Typography>
                     </Box>
                     {/* <ServiceList
@@ -679,6 +687,27 @@ const MyMessenger = () => {
                             )}
                         </Box>
                     </Box>
+                    {state.stepsConfig[1]?.services.length == 0 && (
+                        <Alert
+                            sx={{ maxWidth: 'none', width: 'fit-content' }}
+                            variant="warning"
+                            content="Visit the relevant tab to add offered services"
+                        />
+                    )}
+                    {state.stepsConfig[2]?.services.length == 0 && (
+                        <Alert
+                            sx={{ maxWidth: 'none', width: 'fit-content' }}
+                            variant="warning"
+                            content="Visit the relevant tab to add wanted services"
+                        />
+                    )}
+                    {bots.length == 0 && (
+                        <Alert
+                            sx={{ maxWidth: 'none', width: 'fit-content' }}
+                            variant="warning"
+                            content="Visit the relevant tab to add bots"
+                        />
+                    )}
                 </Configuration>
                 <Box sx={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
                     <Configuration.Infos

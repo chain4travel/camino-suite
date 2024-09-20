@@ -93,7 +93,7 @@ async function getContractMappings(): Promise<Map<string, string>> {
 
 function checkMatch(data): boolean {
     if (data.supportedResult.length === 0 && data.wantedResult.length === 0) {
-        return true
+        return false
     }
 
     const supportedResultSet = new Set(data.supportedResult.map(getServiceName))

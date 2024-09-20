@@ -191,9 +191,11 @@ const Widget = ({ supportedServices, CMAccountAddress, wantedServices, supported
                         )}
                         {!supportedCurrencies?.offChainPaymentSupported &&
                             !supportedCurrencies?.isCam && (
-                                <Typography fontSize={14} fontWeight={600} lineHeight={'20px'}>
-                                    None.
-                                </Typography>
+                                <li className="service-type-item">
+                                    <Typography fontSize={14} fontWeight={600} lineHeight={'20px'}>
+                                        None.
+                                    </Typography>
+                                </li>
                             )}
                     </ul>
                 ) : (

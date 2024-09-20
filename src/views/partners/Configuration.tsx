@@ -29,12 +29,14 @@ const Content = () => {
     const { state, dispatch } = usePartnerConfigurationContext()
     const [loading, setLoading] = useState(false)
     const partnerConfig = usePartnerConfig()
+
     async function submit() {
         setLoading(true)
         await partnerConfig.CreateConfiguration(state)
         setLoading(false)
     }
     const { balance } = useWalletBalance()
+
     if (contractCMAccountAddress) return <MyMessenger />
     return (
         <Box
@@ -66,10 +68,25 @@ const Content = () => {
                 )}
                 <Divider />
                 <Configuration.Buttons>
-                    <MainButton loading={loading} variant="contained" onClick={submit}>
+                    <MainButton
+                        loading={loading}
+                        variant="contained"
+                        onClick={submit}
+                        disabled={parseFloat(balance) < 100}
+                    >
                         Create Configuration
                     </MainButton>
                 </Configuration.Buttons>
+                <Box sx={{ width: '100%' }}>
+                    <Alert
+                        sx={{ maxWidth: 'none', width: 'fit-content' }}
+                        variant="warning"
+                        title="100 CAM is required"
+                        content={
+                            'Creating Camino Messenger account will incur a fee estimated of 0.22366775 CAM from C-Chain balance'
+                        }
+                    />
+                </Box>
             </Configuration>
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
                 {state.step === 0 && (
