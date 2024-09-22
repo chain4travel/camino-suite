@@ -1,7 +1,6 @@
 import { mdiWalletOutline } from '@mdi/js'
 import Icon from '@mdi/react'
 import { Box } from '@mui/material'
-import _ from 'lodash'
 import React, { useEffect, useState } from 'react'
 import store from 'wallet/store'
 import { getNameOfWallet, getPchainAddress } from '../../helpers/walletStore'
@@ -24,17 +23,16 @@ const LoggedInAccount = () => {
         )
     }, [activeNetwork])
 
-   useEffect(() => {
-        store.dispatch('Signavault/updateTransaction')
+    useEffect(() => {
+        checkPendingTx()
+    }, [adr])
 
-        const data = _.cloneDeep(walletStore?.Signavault)
-        console.log("walletStore?.Signavault", walletStore?.Signavault)
-        console.log('data', data)
-
+    const checkPendingTx = async () => {
+        await store.dispatch('Signavault/updateTransaction')
         if (walletStore?.Signavault?.transactions) {
             setHasPendingTx(walletStore.Signavault.transactions.length > 0)
         }
-    }, [adr])
+    }
 
     return (
         <Box sx={{ position: 'relative', display: 'flex', gap: 1, alignItems: 'center' }}>
