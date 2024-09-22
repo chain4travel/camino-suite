@@ -53,7 +53,7 @@ export default function SelectedNetwork() {
                 variant="verified"
                 sx={{
                     position: 'absolute',
-                    top: 0,
+                    top: -2,
                     right: 0,
                 }}
                 label={networkChip(activeNetwork?.networkId)}

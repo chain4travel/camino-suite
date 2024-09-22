@@ -1,7 +1,9 @@
 import { mdiWalletOutline } from '@mdi/js'
 import Icon from '@mdi/react'
 import { Box } from '@mui/material'
+import _ from 'lodash'
 import React, { useEffect, useState } from 'react'
+import store from 'wallet/store'
 import { getNameOfWallet, getPchainAddress } from '../../helpers/walletStore'
 import { useAppDispatch, useAppSelector } from '../../hooks/reduxHooks'
 import { getWalletName, getWalletStore, updatePchainAddress } from '../../redux/slices/app-config'
@@ -14,26 +16,25 @@ const LoggedInAccount = () => {
     const activeNetwork = useAppSelector(getActiveNetwork)
     const walletStore = useAppSelector(getWalletStore)
     const [hasPendingTx, setHasPendingTx] = useState<boolean>(false)
-    const [test, setTest] = useState<any>()
     const adr = getPchainAddress()
     const dispatch = useAppDispatch()
     useEffect(() => {
         dispatch(
             updatePchainAddress({ address: getPchainAddress(), walletName: getNameOfWallet() }),
         )
+    }, [activeNetwork])
 
-        console.log('Wallet store: ', walletStore)
+   useEffect(() => {
+        store.dispatch('Signavault/updateTransaction')
 
-        setTest(walletStore?.Signavault)
-    }, [activeNetwork, walletStore, walletName])
+        const data = _.cloneDeep(walletStore?.Signavault)
+        console.log("walletStore?.Signavault", walletStore?.Signavault)
+        console.log('data', data)
 
-    useEffect(() => {
-        console.log('Test: ', test)
-        console.log('Test transactions: ', test?.transactions)
-        if (test && test.transactions.length > 0) {
-            setHasPendingTx(true)
-        } else setHasPendingTx(false)
-    }, [test, walletName, adr])
+        if (walletStore?.Signavault?.transactions) {
+            setHasPendingTx(walletStore.Signavault.transactions.length > 0)
+        }
+    }, [adr])
 
     return (
         <Box sx={{ position: 'relative', display: 'flex', gap: 1, alignItems: 'center' }}>
