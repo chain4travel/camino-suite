@@ -110,7 +110,7 @@ const Content = () => {
                             <Alert
                                 sx={{ maxWidth: 'none', width: 'fit-content' }}
                                 variant="negative"
-                                content="The wallet does not have sufficient funds."
+                                content="The wallet does not have sufficient funds on C-Chain."
                             />
                         )}
                         {!store.getters['Accounts/kycStatus'] && (
