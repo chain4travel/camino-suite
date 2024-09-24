@@ -4,12 +4,12 @@ import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router'
 import Alert from '../../components/Alert'
 import { usePartnerConfig } from '../../helpers/usePartnerConfig'
+import { useAppDispatch } from '../../hooks/reduxHooks'
 import { useFetchPartnerDataQuery } from '../../redux/services/partners'
+import { updateNotificationStatus } from '../../redux/slices/app-config'
 import { Configuration } from './Configuration'
 
 export const BasicManageBots = () => {
-    const [bots, setBots] = useState([])
-    const [loading, setLoading] = useState(false)
     const { partnerID } = useParams()
     const { data: partner } = useFetchPartnerDataQuery({
         companyName: partnerID,
@@ -26,8 +26,7 @@ export const BasicManageBots = () => {
             <Configuration>
                 <Configuration.Title>Manage Bots</Configuration.Title>
                 <Configuration.Paragraphe>
-                    Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula
-                    eget dolor. Aenean massa. Donec sociis natoque penatibus.
+                    List in this page the addresses of all bots using this Messenger Account.
                 </Configuration.Paragraphe>
                 {partner.bots &&
                     partner.bots.length > 0 &&
@@ -95,12 +94,6 @@ export const BasicManageBots = () => {
                         )
                     })}
             </Configuration>
-            <Box sx={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                <Configuration.Infos
-                    information="This Camino Messenger wizard will assist you in generating and activating your Camino Messenger address. Once the process is complete, your Camino Messenger address will appear on your partner detail page, allowing you to communicate directly with other Camino Messenger accounts."
-                    rackRates="This Camino Messenger wizard will assist you in generating and activating your Camino Messenger address."
-                ></Configuration.Infos>
-            </Box>
         </Box>
     )
 }
@@ -115,6 +108,8 @@ const ManageBots = () => {
         setAddress(newAddress)
         setIsValidAddress(ethers.isAddress(newAddress))
     }
+    const appDispatch = useAppDispatch()
+
     const { addMessengerBot, getListOfBots, removeMessengerBot } = usePartnerConfig()
 
     async function fetchBots() {
@@ -129,15 +124,29 @@ const ManageBots = () => {
     const handleAddBot = () => {
         if (isValidAddress) {
             setLoading(true)
-            addMessengerBot(address).then(() => {
+            addMessengerBot(address).then(async () => {
                 setAddress('')
-                fetchBots()
+                await fetchBots()
+                appDispatch(
+                    updateNotificationStatus({
+                        message: 'Bot added successfully',
+                        severity: 'success',
+                    }),
+                )
             })
         }
     }
     const handleRemoveBot = address => {
         setLoading(true)
-        removeMessengerBot(address).then(() => fetchBots())
+        removeMessengerBot(address).then(async () => {
+            await fetchBots()
+            appDispatch(
+                updateNotificationStatus({
+                    message: 'Bot removed successfully',
+                    severity: 'success',
+                }),
+            )
+        })
     }
     return (
         <Box
@@ -151,8 +160,7 @@ const ManageBots = () => {
             <Configuration>
                 <Configuration.Title>Manage Bots</Configuration.Title>
                 <Configuration.Paragraphe>
-                    Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula
-                    eget dolor. Aenean massa. Donec sociis natoque penatibus.
+                    List in this page the addresses of all bots using this Messenger Account.
                 </Configuration.Paragraphe>
                 {loading && (
                     <Box sx={{ position: 'relative', height: '106px' }}>
@@ -232,17 +240,13 @@ const ManageBots = () => {
                                     />
                                     <Button
                                         disabled={loading}
-                                        variant="outlined"
+                                        variant="contained"
                                         onClick={() => handleRemoveBot(bot)}
                                         sx={{
                                             padding: '6px 12px',
                                             gap: '6px',
                                             borderRadius: '8px',
                                             border: '1px solid #475569',
-                                            backgroundColor: theme =>
-                                                theme.palette.mode === 'dark'
-                                                    ? '#020617'
-                                                    : '#F1F5F9',
                                             borderWidth: '1px',
                                             '&:hover': {
                                                 borderWidth: '1px',
@@ -281,8 +285,6 @@ const ManageBots = () => {
                                 gap: '6px',
                                 borderRadius: '8px',
                                 border: '1px solid #475569',
-                                backgroundColor: theme =>
-                                    theme.palette.mode === 'dark' ? '#0F182A' : '#F1F5F9',
                                 borderWidth: '1px',
                                 '&:hover': {
                                     borderWidth: '1px',
@@ -308,7 +310,7 @@ const ManageBots = () => {
                             onChange={handleAddressChange}
                         />
                         <Button
-                            variant="outlined"
+                            variant="contained"
                             onClick={handleAddBot}
                             disabled={!isValidAddress || loading}
                             sx={{
@@ -316,8 +318,6 @@ const ManageBots = () => {
                                 gap: '6px',
                                 borderRadius: '8px',
                                 border: '1px solid #475569',
-                                backgroundColor: theme =>
-                                    theme.palette.mode === 'dark' ? '#020617' : '#F1F5F9',
                                 borderWidth: '1px',
                                 '&:hover': {
                                     borderWidth: '1px',
@@ -334,10 +334,7 @@ const ManageBots = () => {
                 </Box>
             </Configuration>
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                <Configuration.Infos
-                    information="This Camino Messenger wizard will assist you in generating and activating your Camino Messenger address. Once the process is complete, your Camino Messenger address will appear on your partner detail page, allowing you to communicate directly with other Camino Messenger accounts."
-                    rackRates="This Camino Messenger wizard will assist you in generating and activating your Camino Messenger address."
-                ></Configuration.Infos>
+                <Configuration.Infos information="Check with your IT departments for the C-Chain addresses of each bots, and keep the list updated in case of changes."></Configuration.Infos>
             </Box>
         </Box>
     )

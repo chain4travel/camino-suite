@@ -1,11 +1,9 @@
-import { Box, Link, Toolbar, Typography } from '@mui/material'
+import { Box, Button, Link, Toolbar, Typography } from '@mui/material'
 
 import { Paper } from '@mui/material'
-import { ethers } from 'ethers'
 import React, { useEffect } from 'react'
 import { Navigate, Outlet, useNavigate, useParams } from 'react-router'
 import store from 'wallet/store'
-import CMAccount from '../helpers/CMAccountManagerModule#CMAccount.json'
 import { PartnerConfigurationProvider } from '../helpers/partnerConfigurationContext'
 import { SmartContractProvider } from '../helpers/useSmartContract'
 import { useAppSelector } from '../hooks/reduxHooks'
@@ -15,6 +13,15 @@ import { getActiveNetwork } from '../redux/slices/network'
 import Links from '../views/settings/Links'
 
 const ClaimProfile = () => {
+    const generateEmail = () => {
+        const subject = 'Claim a Partner'
+        const body = `This is to claim a Partner record and associate it to the wallet with C-Chain address .Please add your name, contact details, the Partner name, and attach any evidence of your affiliation with the Partner.`
+
+        const mailtoLink = `mailto:${emailAddress}?subject=${encodeURIComponent(
+            subject,
+        )}&body=${encodeURIComponent(body)}`
+        window.location.href = mailtoLink
+    }
     const emailAddress = 'foundation@camino.network'
     return (
         <Box
@@ -29,35 +36,30 @@ const ClaimProfile = () => {
         >
             <Typography variant="h5">Claim a profile</Typography>
             <Typography variant="body2" textAlign={'center'}>
-                To manage and configure your Camino Messenger, you need to claim an account.
+                To manage and configure your Camino Messenger, you need to claim a Partner record
+                first.
             </Typography>
             <Typography variant="body2" textAlign={'center'}>
-                Contact the Camino Network Foundation via{' '}
-                <Link href={`mailto:${emailAddress}`} target="_blank" rel="noopener noreferrer">
-                    email
-                </Link>{' '}
+                Contact the Camino Network Foundation via <Link onClick={generateEmail}>email</Link>{' '}
                 to proceed.
             </Typography>
+            <Button
+                onClick={generateEmail}
+                sx={{
+                    padding: '10px 16px',
+                    borderRadius: '8px',
+                    background: 'linear-gradient(90deg, #0085FF 0%, #B440FC 100%)',
+                    backgroundColor: theme =>
+                        theme.palette.mode === 'dark' ? '#020617' : '#F1F5F9',
+                }}
+            >
+                <Typography fontSize={14} fontWeight={600} lineHeight={'20px'}>
+                    Contact
+                </Typography>
+            </Button>
         </Box>
     )
 }
-
-// Function to create a contract instance
-function getPartnerContract(address, provider) {
-    return new ethers.Contract(address, CMAccount, provider)
-}
-
-// Main function to get services from multiple partner contracts
-// async function getPartnerServices(partnerAddresses: string[], providerUrl: string) {
-//     const provider = new ethers.JsonRpcProvider(providerUrl)
-//     for (const address of partnerAddresses) {
-//         const contract = getPartnerContract(address, provider)
-//         try {
-//             const result = await contract.getSupportedServices()
-//             console.log(result)
-//         } catch (error) {}
-//     }
-// }
 
 const PartnersLayout = () => {
     const path = window.location.pathname

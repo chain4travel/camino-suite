@@ -1,9 +1,11 @@
+import RefreshIcon from '@mui/icons-material/Refresh'
 import {
     Box,
     Button,
     Checkbox,
     Divider,
     FormControlLabel,
+    IconButton,
     InputAdornment,
     OutlinedInput,
     TextField,
@@ -22,6 +24,8 @@ import {
 import { usePartnerConfig } from '../../helpers/usePartnerConfig'
 import { useSmartContract } from '../../helpers/useSmartContract'
 import useWalletBalance from '../../helpers/useWalletBalance'
+import { useAppDispatch } from '../../hooks/reduxHooks'
+import { updateNotificationStatus } from '../../redux/slices/app-config'
 import MyMessenger from './MyMessenger'
 
 const Content = () => {
@@ -29,13 +33,19 @@ const Content = () => {
     const { state, dispatch } = usePartnerConfigurationContext()
     const [loading, setLoading] = useState(false)
     const partnerConfig = usePartnerConfig()
-
+    const appDispatch = useAppDispatch()
     async function submit() {
         setLoading(true)
         await partnerConfig.CreateConfiguration(state)
+        appDispatch(
+            updateNotificationStatus({
+                message: 'Messenger Account Created',
+                severity: 'success',
+            }),
+        )
         setLoading(false)
     }
-    const { balance } = useWalletBalance()
+    const { balance, fetchBalance } = useWalletBalance()
 
     if (contractCMAccountAddress) return <MyMessenger />
     return (
@@ -51,15 +61,57 @@ const Content = () => {
                 <Configuration.SubTitle>Messenger setup</Configuration.SubTitle>
                 <Configuration.Title>{state.stepsConfig[state.step].title}</Configuration.Title>
                 {state.stepsConfig[state.step].paragraph && (
-                    <Configuration.Paragraphe>
-                        {state.stepsConfig[state.step].paragraph}
-                    </Configuration.Paragraphe>
+                    <>
+                        <Typography variant="body2">
+                            To create a Messenger Account you need to:
+                        </Typography>
+                        <ol style={{ marginLeft: '20px' }}>
+                            <li className="service-type-item">
+                                <Typography fontSize={14} fontWeight={600} lineHeight={'20px'}>
+                                    Be KYC-verified and fund the C-Chain address of your connected
+                                    Wallet with at least 100 CAM.
+                                </Typography>
+                            </li>
+                            <li className="service-type-item">
+                                <Typography fontSize={14} fontWeight={600} lineHeight={'20px'}>
+                                    Create the Account in this page.
+                                </Typography>
+                            </li>
+                            <li className="service-type-item">
+                                <Typography fontSize={14} fontWeight={600} lineHeight={'20px'}>
+                                    Configure Services that you offer to Partners.
+                                </Typography>
+                            </li>
+                            <li className="service-type-item">
+                                <Typography fontSize={14} fontWeight={600} lineHeight={'20px'}>
+                                    Configure Services that you are looking for in Camino Network.
+                                </Typography>
+                            </li>
+                            <li className="service-type-item">
+                                <Typography fontSize={14} fontWeight={600} lineHeight={'20px'}>
+                                    Manage the Bots associated to your Messenger Account.
+                                </Typography>
+                            </li>
+                        </ol>
+                        {balance !== '' && parseFloat(balance) < 100 && (
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                <Typography variant="caption">Refresh Balance</Typography>
+                                <IconButton onClick={fetchBalance} aria-label="refresh">
+                                    <RefreshIcon fontSize="small" />
+                                </IconButton>
+                            </Box>
+                        )}
+                    </>
                 )}
                 {state.step === 0 && (
                     <>
                         <Input />
                         {balance !== '' && parseFloat(balance) < 100 && (
-                            <Alert variant="negative" content="Wallet has not sufficient funds." />
+                            <Alert
+                                sx={{ maxWidth: 'none', width: 'fit-content' }}
+                                variant="negative"
+                                content="The wallet does not have sufficient funds."
+                            />
                         )}
                         {!store.getters['Accounts/kycStatus'] && (
                             <Alert variant="negative" content="Not KYC Verified" />
@@ -67,39 +119,39 @@ const Content = () => {
                     </>
                 )}
                 <Divider />
-                <Configuration.Buttons>
-                    <MainButton
-                        loading={loading}
-                        variant="contained"
-                        onClick={submit}
-                        disabled={parseFloat(balance) < 100}
-                    >
-                        Create Configuration
-                    </MainButton>
-                </Configuration.Buttons>
                 <Box sx={{ width: '100%' }}>
                     <Alert
                         sx={{ maxWidth: 'none', width: 'fit-content' }}
                         variant="warning"
-                        title="100 CAM is required"
                         content={
                             'Creating Camino Messenger account will incur a fee estimated of 0.22366775 CAM from C-Chain balance'
                         }
                     />
                 </Box>
+                <Configuration.Buttons>
+                    <MainButton
+                        loading={loading}
+                        variant="contained"
+                        onClick={submit}
+                        disabled={
+                            !state.balance ||
+                            parseFloat(state.balance) < 100 ||
+                            parseFloat(state.balance) > parseFloat(balance) - 0.5 ||
+                            !store.getters['Accounts/kycStatus']
+                        }
+                    >
+                        Create
+                    </MainButton>
+                </Configuration.Buttons>
             </Configuration>
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
                 {state.step === 0 && (
                     <Alert
                         variant="info"
-                        title="100 CAM is required"
-                        content="To activate your Messenger address, a minimum deposit of 100 CAM is required. Before creating your Camino Messenger account, please ensure that your accessible wallet has sufficient funds."
+                        title="100 CAM required"
+                        content="A minimum deposit of 100 CAM is required, please ensure that your connected Wallet has sufficient funds. This amount will be held in the Messenger Account and used to pay for transaction fees. It can be topped up later."
                     />
                 )}
-                <Configuration.Infos
-                    information="This Camino Messenger wizard will assist you in generating and activating your Camino Messenger address. Once the process is complete, your Camino Messenger address will appear on your partner detail page, allowing you to communicate directly with other Camino Messenger accounts."
-                    rackRates="This Camino Messenger wizard will assist you in generating and activating your Camino Messenger address."
-                ></Configuration.Infos>
             </Box>
         </Box>
     )
@@ -222,61 +274,6 @@ Configuration.Services = function Services({
                         }}
                     >
                         <Typography variant="body2">{service.name}</Typography>
-                        {!!!partnerID && (
-                            <Box
-                                sx={{
-                                    display: 'flex',
-                                    gap: '12px',
-                                    alignItems: 'center',
-                                    flexShrink: '0',
-                                }}
-                            >
-                                {state.step === 1 && (
-                                    <Button
-                                        disabled={disabled}
-                                        variant="outlined"
-                                        onClick={() => addCapability(index)}
-                                        sx={{
-                                            padding: '6px 12px',
-                                            gap: '6px',
-                                            borderRadius: '8px',
-                                            border: '1px solid #475569',
-                                            backgroundColor: theme =>
-                                                theme.palette.mode === 'dark'
-                                                    ? '#020617'
-                                                    : '#F1F5F9',
-                                            borderWidth: '1px',
-                                            '&:hover': {
-                                                borderWidth: '1px',
-                                                boxShadow: 'none',
-                                            },
-                                        }}
-                                    >
-                                        <Typography variant="caption">Add capability</Typography>
-                                    </Button>
-                                )}
-                                <Button
-                                    disabled={disabled}
-                                    variant="outlined"
-                                    sx={{
-                                        padding: '6px 12px',
-                                        gap: '6px',
-                                        borderRadius: '8px',
-                                        border: '1px solid #475569',
-                                        backgroundColor: theme =>
-                                            theme.palette.mode === 'dark' ? '#020617' : '#F1F5F9',
-                                        borderWidth: '1px',
-                                        '&:hover': {
-                                            borderWidth: '1px',
-                                            boxShadow: 'none',
-                                        },
-                                    }}
-                                    onClick={() => removeService(index)}
-                                >
-                                    <Typography variant="caption">Remove service</Typography>
-                                </Button>
-                            </Box>
-                        )}
                     </Box>
                     {state.step === 1 && (
                         <>
@@ -380,20 +377,29 @@ Configuration.Services = function Services({
                                                     Rack Rates
                                                 </Typography>
                                             }
+                                            disabled={disabled}
                                             control={
                                                 <Checkbox
                                                     disabled={disabled}
                                                     sx={{
                                                         color: theme =>
-                                                            theme.palette.secondary.main,
+                                                            disabled
+                                                                ? theme.palette.action.disabled
+                                                                : theme.palette.secondary.main,
                                                         '&.Mui-checked': {
                                                             color: theme =>
-                                                                theme.palette.secondary.main,
+                                                                disabled
+                                                                    ? theme.palette.action.disabled
+                                                                    : theme.palette.secondary.main,
                                                         },
                                                         '&.MuiCheckbox-colorSecondary.Mui-checked':
                                                             {
                                                                 color: theme =>
-                                                                    theme.palette.secondary.main,
+                                                                    disabled
+                                                                        ? theme.palette.action
+                                                                              .disabled
+                                                                        : theme.palette.secondary
+                                                                              .main,
                                                             },
                                                     }}
                                                     checked={
@@ -413,20 +419,6 @@ Configuration.Services = function Services({
                                                 />
                                             }
                                         />
-                                    </Box>
-                                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                                        <svg
-                                            width="24"
-                                            height="24"
-                                            viewBox="0 0 24 24"
-                                            fill="none"
-                                            xmlns="http://www.w3.org/2000/svg"
-                                        >
-                                            <path
-                                                d="M12 22C17.5 22 22 17.5 22 12C22 6.5 17.5 2 12 2C6.5 2 2 6.5 2 12C2 17.5 6.5 22 12 22ZM11 7H13V9H11V7ZM14 17H10V15H11V13H10V11H13V15H14V17Z"
-                                                fill="#0085FF"
-                                            />
-                                        </svg>
                                     </Box>
                                 </Box>
                             )}
@@ -475,25 +467,65 @@ Configuration.Services = function Services({
                                                 }}
                                                 placeholder="Describe your capabilities..."
                                             />
-                                            <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                                                <svg
-                                                    width="24"
-                                                    height="24"
-                                                    viewBox="0 0 24 24"
-                                                    fill="none"
-                                                    xmlns="http://www.w3.org/2000/svg"
-                                                >
-                                                    <path
-                                                        d="M12 22C17.5 22 22 17.5 22 12C22 6.5 17.5 2 12 2C6.5 2 2 6.5 2 12C2 17.5 6.5 22 12 22ZM11 7H13V9H11V7ZM14 17H10V15H11V13H10V11H13V15H14V17Z"
-                                                        fill="#0085FF"
-                                                    />
-                                                </svg>
-                                            </Box>
                                         </Box>
                                     )
                                 },
                             )}
                         </>
+                    )}
+                    {!!!partnerID && (
+                        <Box
+                            sx={{
+                                display: 'flex',
+                                gap: '12px',
+                                alignItems: 'center',
+                                flexShrink: '0',
+                                justifyContent: 'flex-end',
+                            }}
+                        >
+                            {state.step === 1 && (
+                                <Button
+                                    disabled={disabled}
+                                    variant="contained"
+                                    onClick={() => addCapability(index)}
+                                    sx={{
+                                        padding: '6px 12px',
+                                        gap: '6px',
+                                        borderRadius: '8px',
+                                        border: '1px solid #475569',
+                                        // backgroundColor: theme =>
+                                        //     theme.palette.mode === 'dark' ? '#020617' : '#F1F5F9',
+                                        borderWidth: '1px',
+                                        '&:hover': {
+                                            borderWidth: '1px',
+                                            boxShadow: 'none',
+                                        },
+                                    }}
+                                >
+                                    <Typography variant="caption">Add capability</Typography>
+                                </Button>
+                            )}
+                            <Button
+                                disabled={disabled}
+                                variant="contained"
+                                sx={{
+                                    padding: '6px 12px',
+                                    gap: '6px',
+                                    borderRadius: '8px',
+                                    border: '1px solid #475569',
+                                    // backgroundColor: theme =>
+                                    //     theme.palette.mode === 'dark' ? '#020617' : '#F1F5F9',
+                                    borderWidth: '1px',
+                                    '&:hover': {
+                                        borderWidth: '1px',
+                                        boxShadow: 'none',
+                                    },
+                                }}
+                                onClick={() => removeService(index)}
+                            >
+                                <Typography variant="caption">Remove service</Typography>
+                            </Button>
+                        </Box>
                     )}
                 </Box>
             ))}
@@ -501,7 +533,17 @@ Configuration.Services = function Services({
     )
 }
 
-Configuration.Infos = function Infos({ rackRates, information }) {
+Configuration.Infos = function Infos({
+    rackRates,
+    information,
+    infos,
+    offred,
+}: {
+    rackRates?: string
+    information?: string
+    infos?: string[]
+    offred?: boolean
+}) {
     return (
         <Box
             sx={{
@@ -515,15 +557,65 @@ Configuration.Infos = function Infos({ rackRates, information }) {
                 gap: '16px',
             }}
         >
-            <Box sx={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                <Typography variant="overline">information</Typography>
-                <Typography variant="caption">{information}</Typography>
-            </Box>
-            <Divider />
-            <Box sx={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                <Typography variant="overline">rack rates</Typography>
-                <Typography variant="caption">{rackRates}</Typography>
-            </Box>
+            {offred && (
+                <Box sx={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                    <Typography variant="overline">information</Typography>
+                    <Typography variant="caption">For every service, you can:</Typography>
+                    <ul style={{ marginLeft: '16px' }}>
+                        <li>
+                            <Typography variant="caption">
+                                Set a fee for the caller, in CAM
+                            </Typography>
+                        </li>
+                        <li>
+                            <Typography variant="caption">
+                                Flag it as offering "rack" rates, or not. Rack rates are public,
+                                not-negotiated rate on product available for consumption on the
+                                Camino Network
+                            </Typography>
+                        </li>
+                        <li>
+                            <Typography variant="caption">
+                                Add capabilities, as free text to describe the service in detail,
+                                e.g. destination, rate types, etc.
+                            </Typography>
+                        </li>
+                    </ul>
+                </Box>
+            )}
+            {information && (
+                <Box sx={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                    <Typography variant="overline">information</Typography>
+                    <Typography variant="caption">{information}</Typography>
+                </Box>
+            )}
+
+            {rackRates && (
+                <>
+                    <Divider />
+                    <Box sx={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                        <Typography variant="overline">rack rates</Typography>
+                        <Typography variant="caption">{rackRates}</Typography>
+                    </Box>
+                </>
+            )}
+            {infos &&
+                infos.length > 0 &&
+                infos.map((elem, index) => (
+                    <Box key={index}>
+                        <Divider />
+                        <Box
+                            sx={{
+                                display: 'flex',
+                                flexDirection: 'column',
+                                gap: '8px',
+                                mt: '16px',
+                            }}
+                        >
+                            <Typography variant="caption">{elem}</Typography>
+                        </Box>
+                    </Box>
+                ))}
         </Box>
     )
 }

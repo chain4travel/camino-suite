@@ -30,7 +30,7 @@ const MatchingPartners = ({ state }) => {
         isFetching ||
         error ||
         !matchingPartnersFiltred ||
-        matchingPartnersFiltred?.data?.length === 0
+        matchingPartnersFiltred?.length === 0
     )
         return <></>
     return (
