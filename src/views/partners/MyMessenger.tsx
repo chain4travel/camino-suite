@@ -11,12 +11,14 @@ import {
     Divider,
     FormControlLabel,
     IconButton,
+    Link,
     OutlinedInput,
     TextField,
     Typography,
 } from '@mui/material'
 import { ethers } from 'ethers'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import { useNavigate } from 'react-router'
 import Alert from '../../components/Alert'
 import DialogAnimate from '../../components/Animate/DialogAnimate'
 import MainButton from '../../components/MainButton'
@@ -24,7 +26,9 @@ import { usePartnerConfigurationContext } from '../../helpers/partnerConfigurati
 import { usePartnerConfig } from '../../helpers/usePartnerConfig'
 import { useSmartContract } from '../../helpers/useSmartContract'
 import useWalletBalance from '../../helpers/useWalletBalance'
+import { useAppDispatch } from '../../hooks/reduxHooks'
 import { useFetchPartnerDataQuery } from '../../redux/services/partners'
+import { updateNotificationStatus } from '../../redux/slices/app-config'
 import { Configuration } from './Configuration'
 
 const AmountInput = ({ amount, onAmountChange, onMaxAmountClick, maxAmount }) => {
@@ -157,7 +161,7 @@ const AddressInput = ({ address, onAddressChange, onMyAddressClick }) => {
     )
 }
 
-const CamWithdraw = () => {
+const CamWithdraw = ({ setOpen }) => {
     const { wallet, contractCMAccountAddress } = useSmartContract()
     const [address, setAddress] = useState('')
     const [amount, setAmount] = useState('')
@@ -211,7 +215,7 @@ const CamWithdraw = () => {
         setAddress(newAddress)
         setIsValidAddress(ethers.isAddress(newAddress))
     }, [wallet.address])
-
+    const appDispatch = useAppDispatch()
     const handleMaxAmountClick = useCallback(() => {
         setAmount(maxAmount)
         validateAmount(maxAmount)
@@ -224,6 +228,13 @@ const CamWithdraw = () => {
         setAmount('')
         setConfirm(false)
         setAddress('')
+        appDispatch(
+            updateNotificationStatus({
+                message: 'Withdrawal completed successfully!',
+                severity: 'success',
+            }),
+        )
+        setOpen(false)
         setLoading(false)
     }
 
@@ -249,7 +260,7 @@ const CamWithdraw = () => {
                 }}
                 label={
                     <Typography variant="body2">
-                        i double-checked the address i am sending to
+                        I double-checked the address I am about to send to
                     </Typography>
                 }
                 control={
@@ -328,6 +339,7 @@ const MyMessenger = () => {
         companyName: '',
         cChainAddress: wallet.address,
     })
+    const appDispatch = useAppDispatch()
     const handleOpenModal = () => {
         setOpen(true)
     }
@@ -363,6 +375,12 @@ const MyMessenger = () => {
                 if (tempCAMSupported) await addSupportedToken(ethers.ZeroAddress)
                 else await removeSupportedToken(ethers.ZeroAddress)
             }
+            appDispatch(
+                updateNotificationStatus({
+                    message: 'Accepted currencies updated successfully',
+                    severity: 'success',
+                }),
+            )
             setIsEditMode(false)
         } catch (error) {
             console.error('Error: ', error)
@@ -397,7 +415,7 @@ const MyMessenger = () => {
         let result = array.join(', ')
         return result
     }
-
+    const navigate = useNavigate()
     return (
         <>
             <Box
@@ -415,6 +433,9 @@ const MyMessenger = () => {
                     <Configuration.Paragraphe>
                         First you need to top up the CM Account with CAM, EURSH or USDC to work
                         properly. Transfer it to the newly generated CM address below.
+                        <br />
+                        In this page you are able to display and copy your Camino Messenger address,
+                        and manage accepted currencies.
                     </Configuration.Paragraphe>
                     <TextField
                         disabled
@@ -442,6 +463,12 @@ const MyMessenger = () => {
                                     variant="outlined"
                                     onClick={() => {
                                         navigator.clipboard.writeText(contractCMAccountAddress)
+                                        appDispatch(
+                                            updateNotificationStatus({
+                                                message: 'Address copied to clipboard',
+                                                severity: 'success',
+                                            }),
+                                        )
                                     }}
                                 >
                                     Copy
@@ -457,7 +484,18 @@ const MyMessenger = () => {
                             {state.stepsConfig[1]?.services.length > 0 ? (
                                 getServicesNames(state.stepsConfig[1]?.services)
                             ) : (
-                                <>None</>
+                                <>
+                                    None. Visit the relevant{' '}
+                                    <Link
+                                        sx={{ cursor: 'pointer' }}
+                                        onClick={() =>
+                                            navigate('/partners/messenger-configuration/supplier')
+                                        }
+                                    >
+                                        tab
+                                    </Link>{' '}
+                                    to add offered services
+                                </>
                             )}
                         </Typography>
                     </Box>
@@ -469,10 +507,24 @@ const MyMessenger = () => {
                             {state.stepsConfig[2]?.services.length > 0 ? (
                                 getServicesNames(state.stepsConfig[2]?.services)
                             ) : (
-                                <>None</>
+                                <>
+                                    None. Visit the relevant{' '}
+                                    <Link
+                                        sx={{ cursor: 'pointer' }}
+                                        onClick={() =>
+                                            navigate(
+                                                '/partners/messenger-configuration/distribution',
+                                            )
+                                        }
+                                    >
+                                        tab
+                                    </Link>{' '}
+                                    to add wanted services
+                                </>
                             )}
                         </Typography>
                     </Box>
+
                     {/* <ServiceList
                         listName="Wanted Services"
                         services={state.stepsConfig[2]?.services.map(elem => elem.name)}
@@ -487,7 +539,18 @@ const MyMessenger = () => {
                         </Typography>
                         <Typography variant="caption">
                             {bots.length === 0 ? (
-                                <>None</>
+                                <>
+                                    None. Visit the relevant{' '}
+                                    <Link
+                                        sx={{ cursor: 'pointer' }}
+                                        onClick={() =>
+                                            navigate('/partners/messenger-configuration/bots')
+                                        }
+                                    >
+                                        tab
+                                    </Link>{' '}
+                                    to add bots
+                                </>
                             ) : (
                                 <>
                                     You have {bots.length} configured{' '}
@@ -517,6 +580,7 @@ const MyMessenger = () => {
                                     getBalanceOfAnAddress(contractCMAccountAddress)
                                 }}
                                 sx={{
+                                    cursor: 'pointer',
                                     color: theme => `${theme.palette.text.primary} !important`,
                                 }}
                             />
@@ -580,11 +644,7 @@ const MyMessenger = () => {
                                 }
                             />
                             {!isEditMode && (
-                                <Button
-                                    disabled={!isCAMSupported}
-                                    variant="contained"
-                                    onClick={handleOpenModal}
-                                >
+                                <Button variant="contained" onClick={handleOpenModal}>
                                     Withdraw
                                 </Button>
                             )}
@@ -660,7 +720,7 @@ const MyMessenger = () => {
                         <Box sx={{ display: 'flex', justifyContent: 'flex-start' }}>
                             {!isEditMode ? (
                                 <Button variant="contained" onClick={handleEditClick}>
-                                    Edit Currencies
+                                    Configure Currencies
                                 </Button>
                             ) : (
                                 <>
@@ -680,39 +740,22 @@ const MyMessenger = () => {
                                         {isLoading ? (
                                             <CircularProgress size={24} color="inherit" />
                                         ) : (
-                                            'Confirm'
+                                            'Save Changes'
                                         )}
                                     </Button>
                                 </>
                             )}
                         </Box>
                     </Box>
-                    {state.stepsConfig[1]?.services.length == 0 && (
-                        <Alert
-                            sx={{ maxWidth: 'none', width: 'fit-content' }}
-                            variant="warning"
-                            content="Visit the relevant tab to add offered services"
-                        />
-                    )}
-                    {state.stepsConfig[2]?.services.length == 0 && (
-                        <Alert
-                            sx={{ maxWidth: 'none', width: 'fit-content' }}
-                            variant="warning"
-                            content="Visit the relevant tab to add wanted services"
-                        />
-                    )}
-                    {bots.length == 0 && (
-                        <Alert
-                            sx={{ maxWidth: 'none', width: 'fit-content' }}
-                            variant="warning"
-                            content="Visit the relevant tab to add bots"
-                        />
-                    )}
                 </Configuration>
                 <Box sx={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
                     <Configuration.Infos
-                        information="This Camino Messenger wizard will assist you in generating and activating your Camino Messenger address. Once the process is complete, your Camino Messenger address will appear on your partner detail page, allowing you to communicate directly with other Camino Messenger accounts."
-                        rackRates="This Camino Messenger wizard will assist you in generating and activating your Camino Messenger address."
+                        information="To top up, transfer the wanted amount of an accepted currency to the Camino Messenger address from any Wallet (on C-Chain)."
+                        infos={[
+                            'You can send tokens out to any wallet by pressing the Withdraw button and filling the form to initiate a transfer.',
+                            'Manage the accepted currencies by selecting them in the list.',
+                            'To manage bots, services offered or wanted, click on the respective tabs above.',
+                        ]}
                     ></Configuration.Infos>
                 </Box>
             </Box>
@@ -751,7 +794,7 @@ const MyMessenger = () => {
                             theme.palette.mode === 'dark' ? '#020617' : '#F1F5F9',
                     }}
                 >
-                    <CamWithdraw balance={balanceOfAnAddress} />
+                    <CamWithdraw setOpen={setOpen} />
                 </DialogContent>
             </DialogAnimate>
         </>

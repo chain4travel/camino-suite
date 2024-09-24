@@ -5,6 +5,7 @@ import Icon from '@mdi/react'
 import { ContentCopy } from '@mui/icons-material'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
+import store from 'wallet/store'
 import PartnerBusinessFields from '../../components/Partners/PartnerBusinessFields'
 import PartnerFlag from '../../components/Partners/PartnerFlag'
 import PartnerLogo from '../../components/Partners/PartnerLogo'
@@ -13,7 +14,7 @@ import { usePartnerConfig } from '../../helpers/usePartnerConfig'
 import { useSmartContract } from '../../helpers/useSmartContract'
 import { useAppSelector } from '../../hooks/reduxHooks'
 import useWallet from '../../hooks/useWallet'
-import { useFetchPartnerDataQuery } from '../../redux/services/partners'
+import { useFetchPartnerDataQuery, useIsPartnerQuery } from '../../redux/services/partners'
 import { selectValidators } from '../../redux/slices/app-config'
 import { displayFirstPartLongString, displaySecondPartLongString } from '../../utils/display-utils'
 
@@ -61,17 +62,44 @@ function getServiceName(fullName: unknown): string {
     return parts[parts.length - 1] || ''
 }
 
-const Widget = ({ supportedServices, CMAccountAddress, wantedServices, supportedCurrencies }) => {
+const Widget = ({
+    supportedServices,
+    CMAccountAddress,
+    wantedServices,
+    supportedCurrencies,
+    partner,
+}) => {
+    const { data } = useIsPartnerQuery({
+        cChainAddress: store?.state?.activeWallet?.ethAddress
+            ? '0x' + store?.state?.activeWallet?.ethAddress
+            : '',
+    })
     const auth = useAppSelector(state => state.appConfig.isAuth)
     const value = useSmartContract()
     const navigate = useNavigate()
     const [match, setMatch] = useState(false)
     const wantedServiceTypes = useMemo(() => {
-        return [...new Set(wantedServices.map(elem => getServiceType(elem?.name ? elem.name : '')))]
+        return [
+            ...new Set(
+                wantedServices.map(elem => {
+                    const serviceName = elem?.name ? elem.name : ''
+                    const serviceType = getServiceType(serviceName)
+                    return serviceType.endsWith('Service') ? serviceType.slice(0, -7) : serviceType
+                }),
+            ),
+        ]
     }, [])
     const supportedServiceTypes = useMemo(() => {
         return [
-            ...new Set(supportedServices.map(elem => getServiceType(elem?.name ? elem.name : ''))),
+            ...new Set(
+                supportedServices.map(elem => {
+                    const serviceName = elem?.name ? elem.name : ''
+                    const serviceType = getServiceType(serviceName)
+                    return serviceType.endsWith('Service')
+                        ? serviceType.slice(0, -7) // Remove 'Service' from the end
+                        : serviceType
+                }),
+            ),
         ]
     }, [])
 
@@ -102,8 +130,9 @@ const Widget = ({ supportedServices, CMAccountAddress, wantedServices, supported
         ) {
             const supportedResult = await partnerConf.getSupportedServices()
             const wantedResult = await partnerConf.getWantedServices()
+
             const result = checkMatch({
-                supportedResult: supportedResult[0],
+                supportedResult: supportedResult && supportedResult[0] ? supportedResult[0] : [],
                 wantedResult,
                 supportedServices,
                 wantedServices,
@@ -113,6 +142,63 @@ const Widget = ({ supportedServices, CMAccountAddress, wantedServices, supported
         }
     }, [partnerConf, auth])
 
+    const generateEmail = () => {
+        let partnerWanetd = [
+            ...new Set(
+                partner.wantedServices.map(elem => {
+                    const serviceName = elem?.name ? elem.name : ''
+                    const serviceType = getServiceType(serviceName)
+                    return serviceType.endsWith('Service') ? serviceType.slice(0, -7) : serviceType
+                }),
+            ),
+        ].join(', ')
+        let partnerSupported = [
+            ...new Set(
+                partner.supportedServices.map(elem => {
+                    const serviceName = elem?.name ? elem.name : ''
+                    const serviceType = getServiceType(serviceName)
+                    return serviceType.endsWith('Service') ? serviceType.slice(0, -7) : serviceType
+                }),
+            ),
+        ].join(', ')
+        let otherPartnerAccept = []
+        if (partner.supportedCurrencies && supportedCurrencies.isCam) otherPartnerAccept.push('CAM')
+        if (partner.supportedCurrencies && supportedCurrencies.offChainPaymentSupported)
+            otherPartnerAccept.push('offChainPaymentSupported')
+        let myPartnerAccept = []
+        if (data.supportedCurrencies && data.supportedCurrencies.isCam) myPartnerAccept.push('CAM')
+        if (data.supportedCurrencies && data.supportedCurrencies.offChainPaymentSupported)
+            myPartnerAccept.push('offChainPaymentSupported')
+        const subject = 'Connect on Camino Messenger'
+        const body = `
+    Dear Sirs,
+    
+    we are both on Camino Messenger.
+    
+    You: ${partner.attributes.companyName}
+    Offer: ${partnerSupported}
+    Want: ${partnerWanetd}
+    Accept: ${otherPartnerAccept.join(', ')}
+    Messenger Address: ${partner.contractAddress}
+    
+    We: ${data.attributes.companyName}
+    Offer: ${supportedServiceTypes}
+    Want: ${wantedServiceTypes}
+    Accept: ${myPartnerAccept}
+    Messenger Address: ${value?.contractCMAccountAddress}
+
+    Please get in touch at your convenience to discuss a connection on Camino Messenger.
+
+    Best Regards
+        `
+
+        const mailtoLink = `mailto:${
+            partner.attributes.contactEmail
+        }?cc=foundation@camino.network&subject=${encodeURIComponent(
+            subject,
+        )}&body=${encodeURIComponent(body)}`
+        window.location.href = mailtoLink
+    }
     useEffect(() => {
         matchingPartners()
     }, [])
@@ -178,7 +264,7 @@ const Widget = ({ supportedServices, CMAccountAddress, wantedServices, supported
                         {supportedCurrencies?.isCam && (
                             <li className="service-type-item">
                                 <Typography fontSize={14} fontWeight={600} lineHeight={'20px'}>
-                                    Cam
+                                    CAM
                                 </Typography>
                             </li>
                         )}
@@ -199,9 +285,13 @@ const Widget = ({ supportedServices, CMAccountAddress, wantedServices, supported
                             )}
                     </ul>
                 ) : (
-                    <Typography fontSize={14} fontWeight={600} lineHeight={'20px'}>
-                        None.
-                    </Typography>
+                    <ul style={{ marginLeft: '16px' }}>
+                        <li>
+                            <Typography fontSize={14} fontWeight={600} lineHeight={'20px'}>
+                                None.
+                            </Typography>
+                        </li>
+                    </ul>
                 )}
             </Box>
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
@@ -227,10 +317,11 @@ const Widget = ({ supportedServices, CMAccountAddress, wantedServices, supported
             {match && (
                 <Box sx={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
                     <Divider />
-                    <Typography variant="subtitle2">Its a match</Typography>
+                    <Typography variant="subtitle2">It’s a match</Typography>
                     <Typography variant="caption">
-                        This distributor seems to fit perfectly for you supplier company model. You
-                        can connect to each other via the messenger
+                        Offered and/or wanted services by this Partner combine with what you look
+                        for and offer on Camino Network: you can easily connect with them via the
+                        Messenger.
                     </Typography>
                 </Box>
             )}
@@ -256,7 +347,7 @@ const Widget = ({ supportedServices, CMAccountAddress, wantedServices, supported
                 CMAccountAddress.toLocaleLowerCase() !==
                     value?.contractCMAccountAddress.toLocaleLowerCase() && (
                     <Button
-                        // onClick={() => navigate('/partners/messenger-configuration/mymessenger')}
+                        onClick={generateEmail}
                         sx={{
                             padding: '10px 16px',
                             borderRadius: '8px',
@@ -277,6 +368,7 @@ const Widget = ({ supportedServices, CMAccountAddress, wantedServices, supported
 const Partner = () => {
     const auth = useAppSelector(state => state.appConfig.isAuth)
     let { partnerID } = useParams()
+
     const theme = useTheme()
     const isDark = theme.palette.mode === 'dark'
     const value = useSmartContract()
@@ -317,11 +409,11 @@ const Partner = () => {
     const OwnBusinsessNotOnMessenger = (
         <>
             <Typography variant="h6" fontWeight={600}>
-                Connect now and interact with other partners
+                Connect now and interact with Partners onchain.
             </Typography>
             <Typography variant="caption" fontWeight={400}>
-                For the MVP, the C-Chain address of the person which will be operating need to be
-                stored in Strapi prior, then this button appears.
+                This starts the multi-step process to create and configure the Camino Messenger for
+                this Partner.
             </Typography>
             <Button
                 onClick={() => navigate('/partners/messenger-configuration/mymessenger')}
@@ -538,6 +630,7 @@ const Partner = () => {
                                     supportedServices={partner.supportedServices}
                                     CMAccountAddress={partner.contractAddress}
                                     supportedCurrencies={partner.supportedCurrencies}
+                                    partner={partner}
                                 />
                             </Box>
                         )

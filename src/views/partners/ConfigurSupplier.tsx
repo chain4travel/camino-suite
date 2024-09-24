@@ -25,7 +25,9 @@ import {
 } from '../../helpers/partnerConfigurationContext'
 import { usePartnerConfig } from '../../helpers/usePartnerConfig'
 import { useSmartContract } from '../../helpers/useSmartContract'
+import { useAppDispatch } from '../../hooks/reduxHooks'
 import { useFetchPartnerDataQuery } from '../../redux/services/partners'
+import { updateNotificationStatus } from '../../redux/slices/app-config'
 import { Configuration } from './Configuration'
 
 function ServiceChangesPreview({ added, updated, removed }) {
@@ -320,12 +322,6 @@ export const BasicSupportedServices = () => {
                 </Box>
                 <Divider />
             </Configuration>
-            <Box sx={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                <Configuration.Infos
-                    information="This Camino Messenger wizard will assist you in generating and activating your Camino Messenger address. Once the process is complete, your Camino Messenger address will appear on your partner detail page, allowing you to communicate directly with other Camino Messenger accounts."
-                    rackRates="This Camino Messenger wizard will assist you in generating and activating your Camino Messenger address."
-                ></Configuration.Infos>
-            </Box>
         </Box>
     )
 }
@@ -434,6 +430,8 @@ const ConfigurSupplier = () => {
         setIsFetching(false)
     }
 
+    const appDispatch = useAppDispatch()
+
     async function confirmEditing() {
         setLoading(true)
         if (removed.length > 0) await removeServices(removed)
@@ -450,6 +448,12 @@ const ConfigurSupplier = () => {
             type: actionTypes.RESET_STATE,
             payload: { initialState: { ...state, step: 1 } },
         })
+        appDispatch(
+            updateNotificationStatus({
+                message: 'Services configured successfully',
+                severity: 'success',
+            }),
+        )
         setAdded([])
         setRemoved([])
         setUpdated([])
@@ -523,7 +527,7 @@ const ConfigurSupplier = () => {
                                 setEditing(true)
                             }}
                         >
-                            Edit configuration
+                            Configure Services
                         </MainButton>
                     ) : (
                         <>
@@ -534,7 +538,7 @@ const ConfigurSupplier = () => {
                                     cancelEditing()
                                 }}
                             >
-                                Cancel Editing
+                                Cancel
                             </MainButton>
                             <MainButton
                                 loading={loading}
@@ -543,17 +547,14 @@ const ConfigurSupplier = () => {
                                     confirmEditing()
                                 }}
                             >
-                                Confirm Editing
+                                Save Changes
                             </MainButton>
                         </>
                     )}
                 </Configuration.Buttons>
             </Configuration>
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                <Configuration.Infos
-                    information="This Camino Messenger wizard will assist you in generating and activating your Camino Messenger address. Once the process is complete, your Camino Messenger address will appear on your partner detail page, allowing you to communicate directly with other Camino Messenger accounts."
-                    rackRates="This Camino Messenger wizard will assist you in generating and activating your Camino Messenger address."
-                ></Configuration.Infos>
+                <Configuration.Infos offred></Configuration.Infos>
             </Box>
         </Box>
     )

@@ -8,7 +8,7 @@ const initialState = {
     stepsConfig: [
         {
             step: 0,
-            title: 'Messenger configuration',
+            title: 'Create Messenger Account',
             services: [],
             paragraph:
                 'This wizard will help you create and activate your Camino Messenger Account with Camino Messenger address. Once set up, your Camino Messenger address will be displayed on your partner detail page, enabling direct communication with other Camino Messenger users.',

@@ -1,12 +1,21 @@
 import { Autocomplete, TextField, Typography } from '@mui/material'
-import React, { useMemo } from 'react'
+import React, { useMemo, useState } from 'react'
 
 const UpdatedSelectComponent = React.memo(
     ({ editing = true, supplierState, dispatchSupplierState, actionTypes }) => {
+        const [value, setValue] = useState(null)
+        const [inputValue, setInputValue] = useState('')
+
         const handleChange = (event, newValue) => {
             if (newValue) {
                 addService(newValue)
+                setValue(null)
+                setInputValue('')
             }
+        }
+
+        const handleInputChange = (event, newInputValue) => {
+            setInputValue(newInputValue)
         }
 
         const addService = service => {
@@ -60,6 +69,10 @@ const UpdatedSelectComponent = React.memo(
             <Autocomplete
                 disabled={!editing}
                 options={options}
+                value={value}
+                inputValue={inputValue}
+                onInputChange={handleInputChange}
+                onChange={handleChange}
                 renderInput={params => (
                     <TextField
                         {...params}
@@ -75,7 +88,6 @@ const UpdatedSelectComponent = React.memo(
                         {option}
                     </Typography>
                 )}
-                onChange={handleChange}
                 filterOptions={(options, { inputValue }) =>
                     options.filter(option =>
                         option.toLowerCase().includes(inputValue.toLowerCase()),
@@ -105,6 +117,13 @@ const UpdatedSelectComponent = React.memo(
                         '& fieldset': {
                             borderColor: theme => theme.palette.card.border,
                             borderRadius: '12px',
+                        },
+                        '& input': {
+                            color: 'white',
+                        },
+                        '& input::placeholder': {
+                            color: 'white',
+                            opacity: 1,
                         },
                     },
                     '& .MuiAutocomplete-input': {

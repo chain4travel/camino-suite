@@ -103,7 +103,7 @@ export default function Links({ type = 'else', partner }: { type?: string; partn
                     onClick={() => navigate('/partners/messenger-configuration')}
                     className="tab"
                     disableRipple
-                    label="My Partners Profile"
+                    label="My Partner Profile"
                     {...a11yProps(1)}
                     key={1}
                     sx={tabStyle(1, value)}
