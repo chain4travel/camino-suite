@@ -21,6 +21,7 @@ interface InitialStateAppConfigType {
     showButton: boolean
     pChainAddress: string
     validators: Validator[]
+    pendingTxState: boolean
 }
 
 let initialState: InitialStateAppConfigType = {
@@ -37,6 +38,7 @@ let initialState: InitialStateAppConfigType = {
     account: null,
     showButton: false,
     validators: [],
+    pendingTxState: false,
 }
 
 const appConfigSlice = createSlice({
@@ -63,6 +65,9 @@ const appConfigSlice = createSlice({
                 state.notificationSeverity = state.notificationStatus ? payload.severity : ''
                 state.notificationMessage = state.notificationStatus ? payload.message : ''
             }
+        },
+        updatePendingTxState(state, { payload }) {
+            state.pendingTxState = payload
         },
         updateShowButton(state) {
             state.showButton = !state.showButton
@@ -149,5 +154,6 @@ export const {
     updateNotificationStatus,
     updateShowButton,
     updatePchainAddress,
+    updatePendingTxState,
 } = appConfigSlice.actions
 export default appConfigSlice.reducer

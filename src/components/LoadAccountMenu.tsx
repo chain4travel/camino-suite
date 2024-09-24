@@ -22,6 +22,7 @@ export const LoadAccountMenu = (props: {
     setOpen?: React.Dispatch<React.SetStateAction<boolean>>
     selectedAlias?: string
     updateAlias?: any
+    hasImportedPendingTx?: boolean
 }) => {
     const ref = useRef(null)
     const dispatch = useAppDispatch()

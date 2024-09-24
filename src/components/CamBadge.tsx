@@ -73,7 +73,7 @@ const CamBadge = ({
                 ...sx,
             }}
         >
-            <Typography variant="overline" fontWeight={600} sx={getSizeStyles(size)}>
+            <Typography variant="badge" fontWeight={600} sx={getSizeStyles(size)}>
                 {label}
             </Typography>
         </Box>
