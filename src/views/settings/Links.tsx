@@ -98,7 +98,8 @@ export default function Links({ type = 'else', partner }: { type?: string; partn
         />,
         auth &&
             store.state.activeWallet?.type !== 'multisig' &&
-            activeNetwork.name.toLowerCase() === 'columbus' && (
+            (activeNetwork.name.toLowerCase() === 'columbus' ||
+                activeNetwork.name.toLowerCase() === 'camino') && (
                 <Tab
                     onClick={() => navigate('/partners/messenger-configuration')}
                     className="tab"

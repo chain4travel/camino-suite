@@ -8,6 +8,10 @@ import React, {
     useState,
 } from 'react'
 import store from 'wallet/store'
+import {
+    CONTRACTCMACCOUNTMANAGERADDRESSCAMINO,
+    CONTRACTCMACCOUNTMANAGERADDRESSCOLUMBUS,
+} from '../constants/apps-consts'
 import { useAppSelector } from '../hooks/reduxHooks'
 import { getActiveNetwork } from '../redux/slices/network'
 import CMAccount from './CMAccountManagerModule#CMAccount.json'
@@ -33,7 +37,7 @@ export const SmartContractProvider: React.FC<SmartContractProviderProps> = ({ ch
     const [account, setAccount] = useState<string | null>(null)
     const [contractCMAccountAddress, setContractCMAccountAddress] = useState<string | null>('')
     const auth = useAppSelector(state => state.appConfig.isAuth)
-    const contractCMAccountManagerAddress = '0xE5B2f76C778D082b07BDd7D51FFe83E3E055B47F'
+    const activeNetwork = useAppSelector(getActiveNetwork)
 
     const CMAccountCreated = async cmAccountAddress => {
         const accountWritableContract = new ethers.Contract(cmAccountAddress, CMAccount, wallet)
@@ -108,10 +112,19 @@ export const SmartContractProvider: React.FC<SmartContractProviderProps> = ({ ch
             `${selectedNetwork.protocol}://${selectedNetwork.ip}:${selectedNetwork.port}/ext/bc/C/rpc`,
         )
         try {
+            if (
+                activeNetwork.name.toLowerCase() !== 'columbus' &&
+                activeNetwork.name.toLowerCase() !== 'camino'
+            )
+                return
+            let contractAddress =
+                activeNetwork.name.toLowerCase() === 'columbus'
+                    ? CONTRACTCMACCOUNTMANAGERADDRESSCOLUMBUS
+                    : CONTRACTCMACCOUNTMANAGERADDRESSCAMINO
             if (auth) {
                 const wallet = new ethers.Wallet(store.state.activeWallet?.ethKey, ethersProvider)
                 const managerWritableContract = new ethers.Contract(
-                    contractCMAccountManagerAddress,
+                    contractAddress,
                     CMAccountManager.abi,
                     wallet,
                 )
@@ -120,7 +133,7 @@ export const SmartContractProvider: React.FC<SmartContractProviderProps> = ({ ch
                 setAccount(wallet.address)
             }
             const managerReadOnlyContract = new ethers.Contract(
-                contractCMAccountManagerAddress,
+                contractAddress,
                 CMAccountManager.abi,
                 ethersProvider,
             )
@@ -130,10 +143,13 @@ export const SmartContractProvider: React.FC<SmartContractProviderProps> = ({ ch
             console.error('User denied account access:', error)
         }
     }
-    const activeNetwork = useAppSelector(getActiveNetwork)
 
     useEffect(() => {
-        if (activeNetwork.name.toLowerCase() === 'columbus') initializeEthers()
+        if (
+            activeNetwork.name.toLowerCase() === 'columbus' ||
+            activeNetwork.name.toLowerCase() === 'camino'
+        )
+            initializeEthers()
     }, [activeNetwork, auth])
 
     useEffect(() => {
