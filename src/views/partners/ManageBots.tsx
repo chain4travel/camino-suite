@@ -1,7 +1,7 @@
 import { Box, Button, CircularProgress, TextField, Typography } from '@mui/material'
 import { ethers } from 'ethers'
 import React, { useEffect, useState } from 'react'
-import { useParams } from 'react-router'
+import { useNavigate, useParams } from 'react-router'
 import Alert from '../../components/Alert'
 import { usePartnerConfig } from '../../helpers/usePartnerConfig'
 import { useAppDispatch } from '../../hooks/reduxHooks'
@@ -14,6 +14,10 @@ export const BasicManageBots = () => {
     const { data: partner } = useFetchPartnerDataQuery({
         companyName: partnerID,
     })
+    const navigate = useNavigate()
+    if (!partner) return <></>
+
+    if (partner && !partner?.contractAddress) navigate('/partners')
     return (
         <Box
             sx={{
@@ -24,9 +28,16 @@ export const BasicManageBots = () => {
             }}
         >
             <Configuration>
-                <Configuration.Title>Manage Bots</Configuration.Title>
+                <Configuration.Title>Bots</Configuration.Title>
                 <Configuration.Paragraphe>
-                    List in this page the addresses of all bots using this Messenger Account.
+                    This page lists all bot addresses registered to this Messenger Account.
+                    {partner && partner.bots && partner?.bots?.length === 0 && (
+                        <>
+                            <br />
+                            <br />
+                            No bot addresses are currently registered with this Messenger Account.
+                        </>
+                    )}
                 </Configuration.Paragraphe>
                 {partner.bots &&
                     partner.bots.length > 0 &&

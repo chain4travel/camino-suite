@@ -43,7 +43,7 @@ export default function Links({ type = 'else', partner }: { type?: string; partn
             else if (path.includes('bots')) setSecondValue(4)
             else setSecondValue(0)
         } else setValue(0)
-        dispatch(changeActiveApp('Network'))
+        if (!path.includes('partners')) dispatch(changeActiveApp('Network'))
     }, [path]) // eslint-disable-line react-hooks/exhaustive-deps
     const auth = useAppSelector(state => state.appConfig.isAuth)
     const sc = useSmartContract()

@@ -15,7 +15,7 @@ import {
 } from '@mui/material'
 import { ethers } from 'ethers'
 import React, { useEffect, useMemo, useReducer, useState } from 'react'
-import { useParams } from 'react-router'
+import { useNavigate, useParams } from 'react-router'
 import MainButton from '../../components/MainButton'
 import UpdatedSelectComponent from '../../components/Partners/UpdatedSelectComponent'
 import {
@@ -151,6 +151,7 @@ export const BasicWantedServices = () => {
     const { data: partner } = useFetchPartnerDataQuery({
         companyName: partnerID,
     })
+    const navigate = useNavigate()
     useEffect(() => {
         if (partner)
             dispatchDistrubitorState({
@@ -158,6 +159,9 @@ export const BasicWantedServices = () => {
                 payload: { wantedServices: partner.wantedServices, reset: true },
             })
     }, [partner])
+    if (!partner) return <></>
+
+    if (partner && !partner.contractAddress) navigate('/partners')
     return (
         <Box
             sx={{
@@ -169,6 +173,14 @@ export const BasicWantedServices = () => {
         >
             <Configuration>
                 <Configuration.Title>Wanted Services</Configuration.Title>
+                <Configuration.Paragraphe>
+                    This page lists all Wanted Services by this partner. A Wanted Service is a
+                    service this partner is looking to buy.
+                    {/* <br /> */}
+                    {/* {supplierState.stepsConfig[1].services.length === 0 && (
+                        <> No bot addresses are currently registered with this Messenger Account.</>
+                    )} */}
+                </Configuration.Paragraphe>
                 <Box sx={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
                     <Configuration.Services
                         state={distrubitorState}
@@ -176,7 +188,6 @@ export const BasicWantedServices = () => {
                         disabled={true}
                     />
                 </Box>
-                <Divider />
             </Configuration>
         </Box>
     )
