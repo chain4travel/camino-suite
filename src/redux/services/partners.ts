@@ -2,12 +2,18 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 import { ethers } from 'ethers'
 import store from 'wallet/store'
 import { PartnerDataType, PartnersResponseType } from '../../@types/partners'
+import {
+    CONTRACTCMACCOUNTMANAGERADDRESSCAMINO,
+    CONTRACTCMACCOUNTMANAGERADDRESSCOLUMBUS,
+} from '../../constants/apps-consts'
 import CMAccount from '../../helpers/CMAccountManagerModule#CMAccount.json'
 import CMAccountManager from '../../helpers/ManagerProxyModule#CMAccountManager.json'
 import { StatePartnersType } from '../../helpers/partnersReducer'
 
-const baseUrl = 'https://dev.strapi.camino.network/api/partners'
-// const baseUrl = 'https://api.strapi.camino.network/partners'
+const BASE_URLS = {
+    dev: 'https://dev.strapi.camino.network/api/partners',
+    prod: 'https://api.strapi.camino.network/partners',
+}
 
 function createPartnerContract(address: string, provider: ethers.Provider) {
     return new ethers.Contract(address, CMAccount, provider)
@@ -63,8 +69,12 @@ async function getContractMappings(): Promise<Map<string, string>> {
     const selectedNetwork = store.getters['Network/selectedNetwork']
     const providerUrl = `${selectedNetwork.protocol}://${selectedNetwork.ip}:${selectedNetwork.port}/ext/bc/C/rpc`
     const provider = new ethers.JsonRpcProvider(providerUrl)
+    let contractAddress =
+        selectedNetwork.name.toLowerCase() === 'columbus'
+            ? CONTRACTCMACCOUNTMANAGERADDRESSCOLUMBUS
+            : CONTRACTCMACCOUNTMANAGERADDRESSCAMINO
     const managerReadOnlyContract = new ethers.Contract(
-        '0xE5B2f76C778D082b07BDd7D51FFe83E3E055B47F',
+        contractAddress,
         CMAccountManager.abi,
         provider,
     )
@@ -129,11 +139,28 @@ function getServiceName(fullName: unknown): string {
     return parts[parts.length - 1] || ''
 }
 
+const getBaseUrl = () => {
+    const currentPath = typeof window !== 'undefined' ? window.location.hostname : ''
+    if (
+        currentPath === 'localhost' ||
+        currentPath.includes('dev') ||
+        currentPath.includes('stage')
+    ) {
+        return BASE_URLS.dev
+    } else {
+        return BASE_URLS.prod
+    }
+}
+
 export const partnersApi = createApi({
-    baseQuery: fetchBaseQuery({ baseUrl: baseUrl }),
+    baseQuery: fetchBaseQuery({
+        baseUrl: '',
+    }),
     endpoints: build => ({
         listPartners: build.query<any, StatePartnersType>({
             query: ({ page, companyName, businessField, validators, onMessenger }) => {
+                const baseUrl = getBaseUrl()
+
                 let query = '?populate=*'
 
                 if (!isNaN(page)) {
@@ -161,14 +188,18 @@ export const partnersApi = createApi({
                 }
 
                 return {
-                    url: query,
+                    url: `${baseUrl}${query}`,
                     method: 'GET',
                     params: { onMessenger: onMessenger === true ? 'true' : 'false' },
                 }
             },
             async transformResponse(response: PartnersResponseType, meta, arg) {
                 const selectedNetwork = store.getters['Network/selectedNetwork']
-                if (selectedNetwork.name.toLowerCase() !== 'columbus') return response
+                if (
+                    selectedNetwork.name.toLowerCase() !== 'columbus' &&
+                    selectedNetwork.name.toLowerCase() !== 'camino'
+                )
+                    return response
 
                 const providerUrl = `${selectedNetwork.protocol}://${selectedNetwork.ip}:${selectedNetwork.port}/ext/bc/C/rpc`
                 const provider = new ethers.JsonRpcProvider(providerUrl)
@@ -265,16 +296,18 @@ export const partnersApi = createApi({
         >({
             query: ({ companyName, cChainAddress }) => {
                 if (cChainAddress) {
+                    const baseUrl = getBaseUrl()
                     let query =
                         '?populate=*&sort[0]=companyName:asc&pagination[page]=1&pagination[pageSize]=12'
                     query += `&filters[cChainAddress][$eq]=${cChainAddress}`
-                    return query
+                    return `${baseUrl}${query}`
                 }
                 if (companyName) {
+                    const baseUrl = getBaseUrl()
                     let query =
                         '?populate=*&sort[0]=companyName:asc&pagination[page]=1&pagination[pageSize]=12'
                     query += `&filters[companyName][$contains]=${companyName}`
-                    return query
+                    return `${baseUrl}${query}`
                 }
             },
             async transformResponse(response: PartnersResponseType, _meta, arg) {
@@ -352,6 +385,7 @@ export const partnersApi = createApi({
                 supportedResult,
                 wantedResult,
             }) => {
+                const baseUrl = getBaseUrl()
                 let query = '?populate=*'
 
                 if (!isNaN(page)) {
@@ -377,7 +411,7 @@ export const partnersApi = createApi({
                 query += `&filters[cChainAddress][$ne]=null`
 
                 return {
-                    url: query,
+                    url: `${baseUrl}${query}`,
                     method: 'GET',
                     params: {
                         onMessenger: onMessenger === true ? 'true' : 'false',
@@ -388,7 +422,11 @@ export const partnersApi = createApi({
             },
             async transformResponse(response: PartnersResponseType, meta, arg) {
                 const selectedNetwork = store.getters['Network/selectedNetwork']
-                if (selectedNetwork.name.toLowerCase() !== 'columbus') return response
+                if (
+                    selectedNetwork.name.toLowerCase() !== 'columbus' &&
+                    selectedNetwork.name.toLowerCase() !== 'camino'
+                )
+                    return response
 
                 const providerUrl = `${selectedNetwork.protocol}://${selectedNetwork.ip}:${selectedNetwork.port}/ext/bc/C/rpc`
                 const provider = new ethers.JsonRpcProvider(providerUrl)
@@ -477,10 +515,11 @@ export const partnersApi = createApi({
         }),
         isPartner: build.query<PartnerDataType, { cChainAddress: string }>({
             query: ({ cChainAddress }) => {
+                const baseUrl = getBaseUrl()
                 let query =
                     '?populate=*&sort[0]=companyName:asc&pagination[page]=1&pagination[pageSize]=12'
                 query += `&filters[cChainAddress][$eq]=${cChainAddress}`
-                return query
+                return `${baseUrl}${query}`
             },
             async transformResponse(response: PartnersResponseType, _meta, { cChainAddress }) {
                 const partnerData = response.data[0]

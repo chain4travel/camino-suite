@@ -91,7 +91,8 @@ const PartnersLayout = () => {
     if (
         path.includes('partners/messenger-configuration') &&
         !store.state.isAuth &&
-        activeNetwork.name.toLowerCase() !== 'columbus'
+        (activeNetwork.name.toLowerCase() !== 'columbus' ||
+            activeNetwork.name.toLowerCase() !== 'camino')
     ) {
         return <Navigate to="/login" replace />
     }
