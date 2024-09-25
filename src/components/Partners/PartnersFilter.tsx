@@ -17,27 +17,55 @@ const PartnersFilter: React.FC<PartnersFilterProps> = ({ state, dispatchPartners
         <Box sx={{ display: 'flex', gap: '1rem', alignItems: 'center', flexWrap: 'wrap' }}>
             <SearchInput searchByName={searchByName} />
             <BusinessFieldFilter state={state} dispatchPartnersActions={dispatchPartnersActions} />
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: '.5rem' }}>
-                <FormControlLabel
-                    label={<Typography variant="body2">Only Validators</Typography>}
-                    control={
-                        <Checkbox
-                            sx={{
-                                color: theme => theme.palette.secondary.main,
-                                '&.Mui-checked': {
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: '.5rem' }}>
+                    <FormControlLabel
+                        label={<Typography variant="body2">Only Validators</Typography>}
+                        control={
+                            <Checkbox
+                                sx={{
                                     color: theme => theme.palette.secondary.main,
-                                },
-                                '&.MuiCheckbox-colorSecondary.Mui-checked': {
+                                    '&.Mui-checked': {
+                                        color: theme => theme.palette.secondary.main,
+                                    },
+                                    '&.MuiCheckbox-colorSecondary.Mui-checked': {
+                                        color: theme => theme.palette.secondary.main,
+                                    },
+                                }}
+                                checked={state.validators}
+                                onChange={() =>
+                                    dispatchPartnersActions({
+                                        type: partnersActions.TOGGLE_VALIDATORS,
+                                    })
+                                }
+                            />
+                        }
+                    />
+                </Box>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: '.5rem' }}>
+                    <FormControlLabel
+                        label={<Typography variant="body2">On Messenger</Typography>}
+                        control={
+                            <Checkbox
+                                sx={{
                                     color: theme => theme.palette.secondary.main,
-                                },
-                            }}
-                            checked={state.validators}
-                            onChange={() =>
-                                dispatchPartnersActions({ type: partnersActions.TOGGLE_VALIDATORS })
-                            }
-                        />
-                    }
-                />
+                                    '&.Mui-checked': {
+                                        color: theme => theme.palette.secondary.main,
+                                    },
+                                    '&.MuiCheckbox-colorSecondary.Mui-checked': {
+                                        color: theme => theme.palette.secondary.main,
+                                    },
+                                }}
+                                checked={state.onMessenger}
+                                onChange={() =>
+                                    dispatchPartnersActions({
+                                        type: partnersActions.TOGGLE_ON_MESSENGER,
+                                    })
+                                }
+                            />
+                        }
+                    />
+                </Box>
             </Box>
         </Box>
     )
