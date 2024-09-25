@@ -569,9 +569,9 @@ Configuration.Infos = function Infos({
                         </li>
                         <li>
                             <Typography variant="caption">
-                                Flag it as offering "rack" rates, or not. Rack rates are public,
-                                not-negotiated rate on product available for consumption on the
-                                Camino Network
+                                Flag when offering "rack" rates, or not. Rack rates are public,
+                                not-negotiated rates on products available for any distributor to
+                                consume on the Camino Network, without further contract negotiation.
                             </Typography>
                         </li>
                         <li>

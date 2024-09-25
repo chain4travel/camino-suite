@@ -750,6 +750,92 @@ const MyMessenger = () => {
                                 </Button>
                             )}
                         </Box>
+                        <Box
+                            sx={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '8px',
+                                justifyContent: 'space-between',
+                            }}
+                        >
+                            <FormControlLabel
+                                disabled
+                                label={<Typography variant="body2">EURe* (coming soon)</Typography>}
+                                control={
+                                    <Checkbox
+                                        sx={{
+                                            m: '0 8px 0 0',
+                                            color: theme =>
+                                                true
+                                                    ? theme.palette.action.disabled
+                                                    : theme.palette.secondary.main,
+                                            '&.Mui-checked': {
+                                                color: theme =>
+                                                    true
+                                                        ? theme.palette.action.disabled
+                                                        : theme.palette.secondary.main,
+                                            },
+                                            '&.MuiCheckbox-colorSecondary.Mui-checked': {
+                                                color: theme =>
+                                                    true
+                                                        ? theme.palette.action.disabled
+                                                        : theme.palette.secondary.main,
+                                            },
+                                        }}
+                                        checked={false}
+                                    />
+                                }
+                            />
+                            {!isEditMode && (
+                                <Button disabled={true} variant="contained">
+                                    Withdraw
+                                </Button>
+                            )}
+                        </Box>
+                        <Box
+                            sx={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '8px',
+                                justifyContent: 'space-between',
+                            }}
+                        >
+                            <FormControlLabel
+                                disabled
+                                label={
+                                    <Typography variant="body2">EURSH* (coming soon)</Typography>
+                                }
+                                control={
+                                    <Checkbox
+                                        sx={{
+                                            m: '0 8px 0 0',
+                                            color: theme =>
+                                                true
+                                                    ? theme.palette.action.disabled
+                                                    : theme.palette.secondary.main,
+                                            '&.Mui-checked': {
+                                                color: theme =>
+                                                    true
+                                                        ? theme.palette.action.disabled
+                                                        : theme.palette.secondary.main,
+                                            },
+                                            '&.MuiCheckbox-colorSecondary.Mui-checked': {
+                                                color: theme =>
+                                                    true
+                                                        ? theme.palette.action.disabled
+                                                        : theme.palette.secondary.main,
+                                            },
+                                        }}
+                                        checked={false}
+                                    />
+                                }
+                            />
+                            {!isEditMode && (
+                                <Button disabled={true} variant="contained">
+                                    Withdraw
+                                </Button>
+                            )}
+                        </Box>
                         <Box sx={{ display: 'flex', justifyContent: 'flex-start' }}>
                             {!isEditMode ? (
                                 <Button variant="contained" onClick={handleEditClick}>
