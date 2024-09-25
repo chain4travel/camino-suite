@@ -32,7 +32,7 @@ const UpdatedSelectComponent = React.memo(
                             name: service,
                             fee: '0',
                             capabilities: [''],
-                            rackRates: true,
+                            rackRates: false,
                         },
                     },
                 })

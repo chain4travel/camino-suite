@@ -15,8 +15,9 @@ import Links from '../views/settings/Links'
 const ClaimProfile = () => {
     const generateEmail = () => {
         const subject = 'Claim a Partner'
-        const body = `This is to claim a Partner record and associate it to the wallet with C-Chain address .Please add your name, contact details, the Partner name, and attach any evidence of your affiliation with the Partner.`
-
+        const body = `This is to claim a Partner record and associate it to the wallet with C-Chain address ${
+            '0x' + store.state.activeWallet.ethAddress
+        }. Please add your name, contact details, the Partner name, and attach any evidence of your affiliation with the Partner.`
         const mailtoLink = `mailto:${emailAddress}?subject=${encodeURIComponent(
             subject,
         )}&body=${encodeURIComponent(body)}`

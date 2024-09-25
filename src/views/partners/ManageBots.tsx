@@ -334,7 +334,7 @@ const ManageBots = () => {
                 </Box>
             </Configuration>
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                <Configuration.Infos information="Check with your IT departments for the C-Chain addresses of each bots, and keep the list updated in case of changes."></Configuration.Infos>
+                <Configuration.Infos information="Check with your IT departments for the C-Chain address of each bot, and keep the list updated in case of changes."></Configuration.Infos>
             </Box>
         </Box>
     )
