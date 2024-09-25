@@ -179,7 +179,7 @@ const Widget = ({
 
     Best Regards`
             : `
-            
+
     Please get in touch at your convenience to discuss a connection on Camino Messenger.
 
     Best Regards`
@@ -453,7 +453,7 @@ const Partner = () => {
                         startIcon={<Icon path={mdiArrowLeft} size={0.8} />}
                         onClick={() => navigate('/partners')}
                     >
-                        Back to all companies
+                        Back to all Partners
                     </Button>
                 </Box>
             )}
