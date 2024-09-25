@@ -170,7 +170,21 @@ const Widget = ({
         if (data.supportedCurrencies && data.supportedCurrencies.offChainPaymentSupported)
             myPartnerAccept.push('offChainPaymentSupported')
         const subject = 'Connect on Camino Messenger'
-        const body = `
+        let bodyEnding = match
+            ? `
+
+    Offered and/or wanted services by you combine with what we look for and offer on Camino Network: we can easily connect via the Messenger.
+        
+    Please get in touch at your convenience to discuss a connection on Camino Messenger.
+
+    Best Regards`
+            : `
+            
+    Please get in touch at your convenience to discuss a connection on Camino Messenger.
+
+    Best Regards`
+        const body =
+            `
     Dear Sirs,
     
     we are both on Camino Messenger.
@@ -185,12 +199,7 @@ const Widget = ({
     Offer: ${supportedServiceTypes}
     Want: ${wantedServiceTypes}
     Accept: ${myPartnerAccept}
-    Messenger Address: ${value?.contractCMAccountAddress}
-
-    Please get in touch at your convenience to discuss a connection on Camino Messenger.
-
-    Best Regards
-        `
+    Messenger Address: ${value?.contractCMAccountAddress}` + bodyEnding
 
         const mailtoLink = `mailto:${
             partner.attributes.contactEmail

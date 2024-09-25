@@ -431,9 +431,6 @@ const MyMessenger = () => {
                         {partner?.attributes?.companyName} Messenger Account
                     </Configuration.Title>
                     <Configuration.Paragraphe>
-                        First you need to top up the CM Account with CAM, EURSH or USDC to work
-                        properly. Transfer it to the newly generated CM address below.
-                        <br />
                         In this page you are able to display and copy your Camino Messenger address,
                         and manage accepted currencies.
                     </Configuration.Paragraphe>
@@ -591,14 +588,23 @@ const MyMessenger = () => {
                             control={
                                 <Checkbox
                                     sx={{
-                                        color: theme => theme.palette.secondary.main,
+                                        m: '0 8px 0 0',
+                                        color: theme =>
+                                            !isEditMode
+                                                ? theme.palette.action.disabled
+                                                : theme.palette.secondary.main,
                                         '&.Mui-checked': {
-                                            color: theme => theme.palette.secondary.main,
+                                            color: theme =>
+                                                !isEditMode
+                                                    ? theme.palette.action.disabled
+                                                    : theme.palette.secondary.main,
                                         },
                                         '&.MuiCheckbox-colorSecondary.Mui-checked': {
-                                            color: theme => theme.palette.secondary.main,
+                                            color: theme =>
+                                                !isEditMode
+                                                    ? theme.palette.action.disabled
+                                                    : theme.palette.secondary.main,
                                         },
-                                        m: '0 8px 0 0',
                                     }}
                                     checked={
                                         isEditMode
@@ -629,14 +635,23 @@ const MyMessenger = () => {
                                 control={
                                     <Checkbox
                                         sx={{
-                                            color: theme => theme.palette.secondary.main,
+                                            m: '0 8px 0 0',
+                                            color: theme =>
+                                                !isEditMode
+                                                    ? theme.palette.action.disabled
+                                                    : theme.palette.secondary.main,
                                             '&.Mui-checked': {
-                                                color: theme => theme.palette.secondary.main,
+                                                color: theme =>
+                                                    !isEditMode
+                                                        ? theme.palette.action.disabled
+                                                        : theme.palette.secondary.main,
                                             },
                                             '&.MuiCheckbox-colorSecondary.Mui-checked': {
-                                                color: theme => theme.palette.secondary.main,
+                                                color: theme =>
+                                                    !isEditMode
+                                                        ? theme.palette.action.disabled
+                                                        : theme.palette.secondary.main,
                                             },
-                                            m: '0 8px 0 0',
                                         }}
                                         checked={isEditMode ? tempCAMSupported : isCAMSupported}
                                         onChange={e => setTempCAMSupported(e.target.checked)}
@@ -665,14 +680,23 @@ const MyMessenger = () => {
                                 control={
                                     <Checkbox
                                         sx={{
-                                            color: theme => theme.palette.secondary.main,
+                                            m: '0 8px 0 0',
+                                            color: theme =>
+                                                true
+                                                    ? theme.palette.action.disabled
+                                                    : theme.palette.secondary.main,
                                             '&.Mui-checked': {
-                                                color: theme => theme.palette.secondary.main,
+                                                color: theme =>
+                                                    true
+                                                        ? theme.palette.action.disabled
+                                                        : theme.palette.secondary.main,
                                             },
                                             '&.MuiCheckbox-colorSecondary.Mui-checked': {
-                                                color: theme => theme.palette.secondary.main,
+                                                color: theme =>
+                                                    true
+                                                        ? theme.palette.action.disabled
+                                                        : theme.palette.secondary.main,
                                             },
-                                            m: '0 8px 0 0',
                                         }}
                                         checked={false}
                                     />
@@ -698,14 +722,23 @@ const MyMessenger = () => {
                                 control={
                                     <Checkbox
                                         sx={{
-                                            color: theme => theme.palette.secondary.main,
+                                            m: '0 8px 0 0',
+                                            color: theme =>
+                                                true
+                                                    ? theme.palette.action.disabled
+                                                    : theme.palette.secondary.main,
                                             '&.Mui-checked': {
-                                                color: theme => theme.palette.secondary.main,
+                                                color: theme =>
+                                                    true
+                                                        ? theme.palette.action.disabled
+                                                        : theme.palette.secondary.main,
                                             },
                                             '&.MuiCheckbox-colorSecondary.Mui-checked': {
-                                                color: theme => theme.palette.secondary.main,
+                                                color: theme =>
+                                                    true
+                                                        ? theme.palette.action.disabled
+                                                        : theme.palette.secondary.main,
                                             },
-                                            m: '0 8px 0 0',
                                         }}
                                         checked={false}
                                     />
