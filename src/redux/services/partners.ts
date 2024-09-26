@@ -141,11 +141,7 @@ function getServiceName(fullName: unknown): string {
 
 const getBaseUrl = () => {
     const currentPath = typeof window !== 'undefined' ? window.location.hostname : ''
-    if (
-        currentPath === 'localhost' ||
-        currentPath.includes('dev') ||
-        currentPath.includes('stage')
-    ) {
+    if (currentPath === 'localhost' || currentPath.includes('dev')) {
         return BASE_URLS.dev
     } else {
         return BASE_URLS.prod
@@ -163,7 +159,7 @@ export const partnersApi = createApi({
 
                 let query = '?populate=*'
 
-                if (!isNaN(page)) {
+                if (!isNaN(page) && !onMessenger) {
                     query += `&sort[0]=companyName:asc&pagination[page]=${page}&pagination[pageSize]=12`
                 }
                 if (businessField) {
@@ -184,7 +180,7 @@ export const partnersApi = createApi({
                 }
                 // Only add the cChainAddress filter if onMessenger is explicitly true
                 if (onMessenger === true) {
-                    query += `&filters[cChainAddress][$ne]=null`
+                    query += `&sort[0]=companyName:asc&_limit=-1&filters[cChainAddress][$ne]=null`
                 }
 
                 return {
@@ -283,7 +279,9 @@ export const partnersApi = createApi({
                     ...response.meta,
                     pagination: {
                         ...response.meta.pagination,
-                        // total: filteredPartners.length,
+                        total: onMessenger
+                            ? filteredPartners.length
+                            : response.meta.pagination.total,
                     },
                 }
 
@@ -389,7 +387,7 @@ export const partnersApi = createApi({
                 let query = '?populate=*'
 
                 if (!isNaN(page)) {
-                    query += `&sort[0]=companyName:asc&pagination[page]=${page}&pagination[pageSize]=12`
+                    query += `&sort[0]=companyName:asc&_limit=-1`
                 }
                 if (businessField) {
                     let filterWith = businessField

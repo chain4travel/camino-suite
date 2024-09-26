@@ -15,7 +15,7 @@ import {
 } from '@mui/material'
 import { ethers } from 'ethers'
 import React, { useEffect, useMemo, useReducer, useState } from 'react'
-import { useParams } from 'react-router'
+import { useNavigate, useParams } from 'react-router'
 import MainButton from '../../components/MainButton'
 import UpdatedSelectComponent from '../../components/Partners/UpdatedSelectComponent'
 import {
@@ -294,6 +294,7 @@ export const BasicSupportedServices = () => {
     const { data: partner } = useFetchPartnerDataQuery({
         companyName: partnerID,
     })
+    const navigate = useNavigate()
     useEffect(() => {
         if (partner) {
             dispatchSupplierState({
@@ -302,6 +303,9 @@ export const BasicSupportedServices = () => {
             })
         }
     }, [partner])
+    if (!partner) return <></>
+
+    if (partner && !partner.contractAddress) navigate('/partners')
     return (
         <Box
             sx={{
@@ -313,6 +317,11 @@ export const BasicSupportedServices = () => {
         >
             <Configuration>
                 <Configuration.Title>Offered Services</Configuration.Title>
+                <Configuration.Paragraphe>
+                    This page lists all Offered Services by this partner. An Offered Service is a
+                    service that this partner is selling, and all the bots run by this partner
+                    support those services.
+                </Configuration.Paragraphe>
                 <Box sx={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
                     <Configuration.Services
                         disabled={true}
@@ -320,7 +329,6 @@ export const BasicSupportedServices = () => {
                         dispatch={dispatchSupplierState}
                     />
                 </Box>
-                <Divider />
             </Configuration>
         </Box>
     )

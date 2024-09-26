@@ -1,6 +1,7 @@
 import { ethers } from 'ethers'
 import { useCallback, useEffect } from 'react'
-import { useAppDispatch } from '../hooks/reduxHooks'
+import { useAppDispatch, useAppSelector } from '../hooks/reduxHooks'
+import { getActiveNetwork } from '../redux/slices/network'
 import { updateCMAcocuntContract } from '../redux/slices/partner'
 import { useSmartContract } from './useSmartContract'
 
@@ -17,7 +18,8 @@ export const usePartnerConfig = () => {
         CMAccountCreated,
         accountReadContract,
     } = useSmartContract()
-
+    const activeNetwork = useAppSelector(getActiveNetwork)
+    const auth = useAppSelector(state => state.appConfig.isAuth)
     const dispatch = useAppDispatch()
 
     async function CreateConfiguration(state) {
@@ -142,8 +144,8 @@ export const usePartnerConfig = () => {
     }, [account, managerReadContract])
 
     useEffect(() => {
-        if (wallet) isCMAccount()
-    }, [wallet])
+        if (wallet && auth) isCMAccount()
+    }, [wallet, activeNetwork])
 
     const addServices = useCallback(
         async services => {
