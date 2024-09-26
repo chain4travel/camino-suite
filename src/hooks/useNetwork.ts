@@ -61,6 +61,7 @@ const useNetwork = (): {
                 await store.dispatch('activateWallet', store.state.wallets[0])
             }
             await store.dispatch('Network/setNetwork', network)
+            await store.dispatch('Signavault/updateImportedMultiSigTransaction')
             dispatch(changeNetworkStatus(Status.SUCCEEDED))
             if (isAuth) {
                 await store.dispatch('fetchMultiSigAliases', { disable: false })
