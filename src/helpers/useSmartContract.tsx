@@ -7,6 +7,7 @@ import React, {
     useEffect,
     useState,
 } from 'react'
+import { useNavigate } from 'react-router'
 import store from 'wallet/store'
 import {
     CONTRACTCMACCOUNTMANAGERADDRESSCAMINO,
@@ -143,13 +144,25 @@ export const SmartContractProvider: React.FC<SmartContractProviderProps> = ({ ch
             console.error('User denied account access:', error)
         }
     }
-
+    const navigate = useNavigate()
+    const path = window.location.pathname
     useEffect(() => {
         if (
             activeNetwork.name.toLowerCase() === 'columbus' ||
             activeNetwork.name.toLowerCase() === 'camino'
-        )
+        ) {
+            setAccountReadContract(null)
+            setAccountWriteContract(null)
+            if (
+                contractCMAccountAddress &&
+                (path.includes('partners/messenger-configuration/supplier') ||
+                    path.includes('partners/messenger-configuration/distribution') ||
+                    path.includes('partners/messenger-configuration/bots'))
+            )
+                navigate('/partners/messenger-configuration/mydetails')
+            setContractCMAccountAddress('')
             initializeEthers()
+        }
     }, [activeNetwork, auth])
 
     useEffect(() => {
