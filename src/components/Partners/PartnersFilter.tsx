@@ -1,7 +1,8 @@
 import { ActionType, StatePartnersType, partnersActions } from '../../helpers/partnersReducer'
 
-import { Box, Checkbox, FormControlLabel, Typography } from '@mui/material'
+import { Box, Button, Checkbox, FormControlLabel, Typography } from '@mui/material'
 import React from 'react'
+import { REGISTER_PARTNER_URL } from '../../constants/route-paths'
 import BusinessFieldFilter from './BusinessFieldFilter'
 import SearchInput from './SearchInput'
 
@@ -14,7 +15,15 @@ const PartnersFilter: React.FC<PartnersFilterProps> = ({ state, dispatchPartners
     const searchByName = param =>
         dispatchPartnersActions({ type: partnersActions.UPDATE_COMPANY_NAME, payload: param })
     return (
-        <Box sx={{ display: 'flex', gap: '1rem', alignItems: 'center', flexWrap: 'wrap' }}>
+        <Box
+            sx={{
+                display: 'flex',
+                gap: '1rem',
+                alignItems: 'center',
+                flexWrap: 'wrap',
+                justifyContent: 'flex-start',
+            }}
+        >
             <SearchInput searchByName={searchByName} />
             <BusinessFieldFilter state={state} dispatchPartnersActions={dispatchPartnersActions} />
             <Box sx={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
@@ -66,6 +75,28 @@ const PartnersFilter: React.FC<PartnersFilterProps> = ({ state, dispatchPartners
                         }
                     />
                 </Box>
+            </Box>
+            <Box
+                sx={{
+                    flex: '1',
+                    display: 'flex',
+                    justifyContent: 'flex-end',
+                    alignItems: 'flex-start',
+                }}
+            >
+                <Button
+                    variant="contained"
+                    component="a"
+                    href={REGISTER_PARTNER_URL}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    sx={{
+                        whiteSpace: 'nowrap',
+                        minWidth: 'max-content',
+                    }}
+                >
+                    Register as Partner
+                </Button>
             </Box>
         </Box>
     )

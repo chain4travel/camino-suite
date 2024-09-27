@@ -1,7 +1,7 @@
 import { Box, Button, Link, Toolbar, Typography } from '@mui/material'
 
 import { Paper } from '@mui/material'
-import React, { useEffect } from 'react'
+import React, { useEffect, useMemo } from 'react'
 import { Navigate, Outlet, useNavigate, useParams } from 'react-router'
 import store from 'wallet/store'
 import { PartnerConfigurationProvider } from '../helpers/partnerConfigurationContext'
@@ -64,18 +64,24 @@ const ClaimProfile = () => {
 
 const PartnersLayout = () => {
     const path = window.location.pathname
-    const { data, isLoading } = useIsPartnerQuery({
+    const { data, isLoading, refetch } = useIsPartnerQuery({
         cChainAddress: store?.state?.activeWallet?.ethAddress
             ? '0x' + store?.state?.activeWallet?.ethAddress
             : '',
     })
     let { partnerID } = useParams()
-    const { data: partner } = useFetchPartnerDataQuery({
+    const { data: partner, refetch: refetchPartenrData } = useFetchPartnerDataQuery({
         companyName: partnerID,
     })
     const walletName = useAppSelector(getWalletName)
     const navigate = useNavigate()
-
+    const activeNetwork = useAppSelector(getActiveNetwork)
+    useEffect(() => {
+        if (activeNetwork) {
+            refetch()
+            refetchPartenrData()
+        }
+    }, [activeNetwork])
     useEffect(() => {
         if (
             walletName &&
@@ -86,7 +92,13 @@ const PartnersLayout = () => {
         }
     }, [walletName])
 
-    const activeNetwork = useAppSelector(getActiveNetwork)
+    const partnerCChainAddress = useMemo(() => {
+        let cAddress = data?.attributes?.cChainAddresses.find(
+            elem => elem.Network === activeNetwork.name.toLowerCase(),
+        )
+        if (cAddress) return cAddress
+        return ''
+    }, [data])
     if (isLoading) return <></>
     if (
         path.includes('partners/messenger-configuration') &&
@@ -129,7 +141,7 @@ const PartnersLayout = () => {
                     </Toolbar>
                     {((path.includes('partners/messenger-configuration') &&
                         !!data &&
-                        data?.attributes?.cChainAddress) ||
+                        partnerCChainAddress) ||
                         (partner &&
                             partner?.contractAddress &&
                             partnerID === partner.attributes.companyName)) && (
@@ -158,7 +170,7 @@ const PartnersLayout = () => {
                             mt:
                                 (path.includes('partners/messenger-configuration') &&
                                     !!data &&
-                                    data?.attributes?.cChainAddress) ||
+                                    partnerCChainAddress) ||
                                 (path !== '/partners' && partner?.contractAddress)
                                     ? '9rem'
                                     : '5rem',
@@ -173,7 +185,7 @@ const PartnersLayout = () => {
                         {!path.includes('partners/messenger-configuration') ||
                         (path.includes('partners/messenger-configuration') &&
                             !!data &&
-                            data?.attributes?.cChainAddress) ? (
+                            partnerCChainAddress) ? (
                             <Outlet />
                         ) : (
                             <ClaimProfile />
