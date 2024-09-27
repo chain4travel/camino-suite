@@ -26,9 +26,10 @@ import { usePartnerConfigurationContext } from '../../helpers/partnerConfigurati
 import { usePartnerConfig } from '../../helpers/usePartnerConfig'
 import { useSmartContract } from '../../helpers/useSmartContract'
 import useWalletBalance from '../../helpers/useWalletBalance'
-import { useAppDispatch } from '../../hooks/reduxHooks'
+import { useAppDispatch, useAppSelector } from '../../hooks/reduxHooks'
 import { useFetchPartnerDataQuery } from '../../redux/services/partners'
 import { updateNotificationStatus } from '../../redux/slices/app-config'
+import { getActiveNetwork } from '../../redux/slices/network'
 import { Configuration } from './Configuration'
 
 const AmountInput = ({ amount, onAmountChange, onMaxAmountClick, maxAmount }) => {
@@ -335,10 +336,14 @@ const MyMessenger = () => {
         removeSupportedToken,
         getListOfBots,
     } = usePartnerConfig()
-    const { data: partner } = useFetchPartnerDataQuery({
+    const { data: partner, refetch } = useFetchPartnerDataQuery({
         companyName: '',
         cChainAddress: wallet.address,
     })
+    const activeNetwork = useAppSelector(getActiveNetwork)
+    useEffect(() => {
+        if (activeNetwork) refetch()
+    }, [activeNetwork])
     const appDispatch = useAppDispatch()
     const handleOpenModal = () => {
         setOpen(true)

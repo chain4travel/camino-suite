@@ -159,6 +159,7 @@ export const partnersApi = createApi({
 
                 let query = '?populate=*'
 
+                const selectedNetwork = store.getters['Network/selectedNetwork']
                 if (!isNaN(page) && !onMessenger) {
                     query += `&sort[0]=companyName:asc&pagination[page]=${page}&pagination[pageSize]=12`
                 }
@@ -176,11 +177,10 @@ export const partnersApi = createApi({
                     query += `&filters[companyName][$contains]=${companyName}`
                 }
                 if (validators) {
-                    query += `&filters[pChainAddress][$ne]=null`
+                    query += `&filters[$and][0][pChainAddresses][pAddress][$notNull]=true&filters[$and][1][pChainAddresses][Network][$eq]=${selectedNetwork.name.toLowerCase()}`
                 }
-                // Only add the cChainAddress filter if onMessenger is explicitly true
                 if (onMessenger === true) {
-                    query += `&sort[0]=companyName:asc&_limit=-1&filters[cChainAddress][$ne]=null`
+                    query += `&sort[0]=companyName:asc&_limit=-1&filters[$and][0][cChainAddresses][cAddress][$notNull]=true&filters[$and][1][cChainAddresses][Network][$eq]=${selectedNetwork.name.toLowerCase()}`
                 }
 
                 return {
@@ -205,11 +205,14 @@ export const partnersApi = createApi({
 
                 const partnersWithServices = await Promise.all(
                     response.data.map(async partner => {
-                        if (partner.attributes.cChainAddress) {
+                        let partnerCChainAddress = partner?.attributes?.cChainAddresses?.find(
+                            elem => elem.Network === selectedNetwork.name.toLowerCase(),
+                        )
+                        if (partnerCChainAddress?.cAddress) {
                             const contractAddress = Array.from(contractMappings.entries()).find(
                                 ([_, partnerAddress]) =>
                                     partnerAddress.toLowerCase() ===
-                                    partner.attributes.cChainAddress.toLowerCase(),
+                                    partnerCChainAddress?.cAddress.toLowerCase(),
                             )?.[0]
 
                             if (contractAddress) {
@@ -250,7 +253,7 @@ export const partnersApi = createApi({
                                     contractAddress,
                                     bots,
                                     supportedCurrencies,
-                                    isOnMessenger: Boolean(partner.attributes.cChainAddress),
+                                    isOnMessenger: Boolean(partnerCChainAddress.cAddress),
                                 }
                             }
                         }
@@ -295,9 +298,10 @@ export const partnersApi = createApi({
             query: ({ companyName, cChainAddress }) => {
                 if (cChainAddress) {
                     const baseUrl = getBaseUrl()
+                    const selectedNetwork = store.getters['Network/selectedNetwork']
                     let query =
                         '?populate=*&sort[0]=companyName:asc&pagination[page]=1&pagination[pageSize]=12'
-                    query += `&filters[cChainAddress][$eq]=${cChainAddress}`
+                    query += `&filters[$and][0][cChainAddresses][cAddress][$containsi]=${cChainAddress}&filters[$and][1][cChainAddresses][Network][$eq]=${selectedNetwork.name.toLowerCase()}`
                     return `${baseUrl}${query}`
                 }
                 if (companyName) {
@@ -310,7 +314,12 @@ export const partnersApi = createApi({
             },
             async transformResponse(response: PartnersResponseType, _meta, arg) {
                 const partnerData = response.data[0]
-                if (partnerData && partnerData.attributes.cChainAddress) {
+                const selectedNetwork = store.getters['Network/selectedNetwork']
+                let partnerCChainAddress = partnerData?.attributes?.cChainAddresses.find(
+                    elem => elem.Network === selectedNetwork.name.toLowerCase(),
+                )
+
+                if (partnerData && partnerCChainAddress.cAddress) {
                     const selectedNetwork = store.getters['Network/selectedNetwork']
                     const providerUrl = `${selectedNetwork.protocol}://${selectedNetwork.ip}:${selectedNetwork.port}/ext/bc/C/rpc`
                     const provider = new ethers.JsonRpcProvider(providerUrl)
@@ -318,9 +327,7 @@ export const partnersApi = createApi({
                     const contractAddress = Array.from(contractMappings.entries()).find(
                         ([_, partnerAddress]) =>
                             partnerAddress.toLowerCase() ===
-                            (
-                                arg.cChainAddress || partnerData.attributes.cChainAddress
-                            ).toLowerCase(),
+                            (arg.cChainAddress || partnerCChainAddress.cAddress).toLowerCase(),
                     )?.[0]
                     if (contractAddress) {
                         const { supportedServices, wantedServices, bots, supportedCurrencies } =
@@ -385,6 +392,7 @@ export const partnersApi = createApi({
             }) => {
                 const baseUrl = getBaseUrl()
                 let query = '?populate=*'
+                const selectedNetwork = store.getters['Network/selectedNetwork']
 
                 if (!isNaN(page)) {
                     query += `&sort[0]=companyName:asc&_limit=-1`
@@ -403,10 +411,10 @@ export const partnersApi = createApi({
                     query += `&filters[companyName][$contains]=${companyName}`
                 }
                 if (validators) {
-                    query += `&filters[pChainAddress][$ne]=null`
+                    query += `&filters[$and][0][pChainAddresses][pAddress][$notNull]=true&filters[$and][1][pChainAddresses][Network][$eq]=${selectedNetwork.name.toLowerCase()}`
                 }
                 // Only add the cChainAddress filter if onMessenger is explicitly true
-                query += `&filters[cChainAddress][$ne]=null`
+                query += `&filters[$and][0][cChainAddresses][cAddress][$notNull]=true&filters[$and][1][cChainAddresses][Network][$eq]=${selectedNetwork.name.toLowerCase()}`
 
                 return {
                     url: `${baseUrl}${query}`,
@@ -433,11 +441,14 @@ export const partnersApi = createApi({
 
                 const partnersWithServices = await Promise.all(
                     response.data.map(async partner => {
-                        if (partner.attributes.cChainAddress) {
+                        let partnerCChainAddress = partner?.attributes?.cChainAddresses.find(
+                            elem => elem.Network === selectedNetwork.name.toLowerCase(),
+                        )
+                        if (partnerCChainAddress.cAddress) {
                             const contractAddress = Array.from(contractMappings.entries()).find(
                                 ([_, partnerAddress]) =>
                                     partnerAddress.toLowerCase() ===
-                                    partner.attributes.cChainAddress.toLowerCase(),
+                                    partnerCChainAddress.cAddress.toLowerCase(),
                             )?.[0]
 
                             if (contractAddress) {
@@ -514,14 +525,19 @@ export const partnersApi = createApi({
         isPartner: build.query<PartnerDataType, { cChainAddress: string }>({
             query: ({ cChainAddress }) => {
                 const baseUrl = getBaseUrl()
+                const selectedNetwork = store.getters['Network/selectedNetwork']
                 let query =
                     '?populate=*&sort[0]=companyName:asc&pagination[page]=1&pagination[pageSize]=12'
-                query += `&filters[cChainAddress][$eq]=${cChainAddress}`
+                query += `&filters[$and][0][cChainAddresses][cAddress][$containsi]=${cChainAddress}&filters[$and][1][cChainAddresses][Network][$eq]=${selectedNetwork.name.toLowerCase()}`
                 return `${baseUrl}${query}`
             },
             async transformResponse(response: PartnersResponseType, _meta, { cChainAddress }) {
                 const partnerData = response.data[0]
-                if (partnerData && partnerData.attributes.cChainAddress) {
+                const selectedNetwork = store.getters['Network/selectedNetwork']
+                let partnerCChainAddress = partnerData?.attributes?.cChainAddresses.find(
+                    elem => elem.Network === selectedNetwork.name.toLowerCase(),
+                )
+                if (partnerData && partnerCChainAddress.cAddress) {
                     const selectedNetwork = store.getters['Network/selectedNetwork']
                     const providerUrl = `${selectedNetwork.protocol}://${selectedNetwork.ip}:${selectedNetwork.port}/ext/bc/C/rpc`
                     const provider = new ethers.JsonRpcProvider(providerUrl)

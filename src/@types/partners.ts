@@ -4,6 +4,7 @@ export interface PartnerDataType {
 }
 
 export interface AttributesType {
+    cChainAddresses?: { Network: string; cAddress: string; id: number }[]
     cChainAddress?: string
     contactEmail?: string
     companyName?: string
@@ -12,7 +13,7 @@ export interface AttributesType {
     contactFirstname?: string
     contactLastname?: string
     contactPhone?: string
-    pChainAddresses?: string[]
+    pChainAddresses?: { Network: string; pAddress: string; id: number }[]
     pChainAddress?: string
     companyShortDescription?: string
     companyLongDescription?: string

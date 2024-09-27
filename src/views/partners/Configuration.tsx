@@ -93,14 +93,12 @@ const Content = () => {
                                 </Typography>
                             </li>
                         </ol>
-                        {balance !== '' && parseFloat(balance) < 100 && (
-                            <Box sx={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                                <Typography variant="caption">Refresh Balance</Typography>
-                                <IconButton onClick={fetchBalance} aria-label="refresh">
-                                    <RefreshIcon fontSize="small" />
-                                </IconButton>
-                            </Box>
-                        )}
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                            <Typography variant="caption">Refresh Balance</Typography>
+                            <IconButton onClick={fetchBalance} aria-label="refresh">
+                                <RefreshIcon fontSize="small" />
+                            </IconButton>
+                        </Box>
                     </>
                 )}
                 {state.step === 0 && (
@@ -136,7 +134,7 @@ const Content = () => {
                         disabled={
                             !state.balance ||
                             parseFloat(state.balance) < 100 ||
-                            parseFloat(state.balance) > parseFloat(balance) - 0.5 ||
+                            parseFloat(state.balance) + 0.5 > parseFloat(balance) ||
                             !store.getters['Accounts/kycStatus']
                         }
                     >

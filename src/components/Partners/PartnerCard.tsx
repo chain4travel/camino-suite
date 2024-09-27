@@ -6,6 +6,7 @@ import { useAppSelector } from '../../hooks/reduxHooks'
 import { useEffectOnce } from '../../hooks/useEffectOnce'
 import useWallet from '../../hooks/useWallet'
 import { selectValidators } from '../../redux/slices/app-config'
+import { getActiveNetwork } from '../../redux/slices/network'
 import PartnerBusinessFields from './PartnerBusinessFields'
 import PartnerFlag from './PartnerFlag'
 import PartnerLogo from './PartnerLogo'
@@ -23,10 +24,13 @@ const PartnerCard: React.FC<PartnerCardProps> = ({ partner, clickable, onClick }
     const [isValidator, setIsValidator] = useState(false)
     const validators = useAppSelector(selectValidators)
     const { getAddress } = useWallet()
+    const activeNetwork = useAppSelector(getActiveNetwork)
     const chackValidatorStatus = async (address: string) => {
-        if (!pChainAddress) setIsValidator(false)
-        let nodeID = await getRegisteredNode(getAddress(address))
-        setIsValidator(!!validators.find(v => v.nodeID === nodeID))
+        try {
+            if (!pChainAddress) setIsValidator(false)
+            let nodeID = await getRegisteredNode(getAddress(address))
+            setIsValidator(!!validators.find(v => v.nodeID === nodeID))
+        } catch (e) {}
     }
     const {
         attributes: {
@@ -41,7 +45,12 @@ const PartnerCard: React.FC<PartnerCardProps> = ({ partner, clickable, onClick }
         },
     } = partner
     useEffect(() => {
-        if (pChainAddress) chackValidatorStatus(pChainAddress)
+        if (pChainAddresses) {
+            let partnerAddresses = pChainAddresses.find(
+                elem => elem.Network.toLowerCase() === activeNetwork.name.toLowerCase(),
+            )
+            if (partnerAddresses) chackValidatorStatus(partnerAddresses.pAddress)
+        }
     }, [partner, validators])
     return (
         <Box

@@ -16,6 +16,7 @@ import { useAppSelector } from '../../hooks/reduxHooks'
 import useWallet from '../../hooks/useWallet'
 import { useFetchPartnerDataQuery, useIsPartnerQuery } from '../../redux/services/partners'
 import { selectValidators } from '../../redux/slices/app-config'
+import { getActiveNetwork } from '../../redux/slices/network'
 import { displayFirstPartLongString, displaySecondPartLongString } from '../../utils/display-utils'
 
 const ContentField = ({ label, children }) => {
@@ -69,7 +70,7 @@ const Widget = ({
     supportedCurrencies,
     partner,
 }) => {
-    const { data } = useIsPartnerQuery({
+    const { data, refetch } = useIsPartnerQuery({
         cChainAddress: store?.state?.activeWallet?.ethAddress
             ? '0x' + store?.state?.activeWallet?.ethAddress
             : '',
@@ -103,6 +104,10 @@ const Widget = ({
         ]
     }, [])
 
+    const activeNetwork = useAppSelector(getActiveNetwork)
+    useEffect(() => {
+        if (activeNetwork) refetch()
+    }, [activeNetwork])
     const partnerConf = usePartnerConfig()
 
     function checkMatch(data): boolean {
@@ -388,6 +393,7 @@ const Partner = () => {
         isLoading,
         isFetching,
         error,
+        refetch,
     } = useFetchPartnerDataQuery({
         companyName: partnerID,
         cChainAddress: !path.includes('partners/messenger-configuration')
@@ -399,6 +405,10 @@ const Partner = () => {
     const validators = useAppSelector(selectValidators)
     const { state, dispatch } = usePartnerConfigurationContext()
 
+    const activeNetwork = useAppSelector(getActiveNetwork)
+    useEffect(() => {
+        if (activeNetwork) refetch()
+    }, [activeNetwork])
     const chackValidatorStatus = async (address: string) => {
         if (!partner.attributes.pChainAddress) setIsValidator(false)
         let nodeID = await getRegisteredNode(getAddress(address))
