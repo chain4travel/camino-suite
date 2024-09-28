@@ -25,9 +25,10 @@ import {
 } from '../../helpers/partnerConfigurationContext'
 import { usePartnerConfig } from '../../helpers/usePartnerConfig'
 import { useSmartContract } from '../../helpers/useSmartContract'
-import { useAppDispatch } from '../../hooks/reduxHooks'
+import { useAppDispatch, useAppSelector } from '../../hooks/reduxHooks'
 import { useFetchPartnerDataQuery } from '../../redux/services/partners'
 import { updateNotificationStatus } from '../../redux/slices/app-config'
+import { getActiveNetwork } from '../../redux/slices/network'
 import { Configuration } from './Configuration'
 
 function ServiceChangesPreview({ added, removed }) {
@@ -148,9 +149,14 @@ export const BasicWantedServices = () => {
     const { partnerID } = useParams()
     const { state, dispatch } = usePartnerConfigurationContext()
     const [distrubitorState, dispatchDistrubitorState] = useReducer(reducer, { ...state, step: 2 })
-    const { data: partner } = useFetchPartnerDataQuery({
+    const { data: partner, refetch } = useFetchPartnerDataQuery({
         companyName: partnerID,
     })
+    const activeNetwork = useAppSelector(getActiveNetwork)
+    useEffect(() => {
+        if (activeNetwork) refetch()
+    }, [activeNetwork])
+
     const navigate = useNavigate()
     useEffect(() => {
         if (partner)

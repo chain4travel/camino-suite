@@ -4,16 +4,21 @@ import React, { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router'
 import Alert from '../../components/Alert'
 import { usePartnerConfig } from '../../helpers/usePartnerConfig'
-import { useAppDispatch } from '../../hooks/reduxHooks'
+import { useAppDispatch, useAppSelector } from '../../hooks/reduxHooks'
 import { useFetchPartnerDataQuery } from '../../redux/services/partners'
 import { updateNotificationStatus } from '../../redux/slices/app-config'
+import { getActiveNetwork } from '../../redux/slices/network'
 import { Configuration } from './Configuration'
 
 export const BasicManageBots = () => {
     const { partnerID } = useParams()
-    const { data: partner } = useFetchPartnerDataQuery({
+    const { data: partner, refetch } = useFetchPartnerDataQuery({
         companyName: partnerID,
     })
+    const activeNetwork = useAppSelector(getActiveNetwork)
+    useEffect(() => {
+        if (activeNetwork) refetch()
+    }, [activeNetwork])
     const navigate = useNavigate()
     if (!partner) return <></>
 

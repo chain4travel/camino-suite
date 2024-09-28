@@ -81,9 +81,14 @@ const Input = ({ ...rest }) => {
             />
             {error && (
                 <Typography variant="caption" color="error">
-                    {parseFloat(state.balance) < 100 || !state.balance || state.balance === '0'
+                    {parseFloat(state.balance) < 100 ||
+                    !state.balance ||
+                    state.balance === '0' ||
+                    parseFloat(maxBalance) < 100
                         ? 'Balance must be at least 100'
-                        : `Balance cannot exceed ${parseFloat(maxBalance) - 0.5}`}
+                        : parseFloat(state.balance) < 100.5
+                        ? `Insufficient funds: Your wallet balance is too low to create a Camino Messenger account.`
+                        : `Prefund Amount cannot exceed ${parseFloat(maxBalance) - 0.5}`}
                 </Typography>
             )}
         </>
