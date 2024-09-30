@@ -212,7 +212,7 @@ export const partnersApi = createApi({
                             const contractAddress = Array.from(contractMappings.entries()).find(
                                 ([_, partnerAddress]) =>
                                     partnerAddress.toLowerCase() ===
-                                    partnerCChainAddress?.cAddress.toLowerCase(),
+                                    partnerCChainAddress?.cAddress?.toLowerCase(),
                             )?.[0]
 
                             if (contractAddress) {
@@ -253,7 +253,7 @@ export const partnersApi = createApi({
                                     contractAddress,
                                     bots,
                                     supportedCurrencies,
-                                    isOnMessenger: Boolean(partnerCChainAddress.cAddress),
+                                    isOnMessenger: Boolean(partnerCChainAddress?.cAddress),
                                 }
                             }
                         }
@@ -319,7 +319,7 @@ export const partnersApi = createApi({
                     elem => elem.Network === selectedNetwork.name.toLowerCase(),
                 )
 
-                if (partnerData && partnerCChainAddress.cAddress) {
+                if (partnerData && partnerCChainAddress?.cAddress) {
                     const selectedNetwork = store.getters['Network/selectedNetwork']
                     const providerUrl = `${selectedNetwork.protocol}://${selectedNetwork.ip}:${selectedNetwork.port}/ext/bc/C/rpc`
                     const provider = new ethers.JsonRpcProvider(providerUrl)
@@ -327,7 +327,7 @@ export const partnersApi = createApi({
                     const contractAddress = Array.from(contractMappings.entries()).find(
                         ([_, partnerAddress]) =>
                             partnerAddress.toLowerCase() ===
-                            (arg.cChainAddress || partnerCChainAddress.cAddress).toLowerCase(),
+                            (arg.cChainAddress || partnerCChainAddress?.cAddress).toLowerCase(),
                     )?.[0]
                     if (contractAddress) {
                         const { supportedServices, wantedServices, bots, supportedCurrencies } =
@@ -444,11 +444,11 @@ export const partnersApi = createApi({
                         let partnerCChainAddress = partner?.attributes?.cChainAddresses.find(
                             elem => elem.Network === selectedNetwork.name.toLowerCase(),
                         )
-                        if (partnerCChainAddress.cAddress) {
+                        if (partnerCChainAddress?.cAddress) {
                             const contractAddress = Array.from(contractMappings.entries()).find(
                                 ([_, partnerAddress]) =>
                                     partnerAddress.toLowerCase() ===
-                                    partnerCChainAddress.cAddress.toLowerCase(),
+                                    partnerCChainAddress?.cAddress.toLowerCase(),
                             )?.[0]
 
                             if (contractAddress) {
@@ -537,7 +537,7 @@ export const partnersApi = createApi({
                 let partnerCChainAddress = partnerData?.attributes?.cChainAddresses.find(
                     elem => elem.Network === selectedNetwork.name.toLowerCase(),
                 )
-                if (partnerData && partnerCChainAddress.cAddress) {
+                if (partnerData && partnerCChainAddress?.cAddress) {
                     const selectedNetwork = store.getters['Network/selectedNetwork']
                     const providerUrl = `${selectedNetwork.protocol}://${selectedNetwork.ip}:${selectedNetwork.port}/ext/bc/C/rpc`
                     const provider = new ethers.JsonRpcProvider(providerUrl)
