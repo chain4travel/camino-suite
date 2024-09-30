@@ -26,9 +26,9 @@ const MatchingPartners = ({ state }) => {
     const matchingPartnersFiltred = useMemo(() => {
         return partners?.data
             ? partners?.data?.filter(elem => {
-                  let address = (elem?.attributes?.cChainAddresses.find(
+                  let address = elem?.attributes?.cChainAddresses.find(
                       elem => elem.Network.toLowerCase() === activeNetwork.name.toLowerCase(),
-                  )).cAddress
+                  )?.cAddress
                   if (address !== sc?.wallet?.address) return true
                   return false
               })
