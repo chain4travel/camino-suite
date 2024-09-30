@@ -41,7 +41,17 @@ const ClaimProfile = () => {
                 first.
             </Typography>
             <Typography variant="body2" textAlign={'center'}>
-                Contact the Camino Network Foundation via <Link onClick={generateEmail}>email</Link>{' '}
+                Contact the Camino Network Foundation via{' '}
+                <Link
+                    component="a"
+                    sx={{
+                        color: theme => theme.palette.text.primary,
+                        textDecorationColor: 'inherit',
+                    }}
+                    onClick={generateEmail}
+                >
+                    email
+                </Link>{' '}
                 to proceed.
             </Typography>
             <Button
