@@ -143,15 +143,16 @@ const getBaseUrl = () => {
     const currentPath = typeof window !== 'undefined' ? window.location.hostname : ''
     if (currentPath === 'localhost' || currentPath.includes('dev')) {
         return BASE_URLS.dev
+    } else if (currentPath) {
+        return BASE_URLS.prod
     } else {
         return BASE_URLS.prod
     }
 }
 
 export const partnersApi = createApi({
-    baseQuery: fetchBaseQuery({
-        baseUrl: '',
-    }),
+    reducerPath: 'partnersApi',
+    baseQuery: fetchBaseQuery({ baseUrl: '/' }),
     endpoints: build => ({
         listPartners: build.query<any, StatePartnersType>({
             query: ({ page, companyName, businessField, validators, onMessenger }) => {
@@ -296,20 +297,26 @@ export const partnersApi = createApi({
             { companyName: string; cChainAddress?: string }
         >({
             query: ({ companyName, cChainAddress }) => {
-                if (cChainAddress) {
-                    const baseUrl = getBaseUrl()
-                    const selectedNetwork = store.getters['Network/selectedNetwork']
-                    let query =
-                        '?populate=*&sort[0]=companyName:asc&pagination[page]=1&pagination[pageSize]=12'
-                    query += `&filters[$and][0][cChainAddresses][cAddress][$containsi]=${cChainAddress}&filters[$and][1][cChainAddresses][Network][$eq]=${selectedNetwork.name.toLowerCase()}`
-                    return `${baseUrl}${query}`
+                const baseUrl = getBaseUrl()
+                if (!baseUrl) {
+                    throw new Error('Base URL is undefined')
                 }
-                if (companyName) {
-                    const baseUrl = getBaseUrl()
-                    let query =
-                        '?populate=*&sort[0]=companyName:asc&pagination[page]=1&pagination[pageSize]=12'
+
+                let query =
+                    '?populate=*&sort[0]=companyName:asc&pagination[page]=1&pagination[pageSize]=12'
+
+                if (cChainAddress) {
+                    const selectedNetwork = store.getters['Network/selectedNetwork']
+                    if (!selectedNetwork) {
+                        throw new Error('Selected network is undefined')
+                    }
+                    query += `&filters[$and][0][cChainAddresses][cAddress][$containsi]=${cChainAddress}&filters[$and][1][cChainAddresses][Network][$eq]=${selectedNetwork.name.toLowerCase()}`
+                } else if (companyName) {
                     query += `&filters[companyName][$contains]=${companyName}`
-                    return `${baseUrl}${query}`
+                }
+                return {
+                    url: `${baseUrl}${query}`,
+                    method: 'GET',
                 }
             },
             async transformResponse(response: PartnersResponseType, _meta, arg) {
