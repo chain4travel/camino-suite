@@ -1,11 +1,12 @@
 import { Box, Typography } from '@mui/material'
 import React, { useEffect, useMemo } from 'react'
 import { useNavigate } from 'react-router'
+import store from 'wallet/store'
 import PartnerCard from '../../components/Partners/PartnerCard'
 import { usePartnerConfigurationContext } from '../../helpers/partnerConfigurationContext'
 import { useSmartContract } from '../../helpers/useSmartContract'
 import { useAppSelector } from '../../hooks/reduxHooks'
-import { useListMatchingPartnersQuery } from '../../redux/services/partners'
+import { useIsPartnerQuery, useListMatchingPartnersQuery } from '../../redux/services/partners'
 import { getActiveNetwork } from '../../redux/slices/network'
 
 const MatchingPartners = ({ state }) => {
@@ -21,21 +22,36 @@ const MatchingPartners = ({ state }) => {
         supportedResult: value?.state?.stepsConfig[1]?.services,
         wantedResult: value?.state?.stepsConfig[2]?.services,
     })
+    const { data, refetch: refetchIsPartner } = useIsPartnerQuery({
+        cChainAddress: store?.state?.activeWallet?.ethAddress
+            ? '0x' + store?.state?.activeWallet?.ethAddress
+            : '',
+    })
     const activeNetwork = useAppSelector(getActiveNetwork)
     const sc = useSmartContract()
     const matchingPartnersFiltred = useMemo(() => {
         return partners?.data
             ? partners?.data?.filter(elem => {
                   let address = elem?.attributes?.cChainAddresses.find(
-                      elem => elem.Network.toLowerCase() === activeNetwork.name.toLowerCase(),
+                      elem => elem.Network.toLowerCase() === activeNetwork?.name?.toLowerCase(),
                   )?.cAddress
                   if (address !== sc?.wallet?.address) return true
                   return false
               })
             : []
     }, [partners])
+    const partnerCChainAddress = useMemo(() => {
+        let cAddress = data?.attributes?.cChainAddresses.find(
+            elem => elem.Network === activeNetwork?.name?.toLowerCase(),
+        )
+        if (cAddress) return cAddress
+        return ''
+    }, [data])
     useEffect(() => {
-        if (activeNetwork) refetch()
+        if (activeNetwork) {
+            refetch()
+            refetchIsPartner()
+        }
     }, [activeNetwork])
     const navigate = useNavigate()
     if (
@@ -43,7 +59,8 @@ const MatchingPartners = ({ state }) => {
         isFetching ||
         error ||
         !matchingPartnersFiltred ||
-        matchingPartnersFiltred?.length === 0
+        matchingPartnersFiltred?.length === 0 ||
+        !partnerCChainAddress
     )
         return <></>
     return (

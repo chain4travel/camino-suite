@@ -114,12 +114,12 @@ export const SmartContractProvider: React.FC<SmartContractProviderProps> = ({ ch
         )
         try {
             if (
-                activeNetwork.name.toLowerCase() !== 'columbus' &&
-                activeNetwork.name.toLowerCase() !== 'camino'
+                activeNetwork?.name?.toLowerCase() !== 'columbus' &&
+                activeNetwork?.name?.toLowerCase() !== 'camino'
             )
                 return
             let contractAddress =
-                activeNetwork.name.toLowerCase() === 'columbus'
+                activeNetwork?.name?.toLowerCase() === 'columbus'
                     ? CONTRACTCMACCOUNTMANAGERADDRESSCOLUMBUS
                     : CONTRACTCMACCOUNTMANAGERADDRESSCAMINO
             if (auth) {
@@ -148,8 +148,8 @@ export const SmartContractProvider: React.FC<SmartContractProviderProps> = ({ ch
     const path = window.location.pathname
     useEffect(() => {
         if (
-            activeNetwork.name.toLowerCase() === 'columbus' ||
-            activeNetwork.name.toLowerCase() === 'camino'
+            activeNetwork?.name?.toLowerCase() === 'columbus' ||
+            activeNetwork?.name?.toLowerCase() === 'camino'
         ) {
             setAccountReadContract(null)
             setAccountWriteContract(null)
