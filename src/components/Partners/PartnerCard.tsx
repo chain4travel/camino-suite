@@ -47,7 +47,7 @@ const PartnerCard: React.FC<PartnerCardProps> = ({ partner, clickable, onClick }
     useEffect(() => {
         if (pChainAddresses) {
             let partnerAddresses = pChainAddresses.find(
-                elem => elem.Network.toLowerCase() === activeNetwork.name.toLowerCase(),
+                elem => elem.Network.toLowerCase() === activeNetwork?.name?.toLowerCase(),
             )
             if (partnerAddresses) chackValidatorStatus(partnerAddresses.pAddress)
         }

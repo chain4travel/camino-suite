@@ -104,7 +104,7 @@ const PartnersLayout = () => {
 
     const partnerCChainAddress = useMemo(() => {
         let cAddress = data?.attributes?.cChainAddresses.find(
-            elem => elem.Network === activeNetwork.name.toLowerCase(),
+            elem => elem.Network === activeNetwork?.name?.toLowerCase(),
         )
         if (cAddress) return cAddress
         return ''
@@ -113,8 +113,8 @@ const PartnersLayout = () => {
     if (
         path.includes('partners/messenger-configuration') &&
         !store.state.isAuth &&
-        (activeNetwork.name.toLowerCase() !== 'columbus' ||
-            activeNetwork.name.toLowerCase() !== 'camino')
+        (activeNetwork?.name?.toLowerCase() !== 'columbus' ||
+            activeNetwork?.name?.toLowerCase() !== 'camino')
     ) {
         return <Navigate to="/login" replace />
     }
