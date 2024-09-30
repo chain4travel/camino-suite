@@ -607,13 +607,14 @@ const Partner = () => {
                                     wantedServices={state.stepsConfig[2].services}
                                     supportedServices={state.stepsConfig[1].services}
                                     CMAccountAddress={value?.contractCMAccountAddress}
+                                    supportedCurrencies={partner.supportedCurrencies}
+                                    partner={partner}
                                 />
                             ) : (
                                 OwnBusinsessNotOnMessenger
                             )}
                         </Box>
                     ) : (
-                        // <></>
                         partner.contractAddress && (
                             <Box
                                 sx={{

@@ -1,12 +1,12 @@
 import { Box, Grid, Typography } from '@mui/material'
 import { changeActiveApp, getAllApps } from '../../redux/slices/app-config'
 
-import LandingPageAppWidget from './LandingPageAppWidget'
 import React from 'react'
-import { getActiveNetwork } from '../../redux/slices/network'
-import { useAppSelector } from '../../hooks/reduxHooks'
 import { useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router'
+import { useAppSelector } from '../../hooks/reduxHooks'
+import { getActiveNetwork } from '../../redux/slices/network'
+import LandingPageAppWidget from './LandingPageAppWidget'
 
 export default function LandingPage() {
     const activeNetwork = useAppSelector(getActiveNetwork)

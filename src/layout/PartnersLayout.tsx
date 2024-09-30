@@ -41,7 +41,17 @@ const ClaimProfile = () => {
                 first.
             </Typography>
             <Typography variant="body2" textAlign={'center'}>
-                Contact the Camino Network Foundation via <Link onClick={generateEmail}>email</Link>{' '}
+                Contact the Camino Network Foundation via{' '}
+                <Link
+                    component="a"
+                    sx={{
+                        color: theme => theme.palette.text.primary,
+                        textDecorationColor: 'inherit',
+                    }}
+                    onClick={generateEmail}
+                >
+                    email
+                </Link>{' '}
                 to proceed.
             </Typography>
             <Button
@@ -94,7 +104,7 @@ const PartnersLayout = () => {
 
     const partnerCChainAddress = useMemo(() => {
         let cAddress = data?.attributes?.cChainAddresses.find(
-            elem => elem.Network === activeNetwork.name.toLowerCase(),
+            elem => elem.Network === activeNetwork?.name?.toLowerCase(),
         )
         if (cAddress) return cAddress
         return ''
@@ -103,8 +113,8 @@ const PartnersLayout = () => {
     if (
         path.includes('partners/messenger-configuration') &&
         !store.state.isAuth &&
-        (activeNetwork.name.toLowerCase() !== 'columbus' ||
-            activeNetwork.name.toLowerCase() !== 'camino')
+        (activeNetwork?.name?.toLowerCase() !== 'columbus' ||
+            activeNetwork?.name?.toLowerCase() !== 'camino')
     ) {
         return <Navigate to="/login" replace />
     }
