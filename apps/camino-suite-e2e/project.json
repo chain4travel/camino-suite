@@ -1,0 +1,9 @@
+{
+  "name": "camino-suite-e2e",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/camino-suite-e2e/src",
+  "tags": [],
+  "implicitDependencies": ["camino-suite"],
+  "// targets": "to see all targets run: nx show project camino-suite-e2e --web",
+  "targets": {}
+}

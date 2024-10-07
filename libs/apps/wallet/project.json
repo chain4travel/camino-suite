@@ -1,0 +1,9 @@
+{
+  "name": "apps-wallet",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/apps/wallet/src",
+  "projectType": "library",
+  "tags": [],
+  "// targets": "to see all targets run: nx show project apps-wallet --web",
+  "targets": {}
+}

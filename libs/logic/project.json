@@ -1,0 +1,9 @@
+{
+  "name": "logic",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/logic/src",
+  "projectType": "library",
+  "tags": [],
+  "// targets": "to see all targets run: nx show project logic --web",
+  "targets": {}
+}

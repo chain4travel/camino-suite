@@ -1,0 +1,9 @@
+{
+  "name": "camino-suite",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/camino-suite",
+  "projectType": "application",
+  "tags": [],
+  "// targets": "to see all targets run: nx show project camino-suite --web",
+  "targets": {}
+}
