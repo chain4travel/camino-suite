@@ -47,3 +47,11 @@ out
 
 
 storybook-static
+
+# yarn
+.yarn/*
+!.yarn/patches
+!.yarn/releases
+!.yarn/plugins
+!.yarn/sdks
+.yarnrc

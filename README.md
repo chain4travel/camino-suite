@@ -56,6 +56,13 @@ You can use `npx nx list` to get a list of installed plugins. Then, run `npx nx 
 [Learn more about Nx plugins &raquo;](https://nx.dev/concepts/nx-plugins?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) | [Browse the plugin registry &raquo;](https://nx.dev/plugin-registry?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
 
 
+## Add a New Sub-App Inside Camino-suite
+
+```sh
+nx g @nrwl/next:lib name --directory=libs/apps
+```
+We structure it this way rather than generating a new app because of the global store. If we need to use the global store across all the `sub-apps`, this is the only way to do it. The reason is that each app runs on its own port, and if we generated a new app, the global store would be initialized as a new store for each app.
+
 ## Install Nx Console
 
 Nx Console is an editor extension that enriches your developer experience. It lets you run tasks, generate code, and improves code autocompletion in your IDE. It is available for VSCode and IntelliJ.
