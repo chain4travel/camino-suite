@@ -547,7 +547,11 @@ const MyMessenger = () => {
                                 <>
                                     None. Visit the relevant{' '}
                                     <Link
-                                        sx={{ cursor: 'pointer' }}
+                                        sx={{
+                                            cursor: 'pointer',
+                                            color: theme => theme.palette.text.primary,
+                                            textDecorationColor: 'inherit',
+                                        }}
                                         onClick={() =>
                                             navigate('/partners/messenger-configuration/supplier')
                                         }
@@ -570,7 +574,11 @@ const MyMessenger = () => {
                                 <>
                                     None. Visit the relevant{' '}
                                     <Link
-                                        sx={{ cursor: 'pointer' }}
+                                        sx={{
+                                            cursor: 'pointer',
+                                            color: theme => theme.palette.text.primary,
+                                            textDecorationColor: 'inherit',
+                                        }}
                                         onClick={() =>
                                             navigate(
                                                 '/partners/messenger-configuration/distribution',
@@ -602,7 +610,11 @@ const MyMessenger = () => {
                                 <>
                                     None. Visit the relevant{' '}
                                     <Link
-                                        sx={{ cursor: 'pointer' }}
+                                        sx={{
+                                            cursor: 'pointer',
+                                            color: theme => theme.palette.text.primary,
+                                            textDecorationColor: 'inherit',
+                                        }}
                                         onClick={() =>
                                             navigate('/partners/messenger-configuration/bots')
                                         }
