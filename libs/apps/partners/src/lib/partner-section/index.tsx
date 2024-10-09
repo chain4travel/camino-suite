@@ -32,7 +32,7 @@ export function PartnerSection() {
             </h1>
           </div>
           <div id="hero" className="rounded">
-            <div className="text-container">
+            <div className="text-container ">
               <div>
                 <svg
                   width="242"

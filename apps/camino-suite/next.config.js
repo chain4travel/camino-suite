@@ -13,14 +13,6 @@ const nextConfig = {
     svgr: false,
   },
   reactStrictMode: true,
-  async rewrites() {
-    return [
-      {
-        source: '/wallet/:path*', // Match any path starting with /wallet
-        destination: 'http://localhost:3001/wallet/:path*', // Rewrite to camino-wallet
-      },
-    ];
-  },
 };
 
 const plugins = [

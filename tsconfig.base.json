@@ -17,8 +17,10 @@
     "paths": {
       "@rebuild/apps/partners": ["libs/apps/partners/src/index.ts"],
       "@rebuild/apps/wallet": ["libs/apps/wallet/src/index.ts"],
+      "@rebuild/data": ["libs/data/src/index.ts"],
       "@rebuild/logic": ["libs/logic/src/index.ts"],
       "@rebuild/shared/store": ["libs/shared/store/src/index.ts"],
+      "@rebuild/styles": ["libs/styles/src/index.ts"],
       "@rebuild/ui": ["libs/ui/src/index.ts"]
     }
   },
