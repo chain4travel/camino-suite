@@ -19,6 +19,7 @@ import {
 import { ethers } from 'ethers'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router'
+import store from 'wallet/store'
 import Alert from '../../components/Alert'
 import DialogAnimate from '../../components/Animate/DialogAnimate'
 import MainButton from '../../components/MainButton'
@@ -323,6 +324,8 @@ const MyMessenger = () => {
     const [isCAMSupported, setCAMSupported] = useState(false)
     const [isEditMode, setIsEditMode] = useState(false)
     const [tempOffChainPaymentSupported, setTempOffChainPaymentSupported] = useState(false)
+    const [tempSupportedTokens, setTempSupportedTokens] = useState([])
+    const [supportedTokens, setSupportedTokens] = useState([])
     const [tempCAMSupported, setTempCAMSupported] = useState(false)
     const { balanceOfAnAddress, getBalanceOfAnAddress } = useWalletBalance()
     const [isLoading, setIsLoading] = useState(false)
@@ -335,6 +338,7 @@ const MyMessenger = () => {
         addSupportedToken,
         removeSupportedToken,
         getListOfBots,
+        transferERC20,
     } = usePartnerConfig()
     const { data: partner, refetch } = useFetchPartnerDataQuery({
         companyName: '',
@@ -380,6 +384,33 @@ const MyMessenger = () => {
                 if (tempCAMSupported) await addSupportedToken(ethers.ZeroAddress)
                 else await removeSupportedToken(ethers.ZeroAddress)
             }
+            if (tempSupportedTokens) {
+                const result = []
+
+                for (const address of supportedTokens) {
+                    const foundToken = tempSupportedTokens.find(
+                        token =>
+                            token.address.toLowerCase() === address.toLowerCase() &&
+                            token.supported,
+                    )
+
+                    if (foundToken) {
+                        result.push({
+                            address: foundToken.address,
+                            name: foundToken.name,
+                            symbol: foundToken.symbol,
+                            added: true,
+                        })
+                    } else {
+                        result.push({
+                            address: address,
+                            added: false,
+                        })
+                    }
+                }
+
+                return result
+            }
             appDispatch(
                 updateNotificationStatus({
                     message: 'Accepted currencies updated successfully',
@@ -399,6 +430,32 @@ const MyMessenger = () => {
         const res = await getListOfBots()
         setBots(res)
     }
+    async function fetchSupportedTokens() {
+        const res = await getSupportedTokens()
+        setSupportedTokens(res)
+    }
+
+    const tokens = useMemo(() => {
+        if (
+            store.getters['Assets/networkErc20Tokens'] &&
+            store.getters['Assets/networkErc20Tokens'].length > 0
+        ) {
+            let tokens = store.getters['Assets/networkErc20Tokens'].map(elem => {
+                return {
+                    address: elem.contract._address,
+                    balance: elem.balanceBig.toLocaleString(),
+                    name: elem.data.name,
+                    symbol: elem.data.symbol,
+                    decimal: elem.data.decimal,
+                    supported: supportedTokens.find(token => token === elem.contract._address),
+                }
+            })
+            setTempSupportedTokens([...tokens])
+            return tokens
+        }
+        return []
+    }, [supportedTokens])
+
     useEffect(() => {
         checkIfCamSupported()
         checkIfOffChainPaymentSupported()
@@ -407,6 +464,7 @@ const MyMessenger = () => {
 
     useEffect(() => {
         fetchBots()
+        fetchSupportedTokens()
     }, [])
 
     function getServicesNames(services) {
@@ -669,6 +727,75 @@ const MyMessenger = () => {
                                 </Button>
                             )}
                         </Box>
+                        {tokens.length > 0 &&
+                            tokens.map((elem, index) => {
+                                return (
+                                    <Box
+                                        sx={{
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            gap: '8px',
+                                            justifyContent: 'space-between',
+                                        }}
+                                        key={index}
+                                    >
+                                        <FormControlLabel
+                                            disabled={!isEditMode}
+                                            label={
+                                                <Typography variant="body2">
+                                                    {elem.name}: {elem.balance} {elem.symbol}
+                                                </Typography>
+                                            }
+                                            control={
+                                                <Checkbox
+                                                    sx={{
+                                                        m: '0 8px 0 0',
+                                                        color: theme =>
+                                                            !isEditMode
+                                                                ? theme.palette.action.disabled
+                                                                : theme.palette.secondary.main,
+                                                        '&.Mui-checked': {
+                                                            color: theme =>
+                                                                !isEditMode
+                                                                    ? theme.palette.action.disabled
+                                                                    : theme.palette.secondary.main,
+                                                        },
+                                                        '&.MuiCheckbox-colorSecondary.Mui-checked':
+                                                            {
+                                                                color: theme =>
+                                                                    !isEditMode
+                                                                        ? theme.palette.action
+                                                                              .disabled
+                                                                        : theme.palette.secondary
+                                                                              .main,
+                                                            },
+                                                    }}
+                                                    checked={
+                                                        isEditMode
+                                                            ? tempSupportedTokens[index].supported
+                                                            : elem.supported
+                                                    }
+                                                    onChange={e => {
+                                                        let newArray = [...tempSupportedTokens]
+                                                        newArray[index].supported = e.target.checked
+                                                        setTempSupportedTokens(newArray)
+                                                    }}
+                                                />
+                                            }
+                                        />
+                                        {!isEditMode && (
+                                            <Button
+                                                variant="contained"
+                                                onClick={() => {
+                                                    transferERC20()
+                                                }}
+                                            >
+                                                Withdraw
+                                            </Button>
+                                        )}
+                                    </Box>
+                                )
+                            })}
                         <Box
                             sx={{
                                 display: 'flex',
