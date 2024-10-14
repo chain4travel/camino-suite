@@ -1,4 +1,4 @@
-# Camino Application Suite
+# Camino Suite
 
 This app uses Module Federation to combine three different applications with different frameworks into a single, cohesive application. The three applications are:
 

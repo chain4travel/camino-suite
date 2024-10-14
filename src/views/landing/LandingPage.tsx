@@ -28,10 +28,10 @@ export default function LandingPage() {
         <Box sx={{ py: 4 }}>
             <Box>
                 <Typography textAlign="center" variant="h2">
-                    Camino Application Suite
+                    Camino Suite
                 </Typography>
                 <Typography textAlign={'center'}>
-                    The Camino Application Suite unifies all network wide applications of the Camino
+                    The Camino Suite unifies all network wide applications of the Camino
                     Network
                 </Typography>
             </Box>
