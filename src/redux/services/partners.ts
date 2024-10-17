@@ -5,6 +5,7 @@ import { PartnerDataType, PartnersResponseType } from '../../@types/partners'
 import {
     CONTRACTCMACCOUNTMANAGERADDRESSCAMINO,
     CONTRACTCMACCOUNTMANAGERADDRESSCOLUMBUS,
+    ERC20_ABI,
 } from '../../constants/apps-consts'
 import CMAccount from '../../helpers/CMAccountManagerModule#CMAccount.json'
 import CMAccountManager from '../../helpers/ManagerProxyModule#CMAccountManager.json'
@@ -36,13 +37,22 @@ const getListOfBots = async contract => {
     }
 }
 
-const getSupportedCurrencies = async contract => {
+const getSupportedCurrencies = async (contract, provider) => {
     try {
         const offChainPaymentSupported = await contract.offChainPaymentSupported()
-        const isCam = (await contract.getSupportedTokens()).find(
-            elem => elem === ethers.ZeroAddress,
-        )
-        return { offChainPaymentSupported, isCam: !!isCam }
+        const supportedTokens = await contract.getSupportedTokens()
+        let tokens = []
+        for (const token of supportedTokens) {
+            if (token !== ethers.ZeroAddress) {
+                const tokenContract = new ethers.Contract(token, ERC20_ABI, provider)
+                const name = await tokenContract.name()
+                const symbol = await tokenContract.symbol()
+                const decimals = await tokenContract.decimals()
+                tokens.push({ name, symbol, decimals })
+            }
+        }
+        const isCam = supportedTokens.find(elem => elem === ethers.ZeroAddress)
+        return { offChainPaymentSupported, isCam: !!isCam, tokens }
     } catch (error) {
         throw error
     }
@@ -56,7 +66,7 @@ async function fetchContractServices(contractAddress: string, provider: ethers.P
             contract.getSupportedServices(),
             contract.getWantedServices(),
             getListOfBots(contract),
-            getSupportedCurrencies(contract),
+            getSupportedCurrencies(contract, provider),
         ])
         return { supportedServices, wantedServices, bots, supportedCurrencies }
     } catch (error) {

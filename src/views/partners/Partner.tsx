@@ -289,8 +289,26 @@ const Widget = ({
                                 </Typography>
                             </li>
                         )}
+                        {supportedCurrencies?.tokens && supportedCurrencies?.tokens.length > 0 && (
+                            <>
+                                {supportedCurrencies?.tokens.map((elem, index) => {
+                                    return (
+                                        <li className="service-type-item" key={index}>
+                                            <Typography
+                                                fontSize={14}
+                                                fontWeight={600}
+                                                lineHeight={'20px'}
+                                            >
+                                                {elem.symbol}
+                                            </Typography>
+                                        </li>
+                                    )
+                                })}
+                            </>
+                        )}
                         {!supportedCurrencies?.offChainPaymentSupported &&
-                            !supportedCurrencies?.isCam && (
+                            !supportedCurrencies?.isCam &&
+                            supportedCurrencies.tokens?.length < 1 && (
                                 <li className="service-type-item">
                                     <Typography fontSize={14} fontWeight={600} lineHeight={'20px'}>
                                         None.

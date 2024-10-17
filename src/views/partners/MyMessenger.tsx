@@ -356,10 +356,7 @@ const MyMessenger = () => {
         let res = await getOffChainPaymentSupported()
         setIsOffChainPaymentSupported(res)
     }
-    async function checkIfCamSupported() {
-        let res = await getSupportedTokens()
-        setCAMSupported(!!res.find(elem => elem === ethers.ZeroAddress))
-    }
+
     const handleCloseModal = () => {
         setOpen(false)
     }
@@ -385,31 +382,21 @@ const MyMessenger = () => {
                 else await removeSupportedToken(ethers.ZeroAddress)
             }
             if (tempSupportedTokens) {
-                const result = []
+                const excludeSet = new Set(supportedTokens)
 
-                for (const address of supportedTokens) {
-                    const foundToken = tempSupportedTokens.find(
-                        token =>
-                            token.address.toLowerCase() === address.toLowerCase() &&
-                            token.supported,
-                    )
+                for (const item of tempSupportedTokens) {
+                    const shouldBeSupported = !excludeSet.has(item.address)
 
-                    if (foundToken) {
-                        result.push({
-                            address: foundToken.address,
-                            name: foundToken.name,
-                            symbol: foundToken.symbol,
-                            added: true,
-                        })
-                    } else {
-                        result.push({
-                            address: address,
-                            added: false,
-                        })
+                    try {
+                        if (shouldBeSupported && item.supported) {
+                            await addSupportedToken(item.address)
+                        } else if (!shouldBeSupported && !item.supported) {
+                            await removeSupportedToken(item.address)
+                        }
+                    } catch (error) {
+                        console.error(`Error updating token ${item.address}:`, error)
                     }
                 }
-
-                return result
             }
             appDispatch(
                 updateNotificationStatus({
@@ -422,7 +409,7 @@ const MyMessenger = () => {
             console.error('Error: ', error)
         } finally {
             await checkIfOffChainPaymentSupported()
-            await checkIfCamSupported()
+            await fetchSupportedTokens()
             setIsLoading(false)
         }
     }
@@ -432,6 +419,7 @@ const MyMessenger = () => {
     }
     async function fetchSupportedTokens() {
         const res = await getSupportedTokens()
+        setCAMSupported(!!res.find(elem => elem === ethers.ZeroAddress))
         setSupportedTokens(res)
     }
 
@@ -447,7 +435,7 @@ const MyMessenger = () => {
                     name: elem.data.name,
                     symbol: elem.data.symbol,
                     decimal: elem.data.decimal,
-                    supported: supportedTokens.find(token => token === elem.contract._address),
+                    supported: !!supportedTokens.find(token => token === elem.contract._address),
                 }
             })
             setTempSupportedTokens([...tokens])
@@ -457,12 +445,11 @@ const MyMessenger = () => {
     }, [supportedTokens])
 
     useEffect(() => {
-        checkIfCamSupported()
-        checkIfOffChainPaymentSupported()
         getBalanceOfAnAddress(contractCMAccountAddress)
-    }, [getBalanceOfAnAddress])
+    }, [contractCMAccountAddress])
 
     useEffect(() => {
+        checkIfOffChainPaymentSupported()
         fetchBots()
         fetchSupportedTokens()
     }, [])
@@ -547,7 +534,11 @@ const MyMessenger = () => {
                                 <>
                                     None. Visit the relevant{' '}
                                     <Link
-                                        sx={{ cursor: 'pointer' }}
+                                        sx={{
+                                            cursor: 'pointer',
+                                            color: theme => theme.palette.text.primary,
+                                            textDecorationColor: 'inherit',
+                                        }}
                                         onClick={() =>
                                             navigate('/partners/messenger-configuration/supplier')
                                         }
@@ -570,7 +561,11 @@ const MyMessenger = () => {
                                 <>
                                     None. Visit the relevant{' '}
                                     <Link
-                                        sx={{ cursor: 'pointer' }}
+                                        sx={{
+                                            cursor: 'pointer',
+                                            color: theme => theme.palette.text.primary,
+                                            textDecorationColor: 'inherit',
+                                        }}
                                         onClick={() =>
                                             navigate(
                                                 '/partners/messenger-configuration/distribution',
@@ -602,7 +597,11 @@ const MyMessenger = () => {
                                 <>
                                     None. Visit the relevant{' '}
                                     <Link
-                                        sx={{ cursor: 'pointer' }}
+                                        sx={{
+                                            cursor: 'pointer',
+                                            color: theme => theme.palette.text.primary,
+                                            textDecorationColor: 'inherit',
+                                        }}
                                         onClick={() =>
                                             navigate('/partners/messenger-configuration/bots')
                                         }
@@ -638,6 +637,7 @@ const MyMessenger = () => {
                             <RefreshOutlined
                                 onClick={() => {
                                     getBalanceOfAnAddress(contractCMAccountAddress)
+                                    fetchSupportedTokens()
                                 }}
                                 sx={{
                                     cursor: 'pointer',
