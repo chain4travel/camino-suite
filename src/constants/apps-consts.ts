@@ -71,6 +71,15 @@ export const ERC20_ABI = [
     'function totalSupply() view returns (uint256)',
     'function balanceOf(address) view returns (uint256)',
 ]
+export const ERC20_BALANCE_ABI = [
+    {
+        constant: true,
+        inputs: [{ name: '_owner', type: 'address' }],
+        name: 'balanceOf',
+        outputs: [{ name: 'balance', type: 'uint256' }],
+        type: 'function',
+    },
+]
 
 export const CONTRACTCMACCOUNTMANAGERADDRESSCOLUMBUS = '0xE5B2f76C778D082b07BDd7D51FFe83E3E055B47F'
 

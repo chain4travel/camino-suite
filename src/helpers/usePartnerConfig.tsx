@@ -371,7 +371,7 @@ export const usePartnerConfig = () => {
     )
 
     const transferERC20 = useCallback(
-        async (address, value) => {
+        async (tokenAddress, to, value) => {
             if (!account) {
                 console.error('Account is not initialized')
                 return
@@ -387,16 +387,12 @@ export const usePartnerConfig = () => {
                     },
                 ]
 
-                // Create a contract instance
-                const contract = new ethers.Contract(address, abi, provider)
-
-                // Call the balanceOf function
-                const balance = await contract.balanceOf(contractCMAccountAddress)
-                const tx = await accountWriteContract.transferERC20(address, wallet.address, value)
+                const tx = await accountWriteContract.transferERC20(
+                    tokenAddress,
+                    ethers.getAddress(to),
+                    value,
+                )
                 await tx.wait()
-                const afterBalance = await contract.balanceOf(contractCMAccountAddress)
-                const afterFormattedBalance = ethers.formatUnits(afterBalance, 18)
-                return afterFormattedBalance
             } catch (error) {
                 const decodedError = accountWriteContract.interface.parseError(error.data)
                 console.error('Message:', error.message)

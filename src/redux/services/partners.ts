@@ -17,7 +17,12 @@ const BASE_URLS = {
 }
 
 function createPartnerContract(address: string, provider: ethers.Provider) {
-    return new ethers.Contract(address, CMAccount, provider)
+    try {
+        const contract = new ethers.Contract(address, CMAccount, provider)
+        return contract
+    } catch (e) {
+        return null
+    }
 }
 
 const getListOfBots = async contract => {
@@ -62,15 +67,18 @@ async function fetchContractServices(contractAddress: string, provider: ethers.P
     const contract = createPartnerContract(contractAddress, provider)
 
     try {
-        const [supportedServices, wantedServices, bots, supportedCurrencies] = await Promise.all([
-            contract.getSupportedServices(),
-            contract.getWantedServices(),
-            getListOfBots(contract),
-            getSupportedCurrencies(contract, provider),
-        ])
-        return { supportedServices, wantedServices, bots, supportedCurrencies }
+        if (contract) {
+            const [supportedServices, wantedServices, bots, supportedCurrencies] =
+                await Promise.all([
+                    contract.getSupportedServices(),
+                    contract.getWantedServices(),
+                    getListOfBots(contract),
+                    getSupportedCurrencies(contract, provider),
+                ])
+            return { supportedServices, wantedServices, bots, supportedCurrencies }
+        }
+        return { supportedServices: [], wantedServices: [] }
     } catch (error) {
-        console.error(`Error fetching services for ${contractAddress}:`, error)
         return { supportedServices: [], wantedServices: [] }
     }
 }
