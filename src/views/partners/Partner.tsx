@@ -446,16 +446,24 @@ const Partner = () => {
     useEffect(() => {
         if (activeNetwork) refetch()
     }, [activeNetwork])
-    const chackValidatorStatus = async (address: string) => {
-        if (!partner.attributes.pChainAddress) setIsValidator(false)
+
+    const partnerPChainAddress = useMemo(() => {
+        let pAddress = partner?.attributes?.pChainAddresses.find(
+            elem => elem.Network === activeNetwork?.name?.toLowerCase(),
+        )?.pAddress
+        if (pAddress) return pAddress
+        return ''
+    }, [partner, validators])
+
+    const chackValidatorStatus = async (address?: string) => {
+        if (partnerPChainAddress) setIsValidator(false)
         let nodeID = await getRegisteredNode(getAddress(address))
         setIsValidator(!!validators.find(v => v.nodeID === nodeID))
     }
 
     useEffect(() => {
-        if (partner?.attributes.pChainAddress)
-            chackValidatorStatus(partner.attributes.pChainAddress)
-    }, [partner, validators])
+        if (partnerPChainAddress) chackValidatorStatus(partnerPChainAddress)
+    }, [partnerPChainAddress])
 
     if (error || (!partner && !isFetching && !isLoading)) {
         navigate('/partners')
@@ -523,23 +531,6 @@ const Partner = () => {
                         }}
                     >
                         <Typography variant="h3">{partner.attributes.companyName}</Typography>
-                        {/* the badge validator will be added when the api support getting p-chain
-                        address */}
-                        {/* {!!isConsortiumMember && (
-                            <Box
-                                sx={{
-                                    background: theme => theme.palette.background.gradient,
-                                    padding: '10px 14px 8px 12px',
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                    borderRadius: theme => theme.shape.borderRadius,
-                                    width: 'fit-content',
-                                }}
-                            >
-                                <Typography sx={{ color: 'common.white' }}>Validator</Typography>
-                            </Box>
-                        )} */}
                     </Box>
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                         {!!isValidator && (
@@ -564,7 +555,7 @@ const Partner = () => {
                                 </Typography>
                             </Box>
                         )}
-                        {partner.contractAddress && (
+                        {!!partner.contractAddress && (
                             <Box
                                 sx={{
                                     width: '129px',
