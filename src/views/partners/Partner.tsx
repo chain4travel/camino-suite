@@ -170,10 +170,29 @@ const Widget = ({
         if (partner.supportedCurrencies && supportedCurrencies.isCam) otherPartnerAccept.push('CAM')
         if (partner.supportedCurrencies && supportedCurrencies.offChainPaymentSupported)
             otherPartnerAccept.push('offChainPaymentSupported')
+        if (
+            partner.supportedCurrencies &&
+            supportedCurrencies.tokens &&
+            supportedCurrencies.tokens.length > 0
+        )
+            otherPartnerAccept = [
+                ...otherPartnerAccept,
+                [...supportedCurrencies.tokens.filter(elem => elem.symbol)],
+            ]
         let myPartnerAccept = []
         if (data.supportedCurrencies && data.supportedCurrencies.isCam) myPartnerAccept.push('CAM')
         if (data.supportedCurrencies && data.supportedCurrencies.offChainPaymentSupported)
             myPartnerAccept.push('offChainPaymentSupported')
+        if (
+            data.supportedCurrencies &&
+            data.supportedCurrencies.tokens &&
+            data.supportedCurrencies.tokens.length > 0
+        ) {
+            myPartnerAccept = [
+                ...myPartnerAccept,
+                ...data.supportedCurrencies.tokens.map(elem => elem.symbol),
+            ]
+        }
         const subject = 'Connect on Camino Messenger'
         let bodyEnding = match
             ? `
@@ -289,8 +308,26 @@ const Widget = ({
                                 </Typography>
                             </li>
                         )}
+                        {supportedCurrencies?.tokens && supportedCurrencies?.tokens.length > 0 && (
+                            <>
+                                {supportedCurrencies?.tokens.map((elem, index) => {
+                                    return (
+                                        <li className="service-type-item" key={index}>
+                                            <Typography
+                                                fontSize={14}
+                                                fontWeight={600}
+                                                lineHeight={'20px'}
+                                            >
+                                                {elem.symbol}
+                                            </Typography>
+                                        </li>
+                                    )
+                                })}
+                            </>
+                        )}
                         {!supportedCurrencies?.offChainPaymentSupported &&
-                            !supportedCurrencies?.isCam && (
+                            !supportedCurrencies?.isCam &&
+                            supportedCurrencies.tokens?.length < 1 && (
                                 <li className="service-type-item">
                                     <Typography fontSize={14} fontWeight={600} lineHeight={'20px'}>
                                         None.
