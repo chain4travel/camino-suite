@@ -1,10 +1,11 @@
 import React, { useEffect, useRef } from 'react'
 // @ts-ignore
+import { Box } from '@mui/material'
+import { styled } from '@mui/material/styles'
 import { mountMultisigWalletSetting } from 'wallet/mountMultisigWalletSetting'
 import { useAppDispatch } from '../../hooks/reduxHooks'
+import useWallet from '../../hooks/useWallet'
 import { updateNotificationStatus, updateShowButton } from '../../redux/slices/app-config'
-import { styled } from '@mui/material/styles'
-import { Box } from '@mui/material'
 
 const StyledBox = styled(Box)(({ theme }) => ({
     display: 'flex',
@@ -20,11 +21,12 @@ const StyledBox = styled(Box)(({ theme }) => ({
 const LoadMultisigWalletSetting = () => {
     const ref = useRef(null)
     const dispatch = useAppDispatch()
+    const { updateStore } = useWallet()
     const dispatchNotification = ({ message, type }) =>
         dispatch(updateNotificationStatus({ message, severity: type }))
     const updateShowAlias = () => dispatch(updateShowButton())
     useEffect(() => {
-        mountMultisigWalletSetting(ref.current, { dispatchNotification, updateShowAlias })
+        mountMultisigWalletSetting(ref.current, { dispatchNotification, updateShowAlias, updateStore })
     }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
     return (

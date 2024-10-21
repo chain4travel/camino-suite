@@ -1,5 +1,6 @@
 import { mdiWalletOutline } from '@mdi/js'
 import Icon from '@mdi/react'
+import { Box } from '@mui/material'
 import React, { useEffect } from 'react'
 import { getNameOfWallet, getPchainAddress } from '../../helpers/walletStore'
 import { useAppDispatch, useAppSelector } from '../../hooks/reduxHooks'
@@ -16,11 +17,13 @@ const LoggedInAccount = () => {
             updatePchainAddress({ address: getPchainAddress(), walletName: getNameOfWallet() }),
         )
     }, [activeNetwork])
+
+
     return (
-        <>
+        <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
             <Icon path={mdiWalletOutline} size={1} />
             <LongString value={walletName} />
-        </>
+        </Box>
     )
 }
 export default LoggedInAccount

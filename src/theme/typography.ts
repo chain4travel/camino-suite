@@ -157,6 +157,15 @@ const typography = {
         fontVariantNumeric: 'lining-nums tabular-nums slashed-zero',
         fontFeatureSettings: '"ss01" on',
     },
+    badge: {
+        fontFamily: FONT,
+        fontWeight: 600,
+        lineHeight: '16px',
+        letterSpacing: '1.6px',
+        textTransform: 'uppercase',
+        fontVariantNumeric: 'lining-nums tabular-nums slashed-zero',
+        fontFeatureSettings: '"ss01" on',
+    },
 } as const
 
 export default typography
