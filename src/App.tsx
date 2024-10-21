@@ -1,12 +1,12 @@
+import { ExplorerStoreProvider } from 'Explorer/useStore'
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import Root from './layout/index'
 import { HelmetProvider } from 'react-helmet-async'
-import ThemeConfig from './theme'
 import { Provider as ReduxProvider } from 'react-redux'
-import { configureAppStore } from './redux/store'
 import './index.css'
-import { ExplorerStoreProvider } from 'Explorer/useStore'
+import Root from './layout/index'
+import { configureAppStore } from './redux/store'
+import ThemeConfig from './theme'
 
 export const store = configureAppStore()
 
