@@ -16,9 +16,7 @@ export const usePartnerConfig = () => {
         managerReadContract,
         wallet,
         CMAccountCreated,
-        contractCMAccountAddress,
         accountReadContract,
-        provider,
     } = useSmartContract()
     const activeNetwork = useAppSelector(getActiveNetwork)
     const auth = useAppSelector(state => state.appConfig.isAuth)
