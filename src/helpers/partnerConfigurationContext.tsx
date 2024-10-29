@@ -1,5 +1,13 @@
 import { ethers } from 'ethers'
-import React, { createContext, useContext, useEffect, useReducer } from 'react'
+import React, {
+    createContext,
+    useCallback,
+    useContext,
+    useEffect,
+    useReducer,
+    useState,
+} from 'react'
+import { useNavigate } from 'react-router'
 import { usePartnerConfig } from './usePartnerConfig'
 import { useSmartContract } from './useSmartContract'
 
@@ -374,9 +382,11 @@ const PartnerConfigContext = createContext()
 // Context provider component
 export const PartnerConfigurationProvider = ({ children }) => {
     const [state, dispatch] = useReducer(reducer, initialState)
+    const [firstLoad, setFirstLoad] = useState(false)
     const partnerConfig = usePartnerConfig()
-    const { accountReadContract } = useSmartContract()
-
+    const { accountReadContract, accountWriteContract, contractCMAccountAddress, needsUpgrade } =
+        useSmartContract()
+    const path = window.location.pathname
     useEffect(() => {
         if (partnerConfig.account) {
             partnerConfig.getAllServices().then(result => {
@@ -390,6 +400,23 @@ export const PartnerConfigurationProvider = ({ children }) => {
         }
     }, [partnerConfig.account])
 
+    const navigate = useNavigate()
+
+    const checkIfCMAccountneedsUpgrade = useCallback(async () => {
+        let res = await needsUpgrade()
+        setFirstLoad(true)
+        if (res) navigate('/partners/upgrade')
+    }, [contractCMAccountAddress, accountWriteContract])
+
+    useEffect(() => {
+        if (
+            contractCMAccountAddress &&
+            path.includes('partners/messenger-configuration') &&
+            !firstLoad
+        ) {
+            checkIfCMAccountneedsUpgrade()
+        }
+    }, [contractCMAccountAddress, accountWriteContract, path])
     useEffect(() => {
         if (accountReadContract) {
             partnerConfig.getSupportedServices().then(res => {
