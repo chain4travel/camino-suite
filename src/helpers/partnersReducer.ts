@@ -53,6 +53,9 @@ export const partnersReducer = (
                 companyName: action.payload,
             }
         case partnersActions.UPDATE_BUSINESS_FIELD:
+            console.log('action', [...state.businessField])
+            console.log('action', action.payload)
+
             let newBusinessField = [...state.businessField]
             let index = newBusinessField.findIndex(elem => elem.name === action.payload)
             newBusinessField[index] = {
