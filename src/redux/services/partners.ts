@@ -9,11 +9,16 @@ import {
 } from '../../constants/apps-consts'
 import CMAccount from '../../helpers/CMAccountManagerModule#CMAccount.json'
 import CMAccountManager from '../../helpers/ManagerProxyModule#CMAccountManager.json'
-import { StatePartnersType } from '../../helpers/partnersReducer'
+import { BusinessField, StatePartnersType } from '../../helpers/partnersReducer'
 
 const BASE_URLS = {
     dev: 'https://dev.strapi.camino.network/api/partners',
     prod: 'https://api.strapi.camino.network/partners',
+}
+
+const BUSINESS_BASE_URLS = {
+    dev: 'https://dev.strapi.camino.network/api/business-fields',
+    prod: 'https://api.strapi.camino.network/business-fields',
 }
 
 function createPartnerContract(address: string, provider: ethers.Provider) {
@@ -168,6 +173,40 @@ const getBaseUrl = () => {
     }
 }
 
+const getBusinessBaseUrl = () => {
+    const currentPath = typeof window !== 'undefined' ? window.location.hostname : ''
+    if (currentPath === 'localhost' || currentPath.includes('dev')) {
+        return BUSINESS_BASE_URLS.dev
+    } else if (currentPath) {
+        return BUSINESS_BASE_URLS.prod
+    } else {
+        return BUSINESS_BASE_URLS.prod
+    }
+}
+
+
+export const groupedBusinessFields = (businessField: any) => {
+    const grouped: Record<string, BusinessField> = {}
+    businessField.forEach(field => {
+        const [category, subCategory] = field?.attributes?.BusinessField.split(' / ')
+
+        if (!grouped[category]) {
+            grouped[category] = {
+                category,
+                fields: [],
+            }
+        }
+
+        grouped[category].fields.push({
+            name: subCategory || field?.attributes?.BusinessField,
+            active: false,
+            fullName: field?.attributes?.BusinessField,
+        })
+    })
+
+    return Object.values(grouped)
+}
+
 export const partnersApi = createApi({
     reducerPath: 'partnersApi',
     baseQuery: fetchBaseQuery({ baseUrl: '/' }),
@@ -184,8 +223,8 @@ export const partnersApi = createApi({
                 }
                 if (businessField) {
                     let filterWith = businessField
-                        .filter(elem => elem.active)
-                        .map(elem => elem.name)
+                        .flatMap(elem => elem.fields.filter(field => field.active))
+                        .map(field => field.fullName)
                     if (filterWith?.length > 0) {
                         filterWith.forEach((element, index) => {
                             query += `&filters[$and][${index}][business_fields][BusinessField][$eq]=${element}`
@@ -424,8 +463,8 @@ export const partnersApi = createApi({
                 }
                 if (businessField) {
                     let filterWith = businessField
-                        .filter(elem => elem.active)
-                        .map(elem => elem.name)
+                        .flatMap(elem => elem.fields.filter(field => field.active))
+                        .map(field => field.fullName)
                     if (filterWith?.length > 0) {
                         filterWith.forEach((element, index) => {
                             query += `&filters[$and][${index}][business_fields][BusinessField][$eq]=${element}`
@@ -624,6 +663,12 @@ export const partnersApi = createApi({
                 }
             },
         }),
+        getBusinessFields: build.query<any, void>({
+            query: () => getBusinessBaseUrl(),
+            transformResponse(response: PartnersResponseType) {
+                return groupedBusinessFields(response.data)
+            },
+        }),
     }),
 })
 
@@ -632,4 +677,5 @@ export const {
     useFetchPartnerDataQuery,
     useIsPartnerQuery,
     useListMatchingPartnersQuery,
+    useGetBusinessFieldsQuery,
 } = partnersApi

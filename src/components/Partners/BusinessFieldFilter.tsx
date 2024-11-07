@@ -1,68 +1,40 @@
-import { mdiCheckCircle } from '@mdi/js';
-import Icon from '@mdi/react';
-import { Divider, Typography } from '@mui/material';
-import ListItemText from '@mui/material/ListItemText';
-import MenuItem from '@mui/material/MenuItem';
-import Select, { SelectChangeEvent } from '@mui/material/Select';
-import React, { useMemo } from 'react';
-import { ActionType, StatePartnersType, partnersActions } from '../../helpers/partnersReducer';
+import { mdiCheckCircle } from '@mdi/js'
+import Icon from '@mdi/react'
+import { Divider, Typography } from '@mui/material'
+import ListItemText from '@mui/material/ListItemText'
+import MenuItem from '@mui/material/MenuItem'
+import Select from '@mui/material/Select'
+import React from 'react'
+import { ActionType, StatePartnersType, partnersActions } from '../../helpers/partnersReducer'
 
 interface BusinessFieldFilterProps {
-    state: StatePartnersType;
-    dispatchPartnersActions: React.Dispatch<ActionType>;
-}
-
-interface GroupedBusinessField {
-    category: string;
-    fields: Array<{
-        name: string;
-        active: boolean;
-        fullName: string;
-    }>;
+    state: StatePartnersType
+    dispatchPartnersActions: React.Dispatch<ActionType>
 }
 
 const BusinessFieldFilter: React.FC<BusinessFieldFilterProps> = ({
     state,
     dispatchPartnersActions,
 }) => {
-    const groupedBusinessFields = useMemo(() => {
-        const grouped: Record<string, GroupedBusinessField> = {};
-        
-        state.businessField.forEach((field) => {
-            const [category, subCategory] = field.name.split(' / ');
-            
-            if (!grouped[category]) {
-                grouped[category] = {
-                    category,
-                    fields: []
-                };
-            }
-            
-            grouped[category].fields.push({
-                name: subCategory || field.name,
-                active: field.active,
-                fullName: field.name
-            });
-        });
-        
-        return Object.values(grouped);
-    }, [state.businessField]);
-
-    const handleChange = (event: SelectChangeEvent<string[]>) => {
-        console.log(event.target.value);
-        const selectedFields = event.target.value[1]
+    const handleFieldToggle = (selectedField: string) => {
         dispatchPartnersActions({
             type: partnersActions.UPDATE_BUSINESS_FIELD,
-            payload: selectedFields,
-        });
-    };
+            payload: selectedField,
+        })
+    }
 
+    const handleCategoryToggle = (category: string) => {
+        dispatchPartnersActions({
+            type: partnersActions.TOGGLE_CATEGORY,
+            payload: category,
+        })
+    }
 
     return (
         <Select
             multiple
             value={['default']}
-            onChange={handleChange}
+            onChange={() => {}}
             sx={{
                 flex: '1 1 250px',
                 padding: '0',
@@ -105,13 +77,12 @@ const BusinessFieldFilter: React.FC<BusinessFieldFilterProps> = ({
                 },
             }}
         >
-            {groupedBusinessFields.flatMap((group, groupIndex) => [
-                // Category Header as a disabled MenuItem
+            {state?.businessField?.map((group, groupIndex) => [
                 <MenuItem
-                    key={`header-${groupIndex}`}
-                    disabled
+                    key={`category-${groupIndex}`}
+                    onClick={() => handleCategoryToggle(group.category)}
                     sx={{
-                        opacity: 1,
+                        opacity: 0.48,
                         backgroundColor: theme =>
                             theme.palette.mode === 'dark'
                                 ? theme.palette.grey[800]
@@ -129,10 +100,13 @@ const BusinessFieldFilter: React.FC<BusinessFieldFilterProps> = ({
                         {group.category}
                     </Typography>
                 </MenuItem>,
-                
-                // Fields under each category
+
                 ...group.fields.map((field, fieldIndex) => (
-                    <MenuItem key={`field-${groupIndex}-${fieldIndex}`} value={field.fullName}>
+                    <MenuItem
+                        key={`field-${groupIndex}-${fieldIndex}`}
+                        value={field.fullName}
+                        onClick={() => handleFieldToggle(field.fullName)}
+                    >
                         <ListItemText
                             primary={
                                 <Typography
@@ -147,13 +121,12 @@ const BusinessFieldFilter: React.FC<BusinessFieldFilterProps> = ({
                     </MenuItem>
                 )),
 
-                // Divider between categories
-                groupIndex < groupedBusinessFields.length - 1 ? (
+                groupIndex < state.businessField.length - 1 ? (
                     <Divider key={`divider-${groupIndex}`} sx={{ my: 1 }} />
                 ) : null,
             ])}
         </Select>
-    );
-};
+    )
+}
 
-export default BusinessFieldFilter;
+export default BusinessFieldFilter

@@ -1,21 +1,26 @@
-import { Box, Chip } from '@mui/material'
-import React from 'react'
+import { Box, Chip } from '@mui/material';
+import React from 'react';
+import { groupedBusinessFields } from '../../redux/services/partners';
 
 type PartnerBusinessFieldsProps = { business_fields: any; isPartnerView?: boolean }
 
 const PartnerBusinessFields = ({ business_fields, isPartnerView }: PartnerBusinessFieldsProps) => {
+    const flatFields = groupedBusinessFields(business_fields.data).flatMap(
+        category => category.fields,
+    )
+
     const content =
-        business_fields.data.length <= 2 || isPartnerView ? (
-            business_fields.data.map((elem, key) => (
+        flatFields.length <= 2 || isPartnerView ? (
+            flatFields.map((field, index) => (
                 <Chip
-                    key={key}
+                    key={index}
                     sx={{
                         backgroundColor: 'transparent',
                         border: '1px solid',
                         fontSize: '12px',
                         borderColor: theme => theme.palette.grey['700'],
                     }}
-                    label={elem.attributes.BusinessField}
+                    label={field.name}
                 />
             ))
         ) : (
@@ -27,7 +32,7 @@ const PartnerBusinessFields = ({ business_fields, isPartnerView }: PartnerBusine
                         fontSize: '12px',
                         borderColor: theme => theme.palette.grey['700'],
                     }}
-                    label={business_fields.data[0].attributes.BusinessField}
+                    label={flatFields[0].name}
                 />
                 <Chip
                     sx={{
@@ -36,10 +41,11 @@ const PartnerBusinessFields = ({ business_fields, isPartnerView }: PartnerBusine
                         borderColor: theme => theme.palette.grey['700'],
                         fontSize: '12px',
                     }}
-                    label={`+${business_fields.data.length - 1}`}
+                    label={`+${flatFields.length - 1}`}
                 />
             </>
         )
+
     return (
         <Box
             sx={{

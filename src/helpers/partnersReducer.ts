@@ -1,8 +1,10 @@
-import { BUSINESS_FIELDS } from '../constants/apps-consts'
-
 export interface BusinessField {
-    name: string
-    active: boolean
+    category: string
+    fields: Array<{
+        name: string
+        active: boolean
+        fullName: string
+    }>
 }
 
 export interface StatePartnersType {
@@ -16,9 +18,7 @@ export interface StatePartnersType {
 export const initialStatePartners: StatePartnersType = {
     page: 1,
     companyName: '',
-    businessField: BUSINESS_FIELDS.map(elem => {
-        return { name: elem, active: false }
-    }),
+    businessField: [],
     validators: false,
     onMessenger: false,
 }
@@ -27,8 +27,11 @@ export enum partnersActions {
     'NEXT_PAGE',
     'UPDATE_COMPANY_NAME',
     'UPDATE_BUSINESS_FIELD',
+    'TOGGLE_CATEGORY',
     'TOGGLE_VALIDATORS',
     'TOGGLE_ON_MESSENGER',
+    'UPDATE_BUSINESS_FIELDS_FROM_API',
+
 }
 
 export interface ActionType {
@@ -53,20 +56,53 @@ export const partnersReducer = (
                 companyName: action.payload,
             }
         case partnersActions.UPDATE_BUSINESS_FIELD:
-            console.log('action', [...state.businessField])
-            console.log('action', action.payload)
+            const newBusinessField = state.businessField.map(field => {
+                // Check if the field contains the target filter
+                const fieldIndex = field.fields.findIndex(
+                    filter => filter.fullName === action.payload,
+                )
 
-            let newBusinessField = [...state.businessField]
-            let index = newBusinessField.findIndex(elem => elem.name === action.payload)
-            newBusinessField[index] = {
-                ...newBusinessField[index],
-                active: !newBusinessField[index].active,
-            }
+                if (fieldIndex !== -1) {
+                    // Create a new fields array with the updated filter
+                    const updatedFields = field.fields.map((filter, i) => {
+                        if (i === fieldIndex) {
+                            // Return a new filter object with the toggled `active` property
+                            return { ...filter, active: !filter.active }
+                        }
+                        return filter
+                    })
+
+                    // Return a new field object with the updated fields array
+                    return { ...field, fields: updatedFields }
+                }
+
+                // Return the field as-is if it doesn't contain the target filter
+                return field
+            })
+
             return {
                 ...state,
                 page: 1,
                 businessField: newBusinessField,
             }
+        case partnersActions.TOGGLE_CATEGORY:
+            const updatedBusinessField = state.businessField.map(group => {
+                if (group.category === action.payload) {
+                    const updatedFields = group.fields.map(field => ({
+                        ...field,
+                        active: !field.active,
+                    }))
+                    return { ...group, fields: updatedFields }
+                }
+                return group
+            })
+
+            return {
+                ...state,
+                page: 1,
+                businessField: updatedBusinessField,
+            }
+
         case partnersActions.TOGGLE_VALIDATORS:
             return {
                 ...state,
@@ -79,6 +115,12 @@ export const partnersReducer = (
                 page: 1,
                 onMessenger: !state.onMessenger,
             }
+        case partnersActions.UPDATE_BUSINESS_FIELDS_FROM_API:
+            return {
+                ...state,
+                businessField: action.payload,
+            }
+
         default:
             return state
     }
