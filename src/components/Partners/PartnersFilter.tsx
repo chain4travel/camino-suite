@@ -33,6 +33,7 @@ const PartnersFilter: React.FC<PartnersFilterProps> = ({ state, dispatchPartners
         return ''
     }, [data])
     const auth = useAppSelector(state => state.appConfig.isAuth)
+    
     return (
         <Box
             sx={{

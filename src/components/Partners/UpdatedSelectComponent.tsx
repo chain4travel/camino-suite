@@ -90,7 +90,7 @@ const UpdatedSelectComponent = React.memo(
                 )}
                 filterOptions={(options, { inputValue }) =>
                     options.filter(option =>
-                        option.toLowerCase().includes(inputValue.toLowerCase()),
+                        option?.toLowerCase().includes(inputValue.toLowerCase()),
                     )
                 }
                 groupBy={option => option.split('.')[2]}
