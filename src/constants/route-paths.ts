@@ -41,3 +41,5 @@ export const XCHAIN = BASE_PATH + '/x-chain'
 export const PCHAIN = BASE_PATH + '/p-chain'
 
 export const TERMS_OF_USE_URL = 'https://camino.network/terms/'
+
+export const REGISTER_PARTNER_URL = 'https://9gp400vrnwo.typeform.com/supporter'

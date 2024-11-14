@@ -1,8 +1,8 @@
-import { configureStore, ThunkAction, Action } from '@reduxjs/toolkit'
-import appConfigReducer from './slices/app-config'
-import themeReducer from './slices/theme'
-import network from './slices/network'
+import { Action, configureStore, ThunkAction } from '@reduxjs/toolkit'
 import { partnersApi } from './services/partners'
+import appConfigReducer from './slices/app-config'
+import network from './slices/network'
+import themeReducer from './slices/theme'
 export type AppDispatch = typeof store.dispatch
 export type RootState = ReturnType<typeof store.getState>
 export type AppThunk<ReturnType = void> = ThunkAction<

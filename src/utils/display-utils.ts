@@ -6,6 +6,22 @@ export interface Fund {
     value?: number
 }
 
+export const transformServiceNames = services => {
+    return services
+        .map(service => {
+            const parts = service.name.split('.')
+            const versionIndex = parts.findIndex(part => part.startsWith('v'))
+            if (versionIndex !== -1) {
+                const relevantParts = parts.slice(versionIndex + 1)
+                if (relevantParts[relevantParts.length - 1] === 'Service') {
+                    relevantParts.pop()
+                }
+                return relevantParts.join('')
+            }
+            return service
+        })
+        .join(', ')
+}
 // export function getStartDate(endDate: DateTime, timeframe: string): DateTime {
 //     switch (timeframe) {
 //         case Timeframe.DAYS_7:
