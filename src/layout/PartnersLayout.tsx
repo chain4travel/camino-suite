@@ -93,6 +93,7 @@ const PartnersLayout = () => {
             refetchPartenrData()
         }
     }, [activeNetwork])
+    const auth = useAppSelector(state => state.appConfig.isAuth)
     useEffect(() => {
         if (
             walletName &&
@@ -102,6 +103,10 @@ const PartnersLayout = () => {
             navigate('/')
         }
     }, [walletName])
+
+    useEffect(() => {
+        if (!auth && path.includes('partners/messenger-configuration')) navigate('/login')
+    }, [auth, path])
 
     const partnerCChainAddress = useMemo(() => {
         let cAddress = data?.attributes?.cChainAddresses.find(

@@ -577,7 +577,7 @@ export const partnersApi = createApi({
                         const { supportedServices, wantedServices, bots, supportedCurrencies } =
                             await fetchContractServices(contractAddress, provider)
                         let parsedSupportedServices = []
-                        if (supportedServices) {
+                        if (supportedServices[0]) {
                             parsedSupportedServices = supportedServices[0]
                                 .map((service, index) => {
                                     if (
