@@ -1,5 +1,6 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 import { ethers } from 'ethers'
+import { ava as caminoClient } from 'wallet/caminoClient'
 import store from 'wallet/store'
 import { PartnerDataType, PartnersResponseType } from '../../@types/partners'
 import {
@@ -124,6 +125,19 @@ async function getContractMappings(): Promise<Map<string, string>> {
     return mappings
 }
 
+async function getRegisteredNode(address: string): Promise<string> {
+    return await caminoClient.PChain().getRegisteredShortIDLink(address)
+}
+const getAddress = address => {
+    if (address) {
+        let res = caminoClient
+            .PChain()
+            .addressFromBuffer(caminoClient.PChain().parseAddress(address))
+        return res
+    }
+    return ''
+}
+
 function checkMatch(data): boolean {
     if (data.supportedResult.length === 0 && data.wantedResult.length === 0) {
         return false
@@ -165,7 +179,7 @@ function getServiceName(fullName: unknown): string {
 const getBaseUrl = () => {
     const currentPath = typeof window !== 'undefined' ? window.location.hostname : ''
     if (currentPath === 'localhost' || currentPath.includes('dev')) {
-        return BASE_URLS.dev
+        return BASE_URLS.prod
     } else if (currentPath) {
         return BASE_URLS.prod
     } else {
@@ -183,7 +197,6 @@ const getBusinessBaseUrl = () => {
         return BUSINESS_BASE_URLS.prod
     }
 }
-
 
 export const groupedBusinessFields = (businessField: any) => {
     const grouped: Record<string, BusinessField> = {}
@@ -216,9 +229,8 @@ export const partnersApi = createApi({
                 const baseUrl = getBaseUrl()
 
                 let query = '?populate=*'
-
                 const selectedNetwork = store.getters['Network/selectedNetwork']
-                if (!isNaN(page) && !onMessenger) {
+                if (!isNaN(page) && !onMessenger && !validators) {
                     query += `&sort[0]=companyName:asc&pagination[page]=${page}&pagination[pageSize]=12`
                 }
                 if (businessField) {
@@ -235,7 +247,7 @@ export const partnersApi = createApi({
                     query += `&filters[companyName][$contains]=${companyName}`
                 }
                 if (validators) {
-                    query += `&filters[$and][0][pChainAddresses][pAddress][$notNull]=true&filters[$and][1][pChainAddresses][Network][$eq]=${selectedNetwork.name.toLowerCase()}`
+                    query += `&sort[0]=companyName:asc&pagination[page]=${0}&pagination[pageSize]=100&filters[$and][0][pChainAddresses][pAddress][$notNull]=true&filters[$and][1][pChainAddresses][Network][$eq]=${selectedNetwork.name.toLowerCase()}`
                 }
                 if (onMessenger === true) {
                     query += `&sort[0]=companyName:asc&_limit=-1&filters[$and][0][cChainAddresses][cAddress][$notNull]=true&filters[$and][1][cChainAddresses][Network][$eq]=${selectedNetwork.name.toLowerCase()}`
@@ -244,7 +256,10 @@ export const partnersApi = createApi({
                 return {
                     url: `${baseUrl}${query}`,
                     method: 'GET',
-                    params: { onMessenger: onMessenger === true ? 'true' : 'false' },
+                    params: {
+                        onMessenger: onMessenger,
+                        validators: validators,
+                    },
                 }
             },
             async transformResponse(response: PartnersResponseType, meta, arg) {
@@ -259,7 +274,8 @@ export const partnersApi = createApi({
                 const provider = new ethers.JsonRpcProvider(providerUrl)
 
                 const contractMappings = await getContractMappings()
-                const onMessenger = arg.onMessenger === true
+                const onMessenger = arg.onMessenger
+                const onlyValidators = arg.validators
 
                 const partnersWithServices = await Promise.all(
                     response.data.map(async partner => {
@@ -329,24 +345,47 @@ export const partnersApi = createApi({
                               }
                     }),
                 )
-
                 // Filter out null values only if onMessenger is true
                 const filteredPartners = onMessenger
                     ? partnersWithServices.filter(partner => partner !== null)
                     : partnersWithServices
-
+                let validators = (await caminoClient.PChain().getCurrentValidators()).validators
+                let partnersWithValidatorStatus = await Promise.all(
+                    filteredPartners.map(async p => {
+                        let pChainAddress = p.attributes.pChainAddresses.find(
+                            elem =>
+                                elem.Network.toLowerCase() === selectedNetwork.name.toLowerCase(),
+                        )
+                        if (pChainAddress?.pAddress) {
+                            try {
+                                let nodeID = await getRegisteredNode(
+                                    getAddress(pChainAddress?.pAddress),
+                                )
+                                let isValidator = !!validators.find(v => v.nodeID === nodeID)
+                                if (isValidator) return { ...p, isValidator: true }
+                                else return { ...p, isValidator: false }
+                            } catch (error) {
+                                return { ...p, isValidator: false }
+                            }
+                        }
+                        return { ...p, isValidator: false }
+                    }),
+                )
+                const filteredValidatorsPartners = onlyValidators
+                    ? partnersWithValidatorStatus.filter(partner => partner.isValidator)
+                    : partnersWithValidatorStatus
                 // Update the meta information to reflect the new number of results
                 const updatedMeta = {
                     ...response.meta,
                     pagination: {
                         ...response.meta.pagination,
-                        total: onMessenger
-                            ? filteredPartners.length
-                            : response.meta.pagination.total,
+                        total:
+                            onMessenger || onlyValidators
+                                ? filteredValidatorsPartners.length
+                                : response.meta.pagination.total,
                     },
                 }
-
-                return { data: filteredPartners, meta: updatedMeta }
+                return { data: filteredValidatorsPartners, meta: updatedMeta }
             },
         }),
         fetchPartnerData: build.query<
