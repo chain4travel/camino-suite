@@ -368,6 +368,38 @@ export const usePartnerConfig = () => {
         [account, accountWriteContract],
     )
 
+    const transferERC20 = useCallback(
+        async (tokenAddress, to, value) => {
+            if (!account) {
+                console.error('Account is not initialized')
+                return
+            }
+            try {
+                const abi = [
+                    {
+                        constant: true,
+                        inputs: [{ name: '_owner', type: 'address' }],
+                        name: 'balanceOf',
+                        outputs: [{ name: 'balance', type: 'uint256' }],
+                        type: 'function',
+                    },
+                ]
+
+                const tx = await accountWriteContract.transferERC20(
+                    tokenAddress,
+                    ethers.getAddress(to),
+                    value,
+                )
+                await tx.wait()
+            } catch (error) {
+                const decodedError = accountWriteContract.interface.parseError(error.data)
+                console.error('Message:', error.message)
+                console.error(`Reason: ${decodedError?.name} (${decodedError?.args})`)
+            }
+        },
+        [account, accountWriteContract],
+    )
+
     const setOffChainPaymentSupported = useCallback(
         async value => {
             if (!account) {
@@ -454,6 +486,7 @@ export const usePartnerConfig = () => {
     }, [account, readFromContract])
 
     return {
+        transferERC20,
         checkWithDrawRole,
         grantWithDrawRole,
         withDraw,

@@ -5,18 +5,29 @@ import { PartnerDataType, PartnersResponseType } from '../../@types/partners'
 import {
     CONTRACTCMACCOUNTMANAGERADDRESSCAMINO,
     CONTRACTCMACCOUNTMANAGERADDRESSCOLUMBUS,
+    ERC20_ABI,
 } from '../../constants/apps-consts'
 import CMAccount from '../../helpers/CMAccountManagerModule#CMAccount.json'
 import CMAccountManager from '../../helpers/ManagerProxyModule#CMAccountManager.json'
-import { StatePartnersType } from '../../helpers/partnersReducer'
+import { BusinessField, StatePartnersType } from '../../helpers/partnersReducer'
 
 const BASE_URLS = {
     dev: 'https://dev.strapi.camino.network/api/partners',
     prod: 'https://api.strapi.camino.network/partners',
 }
 
+const BUSINESS_BASE_URLS = {
+    dev: 'https://dev.strapi.camino.network/api/business-fields',
+    prod: 'https://api.strapi.camino.network/business-fields',
+}
+
 function createPartnerContract(address: string, provider: ethers.Provider) {
-    return new ethers.Contract(address, CMAccount, provider)
+    try {
+        const contract = new ethers.Contract(address, CMAccount, provider)
+        return contract
+    } catch (e) {
+        return null
+    }
 }
 
 const getListOfBots = async contract => {
@@ -36,13 +47,22 @@ const getListOfBots = async contract => {
     }
 }
 
-const getSupportedCurrencies = async contract => {
+const getSupportedCurrencies = async (contract, provider) => {
     try {
         const offChainPaymentSupported = await contract.offChainPaymentSupported()
-        const isCam = (await contract.getSupportedTokens()).find(
-            elem => elem === ethers.ZeroAddress,
-        )
-        return { offChainPaymentSupported, isCam: !!isCam }
+        const supportedTokens = await contract.getSupportedTokens()
+        let tokens = []
+        for (const token of supportedTokens) {
+            if (token !== ethers.ZeroAddress) {
+                const tokenContract = new ethers.Contract(token, ERC20_ABI, provider)
+                const name = await tokenContract.name()
+                const symbol = await tokenContract.symbol()
+                const decimals = await tokenContract.decimals()
+                tokens.push({ name, symbol, decimals })
+            }
+        }
+        const isCam = supportedTokens.find(elem => elem === ethers.ZeroAddress)
+        return { offChainPaymentSupported, isCam: !!isCam, tokens }
     } catch (error) {
         throw error
     }
@@ -52,15 +72,18 @@ async function fetchContractServices(contractAddress: string, provider: ethers.P
     const contract = createPartnerContract(contractAddress, provider)
 
     try {
-        const [supportedServices, wantedServices, bots, supportedCurrencies] = await Promise.all([
-            contract.getSupportedServices(),
-            contract.getWantedServices(),
-            getListOfBots(contract),
-            getSupportedCurrencies(contract),
-        ])
-        return { supportedServices, wantedServices, bots, supportedCurrencies }
+        if (contract) {
+            const [supportedServices, wantedServices, bots, supportedCurrencies] =
+                await Promise.all([
+                    contract.getSupportedServices(),
+                    contract.getWantedServices(),
+                    getListOfBots(contract),
+                    getSupportedCurrencies(contract, provider),
+                ])
+            return { supportedServices, wantedServices, bots, supportedCurrencies }
+        }
+        return { supportedServices: [], wantedServices: [] }
     } catch (error) {
-        console.error(`Error fetching services for ${contractAddress}:`, error)
         return { supportedServices: [], wantedServices: [] }
     }
 }
@@ -150,6 +173,40 @@ const getBaseUrl = () => {
     }
 }
 
+const getBusinessBaseUrl = () => {
+    const currentPath = typeof window !== 'undefined' ? window.location.hostname : ''
+    if (currentPath === 'localhost' || currentPath.includes('dev')) {
+        return BUSINESS_BASE_URLS.dev
+    } else if (currentPath) {
+        return BUSINESS_BASE_URLS.prod
+    } else {
+        return BUSINESS_BASE_URLS.prod
+    }
+}
+
+
+export const groupedBusinessFields = (businessField: any) => {
+    const grouped: Record<string, BusinessField> = {}
+    businessField.forEach(field => {
+        const [category, subCategory] = field?.attributes?.BusinessField.split(' / ')
+
+        if (!grouped[category]) {
+            grouped[category] = {
+                category,
+                fields: [],
+            }
+        }
+
+        grouped[category].fields.push({
+            name: subCategory || field?.attributes?.BusinessField,
+            active: false,
+            fullName: field?.attributes?.BusinessField,
+        })
+    })
+
+    return Object.values(grouped)
+}
+
 export const partnersApi = createApi({
     reducerPath: 'partnersApi',
     baseQuery: fetchBaseQuery({ baseUrl: '/' }),
@@ -166,8 +223,8 @@ export const partnersApi = createApi({
                 }
                 if (businessField) {
                     let filterWith = businessField
-                        .filter(elem => elem.active)
-                        .map(elem => elem.name)
+                        .flatMap(elem => elem.fields.filter(field => field.active))
+                        .map(field => field.fullName)
                     if (filterWith?.length > 0) {
                         filterWith.forEach((element, index) => {
                             query += `&filters[$and][${index}][business_fields][BusinessField][$eq]=${element}`
@@ -406,8 +463,8 @@ export const partnersApi = createApi({
                 }
                 if (businessField) {
                     let filterWith = businessField
-                        .filter(elem => elem.active)
-                        .map(elem => elem.name)
+                        .flatMap(elem => elem.fields.filter(field => field.active))
+                        .map(field => field.fullName)
                     if (filterWith?.length > 0) {
                         filterWith.forEach((element, index) => {
                             query += `&filters[$and][${index}][business_fields][BusinessField][$eq]=${element}`
@@ -559,7 +616,7 @@ export const partnersApi = createApi({
                         const { supportedServices, wantedServices, bots, supportedCurrencies } =
                             await fetchContractServices(contractAddress, provider)
                         let parsedSupportedServices = []
-                        if (supportedServices) {
+                        if (supportedServices[0]) {
                             parsedSupportedServices = supportedServices[0]
                                 .map((service, index) => {
                                     if (
@@ -606,6 +663,12 @@ export const partnersApi = createApi({
                 }
             },
         }),
+        getBusinessFields: build.query<any, void>({
+            query: () => getBusinessBaseUrl(),
+            transformResponse(response: PartnersResponseType) {
+                return groupedBusinessFields(response.data)
+            },
+        }),
     }),
 })
 
@@ -614,4 +677,5 @@ export const {
     useFetchPartnerDataQuery,
     useIsPartnerQuery,
     useListMatchingPartnersQuery,
+    useGetBusinessFieldsQuery,
 } = partnersApi

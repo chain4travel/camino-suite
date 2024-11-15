@@ -2,6 +2,7 @@ import { Box, Button, Link, Toolbar, Typography } from '@mui/material'
 
 import { Paper } from '@mui/material'
 import React, { useEffect, useMemo } from 'react'
+import { Helmet } from 'react-helmet-async'
 import { Navigate, Outlet, useNavigate, useParams } from 'react-router'
 import store from 'wallet/store'
 import { PartnerConfigurationProvider } from '../helpers/partnerConfigurationContext'
@@ -92,6 +93,7 @@ const PartnersLayout = () => {
             refetchPartenrData()
         }
     }, [activeNetwork])
+    const auth = useAppSelector(state => state.appConfig.isAuth)
     useEffect(() => {
         if (
             walletName &&
@@ -101,6 +103,10 @@ const PartnersLayout = () => {
             navigate('/')
         }
     }, [walletName])
+
+    useEffect(() => {
+        if (!auth && path.includes('partners/messenger-configuration')) navigate('/login')
+    }, [auth, path])
 
     const partnerCChainAddress = useMemo(() => {
         let cAddress = data?.attributes?.cChainAddresses.find(
@@ -118,8 +124,14 @@ const PartnersLayout = () => {
     ) {
         return <Navigate to="/login" replace />
     }
+
     return (
         <SmartContractProvider>
+            <Helmet>
+                <title>Partner Showroom on Camino Network</title>
+                <meta name="description" content="Discover and connect for success." />
+                <meta name="keywords" content="Camino Partners" />
+            </Helmet>
             <PartnerConfigurationProvider>
                 <Box
                     sx={{

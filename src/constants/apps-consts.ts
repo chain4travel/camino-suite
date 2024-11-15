@@ -64,6 +64,23 @@ export const BUSINESS_FIELDS = [
     'Climate Technology',
 ]
 
+export const ERC20_ABI = [
+    'function name() view returns (string)',
+    'function symbol() view returns (string)',
+    'function decimals() view returns (uint8)',
+    'function totalSupply() view returns (uint256)',
+    'function balanceOf(address) view returns (uint256)',
+]
+export const ERC20_BALANCE_ABI = [
+    {
+        constant: true,
+        inputs: [{ name: '_owner', type: 'address' }],
+        name: 'balanceOf',
+        outputs: [{ name: 'balance', type: 'uint256' }],
+        type: 'function',
+    },
+]
+
 export const CONTRACTCMACCOUNTMANAGERADDRESSCOLUMBUS = '0xE5B2f76C778D082b07BDd7D51FFe83E3E055B47F'
 
 export const CONTRACTCMACCOUNTMANAGERADDRESSCAMINO = '0xf9FE1eaAB73a2902136FE7A83E0703338D3b9F1e'

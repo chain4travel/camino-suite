@@ -19,9 +19,11 @@ import {
 import { ethers } from 'ethers'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router'
+import store from 'wallet/store'
 import Alert from '../../components/Alert'
 import DialogAnimate from '../../components/Animate/DialogAnimate'
 import MainButton from '../../components/MainButton'
+import { ERC20_BALANCE_ABI } from '../../constants/apps-consts'
 import { usePartnerConfigurationContext } from '../../helpers/partnerConfigurationContext'
 import { usePartnerConfig } from '../../helpers/usePartnerConfig'
 import { useSmartContract } from '../../helpers/useSmartContract'
@@ -162,7 +164,7 @@ const AddressInput = ({ address, onAddressChange, onMyAddressClick }) => {
     )
 }
 
-const CamWithdraw = ({ setOpen }) => {
+const CamWithdraw = ({ setOpen, token, fetchTokenBalances }) => {
     const { wallet, contractCMAccountAddress } = useSmartContract()
     const [address, setAddress] = useState('')
     const [amount, setAmount] = useState('')
@@ -170,16 +172,17 @@ const CamWithdraw = ({ setOpen }) => {
     const [isValidAddress, setIsValidAddress] = useState(false)
     const [loading, setLoading] = useState(false)
     const [amountError, setAmountError] = useState('')
-    const { withDraw } = usePartnerConfig()
+    const { withDraw, transferERC20 } = usePartnerConfig()
     const { getBalanceOfAnAddress, balanceOfAnAddress: balance } = useWalletBalance()
 
     const maxAmount = useMemo(() => {
+        if (token) return parseFloat(token.balance)
         const balanceParsed = parseFloat(balance)
         if (isNaN(balanceParsed)) {
             return '0.00'
         }
         return Math.max(balanceParsed - 100, 0).toFixed(2)
-    }, [balance])
+    }, [balance, token])
 
     const handleAddressChange = useCallback(newAddress => {
         setAddress(newAddress)
@@ -224,8 +227,13 @@ const CamWithdraw = ({ setOpen }) => {
 
     async function handleWithdraw() {
         setLoading(true)
-        await withDraw(address, ethers.parseEther(amount))
-        getBalanceOfAnAddress(contractCMAccountAddress)
+        if (!token) {
+            await withDraw(address, ethers.parseEther(amount))
+            getBalanceOfAnAddress(contractCMAccountAddress)
+        } else {
+            await transferERC20(token.address, address, ethers.parseEther(amount))
+            await fetchTokenBalances()
+        }
         setAmount('')
         setConfirm(false)
         setAddress('')
@@ -319,15 +327,19 @@ const CamWithdraw = ({ setOpen }) => {
 const MyMessenger = () => {
     const { state, dispatch } = usePartnerConfigurationContext()
     const [open, setOpen] = useState(false)
+    const [selectedToken, setSelectedToken] = useState(null)
     const [isOffChainPaymentSupported, setIsOffChainPaymentSupported] = useState(false)
     const [isCAMSupported, setCAMSupported] = useState(false)
     const [isEditMode, setIsEditMode] = useState(false)
     const [tempOffChainPaymentSupported, setTempOffChainPaymentSupported] = useState(false)
+    const [tempSupportedTokens, setTempSupportedTokens] = useState([])
+    const [supportedTokens, setSupportedTokens] = useState([])
     const [tempCAMSupported, setTempCAMSupported] = useState(false)
     const { balanceOfAnAddress, getBalanceOfAnAddress } = useWalletBalance()
     const [isLoading, setIsLoading] = useState(false)
     const [bots, setBots] = useState([])
-    const { contractCMAccountAddress, wallet } = useSmartContract()
+    const [tokens, setTokens] = useState([])
+    const { contractCMAccountAddress, wallet, provider } = useSmartContract()
     const {
         getSupportedTokens,
         getOffChainPaymentSupported,
@@ -345,18 +357,16 @@ const MyMessenger = () => {
         if (activeNetwork) refetch()
     }, [activeNetwork])
     const appDispatch = useAppDispatch()
-    const handleOpenModal = () => {
+    const handleOpenModal = token => {
         setOpen(true)
     }
     async function checkIfOffChainPaymentSupported() {
         let res = await getOffChainPaymentSupported()
         setIsOffChainPaymentSupported(res)
     }
-    async function checkIfCamSupported() {
-        let res = await getSupportedTokens()
-        setCAMSupported(!!res.find(elem => elem === ethers.ZeroAddress))
-    }
+
     const handleCloseModal = () => {
+        setSelectedToken(null)
         setOpen(false)
     }
 
@@ -380,6 +390,23 @@ const MyMessenger = () => {
                 if (tempCAMSupported) await addSupportedToken(ethers.ZeroAddress)
                 else await removeSupportedToken(ethers.ZeroAddress)
             }
+            if (tempSupportedTokens) {
+                const excludeSet = new Set(supportedTokens)
+
+                for (const item of tempSupportedTokens) {
+                    const shouldBeSupported = !excludeSet.has(item.address)
+
+                    try {
+                        if (shouldBeSupported && item.supported) {
+                            await addSupportedToken(item.address)
+                        } else if (!shouldBeSupported && !item.supported) {
+                            await removeSupportedToken(item.address)
+                        }
+                    } catch (error) {
+                        console.error(`Error updating token ${item.address}:`, error)
+                    }
+                }
+            }
             appDispatch(
                 updateNotificationStatus({
                     message: 'Accepted currencies updated successfully',
@@ -391,7 +418,7 @@ const MyMessenger = () => {
             console.error('Error: ', error)
         } finally {
             await checkIfOffChainPaymentSupported()
-            await checkIfCamSupported()
+            await fetchSupportedTokens()
             setIsLoading(false)
         }
     }
@@ -399,14 +426,48 @@ const MyMessenger = () => {
         const res = await getListOfBots()
         setBots(res)
     }
+    async function fetchSupportedTokens() {
+        const res = await getSupportedTokens()
+        setCAMSupported(!!res.find(elem => elem === ethers.ZeroAddress))
+        setSupportedTokens(res)
+    }
+
+    const fetchTokenBalances = async () => {
+        const networkErc20Tokens = store.getters['Assets/networkErc20Tokens'] || []
+        if (networkErc20Tokens.length > 0) {
+            const fetchedTokens = await Promise.all(
+                networkErc20Tokens.map(async elem => {
+                    const contract = new ethers.Contract(
+                        elem.contract._address,
+                        ERC20_BALANCE_ABI,
+                        provider,
+                    )
+                    const balance = await contract.balanceOf(contractCMAccountAddress)
+                    return {
+                        address: elem.contract._address,
+                        balance: ethers.formatUnits(balance, elem.data.decimal),
+                        name: elem.data.name,
+                        symbol: elem.data.symbol,
+                        decimal: elem.data.decimal,
+                        supported: supportedTokens.includes(elem.contract._address),
+                    }
+                }),
+            )
+            setTokens(fetchedTokens)
+        }
+    }
     useEffect(() => {
-        checkIfCamSupported()
-        checkIfOffChainPaymentSupported()
-        getBalanceOfAnAddress(contractCMAccountAddress)
-    }, [getBalanceOfAnAddress])
+        fetchTokenBalances()
+    }, [contractCMAccountAddress, supportedTokens])
 
     useEffect(() => {
+        getBalanceOfAnAddress(contractCMAccountAddress)
+    }, [contractCMAccountAddress])
+
+    useEffect(() => {
+        checkIfOffChainPaymentSupported()
         fetchBots()
+        fetchSupportedTokens()
     }, [])
 
     function getServicesNames(services) {
@@ -489,7 +550,11 @@ const MyMessenger = () => {
                                 <>
                                     None. Visit the relevant{' '}
                                     <Link
-                                        sx={{ cursor: 'pointer' }}
+                                        sx={{
+                                            cursor: 'pointer',
+                                            color: theme => theme.palette.text.primary,
+                                            textDecorationColor: 'inherit',
+                                        }}
                                         onClick={() =>
                                             navigate('/partners/messenger-configuration/supplier')
                                         }
@@ -512,7 +577,11 @@ const MyMessenger = () => {
                                 <>
                                     None. Visit the relevant{' '}
                                     <Link
-                                        sx={{ cursor: 'pointer' }}
+                                        sx={{
+                                            cursor: 'pointer',
+                                            color: theme => theme.palette.text.primary,
+                                            textDecorationColor: 'inherit',
+                                        }}
                                         onClick={() =>
                                             navigate(
                                                 '/partners/messenger-configuration/distribution',
@@ -544,7 +613,11 @@ const MyMessenger = () => {
                                 <>
                                     None. Visit the relevant{' '}
                                     <Link
-                                        sx={{ cursor: 'pointer' }}
+                                        sx={{
+                                            cursor: 'pointer',
+                                            color: theme => theme.palette.text.primary,
+                                            textDecorationColor: 'inherit',
+                                        }}
                                         onClick={() =>
                                             navigate('/partners/messenger-configuration/bots')
                                         }
@@ -580,6 +653,7 @@ const MyMessenger = () => {
                             <RefreshOutlined
                                 onClick={() => {
                                     getBalanceOfAnAddress(contractCMAccountAddress)
+                                    fetchTokenBalances()
                                 }}
                                 sx={{
                                     cursor: 'pointer',
@@ -664,11 +738,89 @@ const MyMessenger = () => {
                                 }
                             />
                             {!isEditMode && (
-                                <Button variant="contained" onClick={handleOpenModal}>
+                                <Button
+                                    variant="contained"
+                                    onClick={() => {
+                                        setSelectedToken(null)
+                                        handleOpenModal({
+                                            symbol: 'CAM',
+                                        })
+                                    }}
+                                >
                                     Withdraw
                                 </Button>
                             )}
                         </Box>
+                        {tokens.length > 0 &&
+                            tokens.map((elem, index) => {
+                                return (
+                                    <Box
+                                        sx={{
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            gap: '8px',
+                                            justifyContent: 'space-between',
+                                        }}
+                                        key={index}
+                                    >
+                                        <FormControlLabel
+                                            disabled={!isEditMode}
+                                            label={
+                                                <Typography variant="body2">
+                                                    {elem.name}: {elem.balance} {elem.symbol}
+                                                </Typography>
+                                            }
+                                            control={
+                                                <Checkbox
+                                                    sx={{
+                                                        m: '0 8px 0 0',
+                                                        color: theme =>
+                                                            !isEditMode
+                                                                ? theme.palette.action.disabled
+                                                                : theme.palette.secondary.main,
+                                                        '&.Mui-checked': {
+                                                            color: theme =>
+                                                                !isEditMode
+                                                                    ? theme.palette.action.disabled
+                                                                    : theme.palette.secondary.main,
+                                                        },
+                                                        '&.MuiCheckbox-colorSecondary.Mui-checked':
+                                                            {
+                                                                color: theme =>
+                                                                    !isEditMode
+                                                                        ? theme.palette.action
+                                                                              .disabled
+                                                                        : theme.palette.secondary
+                                                                              .main,
+                                                            },
+                                                    }}
+                                                    checked={
+                                                        isEditMode
+                                                            ? tempSupportedTokens[index].supported
+                                                            : elem.supported
+                                                    }
+                                                    onChange={e => {
+                                                        let newArray = [...tempSupportedTokens]
+                                                        newArray[index].supported = e.target.checked
+                                                        setTempSupportedTokens(newArray)
+                                                    }}
+                                                />
+                                            }
+                                        />
+                                        {!isEditMode && (
+                                            <Button
+                                                variant="contained"
+                                                onClick={() => {
+                                                    setSelectedToken(elem)
+                                                    handleOpenModal(elem)
+                                                }}
+                                            >
+                                                Withdraw
+                                            </Button>
+                                        )}
+                                    </Box>
+                                )
+                            })}
                         <Box
                             sx={{
                                 display: 'flex',
@@ -894,7 +1046,7 @@ const MyMessenger = () => {
                     }}
                 >
                     <Typography variant="body1" component="span">
-                        Withdraw CAM
+                        Withdraw {selectedToken ? selectedToken.symbol : 'CAM'}
                     </Typography>
                     <IconButton
                         aria-label="close"
@@ -918,7 +1070,11 @@ const MyMessenger = () => {
                             theme.palette.mode === 'dark' ? '#020617' : '#F1F5F9',
                     }}
                 >
-                    <CamWithdraw setOpen={setOpen} />
+                    <CamWithdraw
+                        setOpen={setOpen}
+                        token={selectedToken}
+                        fetchTokenBalances={fetchTokenBalances}
+                    />
                 </DialogContent>
             </DialogAnimate>
         </>
