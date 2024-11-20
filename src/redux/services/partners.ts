@@ -179,7 +179,7 @@ function getServiceName(fullName: unknown): string {
 const getBaseUrl = () => {
     const currentPath = typeof window !== 'undefined' ? window.location.hostname : ''
     if (currentPath === 'localhost' || currentPath.includes('dev')) {
-        return BASE_URLS.prod
+        return BASE_URLS.dev
     } else if (currentPath) {
         return BASE_URLS.prod
     } else {
