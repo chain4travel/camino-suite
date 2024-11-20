@@ -31,7 +31,6 @@ export enum partnersActions {
     'TOGGLE_VALIDATORS',
     'TOGGLE_ON_MESSENGER',
     'UPDATE_BUSINESS_FIELDS_FROM_API',
-
 }
 
 export interface ActionType {
@@ -88,9 +87,10 @@ export const partnersReducer = (
         case partnersActions.TOGGLE_CATEGORY:
             const updatedBusinessField = state.businessField.map(group => {
                 if (group.category === action.payload) {
+                    const isAllSelected = group.fields.every(field => field.active)
                     const updatedFields = group.fields.map(field => ({
                         ...field,
-                        active: !field.active,
+                        active: isAllSelected ? false : true, // Toggle between all selected and all deselected
                     }))
                     return { ...group, fields: updatedFields }
                 }
