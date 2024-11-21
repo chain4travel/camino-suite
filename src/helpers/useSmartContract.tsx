@@ -30,6 +30,7 @@ type SmartContractProviderProps = {
 
 export const SmartContractProvider: React.FC<SmartContractProviderProps> = ({ children }) => {
     const [provider, setProvider] = useState<ethers.JsonRpcProvider | null>(null)
+    const [needUpgrade, setNeedUpgrade] = useState(false)
     const [managerReadContract, setManagerReadContract] = useState<ethers.Contract | null>(null)
     const [managerWriteContract, setManagerWriteContract] = useState<ethers.Contract | null>(null)
     const [accountReadContract, setAccountReadContract] = useState<ethers.Contract | null>(null)
@@ -84,7 +85,7 @@ export const SmartContractProvider: React.FC<SmartContractProviderProps> = ({ ch
         }
     }
 
-    const upgradeCMAccount = useCallback(async () => {
+    const needsUpgrade = useCallback(async () => {
         try {
             if (accountWriteContract) {
                 const implementation = await managerReadContract.getAccountImplementation()
@@ -94,10 +95,25 @@ export const SmartContractProvider: React.FC<SmartContractProviderProps> = ({ ch
                     IMPLEMENTATION_SLOT,
                 )
                 const implAddr = '0x' + implAddrPadded.slice(-40)
-                console.log({ implementation, implAddr })
+                if (ethers.getAddress(implementation) !== ethers.getAddress(implAddr)) {
+                    setNeedUpgrade(true)
+                    return true
+                }
+                return false
+            }
+        } catch (error) {
+            const decodedError = accountWriteContract.interface.parseError(error.data)
+            console.error('Message:', error.message)
+            console.error(`Reason: ${decodedError?.name} (${decodedError?.args})`)
+        }
+    }, [accountWriteContract])
+
+    const upgradeCMAccount = useCallback(async () => {
+        try {
+            if (accountWriteContract) {
+                const implementation = await managerReadContract.getAccountImplementation()
                 const tx = await accountWriteContract.upgradeToAndCall(implementation, '0x')
                 const receipt = await tx.wait()
-                console.log({ receipt })
                 return receipt
             }
         } catch (error) {
@@ -262,8 +278,10 @@ export const SmartContractProvider: React.FC<SmartContractProviderProps> = ({ ch
     }
 
     const value = {
+        needUpgrade,
         getCMAccountMappings,
         upgradeCMAccount,
+        needsUpgrade,
         contractCMAccountAddress,
         setContractCMAccountAddress,
         wallet,

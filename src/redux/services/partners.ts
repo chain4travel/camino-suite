@@ -1,22 +1,34 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 import { ethers } from 'ethers'
+import { ava as caminoClient } from 'wallet/caminoClient'
 import store from 'wallet/store'
 import { PartnerDataType, PartnersResponseType } from '../../@types/partners'
 import {
     CONTRACTCMACCOUNTMANAGERADDRESSCAMINO,
     CONTRACTCMACCOUNTMANAGERADDRESSCOLUMBUS,
+    ERC20_ABI,
 } from '../../constants/apps-consts'
 import CMAccount from '../../helpers/CMAccountManagerModule#CMAccount.json'
 import CMAccountManager from '../../helpers/ManagerProxyModule#CMAccountManager.json'
-import { StatePartnersType } from '../../helpers/partnersReducer'
+import { BusinessField, StatePartnersType } from '../../helpers/partnersReducer'
 
 const BASE_URLS = {
     dev: 'https://dev.strapi.camino.network/api/partners',
     prod: 'https://api.strapi.camino.network/partners',
 }
 
+const BUSINESS_BASE_URLS = {
+    dev: 'https://dev.strapi.camino.network/api/business-fields',
+    prod: 'https://api.strapi.camino.network/business-fields',
+}
+
 function createPartnerContract(address: string, provider: ethers.Provider) {
-    return new ethers.Contract(address, CMAccount, provider)
+    try {
+        const contract = new ethers.Contract(address, CMAccount, provider)
+        return contract
+    } catch (e) {
+        return null
+    }
 }
 
 const getListOfBots = async contract => {
@@ -36,13 +48,22 @@ const getListOfBots = async contract => {
     }
 }
 
-const getSupportedCurrencies = async contract => {
+const getSupportedCurrencies = async (contract, provider) => {
     try {
         const offChainPaymentSupported = await contract.offChainPaymentSupported()
-        const isCam = (await contract.getSupportedTokens()).find(
-            elem => elem === ethers.ZeroAddress,
-        )
-        return { offChainPaymentSupported, isCam: !!isCam }
+        const supportedTokens = await contract.getSupportedTokens()
+        let tokens = []
+        for (const token of supportedTokens) {
+            if (token !== ethers.ZeroAddress) {
+                const tokenContract = new ethers.Contract(token, ERC20_ABI, provider)
+                const name = await tokenContract.name()
+                const symbol = await tokenContract.symbol()
+                const decimals = await tokenContract.decimals()
+                tokens.push({ name, symbol, decimals })
+            }
+        }
+        const isCam = supportedTokens.find(elem => elem === ethers.ZeroAddress)
+        return { offChainPaymentSupported, isCam: !!isCam, tokens }
     } catch (error) {
         throw error
     }
@@ -52,15 +73,18 @@ async function fetchContractServices(contractAddress: string, provider: ethers.P
     const contract = createPartnerContract(contractAddress, provider)
 
     try {
-        const [supportedServices, wantedServices, bots, supportedCurrencies] = await Promise.all([
-            contract.getSupportedServices(),
-            contract.getWantedServices(),
-            getListOfBots(contract),
-            getSupportedCurrencies(contract),
-        ])
-        return { supportedServices, wantedServices, bots, supportedCurrencies }
+        if (contract) {
+            const [supportedServices, wantedServices, bots, supportedCurrencies] =
+                await Promise.all([
+                    contract.getSupportedServices(),
+                    contract.getWantedServices(),
+                    getListOfBots(contract),
+                    getSupportedCurrencies(contract, provider),
+                ])
+            return { supportedServices, wantedServices, bots, supportedCurrencies }
+        }
+        return { supportedServices: [], wantedServices: [] }
     } catch (error) {
-        console.error(`Error fetching services for ${contractAddress}:`, error)
         return { supportedServices: [], wantedServices: [] }
     }
 }
@@ -99,6 +123,19 @@ async function getContractMappings(): Promise<Map<string, string>> {
     })
 
     return mappings
+}
+
+async function getRegisteredNode(address: string): Promise<string> {
+    return await caminoClient.PChain().getRegisteredShortIDLink(address)
+}
+const getAddress = address => {
+    if (address) {
+        let res = caminoClient
+            .PChain()
+            .addressFromBuffer(caminoClient.PChain().parseAddress(address))
+        return res
+    }
+    return ''
 }
 
 function checkMatch(data): boolean {
@@ -150,6 +187,39 @@ const getBaseUrl = () => {
     }
 }
 
+const getBusinessBaseUrl = () => {
+    const currentPath = typeof window !== 'undefined' ? window.location.hostname : ''
+    if (currentPath === 'localhost' || currentPath.includes('dev')) {
+        return BUSINESS_BASE_URLS.dev
+    } else if (currentPath) {
+        return BUSINESS_BASE_URLS.prod
+    } else {
+        return BUSINESS_BASE_URLS.prod
+    }
+}
+
+export const groupedBusinessFields = (businessField: any) => {
+    const grouped: Record<string, BusinessField> = {}
+    businessField.forEach(field => {
+        const [category, subCategory] = field?.attributes?.BusinessField.split(' / ')
+
+        if (!grouped[category]) {
+            grouped[category] = {
+                category,
+                fields: [],
+            }
+        }
+
+        grouped[category].fields.push({
+            name: subCategory || field?.attributes?.BusinessField,
+            active: false,
+            fullName: field?.attributes?.BusinessField,
+        })
+    })
+
+    return Object.values(grouped)
+}
+
 export const partnersApi = createApi({
     reducerPath: 'partnersApi',
     baseQuery: fetchBaseQuery({ baseUrl: '/' }),
@@ -159,15 +229,14 @@ export const partnersApi = createApi({
                 const baseUrl = getBaseUrl()
 
                 let query = '?populate=*'
-
                 const selectedNetwork = store.getters['Network/selectedNetwork']
-                if (!isNaN(page) && !onMessenger) {
+                if (!isNaN(page) && !onMessenger && !validators) {
                     query += `&sort[0]=companyName:asc&pagination[page]=${page}&pagination[pageSize]=12`
                 }
                 if (businessField) {
                     let filterWith = businessField
-                        .filter(elem => elem.active)
-                        .map(elem => elem.name)
+                        .flatMap(elem => elem.fields.filter(field => field.active))
+                        .map(field => field.fullName)
                     if (filterWith?.length > 0) {
                         filterWith.forEach((element, index) => {
                             query += `&filters[$and][${index}][business_fields][BusinessField][$eq]=${element}`
@@ -178,7 +247,7 @@ export const partnersApi = createApi({
                     query += `&filters[companyName][$contains]=${companyName}`
                 }
                 if (validators) {
-                    query += `&filters[$and][0][pChainAddresses][pAddress][$notNull]=true&filters[$and][1][pChainAddresses][Network][$eq]=${selectedNetwork.name.toLowerCase()}`
+                    query += `&sort[0]=companyName:asc&pagination[page]=${0}&pagination[pageSize]=100&filters[$and][0][pChainAddresses][pAddress][$notNull]=true&filters[$and][1][pChainAddresses][Network][$eq]=${selectedNetwork.name.toLowerCase()}`
                 }
                 if (onMessenger === true) {
                     query += `&sort[0]=companyName:asc&_limit=-1&filters[$and][0][cChainAddresses][cAddress][$notNull]=true&filters[$and][1][cChainAddresses][Network][$eq]=${selectedNetwork.name.toLowerCase()}`
@@ -187,7 +256,10 @@ export const partnersApi = createApi({
                 return {
                     url: `${baseUrl}${query}`,
                     method: 'GET',
-                    params: { onMessenger: onMessenger === true ? 'true' : 'false' },
+                    params: {
+                        onMessenger: onMessenger,
+                        validators: validators,
+                    },
                 }
             },
             async transformResponse(response: PartnersResponseType, meta, arg) {
@@ -202,7 +274,8 @@ export const partnersApi = createApi({
                 const provider = new ethers.JsonRpcProvider(providerUrl)
 
                 const contractMappings = await getContractMappings()
-                const onMessenger = arg.onMessenger === true
+                const onMessenger = arg.onMessenger
+                const onlyValidators = arg.validators
 
                 const partnersWithServices = await Promise.all(
                     response.data.map(async partner => {
@@ -272,24 +345,47 @@ export const partnersApi = createApi({
                               }
                     }),
                 )
-
                 // Filter out null values only if onMessenger is true
                 const filteredPartners = onMessenger
                     ? partnersWithServices.filter(partner => partner !== null)
                     : partnersWithServices
-
+                let validators = (await caminoClient.PChain().getCurrentValidators()).validators
+                let partnersWithValidatorStatus = await Promise.all(
+                    filteredPartners.map(async p => {
+                        let pChainAddress = p.attributes.pChainAddresses.find(
+                            elem =>
+                                elem.Network.toLowerCase() === selectedNetwork.name.toLowerCase(),
+                        )
+                        if (pChainAddress?.pAddress) {
+                            try {
+                                let nodeID = await getRegisteredNode(
+                                    getAddress(pChainAddress?.pAddress),
+                                )
+                                let isValidator = !!validators.find(v => v.nodeID === nodeID)
+                                if (isValidator) return { ...p, isValidator: true }
+                                else return { ...p, isValidator: false }
+                            } catch (error) {
+                                return { ...p, isValidator: false }
+                            }
+                        }
+                        return { ...p, isValidator: false }
+                    }),
+                )
+                const filteredValidatorsPartners = onlyValidators
+                    ? partnersWithValidatorStatus.filter(partner => partner.isValidator)
+                    : partnersWithValidatorStatus
                 // Update the meta information to reflect the new number of results
                 const updatedMeta = {
                     ...response.meta,
                     pagination: {
                         ...response.meta.pagination,
-                        total: onMessenger
-                            ? filteredPartners.length
-                            : response.meta.pagination.total,
+                        total:
+                            onMessenger || onlyValidators
+                                ? filteredValidatorsPartners.length
+                                : response.meta.pagination.total,
                     },
                 }
-
-                return { data: filteredPartners, meta: updatedMeta }
+                return { data: filteredValidatorsPartners, meta: updatedMeta }
             },
         }),
         fetchPartnerData: build.query<
@@ -406,8 +502,8 @@ export const partnersApi = createApi({
                 }
                 if (businessField) {
                     let filterWith = businessField
-                        .filter(elem => elem.active)
-                        .map(elem => elem.name)
+                        .flatMap(elem => elem.fields.filter(field => field.active))
+                        .map(field => field.fullName)
                     if (filterWith?.length > 0) {
                         filterWith.forEach((element, index) => {
                             query += `&filters[$and][${index}][business_fields][BusinessField][$eq]=${element}`
@@ -559,7 +655,7 @@ export const partnersApi = createApi({
                         const { supportedServices, wantedServices, bots, supportedCurrencies } =
                             await fetchContractServices(contractAddress, provider)
                         let parsedSupportedServices = []
-                        if (supportedServices) {
+                        if (supportedServices[0]) {
                             parsedSupportedServices = supportedServices[0]
                                 .map((service, index) => {
                                     if (
@@ -606,6 +702,12 @@ export const partnersApi = createApi({
                 }
             },
         }),
+        getBusinessFields: build.query<any, void>({
+            query: () => getBusinessBaseUrl(),
+            transformResponse(response: PartnersResponseType) {
+                return groupedBusinessFields(response.data)
+            },
+        }),
     }),
 })
 
@@ -614,4 +716,5 @@ export const {
     useFetchPartnerDataQuery,
     useIsPartnerQuery,
     useListMatchingPartnersQuery,
+    useGetBusinessFieldsQuery,
 } = partnersApi

@@ -50,10 +50,14 @@ const appConfigSlice = createSlice({
             state.walletStore = payload
         },
         updatePchainAddress(state, { payload }) {
-            state.pChainAddress = payload.address[0]
+            const Address = store.getters.addresses[0].replace('X-', 'P-')
+            const activeAddress = payload.address.find((adr: string) => adr === Address) || null
+
+            state.pChainAddress = activeAddress
             state.walletName =
-                payload.walletName !== 'Singleton Wallet' ? payload.walletName : payload.address[0]
+                payload.walletName !== 'Singleton Wallet' ? payload.walletName : activeAddress
         },
+
         updateAccount(state, { payload }) {
             state.account = payload
         },

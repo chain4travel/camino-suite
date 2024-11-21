@@ -23,6 +23,7 @@ import store from 'wallet/store'
 import Alert from '../../components/Alert'
 import DialogAnimate from '../../components/Animate/DialogAnimate'
 import MainButton from '../../components/MainButton'
+import { ERC20_BALANCE_ABI } from '../../constants/apps-consts'
 import { usePartnerConfigurationContext } from '../../helpers/partnerConfigurationContext'
 import { usePartnerConfig } from '../../helpers/usePartnerConfig'
 import { useSmartContract } from '../../helpers/useSmartContract'
@@ -163,7 +164,7 @@ const AddressInput = ({ address, onAddressChange, onMyAddressClick }) => {
     )
 }
 
-const CamWithdraw = ({ setOpen }) => {
+const CamWithdraw = ({ setOpen, token, fetchTokenBalances }) => {
     const { wallet, contractCMAccountAddress } = useSmartContract()
     const [address, setAddress] = useState('')
     const [amount, setAmount] = useState('')
@@ -171,16 +172,17 @@ const CamWithdraw = ({ setOpen }) => {
     const [isValidAddress, setIsValidAddress] = useState(false)
     const [loading, setLoading] = useState(false)
     const [amountError, setAmountError] = useState('')
-    const { withDraw } = usePartnerConfig()
+    const { withDraw, transferERC20 } = usePartnerConfig()
     const { getBalanceOfAnAddress, balanceOfAnAddress: balance } = useWalletBalance()
 
     const maxAmount = useMemo(() => {
+        if (token) return parseFloat(token.balance)
         const balanceParsed = parseFloat(balance)
         if (isNaN(balanceParsed)) {
             return '0.00'
         }
         return Math.max(balanceParsed - 100, 0).toFixed(2)
-    }, [balance])
+    }, [balance, token])
 
     const handleAddressChange = useCallback(newAddress => {
         setAddress(newAddress)
@@ -225,8 +227,13 @@ const CamWithdraw = ({ setOpen }) => {
 
     async function handleWithdraw() {
         setLoading(true)
-        await withDraw(address, ethers.parseEther(amount))
-        getBalanceOfAnAddress(contractCMAccountAddress)
+        if (!token) {
+            await withDraw(address, ethers.parseEther(amount))
+            getBalanceOfAnAddress(contractCMAccountAddress)
+        } else {
+            await transferERC20(token.address, address, ethers.parseEther(amount))
+            await fetchTokenBalances()
+        }
         setAmount('')
         setConfirm(false)
         setAddress('')
@@ -320,6 +327,7 @@ const CamWithdraw = ({ setOpen }) => {
 const MyMessenger = () => {
     const { state, dispatch } = usePartnerConfigurationContext()
     const [open, setOpen] = useState(false)
+    const [selectedToken, setSelectedToken] = useState(null)
     const [isOffChainPaymentSupported, setIsOffChainPaymentSupported] = useState(false)
     const [isCAMSupported, setCAMSupported] = useState(false)
     const [isEditMode, setIsEditMode] = useState(false)
@@ -330,7 +338,8 @@ const MyMessenger = () => {
     const { balanceOfAnAddress, getBalanceOfAnAddress } = useWalletBalance()
     const [isLoading, setIsLoading] = useState(false)
     const [bots, setBots] = useState([])
-    const { contractCMAccountAddress, wallet } = useSmartContract()
+    const [tokens, setTokens] = useState([])
+    const { contractCMAccountAddress, wallet, provider } = useSmartContract()
     const {
         getSupportedTokens,
         getOffChainPaymentSupported,
@@ -338,7 +347,6 @@ const MyMessenger = () => {
         addSupportedToken,
         removeSupportedToken,
         getListOfBots,
-        transferERC20,
     } = usePartnerConfig()
     const { data: partner, refetch } = useFetchPartnerDataQuery({
         companyName: '',
@@ -349,18 +357,16 @@ const MyMessenger = () => {
         if (activeNetwork) refetch()
     }, [activeNetwork])
     const appDispatch = useAppDispatch()
-    const handleOpenModal = () => {
+    const handleOpenModal = token => {
         setOpen(true)
     }
     async function checkIfOffChainPaymentSupported() {
         let res = await getOffChainPaymentSupported()
         setIsOffChainPaymentSupported(res)
     }
-    async function checkIfCamSupported() {
-        let res = await getSupportedTokens()
-        setCAMSupported(!!res.find(elem => elem === ethers.ZeroAddress))
-    }
+
     const handleCloseModal = () => {
+        setSelectedToken(null)
         setOpen(false)
     }
 
@@ -385,31 +391,21 @@ const MyMessenger = () => {
                 else await removeSupportedToken(ethers.ZeroAddress)
             }
             if (tempSupportedTokens) {
-                const result = []
+                const excludeSet = new Set(supportedTokens)
 
-                for (const address of supportedTokens) {
-                    const foundToken = tempSupportedTokens.find(
-                        token =>
-                            token.address.toLowerCase() === address.toLowerCase() &&
-                            token.supported,
-                    )
+                for (const item of tempSupportedTokens) {
+                    const shouldBeSupported = !excludeSet.has(item.address)
 
-                    if (foundToken) {
-                        result.push({
-                            address: foundToken.address,
-                            name: foundToken.name,
-                            symbol: foundToken.symbol,
-                            added: true,
-                        })
-                    } else {
-                        result.push({
-                            address: address,
-                            added: false,
-                        })
+                    try {
+                        if (shouldBeSupported && item.supported) {
+                            await addSupportedToken(item.address)
+                        } else if (!shouldBeSupported && !item.supported) {
+                            await removeSupportedToken(item.address)
+                        }
+                    } catch (error) {
+                        console.error(`Error updating token ${item.address}:`, error)
                     }
                 }
-
-                return result
             }
             appDispatch(
                 updateNotificationStatus({
@@ -422,7 +418,7 @@ const MyMessenger = () => {
             console.error('Error: ', error)
         } finally {
             await checkIfOffChainPaymentSupported()
-            await checkIfCamSupported()
+            await fetchSupportedTokens()
             setIsLoading(false)
         }
     }
@@ -432,37 +428,44 @@ const MyMessenger = () => {
     }
     async function fetchSupportedTokens() {
         const res = await getSupportedTokens()
+        setCAMSupported(!!res.find(elem => elem === ethers.ZeroAddress))
         setSupportedTokens(res)
     }
 
-    const tokens = useMemo(() => {
-        if (
-            store.getters['Assets/networkErc20Tokens'] &&
-            store.getters['Assets/networkErc20Tokens'].length > 0
-        ) {
-            let tokens = store.getters['Assets/networkErc20Tokens'].map(elem => {
-                return {
-                    address: elem.contract._address,
-                    balance: elem.balanceBig.toLocaleString(),
-                    name: elem.data.name,
-                    symbol: elem.data.symbol,
-                    decimal: elem.data.decimal,
-                    supported: supportedTokens.find(token => token === elem.contract._address),
-                }
-            })
-            setTempSupportedTokens([...tokens])
-            return tokens
+    const fetchTokenBalances = async () => {
+        const networkErc20Tokens = store.getters['Assets/networkErc20Tokens'] || []
+        if (networkErc20Tokens.length > 0) {
+            const fetchedTokens = await Promise.all(
+                networkErc20Tokens.map(async elem => {
+                    const contract = new ethers.Contract(
+                        elem.contract._address,
+                        ERC20_BALANCE_ABI,
+                        provider,
+                    )
+                    const balance = await contract.balanceOf(contractCMAccountAddress)
+                    return {
+                        address: elem.contract._address,
+                        balance: ethers.formatUnits(balance, elem.data.decimal),
+                        name: elem.data.name,
+                        symbol: elem.data.symbol,
+                        decimal: elem.data.decimal,
+                        supported: supportedTokens.includes(elem.contract._address),
+                    }
+                }),
+            )
+            setTokens(fetchedTokens)
         }
-        return []
-    }, [supportedTokens])
+    }
+    useEffect(() => {
+        fetchTokenBalances()
+    }, [contractCMAccountAddress, supportedTokens])
 
     useEffect(() => {
-        checkIfCamSupported()
-        checkIfOffChainPaymentSupported()
         getBalanceOfAnAddress(contractCMAccountAddress)
-    }, [getBalanceOfAnAddress])
+    }, [contractCMAccountAddress])
 
     useEffect(() => {
+        checkIfOffChainPaymentSupported()
         fetchBots()
         fetchSupportedTokens()
     }, [])
@@ -650,6 +653,7 @@ const MyMessenger = () => {
                             <RefreshOutlined
                                 onClick={() => {
                                     getBalanceOfAnAddress(contractCMAccountAddress)
+                                    fetchTokenBalances()
                                 }}
                                 sx={{
                                     cursor: 'pointer',
@@ -734,7 +738,15 @@ const MyMessenger = () => {
                                 }
                             />
                             {!isEditMode && (
-                                <Button variant="contained" onClick={handleOpenModal}>
+                                <Button
+                                    variant="contained"
+                                    onClick={() => {
+                                        setSelectedToken(null)
+                                        handleOpenModal({
+                                            symbol: 'CAM',
+                                        })
+                                    }}
+                                >
                                     Withdraw
                                 </Button>
                             )}
@@ -799,7 +811,8 @@ const MyMessenger = () => {
                                             <Button
                                                 variant="contained"
                                                 onClick={() => {
-                                                    transferERC20()
+                                                    setSelectedToken(elem)
+                                                    handleOpenModal(elem)
                                                 }}
                                             >
                                                 Withdraw
@@ -1033,7 +1046,7 @@ const MyMessenger = () => {
                     }}
                 >
                     <Typography variant="body1" component="span">
-                        Withdraw CAM
+                        Withdraw {selectedToken ? selectedToken.symbol : 'CAM'}
                     </Typography>
                     <IconButton
                         aria-label="close"
@@ -1057,7 +1070,11 @@ const MyMessenger = () => {
                             theme.palette.mode === 'dark' ? '#020617' : '#F1F5F9',
                     }}
                 >
-                    <CamWithdraw setOpen={setOpen} />
+                    <CamWithdraw
+                        setOpen={setOpen}
+                        token={selectedToken}
+                        fetchTokenBalances={fetchTokenBalances}
+                    />
                 </DialogContent>
             </DialogAnimate>
         </>

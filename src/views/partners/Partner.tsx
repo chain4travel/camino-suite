@@ -170,10 +170,29 @@ const Widget = ({
         if (partner.supportedCurrencies && supportedCurrencies.isCam) otherPartnerAccept.push('CAM')
         if (partner.supportedCurrencies && supportedCurrencies.offChainPaymentSupported)
             otherPartnerAccept.push('offChainPaymentSupported')
+        if (
+            partner.supportedCurrencies &&
+            supportedCurrencies.tokens &&
+            supportedCurrencies.tokens.length > 0
+        )
+            otherPartnerAccept = [
+                ...otherPartnerAccept,
+                [...supportedCurrencies.tokens.filter(elem => elem.symbol)],
+            ]
         let myPartnerAccept = []
         if (data.supportedCurrencies && data.supportedCurrencies.isCam) myPartnerAccept.push('CAM')
         if (data.supportedCurrencies && data.supportedCurrencies.offChainPaymentSupported)
             myPartnerAccept.push('offChainPaymentSupported')
+        if (
+            data.supportedCurrencies &&
+            data.supportedCurrencies.tokens &&
+            data.supportedCurrencies.tokens.length > 0
+        ) {
+            myPartnerAccept = [
+                ...myPartnerAccept,
+                ...data.supportedCurrencies.tokens.map(elem => elem.symbol),
+            ]
+        }
         const subject = 'Connect on Camino Messenger'
         let bodyEnding = match
             ? `
@@ -289,8 +308,26 @@ const Widget = ({
                                 </Typography>
                             </li>
                         )}
+                        {supportedCurrencies?.tokens && supportedCurrencies?.tokens.length > 0 && (
+                            <>
+                                {supportedCurrencies?.tokens.map((elem, index) => {
+                                    return (
+                                        <li className="service-type-item" key={index}>
+                                            <Typography
+                                                fontSize={14}
+                                                fontWeight={600}
+                                                lineHeight={'20px'}
+                                            >
+                                                {elem.symbol}
+                                            </Typography>
+                                        </li>
+                                    )
+                                })}
+                            </>
+                        )}
                         {!supportedCurrencies?.offChainPaymentSupported &&
-                            !supportedCurrencies?.isCam && (
+                            !supportedCurrencies?.isCam &&
+                            supportedCurrencies.tokens?.length < 1 && (
                                 <li className="service-type-item">
                                     <Typography fontSize={14} fontWeight={600} lineHeight={'20px'}>
                                         None.
@@ -409,16 +446,24 @@ const Partner = () => {
     useEffect(() => {
         if (activeNetwork) refetch()
     }, [activeNetwork])
-    const chackValidatorStatus = async (address: string) => {
-        if (!partner.attributes.pChainAddress) setIsValidator(false)
+
+    const partnerPChainAddress = useMemo(() => {
+        let pAddress = partner?.attributes?.pChainAddresses.find(
+            elem => elem.Network === activeNetwork?.name?.toLowerCase(),
+        )?.pAddress
+        if (pAddress) return pAddress
+        return ''
+    }, [partner, validators])
+
+    const chackValidatorStatus = async (address?: string) => {
+        if (partnerPChainAddress) setIsValidator(false)
         let nodeID = await getRegisteredNode(getAddress(address))
         setIsValidator(!!validators.find(v => v.nodeID === nodeID))
     }
 
     useEffect(() => {
-        if (partner?.attributes.pChainAddress)
-            chackValidatorStatus(partner.attributes.pChainAddress)
-    }, [partner, validators])
+        if (partnerPChainAddress) chackValidatorStatus(partnerPChainAddress)
+    }, [partnerPChainAddress])
 
     if (error || (!partner && !isFetching && !isLoading)) {
         navigate('/partners')
@@ -486,23 +531,6 @@ const Partner = () => {
                         }}
                     >
                         <Typography variant="h3">{partner.attributes.companyName}</Typography>
-                        {/* the badge validator will be added when the api support getting p-chain
-                        address */}
-                        {/* {!!isConsortiumMember && (
-                            <Box
-                                sx={{
-                                    background: theme => theme.palette.background.gradient,
-                                    padding: '10px 14px 8px 12px',
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                    borderRadius: theme => theme.shape.borderRadius,
-                                    width: 'fit-content',
-                                }}
-                            >
-                                <Typography sx={{ color: 'common.white' }}>Validator</Typography>
-                            </Box>
-                        )} */}
                     </Box>
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                         {!!isValidator && (
@@ -527,7 +555,7 @@ const Partner = () => {
                                 </Typography>
                             </Box>
                         )}
-                        {partner.contractAddress && (
+                        {!!partner.contractAddress && (
                             <Box
                                 sx={{
                                     width: '129px',

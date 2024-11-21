@@ -1,4 +1,6 @@
 export interface PartnerDataType {
+    isValidator: boolean
+    contractAddress: any
     id?: number
     attributes?: AttributesType
 }

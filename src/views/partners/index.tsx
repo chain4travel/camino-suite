@@ -1,3 +1,7 @@
+import { mdiAccessPointNetwork } from '@mdi/js'
+import Icon from '@mdi/react'
+import ArrowBackIcon from '@mui/icons-material/ArrowBack'
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
 import {
     Box,
     CircularProgress,
@@ -7,23 +11,19 @@ import {
     useTheme,
 } from '@mui/material'
 import React, { ReactNode, useEffect, useReducer } from 'react'
+import PartnersFilter from '../../components/Partners/PartnersFilter'
 import {
     initialStatePartners,
     partnersActions,
-    partnersReducer,
+    partnersReducer
 } from '../../helpers/partnersReducer'
-
-import { mdiAccessPointNetwork } from '@mdi/js'
-import Icon from '@mdi/react'
-import ArrowBackIcon from '@mui/icons-material/ArrowBack'
-import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
-import PartnersFilter from '../../components/Partners/PartnersFilter'
 import { useSmartContract } from '../../helpers/useSmartContract'
 import { useAppSelector } from '../../hooks/reduxHooks'
-import { useListPartnersQuery } from '../../redux/services/partners'
+import { useGetBusinessFieldsQuery, useListPartnersQuery } from '../../redux/services/partners'
 import { getActiveNetwork } from '../../redux/slices/network'
 import ListPartners from './ListPartners'
 import MatchingPartners from './MatchingPartners'
+
 
 interface PartnersListWrapperProps {
     isLoading: boolean
@@ -54,12 +54,20 @@ const PartnersListWrapper: React.FC<PartnersListWrapperProps> = ({
 
 const Partners = () => {
     const activeNetwork = useAppSelector(getActiveNetwork)
+    const { data: bsFeilds } = useGetBusinessFieldsQuery()
     const [state, dispatchPartnersActions] = useReducer(partnersReducer, initialStatePartners)
     const { data: partners, isLoading, isFetching, error, refetch } = useListPartnersQuery(state)
     const value = useSmartContract()
     useEffect(() => {
         if (activeNetwork) refetch()
     }, [activeNetwork])
+
+    useEffect(() => {
+        if (bsFeilds) {
+            dispatchPartnersActions({ type: partnersActions.UPDATE_BUSINESS_FIELDS_FROM_API, payload: bsFeilds })
+        }
+    }, [bsFeilds])
+
     const handleChange = (event: React.ChangeEvent<unknown>, value: number) => {
         dispatchPartnersActions({ type: partnersActions.NEXT_PAGE, payload: value })
     }
@@ -99,7 +107,7 @@ const Partners = () => {
     if (!partners?.data) {
         return <PartnersListWrapper isLoading={isLoading} isFetching={isFetching} />
     }
-
+    
     const content = (
         <>
             <PartnersFilter state={state} dispatchPartnersActions={dispatchPartnersActions} />
