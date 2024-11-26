@@ -27,9 +27,14 @@ export default function LandingPage() {
     }, [activeNetwork])
 
     const checkFeature = async () => {
-        const phases = await getUpgradePhases()
-        const enabled = await isFeatureEnabled('DACFeature', activeNetwork?.url, phases)
-        setFeatureEnabled(enabled)
+        try {
+            const phases = await getUpgradePhases()
+            const enabled = await isFeatureEnabled('DACFeature', activeNetwork?.url, phases)
+            setFeatureEnabled(enabled)
+        } catch (error) {
+            console.error('Error in checkFeature:', error)
+            console.error('Error Details:', JSON.stringify(error, null, 2))
+        }
     }
 
     const handleWidgetClick = app => {
