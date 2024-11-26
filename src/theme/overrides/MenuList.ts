@@ -13,7 +13,7 @@ export default function MenuList(theme: Theme) {
                     maxWidth: '350px',
                     '& .MuiMenuItem-root': {
                         whiteSpace: 'normal',
-                        padding: '.8rem',
+                        padding: '0.625rem',
                         '&.Mui-selected': {
                             backgroundColor: `${theme.palette.action.selected} !important`,
                         },

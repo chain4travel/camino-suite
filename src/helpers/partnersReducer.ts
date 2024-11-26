@@ -31,6 +31,7 @@ export enum partnersActions {
     'TOGGLE_VALIDATORS',
     'TOGGLE_ON_MESSENGER',
     'UPDATE_BUSINESS_FIELDS_FROM_API',
+    'RESET_ALL_BUSINESS_FIELDS',
 }
 
 export interface ActionType {
@@ -120,7 +121,17 @@ export const partnersReducer = (
                 ...state,
                 businessField: action.payload,
             }
-
+        case partnersActions.RESET_ALL_BUSINESS_FIELDS:
+            return {
+                ...state,
+                businessField: state.businessField.map(group => ({
+                    ...group,
+                    fields: group.fields.map(field => ({
+                        ...field,
+                        active: false,
+                    })),
+                })),
+            }
         default:
             return state
     }
