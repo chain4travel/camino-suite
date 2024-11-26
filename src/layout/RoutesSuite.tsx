@@ -81,7 +81,10 @@ export default function RoutesSuite() {
     }, [location])
 
     useEffect(() => {
-        checkFeature()
+        setTimeout(() => {
+            checkFeature()
+        }, 1000)
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [activeNetwork])
 
     const checkFeature = async () => {

@@ -31,7 +31,10 @@ export default function PlatformSwitcher() {
     const [featureEnabled, setFeatureEnabled] = useState<boolean>(false)
 
     useEffect(() => {
-        checkFeature()
+        setTimeout(() => {
+            checkFeature()
+        }, 1000)
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [activeNetwork])
 
     const checkFeature = async () => {
