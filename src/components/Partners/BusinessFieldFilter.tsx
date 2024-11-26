@@ -1,6 +1,6 @@
 import { mdiCloseCircleOutline } from '@mdi/js'
 import Icon from '@mdi/react'
-import { Box, Checkbox, Divider, Typography } from '@mui/material'
+import { Box, Checkbox, Typography } from '@mui/material'
 import ListItemText from '@mui/material/ListItemText'
 import MenuItem from '@mui/material/MenuItem'
 import Select from '@mui/material/Select'
@@ -106,9 +106,6 @@ const BusinessFieldFilter: React.FC<BusinessFieldFilterProps> = ({
                     '.MuiOutlinedInput-notchedOutline': {
                         border: 'none !important',
                     },
-                    'root-MuiCheckbox-root': {
-                        padding: 0,
-                    },
                 }}
                 renderValue={() => (
                     <Typography variant="caption">
@@ -132,9 +129,7 @@ const BusinessFieldFilter: React.FC<BusinessFieldFilterProps> = ({
                         onClick={() => handleCategoryToggle(group.category)} // Toggle category
                         sx={{
                             backgroundColor: theme =>
-                                theme.palette.mode === 'dark'
-                                    ? theme.palette.grey[900]
-                                    : theme.palette.grey[100],
+                                theme.palette.mode === 'dark' ? '#0f182a' : theme.palette.grey[100],
                             py: 1,
                         }}
                     >
@@ -157,12 +152,14 @@ const BusinessFieldFilter: React.FC<BusinessFieldFilterProps> = ({
                                 !group.fields.every(field => field.active) // Not all fields active
                             }
                             sx={{
-                                color: theme => theme.palette.secondary.main,
+                                padding: '0',
+                                color: theme =>
+                                    theme.palette.mode === 'dark' ? '#475569' : '#64748B',
                                 '&.Mui-checked': {
                                     color: theme => theme.palette.secondary.main,
                                 },
                                 '&.MuiCheckbox-indeterminate': {
-                                    color: theme => theme.palette.secondary.main, // Optional: Customize color for indeterminate state
+                                    color: theme => theme.palette.secondary.main,
                                 },
                             }}
                         />
@@ -189,7 +186,9 @@ const BusinessFieldFilter: React.FC<BusinessFieldFilterProps> = ({
                             <Checkbox
                                 checked={field.active}
                                 sx={{
-                                    color: theme => theme.palette.secondary.main,
+                                    padding: '0',
+                                    color: theme =>
+                                        theme.palette.mode === 'dark' ? '#475569' : '#64748B',
                                     '&.Mui-checked': {
                                         color: theme => theme.palette.secondary.main,
                                     },
@@ -197,16 +196,12 @@ const BusinessFieldFilter: React.FC<BusinessFieldFilterProps> = ({
                             />
                         </MenuItem>
                     )),
-
-                    groupIndex < state.businessField.length - 1 ? (
-                        <Divider key={`divider-${groupIndex}`} sx={{ my: 1 }} />
-                    ) : null,
                 ])}
             </Select>
             {selectedFields.length > 0 && (
                 <button
                     onClick={resetAllFields}
-                    style={{ position: 'absolute', top: '10px', right: '40px', zIndex: 1400 }}
+                    style={{ position: 'absolute', top: '9px', right: '40px', zIndex: 1400 }}
                 >
                     <Icon path={mdiCloseCircleOutline} size={1} />
                 </button>
