@@ -106,6 +106,9 @@ const BusinessFieldFilter: React.FC<BusinessFieldFilterProps> = ({
                     '.MuiOutlinedInput-notchedOutline': {
                         border: 'none !important',
                     },
+                    'root-MuiCheckbox-root': {
+                        padding: 0,
+                    },
                 }}
                 renderValue={() => (
                     <Typography variant="caption">
