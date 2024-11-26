@@ -41,8 +41,7 @@ export default function PlatformSwitcher() {
             const enabled = await isFeatureEnabled('DACFeature', activeNetwork?.url, phases)
             setFeatureEnabled(enabled)
         } catch (error) {
-            console.error('Error in checkFeature:', error)
-            console.error('Error Details:', JSON.stringify(error, null, 2))
+            setFeatureEnabled(false)
         }
     }
 
