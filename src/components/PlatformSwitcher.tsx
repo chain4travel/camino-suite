@@ -31,7 +31,9 @@ export default function PlatformSwitcher() {
     const [featureEnabled, setFeatureEnabled] = useState<boolean>(false)
 
     useEffect(() => {
-        checkFeature()
+        if (activeNetwork?.url) {
+            checkFeature()
+        }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [activeNetwork])
 

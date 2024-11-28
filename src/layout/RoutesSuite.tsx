@@ -81,7 +81,9 @@ export default function RoutesSuite() {
     }, [location])
 
     useEffect(() => {
-        checkFeature()
+        if (activeNetwork?.url) {
+            checkFeature()
+        }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [activeNetwork])
 

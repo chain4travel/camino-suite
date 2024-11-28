@@ -20,7 +20,9 @@ export default function LandingPage() {
     const { getUpgradePhases } = useWallet()
 
     useEffect(() => {
-        checkFeature()
+        if (activeNetwork?.url) {
+            checkFeature()
+        }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [activeNetwork])
 
