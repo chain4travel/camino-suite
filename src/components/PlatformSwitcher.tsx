@@ -28,9 +28,8 @@ export default function PlatformSwitcher() {
     const { isDesktop } = useWidth()
     const dispatch = useDispatch()
     const { getUpgradePhases } = useWallet()
-    const { status } = useNetwork()
-
     const [featureEnabled, setFeatureEnabled] = useState<boolean>(false)
+    const { status } = useNetwork()
 
     useEffect(() => {
         if (status === 'succeeded') {
@@ -51,7 +50,6 @@ export default function PlatformSwitcher() {
             dispatch(changeActiveApp('Network'))
         }
     }, [featureEnabled, allApps, activeApp, dispatch])
-
     return (
         <Box
             sx={{
