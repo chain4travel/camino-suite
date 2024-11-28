@@ -5,6 +5,7 @@ import React, { useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { useAppSelector } from '../hooks/reduxHooks'
+import useNetwork from '../hooks/useNetwork'
 import useWallet from '../hooks/useWallet'
 import useWidth from '../hooks/useWidth'
 import {
@@ -27,25 +28,29 @@ export default function PlatformSwitcher() {
     const { isDesktop } = useWidth()
     const dispatch = useDispatch()
     const { getUpgradePhases } = useWallet()
+    const { status } = useNetwork()
 
     const [featureEnabled, setFeatureEnabled] = useState<boolean>(false)
 
     useEffect(() => {
-        if (activeNetwork?.url) {
+        if (status === 'succeeded') {
             checkFeature()
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [activeNetwork])
+    }, [activeNetwork, status])
 
     const checkFeature = async () => {
-        try {
-            const phases = await getUpgradePhases()
-            const enabled = await isFeatureEnabled('DACFeature', activeNetwork?.url, phases)
-            setFeatureEnabled(enabled)
-        } catch (error) {
-            setFeatureEnabled(false)
-        }
+        const phases = await getUpgradePhases()
+        const enabled = await isFeatureEnabled('DACFeature', activeNetwork?.url, phases)
+        setFeatureEnabled(enabled)
     }
+
+    useEffect(() => {
+        const currentApp = allApps[activeApp]
+        if (currentApp?.name === 'DAC' && !featureEnabled) {
+            dispatch(changeActiveApp('Network'))
+        }
+    }, [featureEnabled, allApps, activeApp, dispatch])
 
     return (
         <Box
@@ -111,48 +116,39 @@ export default function PlatformSwitcher() {
                         (!app.private || isAuth) &&
                         (app.name !== 'DAC' || featureEnabled)
                     )
-                        if (
-                            !app.hidden &&
-                            (!app.private || isAuth) &&
-                            (app.name !== 'DAC' || featureEnabled)
-                        )
-                            return (
-                                <MenuItem
-                                    key={index}
-                                    value={app.name}
-                                    divider
-                                    onClick={() => navigate(app.url)}
-                                    data-cy={`app-selector-${app.name}`}
-                                >
-                                    <Box sx={{ width: '100%' }}>
-                                        <Box
-                                            sx={{
-                                                display: 'flex',
-                                                alignItems: 'center',
-                                                justifyContent: 'space-between',
-                                            }}
-                                        >
-                                            <Typography
-                                                variant="subtitle2"
-                                                component="span"
-                                                noWrap
-                                                fontWeight="500"
-                                                sx={{ color: '#149EED' }}
-                                            >
-                                                {app.name}
-                                            </Typography>
-                                            <Icon path={mdiChevronRight} size={0.9} />
-                                        </Box>
+                        return (
+                            <MenuItem
+                                key={index}
+                                value={app.name}
+                                divider
+                                onClick={() => navigate(app.url)}
+                                data-cy={`app-selector-${app.name}`}
+                            >
+                                <Box sx={{ width: '100%' }}>
+                                    <Box
+                                        sx={{
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'space-between',
+                                        }}
+                                    >
                                         <Typography
-                                            variant="caption"
+                                            variant="subtitle2"
                                             component="span"
-                                            fontWeight="300"
+                                            noWrap
+                                            fontWeight="500"
+                                            sx={{ color: '#149EED' }}
                                         >
-                                            {app.subText}
+                                            {app.name}
                                         </Typography>
+                                        <Icon path={mdiChevronRight} size={0.9} />
                                     </Box>
-                                </MenuItem>
-                            )
+                                    <Typography variant="caption" component="span" fontWeight="300">
+                                        {app.subText}
+                                    </Typography>
+                                </Box>
+                            </MenuItem>
+                        )
                 })}
             </Select>
         </Box>

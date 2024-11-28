@@ -5,6 +5,7 @@ import React, { useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router'
 import { useAppSelector } from '../../hooks/reduxHooks'
+import useNetwork from '../../hooks/useNetwork'
 import useWallet from '../../hooks/useWallet'
 import { getActiveNetwork } from '../../redux/slices/network'
 import { isFeatureEnabled } from '../../utils/featureFlags/featureFlagUtils'
@@ -18,22 +19,19 @@ export default function LandingPage() {
     const isAuth = useAppSelector(state => state.appConfig.isAuth)
     const [featureEnabled, setFeatureEnabled] = useState<boolean>(false)
     const { getUpgradePhases } = useWallet()
+    const { status } = useNetwork()
 
     useEffect(() => {
-        if (activeNetwork?.url) {
+        if (status === 'succeeded') {
             checkFeature()
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [activeNetwork])
+    }, [activeNetwork, status])
 
     const checkFeature = async () => {
-        try {
-            const phases = await getUpgradePhases()
-            const enabled = await isFeatureEnabled('DACFeature', activeNetwork?.url, phases)
-            setFeatureEnabled(enabled)
-        } catch (error) {
-            setFeatureEnabled(false)
-        }
+        const phases = await getUpgradePhases()
+        const enabled = await isFeatureEnabled('DACFeature', activeNetwork?.url, phases)
+        setFeatureEnabled(enabled)
     }
 
     const handleWidgetClick = app => {
@@ -53,8 +51,7 @@ export default function LandingPage() {
                     Camino Suite
                 </Typography>
                 <Typography textAlign={'center'}>
-                    The Camino Suite unifies all network wide applications of the Camino Network The
-                    Camino Suite unifies all network wide applications of the Camino Network
+                    The Camino Suite unifies all network wide applications of the Camino Network
                 </Typography>
             </Box>
 
