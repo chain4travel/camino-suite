@@ -2,9 +2,11 @@ import { mdiChevronRight } from '@mdi/js'
 import Icon from '@mdi/react'
 import { Box, MenuItem, Select, Typography, useTheme } from '@mui/material'
 import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { useAppSelector } from '../hooks/reduxHooks'
+import useWallet from '../hooks/useWallet'
 import useWallet from '../hooks/useWallet'
 import useWidth from '../hooks/useWidth'
 import {
@@ -15,9 +17,12 @@ import {
 } from '../redux/slices/app-config'
 import { getActiveNetwork } from '../redux/slices/network'
 import { isFeatureEnabled } from '../utils/featureFlags/featureFlagUtils'
+import { getActiveNetwork } from '../redux/slices/network'
+import { isFeatureEnabled } from '../utils/featureFlags/featureFlagUtils'
 
 export default function PlatformSwitcher() {
     const theme = useTheme()
+    const activeNetwork = useAppSelector(getActiveNetwork)
     const activeNetwork = useAppSelector(getActiveNetwork)
     const navigate = useNavigate()
     const activeApp = useAppSelector(getActiveApp)
@@ -32,13 +37,17 @@ export default function PlatformSwitcher() {
 
     useEffect(() => {
         checkFeature()
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [activeNetwork])
 
     const checkFeature = async () => {
-        const phases = await getUpgradePhases()
-        const enabled = await isFeatureEnabled('DACFeature', activeNetwork?.url, phases)
-
-        setFeatureEnabled(enabled)
+        try {
+            const phases = await getUpgradePhases()
+            const enabled = await isFeatureEnabled('DACFeature', activeNetwork?.url, phases)
+            setFeatureEnabled(enabled)
+        } catch (error) {
+            setFeatureEnabled(false)
+        }
     }
 
     return (
@@ -100,6 +109,11 @@ export default function PlatformSwitcher() {
                 data-cy="app-selector-menu"
             >
                 {allApps?.map((app, index) => {
+                    if (
+                        !app.hidden &&
+                        (!app.private || isAuth) &&
+                        (app.name !== 'DAC' || featureEnabled)
+                    )
                     if (
                         !app.hidden &&
                         (!app.private || isAuth) &&
