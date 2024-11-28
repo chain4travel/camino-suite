@@ -1,5 +1,5 @@
+import { Box, Chip, Typography } from '@mui/material'
 import React from 'react'
-import { Box, Typography, Chip } from '@mui/material'
 import { useAppSelector } from '../../hooks/reduxHooks'
 import { NetworkID, getActiveNetwork, selectNetworkStatus } from '../../redux/slices/network'
 
