@@ -5,10 +5,8 @@ import { useDispatch } from 'react-redux'
 import { useLocation } from 'react-router-dom'
 import { useAppSelector } from '../hooks/reduxHooks'
 import useWallet from '../hooks/useWallet'
-import useWallet from '../hooks/useWallet'
 import { changeActiveApp } from '../redux/slices/app-config'
 import { getActiveNetwork } from '../redux/slices/network'
-import { isFeatureEnabled } from '../utils/featureFlags/featureFlagUtils'
 import { isFeatureEnabled } from '../utils/featureFlags/featureFlagUtils'
 import AccessLayout from '../views/access'
 import MountAccessComponent from '../views/access/MountAccessComponent'
@@ -29,7 +27,6 @@ import MultisigWallet from '../views/settings/MultisigWallet'
 import VerifyWallet from '../views/settings/VerifyWallet'
 import Settings from '../views/settings/index'
 import VoteApp from '../views/vote/VoteApp'
-import VoteApp from '../views/vote/VoteApp'
 import Wallet from '../views/wallet/WalletApp'
 import CreateDepositsLayout from './CreateDepositLayout'
 import PartnersLayout from './PartnersLayout'
@@ -42,11 +39,9 @@ export default function RoutesSuite() {
     const activeNetwork = useAppSelector(getActiveNetwork)
     const location = useLocation()
     const { getUpgradePhases } = useWallet()
-    const { getUpgradePhases } = useWallet()
 
     const [lastUrlWithNewNetwork, setLastUrlWithNewNetwork] = useState('')
     const [networkAliasToUrl, setNetworkAliasToUrl] = useState<string>('camino')
-    const [featureEnabled, setFeatureEnabled] = useState<boolean>(false)
     const [featureEnabled, setFeatureEnabled] = useState<boolean>(false)
 
     useEffect(() => {
@@ -121,13 +116,6 @@ export default function RoutesSuite() {
                             path="/explorer"
                             element={<Navigate to={`/explorer/${networkAliasToUrl}`} />}
                         />
-
-                        {featureEnabled && (
-                            <>
-                                <Route path={`/dac/*`} element={<VoteApp />} />
-                                <Route path={`/dac`} element={<Navigate to="/dac/active" />} />
-                            </>
-                        )}
 
                         {featureEnabled && (
                             <>
