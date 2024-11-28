@@ -2,11 +2,14 @@ import { Box, Grid, Typography } from '@mui/material'
 import { changeActiveApp, getAllApps } from '../../redux/slices/app-config'
 
 import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router'
 import { useAppSelector } from '../../hooks/reduxHooks'
 import useWallet from '../../hooks/useWallet'
+import useWallet from '../../hooks/useWallet'
 import { getActiveNetwork } from '../../redux/slices/network'
+import { isFeatureEnabled } from '../../utils/featureFlags/featureFlagUtils'
 import { isFeatureEnabled } from '../../utils/featureFlags/featureFlagUtils'
 import LandingPageAppWidget from './LandingPageAppWidget'
 
@@ -52,6 +55,7 @@ export default function LandingPage() {
                 </Typography>
                 <Typography textAlign={'center'}>
                     The Camino Suite unifies all network wide applications of the Camino Network
+                    The Camino Suite unifies all network wide applications of the Camino Network
                 </Typography>
             </Box>
 
@@ -60,6 +64,8 @@ export default function LandingPage() {
                     {allApps?.map((app, index) => {
                         if (
                             !app.hidden &&
+                            (app.private === false || (app.name === 'Foundation' && isAuth)) &&
+                            (app.name !== 'DAC' || featureEnabled)
                             (app.private === false || (app.name === 'Foundation' && isAuth)) &&
                             (app.name !== 'DAC' || featureEnabled)
                         )

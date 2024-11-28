@@ -2,6 +2,13 @@ version: '3.5'
 
 services:
 
+  voting:
+    image: ${VOTING_IMAGE}
+    entrypoint: ["yarn", "start"]
+    ports:
+      - 5004:5004
+    container_name: camino-suite-voting-container
+
   wallet:
     image: ${WALLET_IMAGE}
     entrypoint: ["yarn", "start"]

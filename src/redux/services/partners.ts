@@ -179,7 +179,7 @@ function getServiceName(fullName: unknown): string {
 const getBaseUrl = () => {
     const currentPath = typeof window !== 'undefined' ? window.location.hostname : ''
     if (currentPath === 'localhost' || currentPath.includes('dev')) {
-        return BASE_URLS.prod
+        return BASE_URLS.dev
     } else if (currentPath) {
         return BASE_URLS.prod
     } else {
@@ -298,7 +298,11 @@ export const partnersApi = createApi({
                                 } = await fetchContractServices(contractAddress, provider)
 
                                 let parsedSupportedServices = []
-                                if (supportedServices[0]) {
+                                if (
+                                    supportedServices &&
+                                    supportedServices.length > 0 &&
+                                    supportedServices[0]
+                                ) {
                                     parsedSupportedServices = supportedServices[0]
                                         .map((service, index) => {
                                             let capabilities = supportedServices[1][index][2].map(
@@ -436,7 +440,7 @@ export const partnersApi = createApi({
                         const { supportedServices, wantedServices, bots, supportedCurrencies } =
                             await fetchContractServices(contractAddress, provider)
                         let parsedSupportedServices = []
-                        if (supportedServices) {
+                        if (supportedServices && supportedServices?.length > 0) {
                             parsedSupportedServices = supportedServices[0]
                                 .map((service, index) => {
                                     if (
@@ -563,7 +567,11 @@ export const partnersApi = createApi({
                                 } = await fetchContractServices(contractAddress, provider)
 
                                 let parsedSupportedServices = []
-                                if (supportedServices[0]) {
+                                if (
+                                    supportedServices &&
+                                    supportedServices.length > 0 &&
+                                    supportedServices[0]
+                                ) {
                                     parsedSupportedServices = supportedServices[0]
                                         .map((service, index) => {
                                             let capabilities = supportedServices[1][index][2].map(
@@ -655,7 +663,11 @@ export const partnersApi = createApi({
                         const { supportedServices, wantedServices, bots, supportedCurrencies } =
                             await fetchContractServices(contractAddress, provider)
                         let parsedSupportedServices = []
-                        if (supportedServices[0]) {
+                        if (
+                            supportedServices &&
+                            supportedServices?.length > 0 &&
+                            supportedServices[0]
+                        ) {
                             parsedSupportedServices = supportedServices[0]
                                 .map((service, index) => {
                                     if (
