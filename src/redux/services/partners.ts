@@ -239,7 +239,7 @@ export const partnersApi = createApi({
                         .map(field => field.fullName)
                     if (filterWith?.length > 0) {
                         filterWith.forEach((element, index) => {
-                            query += `&filters[$and][${index}][business_fields][BusinessField][$eq]=${element}`
+                            query += `&filters[$or][${index}][business_fields][BusinessField][$eq]=${element}`
                         })
                     }
                 }
@@ -510,7 +510,7 @@ export const partnersApi = createApi({
                         .map(field => field.fullName)
                     if (filterWith?.length > 0) {
                         filterWith.forEach((element, index) => {
-                            query += `&filters[$and][${index}][business_fields][BusinessField][$eq]=${element}`
+                            query += `&filters[$or][${index}][business_fields][BusinessField][$eq]=${element}`
                         })
                     }
                 }
