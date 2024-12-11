@@ -66,14 +66,14 @@ jobs:
         uses: actions/upload-artifact@v4
         if: failure()
         with:
-          name: cypress-screenshots
+          name: cypress-screenshots_wallet
           path: camino-suite/cypress/screenshots
       # Test run video was always captured, so this action uses "always()" condition
       - name: extract videos to git
         uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: cypress-videos
+          name: cypress-videos_wallet
           path: camino-suite/cypress/videos
 
 
@@ -129,12 +129,12 @@ jobs:
         uses: actions/upload-artifact@v4
         if: failure()
         with:
-          name: cypress-screenshots
+          name: cypress-screenshots_explorer
           path: camino-suite/cypress/screenshots
       # Test run video was always captured, so this action uses "always()" condition
       - name: extract videos to git
         uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: cypress-videos
+          name: cypress-videos_explorer
           path: camino-suite/cypress/videos
