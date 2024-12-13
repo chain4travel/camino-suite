@@ -584,12 +584,14 @@ const Partner = () => {
                             isPartnerView={true}
                         />
                     </Box>
-                    <Box sx={{ paddingBottom: '1.5rem' }}>
-                        <Typography variant="subtitle1">Description</Typography>
-                        <Typography variant="body2">
-                            {partner.attributes.companyLongDescription}
-                        </Typography>
-                    </Box>
+                    {partner.attributes.companyLongDescription && (
+                        <Box sx={{ paddingBottom: '1.5rem' }}>
+                            <Typography variant="subtitle1">Description</Typography>
+                            <Typography variant="body2" sx={{ marginTop: '.5rem' }}>
+                                {partner.attributes.companyLongDescription}
+                            </Typography>
+                        </Box>
+                    )}
                 </Box>
                 <Box
                     sx={{
@@ -712,37 +714,22 @@ const Partner = () => {
                             />
                         </Box>
                         <Divider />
-                        <ContentField label="company country">
-                            {partner.attributes.country_flag &&
-                                partner.attributes.country_flag.data?.attributes && (
-                                    <PartnerFlag
-                                        country={partner.attributes.country_flag.data.attributes}
-                                    />
-                                )}
-                        </ContentField>
+                        {partner.attributes.country_flag.data.attributes && (
+                            <ContentField label="company country">
+                                {partner.attributes.country_flag &&
+                                    partner.attributes.country_flag.data?.attributes && (
+                                        <PartnerFlag
+                                            country={
+                                                partner.attributes.country_flag.data.attributes
+                                            }
+                                        />
+                                    )}
+                            </ContentField>
+                        )}
                         <Divider />
-                        <ContentField label="Direct Contact">
-                            <Typography
-                                sx={{
-                                    color: theme => theme.palette.card.text,
-                                    fontSize: '16px',
-                                    fontStyle: 'normal',
-                                    fontWeight: 400,
-                                    lineHeight: '150%',
-                                }}
-                            >
-                                {partner.attributes.contactFirstname +
-                                    ' ' +
-                                    partner.attributes.contactLastname}
-                            </Typography>
-                        </ContentField>
-                        <Divider />
-                        <ContentField label="Contact Email">
-                            <Link
-                                rel="noopener noreferrer"
-                                style={{ textDecoration: 'none' }}
-                                to={'mailto:' + partner.attributes.contactEmail}
-                            >
+                        {(partner?.attributes?.contactFirstname ||
+                            partner?.attributes?.contactLastname) && (
+                            <ContentField label="Direct Contact">
                                 <Typography
                                     sx={{
                                         color: theme => theme.palette.card.text,
@@ -752,51 +739,83 @@ const Partner = () => {
                                         lineHeight: '150%',
                                     }}
                                 >
-                                    {partner.attributes.contactEmail}
+                                    {[
+                                        partner?.attributes?.contactFirstname,
+                                        partner?.attributes?.contactLastname,
+                                    ]
+                                        .filter(Boolean)
+                                        .join(' ')}
                                 </Typography>
-                            </Link>
-                        </ContentField>
+                            </ContentField>
+                        )}
+
                         <Divider />
-                        <ContentField label="Contact Phone">
-                            <Link
-                                rel="noopener noreferrer"
-                                style={{ textDecoration: 'none' }}
-                                to={'tel:' + partner.attributes.contactPhone}
-                            >
-                                <Typography
-                                    sx={{
-                                        color: theme => theme.palette.card.text,
-                                        fontSize: '16px',
-                                        fontStyle: 'normal',
-                                        fontWeight: 400,
-                                        lineHeight: '150%',
-                                    }}
+                        {partner.attributes.contactEmail && (
+                            <ContentField label="Contact Email">
+                                <Link
+                                    rel="noopener noreferrer"
+                                    style={{ textDecoration: 'none' }}
+                                    to={'mailto:' + partner.attributes.contactEmail}
                                 >
-                                    {partner.attributes.contactPhone}
-                                </Typography>
-                            </Link>
-                        </ContentField>
+                                    <Typography
+                                        sx={{
+                                            color: theme => theme.palette.card.text,
+                                            fontSize: '16px',
+                                            fontStyle: 'normal',
+                                            fontWeight: 400,
+                                            lineHeight: '150%',
+                                        }}
+                                    >
+                                        {partner.attributes.contactEmail}
+                                    </Typography>
+                                </Link>
+                            </ContentField>
+                        )}
                         <Divider />
-                        <ContentField label="Website">
-                            <Link
-                                rel="noopener noreferrer"
-                                target="_blank"
-                                style={{ textDecoration: 'none' }}
-                                to={partner.attributes.companyWebsite}
-                            >
-                                <Typography
-                                    sx={{
-                                        color: theme => theme.palette.card.text,
-                                        fontSize: '16px',
-                                        fontStyle: 'normal',
-                                        fontWeight: 400,
-                                        lineHeight: '150%',
-                                    }}
+                        {partner.attributes.contactPhone && (
+                            <ContentField label="Contact Phone">
+                                <Link
+                                    rel="noopener noreferrer"
+                                    style={{ textDecoration: 'none' }}
+                                    to={'tel:' + partner.attributes.contactPhone}
                                 >
-                                    {partner.attributes.companyWebsite}
-                                </Typography>
-                            </Link>
-                        </ContentField>
+                                    <Typography
+                                        sx={{
+                                            color: theme => theme.palette.card.text,
+                                            fontSize: '16px',
+                                            fontStyle: 'normal',
+                                            fontWeight: 400,
+                                            lineHeight: '150%',
+                                        }}
+                                    >
+                                        {partner.attributes.contactPhone}
+                                    </Typography>
+                                </Link>
+                            </ContentField>
+                        )}
+                        <Divider />
+                        {partner.attributes.companyWebsite && (
+                            <ContentField label="Website">
+                                <Link
+                                    rel="noopener noreferrer"
+                                    target="_blank"
+                                    style={{ textDecoration: 'none' }}
+                                    to={partner.attributes.companyWebsite}
+                                >
+                                    <Typography
+                                        sx={{
+                                            color: theme => theme.palette.card.text,
+                                            fontSize: '16px',
+                                            fontStyle: 'normal',
+                                            fontWeight: 400,
+                                            lineHeight: '150%',
+                                        }}
+                                    >
+                                        {partner.attributes.companyWebsite}
+                                    </Typography>
+                                </Link>
+                            </ContentField>
+                        )}
                     </Box>
                 </Box>
             </Box>
