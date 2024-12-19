@@ -29,7 +29,12 @@ const useWallet = () => {
                 )
         }
     }
-    return { updateStore, getRegisteredNode, getAddress }
+
+    async function getUpgradePhases() {
+        return await caminoClient.PChain().getUpgradePhases()
+    }
+
+    return { updateStore, getRegisteredNode, getAddress, getUpgradePhases }
 }
 
 export default useWallet

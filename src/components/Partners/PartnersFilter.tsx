@@ -33,7 +33,7 @@ const PartnersFilter: React.FC<PartnersFilterProps> = ({ state, dispatchPartners
         return ''
     }, [data])
     const auth = useAppSelector(state => state.appConfig.isAuth)
-    
+
     return (
         <Box
             sx={{
@@ -71,30 +71,33 @@ const PartnersFilter: React.FC<PartnersFilterProps> = ({ state, dispatchPartners
                         }
                     />
                 </Box>
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: '.5rem' }}>
-                    <FormControlLabel
-                        label={<Typography variant="body2">On Messenger</Typography>}
-                        control={
-                            <Checkbox
-                                sx={{
-                                    color: theme => theme.palette.secondary.main,
-                                    '&.Mui-checked': {
-                                        color: theme => theme.palette.secondary.main,
-                                    },
-                                    '&.MuiCheckbox-colorSecondary.Mui-checked': {
-                                        color: theme => theme.palette.secondary.main,
-                                    },
-                                }}
-                                checked={state.onMessenger}
-                                onChange={() =>
-                                    dispatchPartnersActions({
-                                        type: partnersActions.TOGGLE_ON_MESSENGER,
-                                    })
+                {activeNetwork?.name?.toLowerCase() !== 'camino' &&
+                    activeNetwork?.name?.toLowerCase() !== 'columbus' && (
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: '.5rem' }}>
+                            <FormControlLabel
+                                label={<Typography variant="body2">On Messenger</Typography>}
+                                control={
+                                    <Checkbox
+                                        sx={{
+                                            color: theme => theme.palette.secondary.main,
+                                            '&.Mui-checked': {
+                                                color: theme => theme.palette.secondary.main,
+                                            },
+                                            '&.MuiCheckbox-colorSecondary.Mui-checked': {
+                                                color: theme => theme.palette.secondary.main,
+                                            },
+                                        }}
+                                        checked={state.onMessenger}
+                                        onChange={() =>
+                                            dispatchPartnersActions({
+                                                type: partnersActions.TOGGLE_ON_MESSENGER,
+                                            })
+                                        }
+                                    />
                                 }
                             />
-                        }
-                    />
-                </Box>
+                        </Box>
+                    )}
             </Box>
             {(!auth || !partnerCChainAddress) && (
                 <Box

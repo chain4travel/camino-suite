@@ -1,5 +1,5 @@
+import { Box, Dialog, DialogProps, Paper, useTheme } from '@mui/material'
 import React from 'react'
-import { Dialog, Box, Paper, DialogProps, useTheme } from '@mui/material'
 
 interface DialogAnimateProps extends DialogProps {
     animate?: object
