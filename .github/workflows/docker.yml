@@ -99,7 +99,7 @@ jobs:
       
       - name: create suite docker image
         run: |
-          docker build . -f Dockerfile_SUITE -t ${{ steps.setDefaults.outputs.docker_image }} --build-arg BUILD_ENV=build:${{ steps.setDefaults.outputs.build_env }} --build-arg EXPLORER_BRANCH=${{ steps.setDefaults.outputs.branch }} --build-arg WALLET_BRANCH=${{ steps.setDefaults.outputs.branch }}
+          docker build . -f Dockerfile_SUITE -t ${{ steps.setDefaults.outputs.docker_image }} --build-arg BUILD_ENV=build:${{ steps.setDefaults.outputs.build_env }} --build-arg EXPLORER_BRANCH=${{ steps.setDefaults.outputs.branch }} --build-arg WALLET_BRANCH=${{ steps.setDefaults.outputs.branch }} --build-arg VOTING_BRANCH=${{ steps.setDefaults.outputs.branch }}
 
           
       
