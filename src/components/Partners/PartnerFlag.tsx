@@ -11,6 +11,7 @@ interface PartnerFlagProps {
 const PartnerFlag: React.FC<PartnerFlagProps> = ({
     country: { countryName, countryIdentifier },
 }) => {
+    if (!countryIdentifier || !countryName) return null
     return (
         <Box sx={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
             <CircleFlag countryCode={countryIdentifier?.toLowerCase()} height="20" />
