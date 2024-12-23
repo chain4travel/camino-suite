@@ -714,13 +714,13 @@ const Partner = () => {
                             />
                         </Box>
                         <Divider />
-                        {partner.attributes.country_flag.data.attributes && (
+                        {partner?.attributes?.country_flag?.data?.attributes && (
                             <ContentField label="company country">
-                                {partner.attributes.country_flag &&
-                                    partner.attributes.country_flag.data?.attributes && (
+                                {partner?.attributes?.country_flag &&
+                                    partner?.attributes?.country_flag.data?.attributes && (
                                         <PartnerFlag
                                             country={
-                                                partner.attributes.country_flag.data.attributes
+                                                partner?.attributes?.country_flag?.data?.attributes
                                             }
                                         />
                                     )}
