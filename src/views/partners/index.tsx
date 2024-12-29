@@ -1,7 +1,3 @@
-import { mdiAccessPointNetwork } from '@mdi/js'
-import Icon from '@mdi/react'
-import ArrowBackIcon from '@mui/icons-material/ArrowBack'
-import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
 import {
     Box,
     CircularProgress,
@@ -10,20 +6,25 @@ import {
     Typography,
     useTheme,
 } from '@mui/material'
-import React, { ReactNode, useEffect, useReducer } from 'react'
-import PartnersFilter from '../../components/Partners/PartnersFilter'
+import React, { ReactNode, useEffect, useMemo, useReducer, useState } from 'react'
 import {
     initialStatePartners,
     partnersActions,
-    partnersReducer
+    partnersReducer,
 } from '../../helpers/partnersReducer'
+import { useGetBusinessFieldsQuery, useListPartnersQuery } from '../../redux/services/partners'
+
+import { mdiAccessPointNetwork } from '@mdi/js'
+import Icon from '@mdi/react'
+import ArrowBackIcon from '@mui/icons-material/ArrowBack'
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
+import PartnersFilter from '../../components/Partners/PartnersFilter'
 import { useSmartContract } from '../../helpers/useSmartContract'
 import { useAppSelector } from '../../hooks/reduxHooks'
-import { useGetBusinessFieldsQuery, useListPartnersQuery } from '../../redux/services/partners'
+import { selectFilteredPartners } from '../../redux/selectors/partners'
 import { getActiveNetwork } from '../../redux/slices/network'
 import ListPartners from './ListPartners'
 import MatchingPartners from './MatchingPartners'
-
 
 interface PartnersListWrapperProps {
     isLoading: boolean
@@ -56,23 +57,68 @@ const Partners = () => {
     const activeNetwork = useAppSelector(getActiveNetwork)
     const { data: bsFeilds } = useGetBusinessFieldsQuery()
     const [state, dispatchPartnersActions] = useReducer(partnersReducer, initialStatePartners)
-    const { data: partners, isLoading, isFetching, error, refetch } = useListPartnersQuery(state)
+    const { data: partners, isLoading, isFetching, refetch, error } = useListPartnersQuery()
+    console.log('Raw partners from query:', partners)
+
+    const filteredPartners = useAppSelector(rootState =>
+        selectFilteredPartners(rootState, partners, state),
+    )
+    console.log('Filtered partners:', filteredPartners)
+
     const value = useSmartContract()
+    const [activePage, setActivePage] = useState(0)
+    const itemsPerPage = 12
+
+    useEffect(() => {
+        setActivePage(0)
+    }, [state.companyName, state.businessField, state.validators, state.onMessenger])
+
     useEffect(() => {
         if (activeNetwork) refetch()
-    }, [activeNetwork])
+    }, [activeNetwork, refetch])
 
     useEffect(() => {
         if (bsFeilds) {
-            dispatchPartnersActions({ type: partnersActions.UPDATE_BUSINESS_FIELDS_FROM_API, payload: bsFeilds })
+            dispatchPartnersActions({
+                type: partnersActions.UPDATE_BUSINESS_FIELDS_FROM_API,
+                payload: bsFeilds,
+            })
         }
     }, [bsFeilds])
 
-    const handleChange = (event: React.ChangeEvent<unknown>, value: number) => {
-        dispatchPartnersActions({ type: partnersActions.NEXT_PAGE, payload: value })
+    // Get current partners for pagination
+    const currentPartners = useMemo(() => {
+        console.log('Calculating current partners slice')
+        if (!filteredPartners?.data) {
+            console.log('No filtered partners data')
+            return []
+        }
+        const slice = filteredPartners.data.slice(
+            activePage * itemsPerPage,
+            activePage * itemsPerPage + itemsPerPage,
+        )
+        console.log('Current partners slice:', slice)
+        return slice
+    }, [filteredPartners?.data, activePage])
+
+    const handlePageChange = (event: React.ChangeEvent<unknown>, page: number) => {
+        setActivePage(page - 1)
     }
+
     const theme = useTheme()
     const auth = useAppSelector(state => state.appConfig.isAuth)
+
+    // Show loading state while initial data is being fetched
+    if (isLoading) {
+        return <PartnersListWrapper isLoading={true} isFetching={false} />
+    }
+
+    // Show loading state while data is being refetched
+    if (isFetching) {
+        return <PartnersListWrapper isLoading={false} isFetching={true} />
+    }
+
+    // Show error state
     if (error) {
         return (
             <Box
@@ -104,10 +150,12 @@ const Partners = () => {
             </Box>
         )
     }
-    if (!partners?.data) {
-        return <PartnersListWrapper isLoading={isLoading} isFetching={isFetching} />
+
+    // Show loading state if we don't have filtered partners yet
+    if (!filteredPartners) {
+        return <PartnersListWrapper isLoading={true} isFetching={false} />
     }
-    
+
     const content = (
         <>
             <PartnersFilter state={state} dispatchPartnersActions={dispatchPartnersActions} />
@@ -117,16 +165,24 @@ const Partners = () => {
                     <MatchingPartners state={state} />
                 </>
             )}
-            <Typography variant="h5">{partners.meta.pagination.total} Partners</Typography>
+            <Typography variant="h5">{filteredPartners?.data?.length || 0} Partners</Typography>
             <PartnersListWrapper isLoading={isLoading} isFetching={isFetching}>
-                <ListPartners partners={partners} />
+                <ListPartners
+                    partners={
+                        filteredPartners ? { ...filteredPartners, data: currentPartners } : null
+                    }
+                />
             </PartnersListWrapper>
             <Box sx={{ display: 'flex', justifyContent: 'center', my: '2rem' }}>
                 <Pagination
-                    page={state.page}
-                    onChange={handleChange}
-                    count={partners.meta.pagination.pageCount}
-                    siblingCount={0}
+                    count={Math.ceil(filteredPartners.data.length / itemsPerPage)}
+                    page={activePage + 1}
+                    onChange={handlePageChange}
+                    showFirstButton
+                    showLastButton
+                    shape="rounded"
+                    variant="outlined"
+                    color="primary"
                     renderItem={item => (
                         <PaginationItem
                             slots={{ previous: ArrowBackIcon, next: ArrowForwardIcon }}

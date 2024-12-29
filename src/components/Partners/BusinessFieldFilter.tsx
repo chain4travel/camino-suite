@@ -1,11 +1,12 @@
+import { Box, Checkbox, Typography } from '@mui/material'
+import React, { useState } from 'react'
+import { ActionType, StatePartnersType, partnersActions } from '../../helpers/partnersReducer'
+
 import { mdiCloseCircleOutline } from '@mdi/js'
 import Icon from '@mdi/react'
-import { Box, Checkbox, Typography } from '@mui/material'
 import ListItemText from '@mui/material/ListItemText'
 import MenuItem from '@mui/material/MenuItem'
 import Select from '@mui/material/Select'
-import React, { useState } from 'react'
-import { ActionType, partnersActions, StatePartnersType } from '../../helpers/partnersReducer'
 
 interface BusinessFieldFilterProps {
     state: StatePartnersType

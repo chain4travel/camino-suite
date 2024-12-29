@@ -1,7 +1,7 @@
-import { ActionType, StatePartnersType, partnersActions } from '../../helpers/partnersReducer'
-
 import { Box, Button, Checkbox, FormControlLabel, Typography } from '@mui/material'
 import React, { useMemo } from 'react'
+import { ActionType, StatePartnersType, partnersActions } from '../../helpers/partnersReducer'
+
 import store from 'wallet/store'
 import { REGISTER_PARTNER_URL } from '../../constants/route-paths'
 import { useAppSelector } from '../../hooks/reduxHooks'
@@ -31,9 +31,9 @@ const PartnersFilter: React.FC<PartnersFilterProps> = ({ state, dispatchPartners
         )
         if (cAddress) return cAddress
         return ''
-    }, [data])
+    }, [data, activeNetwork?.name])
     const auth = useAppSelector(state => state.appConfig.isAuth)
-    
+
     return (
         <Box
             sx={{
