@@ -1,19 +1,30 @@
-import { Box, Link, Toolbar, Typography } from '@mui/material'
+import { Box, Button, Link, Toolbar, Typography } from '@mui/material'
 
 import { Paper } from '@mui/material'
-import React, { useEffect } from 'react'
-import { Navigate, Outlet, useNavigate } from 'react-router'
+import React, { useEffect, useMemo } from 'react'
+import { Helmet } from 'react-helmet-async'
+import { Navigate, Outlet, useNavigate, useParams } from 'react-router'
 import store from 'wallet/store'
 import { PartnerConfigurationProvider } from '../helpers/partnerConfigurationContext'
 import { SmartContractProvider } from '../helpers/useSmartContract'
 import { useAppSelector } from '../hooks/reduxHooks'
-import { useIsPartnerQuery } from '../redux/services/partners'
+import { useFetchPartnerDataQuery, useIsPartnerQuery } from '../redux/services/partners'
 import { getWalletName } from '../redux/slices/app-config'
 import { getActiveNetwork } from '../redux/slices/network'
 import Links from '../views/settings/Links'
 
 const ClaimProfile = () => {
-    const emailAddress = 'foundation@camino.network'
+    const generateEmail = () => {
+        const subject = 'Claim a Partner'
+        const body = `This is to claim a Partner record and associate it to the wallet with C-Chain address ${
+            '0x' + store.state.activeWallet.ethAddress
+        }. Please add your name, contact details, the Partner name, and attach any evidence of your affiliation with the Partner.`
+        const mailtoLink = `mailto:${emailAddress}?subject=${encodeURIComponent(
+            subject,
+        )}&body=${encodeURIComponent(body)}`
+        window.location.href = mailtoLink
+    }
+    const emailAddress = 'hello@camino.network'
     return (
         <Box
             sx={{
@@ -27,28 +38,62 @@ const ClaimProfile = () => {
         >
             <Typography variant="h5">Claim a profile</Typography>
             <Typography variant="body2" textAlign={'center'}>
-                To manage and configure your Camino Messenger, you need to claim an account.
+                To manage and configure your Camino Messenger, you need to claim a Partner record
+                first.
             </Typography>
             <Typography variant="body2" textAlign={'center'}>
                 Contact the Camino Network Foundation via{' '}
-                <Link href={`mailto:${emailAddress}`} target="_blank" rel="noopener noreferrer">
+                <Link
+                    component="a"
+                    sx={{
+                        color: theme => theme.palette.text.primary,
+                        textDecorationColor: 'inherit',
+                    }}
+                    onClick={generateEmail}
+                >
                     email
                 </Link>{' '}
                 to proceed.
             </Typography>
+            <Button
+                onClick={generateEmail}
+                sx={{
+                    padding: '10px 16px',
+                    borderRadius: '8px',
+                    background: 'linear-gradient(90deg, #0085FF 0%, #B440FC 100%)',
+                    backgroundColor: theme =>
+                        theme.palette.mode === 'dark' ? '#020617' : '#F1F5F9',
+                }}
+            >
+                <Typography fontSize={14} fontWeight={600} lineHeight={'20px'}>
+                    Contact
+                </Typography>
+            </Button>
         </Box>
     )
 }
 
 const PartnersLayout = () => {
     const path = window.location.pathname
-    const { data, isLoading } = useIsPartnerQuery({
+    const { data, isLoading, refetch } = useIsPartnerQuery({
         cChainAddress: store?.state?.activeWallet?.ethAddress
             ? '0x' + store?.state?.activeWallet?.ethAddress
             : '',
     })
+    let { partnerID } = useParams()
+    const { data: partner, refetch: refetchPartenrData } = useFetchPartnerDataQuery({
+        companyName: partnerID,
+    })
     const walletName = useAppSelector(getWalletName)
     const navigate = useNavigate()
+    const activeNetwork = useAppSelector(getActiveNetwork)
+    useEffect(() => {
+        if (activeNetwork) {
+            refetch()
+            refetchPartenrData()
+        }
+    }, [activeNetwork])
+    const auth = useAppSelector(state => state.appConfig.isAuth)
     useEffect(() => {
         if (
             walletName &&
@@ -58,17 +103,35 @@ const PartnersLayout = () => {
             navigate('/')
         }
     }, [walletName])
-    const activeNetwork = useAppSelector(getActiveNetwork)
+
+    useEffect(() => {
+        if (!auth && path.includes('partners/messenger-configuration')) navigate('/login')
+    }, [auth, path])
+
+    const partnerCChainAddress = useMemo(() => {
+        let cAddress = data?.attributes?.cChainAddresses.find(
+            elem => elem.Network === activeNetwork?.name?.toLowerCase(),
+        )
+        if (cAddress) return cAddress
+        return ''
+    }, [data])
     if (isLoading) return <></>
     if (
         path.includes('partners/messenger-configuration') &&
         !store.state.isAuth &&
-        activeNetwork.name.toLowerCase() !== 'columbus'
+        (activeNetwork?.name?.toLowerCase() !== 'columbus' ||
+            activeNetwork?.name?.toLowerCase() !== 'camino')
     ) {
         return <Navigate to="/login" replace />
     }
+
     return (
         <SmartContractProvider>
+            <Helmet>
+                <title>Partner Showroom on Camino Network</title>
+                <meta name="description" content="Discover and connect for success." />
+                <meta name="keywords" content="Camino Partners" />
+            </Helmet>
             <PartnerConfigurationProvider>
                 <Box
                     sx={{
@@ -98,7 +161,12 @@ const PartnersLayout = () => {
                     >
                         <Links />
                     </Toolbar>
-                    {path.includes('partners/messenger-configuration') && !!data && (
+                    {((path.includes('partners/messenger-configuration') &&
+                        !!data &&
+                        partnerCChainAddress) ||
+                        (partner &&
+                            partner?.contractAddress &&
+                            partnerID === partner.attributes.companyName)) && (
                         <Toolbar
                             sx={{
                                 borderBottom: '1px solid',
@@ -116,13 +184,16 @@ const PartnersLayout = () => {
                                 right: 0,
                             }}
                         >
-                            <Links type="subtabs" />
+                            <Links type="subtabs" partner={partner} />
                         </Toolbar>
                     )}
                     <Box
                         sx={{
                             mt:
-                                path.includes('partners/messenger-configuration') && !!data
+                                (path.includes('partners/messenger-configuration') &&
+                                    !!data &&
+                                    partnerCChainAddress) ||
+                                (path !== '/partners' && partner?.contractAddress)
                                     ? '9rem'
                                     : '5rem',
                             height: '100%',
@@ -134,7 +205,9 @@ const PartnersLayout = () => {
                         component={Paper}
                     >
                         {!path.includes('partners/messenger-configuration') ||
-                        (path.includes('partners/messenger-configuration') && !!data) ? (
+                        (path.includes('partners/messenger-configuration') &&
+                            !!data &&
+                            partnerCChainAddress) ? (
                             <Outlet />
                         ) : (
                             <ClaimProfile />

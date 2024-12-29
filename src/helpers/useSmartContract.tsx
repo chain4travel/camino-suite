@@ -7,7 +7,12 @@ import React, {
     useEffect,
     useState,
 } from 'react'
+import { useNavigate } from 'react-router'
 import store from 'wallet/store'
+import {
+    CONTRACTCMACCOUNTMANAGERADDRESSCAMINO,
+    CONTRACTCMACCOUNTMANAGERADDRESSCOLUMBUS,
+} from '../constants/apps-consts'
 import { useAppSelector } from '../hooks/reduxHooks'
 import { getActiveNetwork } from '../redux/slices/network'
 import CMAccount from './CMAccountManagerModule#CMAccount.json'
@@ -25,6 +30,7 @@ type SmartContractProviderProps = {
 
 export const SmartContractProvider: React.FC<SmartContractProviderProps> = ({ children }) => {
     const [provider, setProvider] = useState<ethers.JsonRpcProvider | null>(null)
+    const [needUpgrade, setNeedUpgrade] = useState(false)
     const [managerReadContract, setManagerReadContract] = useState<ethers.Contract | null>(null)
     const [managerWriteContract, setManagerWriteContract] = useState<ethers.Contract | null>(null)
     const [accountReadContract, setAccountReadContract] = useState<ethers.Contract | null>(null)
@@ -33,9 +39,9 @@ export const SmartContractProvider: React.FC<SmartContractProviderProps> = ({ ch
     const [account, setAccount] = useState<string | null>(null)
     const [contractCMAccountAddress, setContractCMAccountAddress] = useState<string | null>('')
     const auth = useAppSelector(state => state.appConfig.isAuth)
-    const contractCMAccountManagerAddress = '0xE5B2f76C778D082b07BDd7D51FFe83E3E055B47F'
+    const activeNetwork = useAppSelector(getActiveNetwork)
 
-    const CMAccountCreated = async (state, cmAccountAddress) => {
+    const CMAccountCreated = async cmAccountAddress => {
         const accountWritableContract = new ethers.Contract(cmAccountAddress, CMAccount, wallet)
         const accountReadOnlyContract = new ethers.Contract(cmAccountAddress, CMAccount, provider)
 
@@ -44,32 +50,6 @@ export const SmartContractProvider: React.FC<SmartContractProviderProps> = ({ ch
             return { success: false, error: 'Account is not initialized' }
         }
         try {
-            for (const service of state.services) {
-                const tx = await accountWritableContract.addService(
-                    service.name,
-                    service.fee,
-                    service.rackRates,
-                    service.capabilities,
-                )
-                await tx.wait()
-            }
-
-            if (state.wantedServices.length > 0) {
-                const wantedServicesTx = await accountWritableContract.addWantedServices(
-                    state.wantedServices,
-                )
-                await wantedServicesTx.wait()
-            }
-            if (state.isOffChainPayement) {
-                const offChainPaymentTx = await accountWritableContract.setOffChainPaymentSupported(
-                    state.isOffChainPayement,
-                )
-                await offChainPaymentTx.wait()
-            }
-            if (state.isCam) {
-                const tx = await accountWritableContract.addSupportedToken(ethers.ZeroAddress)
-                await tx.wait()
-            }
             const WITHDRAWER_ROLE = await accountReadOnlyContract.WITHDRAWER_ROLE()
             const tx = await accountWritableContract.grantRole(WITHDRAWER_ROLE, wallet.address)
             await tx.wait()
@@ -105,7 +85,7 @@ export const SmartContractProvider: React.FC<SmartContractProviderProps> = ({ ch
         }
     }
 
-    const upgradeCMAccount = useCallback(async () => {
+    const needsUpgrade = useCallback(async () => {
         try {
             if (accountWriteContract) {
                 const implementation = await managerReadContract.getAccountImplementation()
@@ -115,10 +95,25 @@ export const SmartContractProvider: React.FC<SmartContractProviderProps> = ({ ch
                     IMPLEMENTATION_SLOT,
                 )
                 const implAddr = '0x' + implAddrPadded.slice(-40)
-                console.log({ implementation, implAddr })
+                if (ethers.getAddress(implementation) !== ethers.getAddress(implAddr)) {
+                    setNeedUpgrade(true)
+                    return true
+                }
+                return false
+            }
+        } catch (error) {
+            const decodedError = accountWriteContract.interface.parseError(error.data)
+            console.error('Message:', error.message)
+            console.error(`Reason: ${decodedError?.name} (${decodedError?.args})`)
+        }
+    }, [accountWriteContract])
+
+    const upgradeCMAccount = useCallback(async () => {
+        try {
+            if (accountWriteContract) {
+                const implementation = await managerReadContract.getAccountImplementation()
                 const tx = await accountWriteContract.upgradeToAndCall(implementation, '0x')
                 const receipt = await tx.wait()
-                console.log({ receipt })
                 return receipt
             }
         } catch (error) {
@@ -134,30 +129,56 @@ export const SmartContractProvider: React.FC<SmartContractProviderProps> = ({ ch
             `${selectedNetwork.protocol}://${selectedNetwork.ip}:${selectedNetwork.port}/ext/bc/C/rpc`,
         )
         try {
-            const wallet = new ethers.Wallet(store.state.activeWallet?.ethKey, ethersProvider)
-            const managerWritableContract = new ethers.Contract(
-                contractCMAccountManagerAddress,
-                CMAccountManager.abi,
-                wallet,
+            if (
+                activeNetwork?.name?.toLowerCase() !== 'columbus' &&
+                activeNetwork?.name?.toLowerCase() !== 'camino'
             )
+                return
+            let contractAddress =
+                activeNetwork?.name?.toLowerCase() === 'columbus'
+                    ? CONTRACTCMACCOUNTMANAGERADDRESSCOLUMBUS
+                    : CONTRACTCMACCOUNTMANAGERADDRESSCAMINO
+            if (auth) {
+                const wallet = new ethers.Wallet(store.state.activeWallet?.ethKey, ethersProvider)
+                const managerWritableContract = new ethers.Contract(
+                    contractAddress,
+                    CMAccountManager.abi,
+                    wallet,
+                )
+                setManagerWriteContract(managerWritableContract)
+                setWallet(wallet)
+                setAccount(wallet.address)
+            }
             const managerReadOnlyContract = new ethers.Contract(
-                contractCMAccountManagerAddress,
+                contractAddress,
                 CMAccountManager.abi,
                 ethersProvider,
             )
-            setWallet(wallet)
             setProvider(ethersProvider)
             setManagerReadContract(managerReadOnlyContract)
-            setManagerWriteContract(managerWritableContract)
-            setAccount(wallet.address)
         } catch (error) {
             console.error('User denied account access:', error)
         }
     }
-    const activeNetwork = useAppSelector(getActiveNetwork)
-
+    const navigate = useNavigate()
+    const path = window.location.pathname
     useEffect(() => {
-        if (auth && activeNetwork.name.toLowerCase() === 'columbus') initializeEthers()
+        if (
+            activeNetwork?.name?.toLowerCase() === 'columbus' ||
+            activeNetwork?.name?.toLowerCase() === 'camino'
+        ) {
+            setAccountReadContract(null)
+            setAccountWriteContract(null)
+            if (
+                contractCMAccountAddress &&
+                (path.includes('partners/messenger-configuration/supplier') ||
+                    path.includes('partners/messenger-configuration/distribution') ||
+                    path.includes('partners/messenger-configuration/bots'))
+            )
+                navigate('/partners/messenger-configuration/mydetails')
+            setContractCMAccountAddress('')
+            initializeEthers()
+        }
     }, [activeNetwork, auth])
 
     useEffect(() => {
@@ -166,6 +187,7 @@ export const SmartContractProvider: React.FC<SmartContractProviderProps> = ({ ch
 
     const getCMAccountMappings = useCallback(async () => {
         try {
+            console.log('called?')
             const mappings = new Map()
             const CMACCOUNT_ROLE = await readFromContract('manager', 'CMACCOUNT_ROLE')
             const roleMemberCount = await readFromContract(
@@ -256,8 +278,10 @@ export const SmartContractProvider: React.FC<SmartContractProviderProps> = ({ ch
     }
 
     const value = {
+        needUpgrade,
         getCMAccountMappings,
         upgradeCMAccount,
+        needsUpgrade,
         contractCMAccountAddress,
         setContractCMAccountAddress,
         wallet,

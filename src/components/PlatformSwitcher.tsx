@@ -1,10 +1,12 @@
 import { mdiChevronRight } from '@mdi/js'
 import Icon from '@mdi/react'
 import { Box, MenuItem, Select, Typography, useTheme } from '@mui/material'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { useAppSelector } from '../hooks/reduxHooks'
+import useNetwork from '../hooks/useNetwork'
+import useWallet from '../hooks/useWallet'
 import useWidth from '../hooks/useWidth'
 import {
     changeActiveApp,
@@ -12,9 +14,12 @@ import {
     getAllApps,
     getAuthStatus,
 } from '../redux/slices/app-config'
+import { getActiveNetwork } from '../redux/slices/network'
+import { isFeatureEnabled } from '../utils/featureFlags/featureFlagUtils'
 
 export default function PlatformSwitcher() {
     const theme = useTheme()
+    const activeNetwork = useAppSelector(getActiveNetwork)
     const navigate = useNavigate()
     const activeApp = useAppSelector(getActiveApp)
     const allApps = useAppSelector(getAllApps)
@@ -22,7 +27,29 @@ export default function PlatformSwitcher() {
     const themeMode = theme.palette.mode === 'light' ? true : false
     const { isDesktop } = useWidth()
     const dispatch = useDispatch()
+    const { getUpgradePhases } = useWallet()
+    const [featureEnabled, setFeatureEnabled] = useState<boolean>(false)
+    const { status } = useNetwork()
 
+    useEffect(() => {
+        if (status === 'succeeded') {
+            checkFeature()
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [activeNetwork, status])
+
+    const checkFeature = async () => {
+        const phases = await getUpgradePhases()
+        const enabled = await isFeatureEnabled('DACFeature', activeNetwork?.url, phases)
+        setFeatureEnabled(enabled)
+    }
+
+    useEffect(() => {
+        const currentApp = allApps[activeApp]
+        if (currentApp?.name === 'DAC' && !featureEnabled) {
+            dispatch(changeActiveApp('Network'))
+        }
+    }, [featureEnabled, allApps, activeApp, dispatch])
     return (
         <Box
             sx={{
@@ -82,7 +109,11 @@ export default function PlatformSwitcher() {
                 data-cy="app-selector-menu"
             >
                 {allApps?.map((app, index) => {
-                    if (!app.hidden && (!app.private || isAuth))
+                    if (
+                        !app.hidden &&
+                        (!app.private || isAuth) &&
+                        (app.name !== 'DAC' || featureEnabled)
+                    )
                         return (
                             <MenuItem
                                 key={index}

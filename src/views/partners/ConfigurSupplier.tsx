@@ -4,9 +4,7 @@ import {
     CardContent,
     Divider,
     FormControl,
-    MenuItem,
     Paper,
-    Select,
     Table,
     TableBody,
     TableCell,
@@ -17,7 +15,9 @@ import {
 } from '@mui/material'
 import { ethers } from 'ethers'
 import React, { useEffect, useMemo, useReducer, useState } from 'react'
+import { useNavigate, useParams } from 'react-router'
 import MainButton from '../../components/MainButton'
+import UpdatedSelectComponent from '../../components/Partners/UpdatedSelectComponent'
 import {
     actionTypes,
     reducer,
@@ -25,6 +25,10 @@ import {
 } from '../../helpers/partnerConfigurationContext'
 import { usePartnerConfig } from '../../helpers/usePartnerConfig'
 import { useSmartContract } from '../../helpers/useSmartContract'
+import { useAppDispatch, useAppSelector } from '../../hooks/reduxHooks'
+import { useFetchPartnerDataQuery } from '../../redux/services/partners'
+import { updateNotificationStatus } from '../../redux/slices/app-config'
+import { getActiveNetwork } from '../../redux/slices/network'
 import { Configuration } from './Configuration'
 
 function ServiceChangesPreview({ added, updated, removed }) {
@@ -193,12 +197,31 @@ function ServiceChangesPreview({ added, updated, removed }) {
                                         <>
                                             <TableCell>
                                                 <Typography variant="overline">
-                                                    {item.changeDetails.map((change, index) => (
-                                                        <div key={index}>
-                                                            <strong>{change.type}:</strong>{' '}
-                                                            {change.oldValue} → {change.newValue}
-                                                        </div>
-                                                    ))}
+                                                    {item.changeDetails.map((change, index) => {
+                                                        if (change.type === 'capabilities')
+                                                            return (
+                                                                <div key={index}>Capabilities</div>
+                                                            )
+                                                        else if (change.type === 'rackRates')
+                                                            return (
+                                                                <div key={index}>
+                                                                    {change.type}:{' '}
+                                                                    {change.oldValue
+                                                                        ? 'true'
+                                                                        : 'false'}{' '}
+                                                                    →{' '}
+                                                                    {change.newValue
+                                                                        ? 'true'
+                                                                        : 'false'}
+                                                                </div>
+                                                            )
+                                                        return (
+                                                            <div key={index}>
+                                                                {change.type}: {change.oldValue} →{' '}
+                                                                {change.newValue}
+                                                            </div>
+                                                        )
+                                                    })}
                                                 </Typography>
                                             </TableCell>
                                             <TableCell align="right">
@@ -265,6 +288,57 @@ const isEqual = (a, b) => {
     )
 }
 
+export const BasicSupportedServices = () => {
+    const { partnerID } = useParams()
+    const { state, dispatch } = usePartnerConfigurationContext()
+    const [supplierState, dispatchSupplierState] = useReducer(reducer, { ...state, step: 1 })
+    const { data: partner, refetch } = useFetchPartnerDataQuery({
+        companyName: partnerID,
+    })
+    const navigate = useNavigate()
+    const activeNetwork = useAppSelector(getActiveNetwork)
+    useEffect(() => {
+        if (activeNetwork) refetch()
+    }, [activeNetwork])
+    useEffect(() => {
+        if (partner) {
+            dispatchSupplierState({
+                type: actionTypes.UPDATE_SUPPORTED_SERVICES,
+                payload: { services: partner.supportedServices, reset: true },
+            })
+        }
+    }, [partner])
+    if (!partner) return <></>
+
+    if (partner && !partner.contractAddress) navigate('/partners')
+    return (
+        <Box
+            sx={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                gap: '16px',
+                flexWrap: 'wrap',
+            }}
+        >
+            <Configuration>
+                <Configuration.Title>Offered Services</Configuration.Title>
+                <Configuration.Paragraphe>
+                    This page lists all Offered Services by this partner. An Offered Service is a
+                    service that this partner is selling, and all the bots run by this partner
+                    support those services.
+                </Configuration.Paragraphe>
+                <Box sx={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                    <Configuration.Services
+                        disabled={true}
+                        state={supplierState}
+                        dispatch={dispatchSupplierState}
+                    />
+                </Box>
+            </Configuration>
+        </Box>
+    )
+}
+
 const ConfigurSupplier = () => {
     const { state, dispatch } = usePartnerConfigurationContext()
     const [supplierState, dispatchSupplierState] = useReducer(reducer, { ...state, step: 1 })
@@ -273,6 +347,7 @@ const ConfigurSupplier = () => {
     const [removed, setRemoved] = useState([])
     const [updated, setUpdated] = useState([])
     const [loading, setLoading] = useState(false)
+    const [isFetching, setIsFetching] = useState(true)
     const {
         removeServices,
         addServices,
@@ -281,9 +356,7 @@ const ConfigurSupplier = () => {
         setServiceFee,
         setServiceRestrictedRate,
     } = usePartnerConfig()
-    const handleChange = event => {
-        addService(event.target.value)
-    }
+
     const compareServices = useMemo(() => {
         const added = []
         const updated = []
@@ -330,25 +403,6 @@ const ConfigurSupplier = () => {
         return { added, updated, removed }
     }, [state, supplierState])
 
-    const addService = service => {
-        if (
-            !supplierState.stepsConfig[supplierState.step].services.find(
-                elem => elem.name === service,
-            )
-        )
-            dispatchSupplierState({
-                type: actionTypes.ADD_SERVICE,
-                payload: {
-                    step: supplierState.step,
-                    newService: {
-                        name: supplierState.registredServices.find(elem => elem === service),
-                        fee: '0',
-                        capabilities: [''],
-                        rackRates: true,
-                    },
-                },
-            })
-    }
     useEffect(() => {
         const { added, updated, removed } = compareServices
         setAdded(added)
@@ -375,6 +429,22 @@ const ConfigurSupplier = () => {
             )
         }
     }
+
+    const updateServices = async () => {
+        let res = await getSupportedServices()
+        dispatch({
+            type: actionTypes.UPDATE_SUPPORTED_SERVICES,
+            payload: { services: res },
+        })
+        dispatchSupplierState({
+            type: actionTypes.RESET_STATE,
+            payload: { initialState: { ...state, step: 1 } },
+        })
+        setIsFetching(false)
+    }
+
+    const appDispatch = useAppDispatch()
+
     async function confirmEditing() {
         setLoading(true)
         if (removed.length > 0) await removeServices(removed)
@@ -391,6 +461,12 @@ const ConfigurSupplier = () => {
             type: actionTypes.RESET_STATE,
             payload: { initialState: { ...state, step: 1 } },
         })
+        appDispatch(
+            updateNotificationStatus({
+                message: 'Services configured successfully',
+                severity: 'success',
+            }),
+        )
         setAdded([])
         setRemoved([])
         setUpdated([])
@@ -413,6 +489,10 @@ const ConfigurSupplier = () => {
         })
     }, [state])
 
+    useEffect(() => {
+        updateServices()
+    }, [])
+
     return (
         <Box
             sx={{
@@ -433,92 +513,23 @@ const ConfigurSupplier = () => {
                     <Box sx={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                         <Typography variant="overline">services</Typography>
                         <FormControl>
-                            <Select
-                                disabled={!editing}
-                                sx={{
-                                    fontFamily: 'Inter',
-                                    fontSize: '14px',
-                                    fontWeight: 400,
-                                    lineHeight: '20px',
-                                    textAlign: 'left',
-                                    height: '40px',
-                                    gap: '4px',
-                                    borderRadius: '8px',
-                                    border: '1px solid transparent',
-                                    borderBottom: 'none',
-                                    opacity: 1,
-                                    paddingRight: '0px !important',
-                                    maxWidth: '100%',
-                                    overflow: 'hidden',
-                                    '.MuiSelect-select ': {
-                                        boxSizing: 'border-box',
-                                        height: '40px',
-                                        padding: '10px 16px 10px 16px',
-                                        borderRadius: '12px',
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        border: theme => `solid 1px ${theme.palette.card.border}`,
-                                    },
-                                    '& .MuiPopover-paper ul': {
-                                        paddingRight: 'unset !important',
-                                        width: '100% !important',
-                                    },
-                                    '.MuiOutlinedInput-notchedOutline': {
-                                        border: 'none !important',
-                                    },
-                                    '& [aria-expanded=true]': {
-                                        boxSizing: 'border-box',
-                                        height: '40px',
-                                    },
-                                }}
-                                value="service"
-                                onChange={handleChange}
-                                MenuProps={{
-                                    PaperProps: {
-                                        style: {
-                                            maxHeight: '120px',
-                                            overflow: 'auto',
-                                        },
-                                    },
-                                }}
-                            >
-                                <MenuItem sx={{ display: 'none' }} value={'service'}>
-                                    Services
-                                </MenuItem>
-                                {state.registredServices.map((item, index) => (
-                                    <MenuItem
-                                        key={index}
-                                        sx={{
-                                            fontFamily: 'Inter',
-                                            fontSize: '14px',
-                                            fontWeight: 400,
-                                            lineHeight: '20px',
-                                            textAlign: 'left',
-                                            height: '40px',
-                                            padding: '10px 16px',
-                                            gap: '4px',
-                                            borderRadius: '8px',
-                                            border: '1px solid transparent',
-                                            borderBottom: 'none',
-                                            opacity: 1,
-                                        }}
-                                        value={item}
-                                    >
-                                        {item}
-                                    </MenuItem>
-                                ))}
-                            </Select>
+                            <UpdatedSelectComponent
+                                editing={editing}
+                                supplierState={supplierState}
+                                dispatchSupplierState={dispatchSupplierState}
+                                actionTypes={actionTypes}
+                            />
                         </FormControl>
                     </Box>
 
                     <Configuration.Services
-                        disabled={!editing}
+                        disabled={!editing || loading}
                         state={supplierState}
                         dispatch={dispatchSupplierState}
                     />
                 </Box>
                 <Divider />
-                {(added.length > 0 || updated.length > 0 || removed.length > 0) && (
+                {(added.length > 0 || updated.length > 0 || removed.length > 0) && !isFetching && (
                     <ServiceChangesPreview added={added} removed={removed} updated={updated} />
                 )}
                 <Configuration.Buttons>
@@ -529,7 +540,7 @@ const ConfigurSupplier = () => {
                                 setEditing(true)
                             }}
                         >
-                            Edit configuration
+                            Configure Services
                         </MainButton>
                     ) : (
                         <>
@@ -540,7 +551,7 @@ const ConfigurSupplier = () => {
                                     cancelEditing()
                                 }}
                             >
-                                Cancel Editing
+                                Cancel
                             </MainButton>
                             <MainButton
                                 loading={loading}
@@ -549,17 +560,14 @@ const ConfigurSupplier = () => {
                                     confirmEditing()
                                 }}
                             >
-                                Confirm Editing
+                                Save Changes
                             </MainButton>
                         </>
                     )}
                 </Configuration.Buttons>
             </Configuration>
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                <Configuration.Infos
-                    information="This Camino Messenger wizard will assist you in generating and activating your Camino Messenger address. Once the process is complete, your Camino Messenger address will appear on your partner detail page, allowing you to communicate directly with other Camino Messenger accounts."
-                    rackRates="This Camino Messenger wizard will assist you in generating and activating your Camino Messenger address."
-                ></Configuration.Infos>
+                <Configuration.Infos offred></Configuration.Infos>
             </Box>
         </Box>
     )

@@ -4,8 +4,11 @@ import { Navigate, Route, Routes, useNavigate } from 'react-router-dom'
 import { useDispatch } from 'react-redux'
 import { useLocation } from 'react-router-dom'
 import { useAppSelector } from '../hooks/reduxHooks'
+import useNetwork from '../hooks/useNetwork'
+import useWallet from '../hooks/useWallet'
 import { changeActiveApp } from '../redux/slices/app-config'
 import { getActiveNetwork } from '../redux/slices/network'
+import { isFeatureEnabled } from '../utils/featureFlags/featureFlagUtils'
 import AccessLayout from '../views/access'
 import MountAccessComponent from '../views/access/MountAccessComponent'
 import Create from '../views/create/Create'
@@ -13,16 +16,18 @@ import ExplorerApp from '../views/explorer/ExplorerApp'
 import LandingPage from '../views/landing/LandingPage'
 import LoginPage from '../views/login/LoginPage'
 import Partners from '../views/partners'
-import ConfigurDistrubitor from '../views/partners/ConfigurDistrubitor'
-import ConfigurSupplier from '../views/partners/ConfigurSupplier'
+import ConfigurDistrubitor, { BasicWantedServices } from '../views/partners/ConfigurDistrubitor'
+import ConfigurSupplier, { BasicSupportedServices } from '../views/partners/ConfigurSupplier'
 import Overreview from '../views/partners/Configuration'
 import CreatedOffers from '../views/partners/CreatedOffers'
 import Foundation from '../views/partners/Foundation'
-import ManageBots from '../views/partners/ManageBots'
+import ManageBots, { BasicManageBots } from '../views/partners/ManageBots'
 import Partner from '../views/partners/Partner'
+import UpgradeCMAccount from '../views/partners/UpgradeCMAccount'
 import MultisigWallet from '../views/settings/MultisigWallet'
 import VerifyWallet from '../views/settings/VerifyWallet'
 import Settings from '../views/settings/index'
+import VoteApp from '../views/vote/VoteApp'
 import Wallet from '../views/wallet/WalletApp'
 import CreateDepositsLayout from './CreateDepositLayout'
 import PartnersLayout from './PartnersLayout'
@@ -34,9 +39,12 @@ export default function RoutesSuite() {
     const navigate = useNavigate()
     const activeNetwork = useAppSelector(getActiveNetwork)
     const location = useLocation()
+    const { getUpgradePhases } = useWallet()
+    const { status } = useNetwork()
 
     const [lastUrlWithNewNetwork, setLastUrlWithNewNetwork] = useState('')
     const [networkAliasToUrl, setNetworkAliasToUrl] = useState<string>('camino')
+    const [featureEnabled, setFeatureEnabled] = useState<boolean>(false)
 
     useEffect(() => {
         if (activeNetwork) {
@@ -74,6 +82,18 @@ export default function RoutesSuite() {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [location])
 
+    useEffect(() => {
+        if (status === 'succeeded') {
+            checkFeature()
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [activeNetwork, status])
+
+    const checkFeature = async () => {
+        const phases = await getUpgradePhases()
+        const enabled = await isFeatureEnabled('DACFeature', activeNetwork?.url, phases)
+        setFeatureEnabled(enabled)
+    }
     return (
         <>
             <Routes>
@@ -96,6 +116,13 @@ export default function RoutesSuite() {
                             path="/explorer"
                             element={<Navigate to={`/explorer/${networkAliasToUrl}`} />}
                         />
+
+                        {featureEnabled && (
+                            <>
+                                <Route path={`/dac/*`} element={<VoteApp />} />
+                                <Route path={`/dac`} element={<Navigate to="/dac/active" />} />
+                            </>
+                        )}
                     </>
                 ) : null}
                 <Route element={<Protected />}>
@@ -113,6 +140,10 @@ export default function RoutesSuite() {
                 </Route>
                 <Route path="/partners" element={<PartnersLayout />}>
                     <Route index element={<Partners />} />
+                    <Route path="upgrade" element={<UpgradeCMAccount />} />
+                    <Route path=":partnerID/distribution" element={<BasicWantedServices />} />
+                    <Route path=":partnerID/supplier" element={<BasicSupportedServices />} />
+                    <Route path=":partnerID/bots" element={<BasicManageBots />} />
                     <Route path=":partnerID" element={<Partner />} />
                     <Route path="messenger-configuration">
                         <Route index element={<Partner />} />

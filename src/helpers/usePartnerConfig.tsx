@@ -1,6 +1,7 @@
 import { ethers } from 'ethers'
 import { useCallback, useEffect } from 'react'
-import { useAppDispatch } from '../hooks/reduxHooks'
+import { useAppDispatch, useAppSelector } from '../hooks/reduxHooks'
+import { getActiveNetwork } from '../redux/slices/network'
 import { updateCMAcocuntContract } from '../redux/slices/partner'
 import { useSmartContract } from './useSmartContract'
 
@@ -17,7 +18,8 @@ export const usePartnerConfig = () => {
         CMAccountCreated,
         accountReadContract,
     } = useSmartContract()
-
+    const activeNetwork = useAppSelector(getActiveNetwork)
+    const auth = useAppSelector(state => state.appConfig.isAuth)
     const dispatch = useAppDispatch()
 
     async function CreateConfiguration(state) {
@@ -27,16 +29,6 @@ export const usePartnerConfig = () => {
         }
         try {
             let balance = ethers.parseEther(state.balance ? state.balance : '0')
-            let services = state.stepsConfig[1].services.map(elem => {
-                return {
-                    ...elem,
-                    fee: ethers.parseEther(elem.fee ? elem.fee : '0'),
-                    capabilities: elem.capabilities.filter(item => item !== ''),
-                }
-            })
-            let wantedServices = state.stepsConfig[2].services.map(elem => elem.name)
-            let isOffChainPayement = state.stepsConfig[3].isOffChain
-            let isCam = state.stepsConfig[3].isCam
 
             const tx = await writeToContract('manager', 'createCMAccount', account, account, {
                 value: balance,
@@ -51,10 +43,7 @@ export const usePartnerConfig = () => {
 
             const parsedEvent = managerWriteContract.interface.parseLog(event)
             const cmAccountAddress = parsedEvent.args.account
-            await CMAccountCreated(
-                { services, wantedServices, isOffChainPayement, isCam },
-                cmAccountAddress,
-            )
+            await CMAccountCreated(cmAccountAddress)
             return tx
         } catch (error) {
             console.error(error)
@@ -155,8 +144,8 @@ export const usePartnerConfig = () => {
     }, [account, managerReadContract])
 
     useEffect(() => {
-        isCMAccount()
-    }, [wallet])
+        if (wallet && auth) isCMAccount()
+    }, [wallet, activeNetwork])
 
     const addServices = useCallback(
         async services => {
@@ -379,6 +368,38 @@ export const usePartnerConfig = () => {
         [account, accountWriteContract],
     )
 
+    const transferERC20 = useCallback(
+        async (tokenAddress, to, value) => {
+            if (!account) {
+                console.error('Account is not initialized')
+                return
+            }
+            try {
+                const abi = [
+                    {
+                        constant: true,
+                        inputs: [{ name: '_owner', type: 'address' }],
+                        name: 'balanceOf',
+                        outputs: [{ name: 'balance', type: 'uint256' }],
+                        type: 'function',
+                    },
+                ]
+
+                const tx = await accountWriteContract.transferERC20(
+                    tokenAddress,
+                    ethers.getAddress(to),
+                    value,
+                )
+                await tx.wait()
+            } catch (error) {
+                const decodedError = accountWriteContract.interface.parseError(error.data)
+                console.error('Message:', error.message)
+                console.error(`Reason: ${decodedError?.name} (${decodedError?.args})`)
+            }
+        },
+        [account, accountWriteContract],
+    )
+
     const setOffChainPaymentSupported = useCallback(
         async value => {
             if (!account) {
@@ -465,6 +486,7 @@ export const usePartnerConfig = () => {
     }, [account, readFromContract])
 
     return {
+        transferERC20,
         checkWithDrawRole,
         grantWithDrawRole,
         withDraw,

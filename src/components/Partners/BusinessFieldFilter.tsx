@@ -1,12 +1,11 @@
-import { ActionType, StatePartnersType, partnersActions } from '../../helpers/partnersReducer'
-import Select, { SelectChangeEvent } from '@mui/material/Select'
-
+import { mdiCloseCircleOutline } from '@mdi/js'
 import Icon from '@mdi/react'
+import { Box, Checkbox, Typography } from '@mui/material'
 import ListItemText from '@mui/material/ListItemText'
 import MenuItem from '@mui/material/MenuItem'
-import React from 'react'
-import { Typography } from '@mui/material'
-import { mdiCheckCircle } from '@mdi/js'
+import Select from '@mui/material/Select'
+import React, { useState } from 'react'
+import { ActionType, partnersActions, StatePartnersType } from '../../helpers/partnersReducer'
 
 interface BusinessFieldFilterProps {
     state: StatePartnersType
@@ -17,83 +16,197 @@ const BusinessFieldFilter: React.FC<BusinessFieldFilterProps> = ({
     state,
     dispatchPartnersActions,
 }) => {
-    const handleChange = (event: SelectChangeEvent<typeof state.businessField>) => {
-        const {
-            target: { value },
-        } = event
-        dispatchPartnersActions({ type: partnersActions.UPDATE_BUSINESS_FIELD, payload: value[1] })
+    const [selectedFields, setSelectedFields] = useState<string[]>([])
+
+    // Toggle individual field
+    const handleFieldToggle = (selectedField: string) => {
+        const newSelectedFields = selectedFields.includes(selectedField)
+            ? selectedFields.filter(field => field !== selectedField)
+            : [...selectedFields, selectedField]
+
+        setSelectedFields(newSelectedFields)
+
+        dispatchPartnersActions({
+            type: partnersActions.UPDATE_BUSINESS_FIELD,
+            payload: selectedField,
+        })
+    }
+
+    // Toggle entire category (select/deselect all fields in category)
+    const handleCategoryToggle = (category: string) => {
+        // Find all fields in the category
+        const categoryFields =
+            state.businessField.find(group => group.category === category)?.fields || []
+
+        // Check if all fields in the category are already selected
+        const allFieldsInCategorySelected = categoryFields.every(field =>
+            selectedFields.includes(field.fullName),
+        )
+
+        // Update the `selectedFields` state:
+        // - If all are selected, remove them
+        // - Otherwise, add the ones not already selected
+        const updatedSelectedFields = allFieldsInCategorySelected
+            ? selectedFields.filter(field => !categoryFields.map(f => f.fullName).includes(field))
+            : [
+                  ...selectedFields,
+                  ...categoryFields
+                      .filter(field => !selectedFields.includes(field.fullName)) // Avoid duplicates
+                      .map(field => field.fullName),
+              ]
+
+        setSelectedFields(updatedSelectedFields)
+        dispatchPartnersActions({
+            type: partnersActions.TOGGLE_CATEGORY,
+            payload: category,
+        })
+    }
+
+    const resetAllFields = () => {
+        setSelectedFields([]) // Clear selected fields from the state
+        dispatchPartnersActions({
+            type: partnersActions.RESET_ALL_BUSINESS_FIELDS,
+        })
     }
 
     return (
-        <Select
-            multiple
-            // @ts-ignore
-            value={['default']}
-            onChange={handleChange}
+        <Box
             sx={{
-                flex: '1 1 250px',
-                padding: '0',
-                borderRadius: '12px',
-                paddingRight: '0px !important',
-                maxWidth: { xs: '100%', sm: '50%', md: '250px' },
-                overflow: 'hidden',
-                '.MuiSelect-select ': {
-                    boxSizing: 'border-box',
-                    height: '40px',
-                    padding: '10px 16px 10px 16px',
-                    borderRadius: '12px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    border: theme => `solid 1px ${theme.palette.card.border}`,
-                },
-                '& .MuiPopover-paper ul': {
-                    paddingRight: 'unset !important',
-                    width: '100% !important',
-                },
-                '.MuiOutlinedInput-notchedOutline': {
-                    border: 'none !important',
-                },
-                '& [aria-expanded=true]': {
-                    background: theme =>
-                        theme.palette.mode === 'dark'
-                            ? theme.palette.grey[600]
-                            : theme.palette.grey[200],
-                    boxSizing: 'border-box',
-                    height: '40px',
-                },
-            }}
-            renderValue={() => <Typography variant="caption">Business fields</Typography>}
-            MenuProps={{
-                PaperProps: {
-                    style: {
-                        maxHeight: '400px',
-                        overflow: 'auto',
-                    },
-                },
+                display: 'flex',
+                gap: '1rem',
+                alignItems: 'center',
+                flexWrap: 'wrap',
+                position: 'relative',
+                width: '220px',
             }}
         >
-            <MenuItem sx={{ display: 'none' }} value={'default'}>
-                <Typography variant="caption">Business fields</Typography>
-            </MenuItem>
-            {state.businessField.map((businessField, index) => (
-                <MenuItem key={index} value={businessField.name}>
-                    <ListItemText
-                        // sx={{ color: !businessField.active ? '#CBD4E2' : '#ffffff' }}
-                        primary={
-                            <Typography
-                                variant="caption"
-                                sx={{ fontWeight: !businessField.active ? 500 : 600 }}
-                            >
-                                {businessField.name}
-                            </Typography>
-                        }
-                    />
-                    {businessField.active && (
-                        <Icon path={mdiCheckCircle} size={1} color="#B5E3FD" />
-                    )}
-                </MenuItem>
-            ))}
-        </Select>
+            <Select
+                multiple
+                value={['default']} // Track selected fields dynamically
+                onChange={() => {}} // No-op since we're handling state manually
+                sx={{
+                    flex: '1 1 220px',
+                    padding: '0',
+                    borderRadius: '12px',
+                    paddingRight: '0px !important',
+                    maxWidth: { xs: '100%', sm: '50%', md: '220px' },
+                    overflow: 'hidden',
+                    '.MuiSelect-select ': {
+                        boxSizing: 'border-box',
+                        padding: '10px 10px 10px 10px',
+                        borderRadius: '12px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        border: theme => `solid 1px ${theme.palette.card.border}`,
+                    },
+                    '& .MuiPopover-paper ul': {
+                        paddingRight: 'unset !important',
+                        width: '100% !important',
+                    },
+                    '.MuiOutlinedInput-notchedOutline': {
+                        border: 'none !important',
+                    },
+                }}
+                renderValue={() => (
+                    <Typography variant="caption">
+                        {selectedFields.length > 0
+                            ? `Business fields (${selectedFields.length})`
+                            : 'Business fields'}
+                    </Typography>
+                )}
+                MenuProps={{
+                    PaperProps: {
+                        style: {
+                            maxHeight: '400px',
+                            overflow: 'auto',
+                        },
+                    },
+                }}
+            >
+                {state?.businessField?.map((group, groupIndex) => [
+                    <MenuItem
+                        key={`category-${groupIndex}`}
+                        onClick={() => handleCategoryToggle(group.category)} // Toggle category
+                        sx={{
+                            backgroundColor: theme =>
+                                theme.palette.mode === 'dark' ? '#0f182a' : theme.palette.grey[100],
+                            py: 1,
+                        }}
+                    >
+                        <ListItemText
+                            primary={
+                                <Typography
+                                    variant="caption"
+                                    sx={{
+                                        fontWeight: 600,
+                                    }}
+                                >
+                                    {group.category}
+                                </Typography>
+                            }
+                        />
+                        <Checkbox
+                            checked={group.fields.every(field => field.active)} // All fields active
+                            indeterminate={
+                                group.fields.some(field => field.active) && // Some fields active
+                                !group.fields.every(field => field.active) // Not all fields active
+                            }
+                            sx={{
+                                padding: '0',
+                                color: theme =>
+                                    theme.palette.mode === 'dark' ? '#475569' : '#64748B',
+                                '&.Mui-checked': {
+                                    color: theme => theme.palette.secondary.main,
+                                },
+                                '&.MuiCheckbox-indeterminate': {
+                                    color: theme => theme.palette.secondary.main,
+                                },
+                            }}
+                        />
+                    </MenuItem>,
+
+                    ...group.fields.map((field, fieldIndex) => (
+                        <MenuItem
+                            key={`field-${groupIndex}-${fieldIndex}`}
+                            value={field.fullName}
+                            onClick={() => handleFieldToggle(field.fullName)} // Toggle individual field
+                        >
+                            <ListItemText
+                                primary={
+                                    <Typography
+                                        variant="caption"
+                                        sx={{
+                                            fontWeight: field.active ? 600 : 500,
+                                        }}
+                                    >
+                                        {field.name}
+                                    </Typography>
+                                }
+                            />
+                            <Checkbox
+                                checked={field.active}
+                                sx={{
+                                    padding: '0',
+                                    color: theme =>
+                                        theme.palette.mode === 'dark' ? '#475569' : '#64748B',
+                                    '&.Mui-checked': {
+                                        color: theme => theme.palette.secondary.main,
+                                    },
+                                }}
+                            />
+                        </MenuItem>
+                    )),
+                ])}
+            </Select>
+            {selectedFields.length > 0 && (
+                <button
+                    onClick={resetAllFields}
+                    style={{ position: 'absolute', top: '9px', right: '40px', zIndex: 1400 }}
+                >
+                    <Icon path={mdiCloseCircleOutline} size={1} />
+                </button>
+            )}
+        </Box>
     )
 }
 

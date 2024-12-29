@@ -1,9 +1,118 @@
 import { Box, Button, CircularProgress, TextField, Typography } from '@mui/material'
 import { ethers } from 'ethers'
 import React, { useEffect, useState } from 'react'
+import { useNavigate, useParams } from 'react-router'
 import Alert from '../../components/Alert'
 import { usePartnerConfig } from '../../helpers/usePartnerConfig'
+import { useAppDispatch, useAppSelector } from '../../hooks/reduxHooks'
+import { useFetchPartnerDataQuery } from '../../redux/services/partners'
+import { updateNotificationStatus } from '../../redux/slices/app-config'
+import { getActiveNetwork } from '../../redux/slices/network'
 import { Configuration } from './Configuration'
+
+export const BasicManageBots = () => {
+    const { partnerID } = useParams()
+    const { data: partner, refetch } = useFetchPartnerDataQuery({
+        companyName: partnerID,
+    })
+    const activeNetwork = useAppSelector(getActiveNetwork)
+    useEffect(() => {
+        if (activeNetwork) refetch()
+    }, [activeNetwork])
+    const navigate = useNavigate()
+    if (!partner) return <></>
+
+    if (partner && !partner?.contractAddress) navigate('/partners')
+    return (
+        <Box
+            sx={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                gap: '16px',
+                flexWrap: 'wrap',
+            }}
+        >
+            <Configuration>
+                <Configuration.Title>Bots</Configuration.Title>
+                <Configuration.Paragraphe>
+                    This page lists all bot addresses registered to this Messenger Account.
+                    {partner && partner.bots && partner?.bots?.length === 0 && (
+                        <>
+                            <br />
+                            <br />
+                            No bot addresses are currently registered with this Messenger Account.
+                        </>
+                    )}
+                </Configuration.Paragraphe>
+                {partner.bots &&
+                    partner.bots.length > 0 &&
+                    partner.bots.map((bot, index) => {
+                        return (
+                            <Box
+                                key={index}
+                                sx={{
+                                    display: 'flex',
+                                    alignItems: 'start',
+                                    flexDirection: 'column',
+                                    gap: '8px',
+                                    padding: '16px',
+                                    borderRadius: '8px',
+                                    border: '1px solid #1E293B',
+                                }}
+                            >
+                                <Box
+                                    sx={{
+                                        width: '100%',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '12px',
+                                    }}
+                                >
+                                    <Typography
+                                        sx={{
+                                            padding: '6px 12px',
+                                            gap: '6px',
+                                            borderRadius: '8px',
+                                            border: '1px solid #475569',
+                                            backgroundColor: theme =>
+                                                theme.palette.mode === 'dark'
+                                                    ? '#0F182A'
+                                                    : '#F1F5F9',
+                                            borderWidth: '1px',
+                                            '&:hover': {
+                                                borderWidth: '1px',
+                                                boxShadow: 'none',
+                                            },
+                                        }}
+                                        variant="caption"
+                                    >
+                                        Bot
+                                    </Typography>
+                                    <TextField
+                                        disabled
+                                        value={bot}
+                                        sx={{ flexGrow: '1' }}
+                                        InputProps={{
+                                            sx: {
+                                                '& input': {
+                                                    fontSize: '16px',
+                                                },
+                                                '& input.Mui-disabled': {
+                                                    color: theme => theme.palette.text.primary,
+                                                    WebkitTextFillColor: theme =>
+                                                        theme.palette.text.primary,
+                                                },
+                                            },
+                                        }}
+                                    />
+                                </Box>
+                            </Box>
+                        )
+                    })}
+            </Configuration>
+        </Box>
+    )
+}
 
 const ManageBots = () => {
     const [isValidAddress, setIsValidAddress] = useState(false)
@@ -15,6 +124,8 @@ const ManageBots = () => {
         setAddress(newAddress)
         setIsValidAddress(ethers.isAddress(newAddress))
     }
+    const appDispatch = useAppDispatch()
+
     const { addMessengerBot, getListOfBots, removeMessengerBot } = usePartnerConfig()
 
     async function fetchBots() {
@@ -29,15 +140,29 @@ const ManageBots = () => {
     const handleAddBot = () => {
         if (isValidAddress) {
             setLoading(true)
-            addMessengerBot(address).then(() => {
+            addMessengerBot(address).then(async () => {
                 setAddress('')
-                fetchBots()
+                await fetchBots()
+                appDispatch(
+                    updateNotificationStatus({
+                        message: 'Bot added successfully',
+                        severity: 'success',
+                    }),
+                )
             })
         }
     }
     const handleRemoveBot = address => {
         setLoading(true)
-        removeMessengerBot(address).then(() => fetchBots())
+        removeMessengerBot(address).then(async () => {
+            await fetchBots()
+            appDispatch(
+                updateNotificationStatus({
+                    message: 'Bot removed successfully',
+                    severity: 'success',
+                }),
+            )
+        })
     }
     return (
         <Box
@@ -51,8 +176,7 @@ const ManageBots = () => {
             <Configuration>
                 <Configuration.Title>Manage Bots</Configuration.Title>
                 <Configuration.Paragraphe>
-                    Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula
-                    eget dolor. Aenean massa. Donec sociis natoque penatibus.
+                    List in this page the addresses of all bots using this Messenger Account.
                 </Configuration.Paragraphe>
                 {loading && (
                     <Box sx={{ position: 'relative', height: '106px' }}>
@@ -132,17 +256,13 @@ const ManageBots = () => {
                                     />
                                     <Button
                                         disabled={loading}
-                                        variant="outlined"
+                                        variant="contained"
                                         onClick={() => handleRemoveBot(bot)}
                                         sx={{
                                             padding: '6px 12px',
                                             gap: '6px',
                                             borderRadius: '8px',
                                             border: '1px solid #475569',
-                                            backgroundColor: theme =>
-                                                theme.palette.mode === 'dark'
-                                                    ? '#020617'
-                                                    : '#F1F5F9',
                                             borderWidth: '1px',
                                             '&:hover': {
                                                 borderWidth: '1px',
@@ -181,8 +301,6 @@ const ManageBots = () => {
                                 gap: '6px',
                                 borderRadius: '8px',
                                 border: '1px solid #475569',
-                                backgroundColor: theme =>
-                                    theme.palette.mode === 'dark' ? '#0F182A' : '#F1F5F9',
                                 borderWidth: '1px',
                                 '&:hover': {
                                     borderWidth: '1px',
@@ -208,7 +326,7 @@ const ManageBots = () => {
                             onChange={handleAddressChange}
                         />
                         <Button
-                            variant="outlined"
+                            variant="contained"
                             onClick={handleAddBot}
                             disabled={!isValidAddress || loading}
                             sx={{
@@ -216,8 +334,6 @@ const ManageBots = () => {
                                 gap: '6px',
                                 borderRadius: '8px',
                                 border: '1px solid #475569',
-                                backgroundColor: theme =>
-                                    theme.palette.mode === 'dark' ? '#020617' : '#F1F5F9',
                                 borderWidth: '1px',
                                 '&:hover': {
                                     borderWidth: '1px',
@@ -234,10 +350,7 @@ const ManageBots = () => {
                 </Box>
             </Configuration>
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                <Configuration.Infos
-                    information="This Camino Messenger wizard will assist you in generating and activating your Camino Messenger address. Once the process is complete, your Camino Messenger address will appear on your partner detail page, allowing you to communicate directly with other Camino Messenger accounts."
-                    rackRates="This Camino Messenger wizard will assist you in generating and activating your Camino Messenger address."
-                ></Configuration.Infos>
+                <Configuration.Infos information="Check with your IT departments for the C-Chain address of each bot, and keep the list updated in case of changes."></Configuration.Infos>
             </Box>
         </Box>
     )

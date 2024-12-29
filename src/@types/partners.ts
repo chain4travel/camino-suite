@@ -1,9 +1,13 @@
 export interface PartnerDataType {
+    isValidator: boolean
+    contractAddress: any
     id?: number
     attributes?: AttributesType
 }
 
 export interface AttributesType {
+    cChainAddresses?: { Network: string; cAddress: string; id: number }[]
+    cChainAddress?: string
     contactEmail?: string
     companyName?: string
     companyCountry?: string
@@ -11,6 +15,7 @@ export interface AttributesType {
     contactFirstname?: string
     contactLastname?: string
     contactPhone?: string
+    pChainAddresses?: { Network: string; pAddress: string; id: number }[]
     pChainAddress?: string
     companyShortDescription?: string
     companyLongDescription?: string

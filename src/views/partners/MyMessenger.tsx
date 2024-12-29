@@ -11,22 +11,27 @@ import {
     Divider,
     FormControlLabel,
     IconButton,
-    InputAdornment,
+    Link,
     OutlinedInput,
     TextField,
     Typography,
 } from '@mui/material'
 import { ethers } from 'ethers'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import { useNavigate } from 'react-router'
+import store from 'wallet/store'
 import Alert from '../../components/Alert'
 import DialogAnimate from '../../components/Animate/DialogAnimate'
 import MainButton from '../../components/MainButton'
+import { ERC20_BALANCE_ABI } from '../../constants/apps-consts'
 import { usePartnerConfigurationContext } from '../../helpers/partnerConfigurationContext'
 import { usePartnerConfig } from '../../helpers/usePartnerConfig'
 import { useSmartContract } from '../../helpers/useSmartContract'
 import useWalletBalance from '../../helpers/useWalletBalance'
+import { useAppDispatch, useAppSelector } from '../../hooks/reduxHooks'
 import { useFetchPartnerDataQuery } from '../../redux/services/partners'
-import { transformServiceNames } from '../../utils/display-utils'
+import { updateNotificationStatus } from '../../redux/slices/app-config'
+import { getActiveNetwork } from '../../redux/slices/network'
 import { Configuration } from './Configuration'
 
 const AmountInput = ({ amount, onAmountChange, onMaxAmountClick, maxAmount }) => {
@@ -159,7 +164,7 @@ const AddressInput = ({ address, onAddressChange, onMyAddressClick }) => {
     )
 }
 
-const CamWithdraw = () => {
+const CamWithdraw = ({ setOpen, token, fetchTokenBalances }) => {
     const { wallet, contractCMAccountAddress } = useSmartContract()
     const [address, setAddress] = useState('')
     const [amount, setAmount] = useState('')
@@ -167,16 +172,17 @@ const CamWithdraw = () => {
     const [isValidAddress, setIsValidAddress] = useState(false)
     const [loading, setLoading] = useState(false)
     const [amountError, setAmountError] = useState('')
-    const { withDraw } = usePartnerConfig()
+    const { withDraw, transferERC20 } = usePartnerConfig()
     const { getBalanceOfAnAddress, balanceOfAnAddress: balance } = useWalletBalance()
 
     const maxAmount = useMemo(() => {
+        if (token) return parseFloat(token.balance)
         const balanceParsed = parseFloat(balance)
         if (isNaN(balanceParsed)) {
             return '0.00'
         }
         return Math.max(balanceParsed - 100, 0).toFixed(2)
-    }, [balance])
+    }, [balance, token])
 
     const handleAddressChange = useCallback(newAddress => {
         setAddress(newAddress)
@@ -213,7 +219,7 @@ const CamWithdraw = () => {
         setAddress(newAddress)
         setIsValidAddress(ethers.isAddress(newAddress))
     }, [wallet.address])
-
+    const appDispatch = useAppDispatch()
     const handleMaxAmountClick = useCallback(() => {
         setAmount(maxAmount)
         validateAmount(maxAmount)
@@ -221,11 +227,23 @@ const CamWithdraw = () => {
 
     async function handleWithdraw() {
         setLoading(true)
-        await withDraw(address, ethers.parseEther(amount))
-        getBalanceOfAnAddress(contractCMAccountAddress)
+        if (!token) {
+            await withDraw(address, ethers.parseEther(amount))
+            getBalanceOfAnAddress(contractCMAccountAddress)
+        } else {
+            await transferERC20(token.address, address, ethers.parseEther(amount))
+            await fetchTokenBalances()
+        }
         setAmount('')
         setConfirm(false)
         setAddress('')
+        appDispatch(
+            updateNotificationStatus({
+                message: 'Withdrawal completed successfully!',
+                severity: 'success',
+            }),
+        )
+        setOpen(false)
         setLoading(false)
     }
 
@@ -251,7 +269,7 @@ const CamWithdraw = () => {
                 }}
                 label={
                     <Typography variant="body2">
-                        i double-checked the address i am sending to
+                        I double-checked the address I am about to send to
                     </Typography>
                 }
                 control={
@@ -309,37 +327,46 @@ const CamWithdraw = () => {
 const MyMessenger = () => {
     const { state, dispatch } = usePartnerConfigurationContext()
     const [open, setOpen] = useState(false)
+    const [selectedToken, setSelectedToken] = useState(null)
     const [isOffChainPaymentSupported, setIsOffChainPaymentSupported] = useState(false)
     const [isCAMSupported, setCAMSupported] = useState(false)
     const [isEditMode, setIsEditMode] = useState(false)
     const [tempOffChainPaymentSupported, setTempOffChainPaymentSupported] = useState(false)
+    const [tempSupportedTokens, setTempSupportedTokens] = useState([])
+    const [supportedTokens, setSupportedTokens] = useState([])
     const [tempCAMSupported, setTempCAMSupported] = useState(false)
     const { balanceOfAnAddress, getBalanceOfAnAddress } = useWalletBalance()
     const [isLoading, setIsLoading] = useState(false)
-    const { contractCMAccountAddress, upgradeCMAccount, wallet } = useSmartContract()
+    const [bots, setBots] = useState([])
+    const [tokens, setTokens] = useState([])
+    const { contractCMAccountAddress, wallet, provider } = useSmartContract()
     const {
         getSupportedTokens,
         getOffChainPaymentSupported,
         setOffChainPaymentSupported,
         addSupportedToken,
         removeSupportedToken,
+        getListOfBots,
     } = usePartnerConfig()
-    const { data: partner } = useFetchPartnerDataQuery({
+    const { data: partner, refetch } = useFetchPartnerDataQuery({
         companyName: '',
         cChainAddress: wallet.address,
     })
-    const handleOpenModal = () => {
+    const activeNetwork = useAppSelector(getActiveNetwork)
+    useEffect(() => {
+        if (activeNetwork) refetch()
+    }, [activeNetwork])
+    const appDispatch = useAppDispatch()
+    const handleOpenModal = token => {
         setOpen(true)
     }
     async function checkIfOffChainPaymentSupported() {
         let res = await getOffChainPaymentSupported()
         setIsOffChainPaymentSupported(res)
     }
-    async function checkIfCamSupported() {
-        let res = await getSupportedTokens()
-        setCAMSupported(!!res.find(elem => elem === ethers.ZeroAddress))
-    }
+
     const handleCloseModal = () => {
+        setSelectedToken(null)
         setOpen(false)
     }
 
@@ -363,22 +390,98 @@ const MyMessenger = () => {
                 if (tempCAMSupported) await addSupportedToken(ethers.ZeroAddress)
                 else await removeSupportedToken(ethers.ZeroAddress)
             }
+            if (tempSupportedTokens) {
+                const excludeSet = new Set(supportedTokens)
+
+                for (const item of tempSupportedTokens) {
+                    const shouldBeSupported = !excludeSet.has(item.address)
+
+                    try {
+                        if (shouldBeSupported && item.supported) {
+                            await addSupportedToken(item.address)
+                        } else if (!shouldBeSupported && !item.supported) {
+                            await removeSupportedToken(item.address)
+                        }
+                    } catch (error) {
+                        console.error(`Error updating token ${item.address}:`, error)
+                    }
+                }
+            }
+            appDispatch(
+                updateNotificationStatus({
+                    message: 'Accepted currencies updated successfully',
+                    severity: 'success',
+                }),
+            )
             setIsEditMode(false)
         } catch (error) {
             console.error('Error: ', error)
         } finally {
             await checkIfOffChainPaymentSupported()
-            await checkIfCamSupported()
+            await fetchSupportedTokens()
             setIsLoading(false)
         }
     }
+    async function fetchBots() {
+        const res = await getListOfBots()
+        setBots(res)
+    }
+    async function fetchSupportedTokens() {
+        const res = await getSupportedTokens()
+        setCAMSupported(!!res.find(elem => elem === ethers.ZeroAddress))
+        setSupportedTokens(res)
+    }
+
+    const fetchTokenBalances = async () => {
+        const networkErc20Tokens = store.getters['Assets/networkErc20Tokens'] || []
+        if (networkErc20Tokens.length > 0) {
+            const fetchedTokens = await Promise.all(
+                networkErc20Tokens.map(async elem => {
+                    const contract = new ethers.Contract(
+                        elem.contract._address,
+                        ERC20_BALANCE_ABI,
+                        provider,
+                    )
+                    const balance = await contract.balanceOf(contractCMAccountAddress)
+                    return {
+                        address: elem.contract._address,
+                        balance: ethers.formatUnits(balance, elem.data.decimal),
+                        name: elem.data.name,
+                        symbol: elem.data.symbol,
+                        decimal: elem.data.decimal,
+                        supported: supportedTokens.includes(elem.contract._address),
+                    }
+                }),
+            )
+            setTokens(fetchedTokens)
+        }
+    }
+    useEffect(() => {
+        fetchTokenBalances()
+    }, [contractCMAccountAddress, supportedTokens])
 
     useEffect(() => {
-        checkIfCamSupported()
-        checkIfOffChainPaymentSupported()
         getBalanceOfAnAddress(contractCMAccountAddress)
-    }, [getBalanceOfAnAddress])
+    }, [contractCMAccountAddress])
 
+    useEffect(() => {
+        checkIfOffChainPaymentSupported()
+        fetchBots()
+        fetchSupportedTokens()
+    }, [])
+
+    function getServicesNames(services) {
+        if (!services || services.length === '0') return 'None.'
+        let array = services.map(elem => {
+            const parts = elem.name.split('.')
+            let name = parts[parts.length - 1]
+            name = name.endsWith('Service') ? name.slice(0, -7) : name
+            return name // elem.name
+        })
+        let result = array.join(', ')
+        return result
+    }
+    const navigate = useNavigate()
     return (
         <>
             <Box
@@ -394,10 +497,9 @@ const MyMessenger = () => {
                         {partner?.attributes?.companyName} Messenger Account
                     </Configuration.Title>
                     <Configuration.Paragraphe>
-                        First you need to top up the CM Account with CAM, EURSH or USDC to work
-                        properly. Transfer it to the newly generated CM address below.
+                        In this page you are able to display and copy your Camino Messenger address,
+                        and manage accepted currencies.
                     </Configuration.Paragraphe>
-                    {/* <button onClick={upgradeCMAccount}>upgrade</button> */}
                     <TextField
                         disabled
                         value={contractCMAccountAddress as string}
@@ -424,6 +526,12 @@ const MyMessenger = () => {
                                     variant="outlined"
                                     onClick={() => {
                                         navigator.clipboard.writeText(contractCMAccountAddress)
+                                        appDispatch(
+                                            updateNotificationStatus({
+                                                message: 'Address copied to clipboard',
+                                                severity: 'success',
+                                            }),
+                                        )
                                     }}
                                 >
                                     Copy
@@ -431,111 +539,101 @@ const MyMessenger = () => {
                             ),
                         }}
                     />
-                    <TextField
-                        disabled
-                        value={balanceOfAnAddress}
-                        InputProps={{
-                            sx: {
-                                '& input': {
-                                    fontSize: '16px',
-                                },
-                                '& input.Mui-disabled': {
-                                    color: theme => theme.palette.text.primary,
-                                    WebkitTextFillColor: theme => theme.palette.text.primary,
-                                },
-                            },
-                            startAdornment: (
-                                <InputAdornment
-                                    position="start"
-                                    sx={{
-                                        width: 'fit-content',
-                                        color: theme => theme.palette.text.primary,
-                                    }}
-                                >
-                                    <Typography variant="body2">CM Balance:</Typography>
-                                </InputAdornment>
-                            ),
-                            endAdornment: (
-                                <Box sx={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-                                    {parseFloat(balanceOfAnAddress) < 100 ? (
-                                        <InputAdornment
-                                            position="end"
-                                            sx={{ width: 'fit-contnet' }}
-                                        >
-                                            <svg
-                                                width="24"
-                                                height="24"
-                                                viewBox="0 0 24 24"
-                                                fill="none"
-                                                xmlns="http://www.w3.org/2000/svg"
-                                            >
-                                                <path
-                                                    d="M12 2C17.53 2 22 6.47 22 12C22 17.53 17.53 22 12 22C6.47 22 2 17.53 2 12C2 6.47 6.47 2 12 2ZM15.59 7L12 10.59L8.41 7L7 8.41L10.59 12L7 15.59L8.41 17L12 13.41L15.59 17L17 15.59L13.41 12L17 8.41L15.59 7Z"
-                                                    fill="#E5431F"
-                                                />
-                                            </svg>
-                                        </InputAdornment>
-                                    ) : (
-                                        <InputAdornment
-                                            position="end"
-                                            sx={{ width: 'fit-contnet' }}
-                                        >
-                                            <svg
-                                                width="24"
-                                                height="24"
-                                                viewBox="0 0 24 24"
-                                                fill="none"
-                                                xmlns="http://www.w3.org/2000/svg"
-                                            >
-                                                <path
-                                                    d="M12 2C6.5 2 2 6.5 2 12C2 17.5 6.5 22 12 22C17.5 22 22 17.5 22 12C22 6.5 17.5 2 12 2ZM10 17L5 12L6.41 10.59L10 14.17L17.59 6.58L19 8L10 17Z"
-                                                    fill="#18B728"
-                                                />
-                                            </svg>
-                                        </InputAdornment>
-                                    )}
-                                    <MainButton
-                                        endIcon={
-                                            <RefreshOutlined
-                                                sx={{
-                                                    color: theme =>
-                                                        `${theme.palette.text.primary} !important`,
-                                                }}
-                                            />
-                                        }
-                                        variant="outlined"
-                                        onClick={() => {
-                                            getBalanceOfAnAddress(contractCMAccountAddress)
+                    <Box sx={{ display: 'flex', alignItems: 'start', gap: '16px' }}>
+                        <Typography sx={{ flex: '0 0 20%' }} variant="body2">
+                            Offered Services
+                        </Typography>
+                        <Typography variant="caption">
+                            {state.stepsConfig[1]?.services.length > 0 ? (
+                                getServicesNames(state.stepsConfig[1]?.services)
+                            ) : (
+                                <>
+                                    None. Visit the relevant{' '}
+                                    <Link
+                                        sx={{
+                                            cursor: 'pointer',
+                                            color: theme => theme.palette.text.primary,
+                                            textDecorationColor: 'inherit',
                                         }}
+                                        onClick={() =>
+                                            navigate('/partners/messenger-configuration/supplier')
+                                        }
                                     >
-                                        Refresh
-                                    </MainButton>
-                                </Box>
-                            ),
-                        }}
+                                        tab
+                                    </Link>{' '}
+                                    to add offered services
+                                </>
+                            )}
+                        </Typography>
+                    </Box>
+                    <Box sx={{ display: 'flex', alignItems: 'start', gap: '16px' }}>
+                        <Typography sx={{ flex: '0 0 20%' }} variant="body2">
+                            Wanted Services
+                        </Typography>
+                        <Typography variant="caption">
+                            {state.stepsConfig[2]?.services.length > 0 ? (
+                                getServicesNames(state.stepsConfig[2]?.services)
+                            ) : (
+                                <>
+                                    None. Visit the relevant{' '}
+                                    <Link
+                                        sx={{
+                                            cursor: 'pointer',
+                                            color: theme => theme.palette.text.primary,
+                                            textDecorationColor: 'inherit',
+                                        }}
+                                        onClick={() =>
+                                            navigate(
+                                                '/partners/messenger-configuration/distribution',
+                                            )
+                                        }
+                                    >
+                                        tab
+                                    </Link>{' '}
+                                    to add wanted services
+                                </>
+                            )}
+                        </Typography>
+                    </Box>
+
+                    {/* <ServiceList
+                        listName="Wanted Services"
+                        services={state.stepsConfig[2]?.services.map(elem => elem.name)}
                     />
-                    {state.stepsConfig[2]?.services?.length > 0 && (
-                        <Box sx={{ display: 'flex', alignItems: 'start', gap: '16px' }}>
-                            <Typography sx={{ flex: '0 0 20%' }} variant="body2">
-                                Wanted Services
-                            </Typography>
-                            <Typography variant="caption">
-                                {transformServiceNames(state.stepsConfig[2].services)}
-                            </Typography>
-                        </Box>
-                    )}
-                    {state.stepsConfig[1]?.services?.length > 0 && (
-                        <Box sx={{ display: 'flex', alignItems: 'start', gap: '16px' }}>
-                            <Typography sx={{ flex: '0 0 20%' }} variant="body2">
-                                Offered Services
-                            </Typography>
-                            <Typography variant="caption">
-                                {transformServiceNames(state.stepsConfig[1].services)}
-                            </Typography>
-                        </Box>
-                    )}
-                    <Typography variant="body2">Accepted Currencies</Typography>
-                    {/* <Configuration.SubTitle>Accepted Currencies</Configuration.SubTitle> */}
+                    <ServiceList
+                        listName="Offered Services"
+                        services={state.stepsConfig[1]?.services.map(elem => elem.name)}
+                    /> */}
+                    <Box sx={{ display: 'flex', alignItems: 'start', gap: '16px' }}>
+                        <Typography sx={{ flex: '0 0 20%' }} variant="body2">
+                            Configured Bots
+                        </Typography>
+                        <Typography variant="caption">
+                            {bots.length === 0 ? (
+                                <>
+                                    None. Visit the relevant{' '}
+                                    <Link
+                                        sx={{
+                                            cursor: 'pointer',
+                                            color: theme => theme.palette.text.primary,
+                                            textDecorationColor: 'inherit',
+                                        }}
+                                        onClick={() =>
+                                            navigate('/partners/messenger-configuration/bots')
+                                        }
+                                    >
+                                        tab
+                                    </Link>{' '}
+                                    to add bots
+                                </>
+                            ) : (
+                                <>
+                                    You have {bots.length} configured{' '}
+                                    {bots.length === 1 ? 'bot.' : 'bots.'}
+                                </>
+                            )}
+                        </Typography>
+                    </Box>
                     <Box
                         sx={{
                             display: 'flex',
@@ -544,20 +642,48 @@ const MyMessenger = () => {
                             width: 'fit-content',
                         }}
                     >
+                        <Box
+                            sx={{
+                                display: 'flex',
+                                justifyContent: 'space-between',
+                                alignItems: 'center',
+                            }}
+                        >
+                            <Typography variant="body2">Accepted Currencies</Typography>
+                            <RefreshOutlined
+                                onClick={() => {
+                                    getBalanceOfAnAddress(contractCMAccountAddress)
+                                    fetchTokenBalances()
+                                }}
+                                sx={{
+                                    cursor: 'pointer',
+                                    color: theme => `${theme.palette.text.primary} !important`,
+                                }}
+                            />
+                        </Box>
                         <FormControlLabel
                             disabled={!isEditMode}
                             label={<Typography variant="body2">Fiat: off-chain</Typography>}
                             control={
                                 <Checkbox
                                     sx={{
-                                        color: theme => theme.palette.secondary.main,
+                                        m: '0 8px 0 0',
+                                        color: theme =>
+                                            !isEditMode
+                                                ? theme.palette.action.disabled
+                                                : theme.palette.secondary.main,
                                         '&.Mui-checked': {
-                                            color: theme => theme.palette.secondary.main,
+                                            color: theme =>
+                                                !isEditMode
+                                                    ? theme.palette.action.disabled
+                                                    : theme.palette.secondary.main,
                                         },
                                         '&.MuiCheckbox-colorSecondary.Mui-checked': {
-                                            color: theme => theme.palette.secondary.main,
+                                            color: theme =>
+                                                !isEditMode
+                                                    ? theme.palette.action.disabled
+                                                    : theme.palette.secondary.main,
                                         },
-                                        m: '0 8px 0 0',
                                     }}
                                     checked={
                                         isEditMode
@@ -580,18 +706,31 @@ const MyMessenger = () => {
                         >
                             <FormControlLabel
                                 disabled={!isEditMode}
-                                label={<Typography variant="body2">CAM</Typography>}
+                                label={
+                                    <Typography variant="body2">
+                                        CAM: {balanceOfAnAddress}
+                                    </Typography>
+                                }
                                 control={
                                     <Checkbox
                                         sx={{
-                                            color: theme => theme.palette.secondary.main,
+                                            m: '0 8px 0 0',
+                                            color: theme =>
+                                                !isEditMode
+                                                    ? theme.palette.action.disabled
+                                                    : theme.palette.secondary.main,
                                             '&.Mui-checked': {
-                                                color: theme => theme.palette.secondary.main,
+                                                color: theme =>
+                                                    !isEditMode
+                                                        ? theme.palette.action.disabled
+                                                        : theme.palette.secondary.main,
                                             },
                                             '&.MuiCheckbox-colorSecondary.Mui-checked': {
-                                                color: theme => theme.palette.secondary.main,
+                                                color: theme =>
+                                                    !isEditMode
+                                                        ? theme.palette.action.disabled
+                                                        : theme.palette.secondary.main,
                                             },
-                                            m: '0 8px 0 0',
                                         }}
                                         checked={isEditMode ? tempCAMSupported : isCAMSupported}
                                         onChange={e => setTempCAMSupported(e.target.checked)}
@@ -600,14 +739,88 @@ const MyMessenger = () => {
                             />
                             {!isEditMode && (
                                 <Button
-                                    disabled={!isCAMSupported}
                                     variant="contained"
-                                    onClick={handleOpenModal}
+                                    onClick={() => {
+                                        setSelectedToken(null)
+                                        handleOpenModal({
+                                            symbol: 'CAM',
+                                        })
+                                    }}
                                 >
                                     Withdraw
                                 </Button>
                             )}
                         </Box>
+                        {tokens.length > 0 &&
+                            tokens.map((elem, index) => {
+                                return (
+                                    <Box
+                                        sx={{
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            gap: '8px',
+                                            justifyContent: 'space-between',
+                                        }}
+                                        key={index}
+                                    >
+                                        <FormControlLabel
+                                            disabled={!isEditMode}
+                                            label={
+                                                <Typography variant="body2">
+                                                    {elem.name}: {elem.balance} {elem.symbol}
+                                                </Typography>
+                                            }
+                                            control={
+                                                <Checkbox
+                                                    sx={{
+                                                        m: '0 8px 0 0',
+                                                        color: theme =>
+                                                            !isEditMode
+                                                                ? theme.palette.action.disabled
+                                                                : theme.palette.secondary.main,
+                                                        '&.Mui-checked': {
+                                                            color: theme =>
+                                                                !isEditMode
+                                                                    ? theme.palette.action.disabled
+                                                                    : theme.palette.secondary.main,
+                                                        },
+                                                        '&.MuiCheckbox-colorSecondary.Mui-checked':
+                                                            {
+                                                                color: theme =>
+                                                                    !isEditMode
+                                                                        ? theme.palette.action
+                                                                              .disabled
+                                                                        : theme.palette.secondary
+                                                                              .main,
+                                                            },
+                                                    }}
+                                                    checked={
+                                                        isEditMode
+                                                            ? tempSupportedTokens[index].supported
+                                                            : elem.supported
+                                                    }
+                                                    onChange={e => {
+                                                        let newArray = [...tempSupportedTokens]
+                                                        newArray[index].supported = e.target.checked
+                                                        setTempSupportedTokens(newArray)
+                                                    }}
+                                                />
+                                            }
+                                        />
+                                        {!isEditMode && (
+                                            <Button
+                                                variant="contained"
+                                                onClick={() => {
+                                                    setSelectedToken(elem)
+                                                    handleOpenModal(elem)
+                                                }}
+                                            >
+                                                Withdraw
+                                            </Button>
+                                        )}
+                                    </Box>
+                                )
+                            })}
                         <Box
                             sx={{
                                 display: 'flex',
@@ -624,14 +837,23 @@ const MyMessenger = () => {
                                 control={
                                     <Checkbox
                                         sx={{
-                                            color: theme => theme.palette.secondary.main,
+                                            m: '0 8px 0 0',
+                                            color: theme =>
+                                                true
+                                                    ? theme.palette.action.disabled
+                                                    : theme.palette.secondary.main,
                                             '&.Mui-checked': {
-                                                color: theme => theme.palette.secondary.main,
+                                                color: theme =>
+                                                    true
+                                                        ? theme.palette.action.disabled
+                                                        : theme.palette.secondary.main,
                                             },
                                             '&.MuiCheckbox-colorSecondary.Mui-checked': {
-                                                color: theme => theme.palette.secondary.main,
+                                                color: theme =>
+                                                    true
+                                                        ? theme.palette.action.disabled
+                                                        : theme.palette.secondary.main,
                                             },
-                                            m: '0 8px 0 0',
                                         }}
                                         checked={false}
                                     />
@@ -657,14 +879,109 @@ const MyMessenger = () => {
                                 control={
                                     <Checkbox
                                         sx={{
-                                            color: theme => theme.palette.secondary.main,
+                                            m: '0 8px 0 0',
+                                            color: theme =>
+                                                true
+                                                    ? theme.palette.action.disabled
+                                                    : theme.palette.secondary.main,
                                             '&.Mui-checked': {
-                                                color: theme => theme.palette.secondary.main,
+                                                color: theme =>
+                                                    true
+                                                        ? theme.palette.action.disabled
+                                                        : theme.palette.secondary.main,
                                             },
                                             '&.MuiCheckbox-colorSecondary.Mui-checked': {
-                                                color: theme => theme.palette.secondary.main,
+                                                color: theme =>
+                                                    true
+                                                        ? theme.palette.action.disabled
+                                                        : theme.palette.secondary.main,
                                             },
+                                        }}
+                                        checked={false}
+                                    />
+                                }
+                            />
+                            {!isEditMode && (
+                                <Button disabled={true} variant="contained">
+                                    Withdraw
+                                </Button>
+                            )}
+                        </Box>
+                        <Box
+                            sx={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '8px',
+                                justifyContent: 'space-between',
+                            }}
+                        >
+                            <FormControlLabel
+                                disabled
+                                label={<Typography variant="body2">EURe* (coming soon)</Typography>}
+                                control={
+                                    <Checkbox
+                                        sx={{
                                             m: '0 8px 0 0',
+                                            color: theme =>
+                                                true
+                                                    ? theme.palette.action.disabled
+                                                    : theme.palette.secondary.main,
+                                            '&.Mui-checked': {
+                                                color: theme =>
+                                                    true
+                                                        ? theme.palette.action.disabled
+                                                        : theme.palette.secondary.main,
+                                            },
+                                            '&.MuiCheckbox-colorSecondary.Mui-checked': {
+                                                color: theme =>
+                                                    true
+                                                        ? theme.palette.action.disabled
+                                                        : theme.palette.secondary.main,
+                                            },
+                                        }}
+                                        checked={false}
+                                    />
+                                }
+                            />
+                            {!isEditMode && (
+                                <Button disabled={true} variant="contained">
+                                    Withdraw
+                                </Button>
+                            )}
+                        </Box>
+                        <Box
+                            sx={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '8px',
+                                justifyContent: 'space-between',
+                            }}
+                        >
+                            <FormControlLabel
+                                disabled
+                                label={
+                                    <Typography variant="body2">EURSH* (coming soon)</Typography>
+                                }
+                                control={
+                                    <Checkbox
+                                        sx={{
+                                            m: '0 8px 0 0',
+                                            color: theme =>
+                                                true
+                                                    ? theme.palette.action.disabled
+                                                    : theme.palette.secondary.main,
+                                            '&.Mui-checked': {
+                                                color: theme =>
+                                                    true
+                                                        ? theme.palette.action.disabled
+                                                        : theme.palette.secondary.main,
+                                            },
+                                            '&.MuiCheckbox-colorSecondary.Mui-checked': {
+                                                color: theme =>
+                                                    true
+                                                        ? theme.palette.action.disabled
+                                                        : theme.palette.secondary.main,
+                                            },
                                         }}
                                         checked={false}
                                     />
@@ -679,22 +996,27 @@ const MyMessenger = () => {
                         <Box sx={{ display: 'flex', justifyContent: 'flex-start' }}>
                             {!isEditMode ? (
                                 <Button variant="contained" onClick={handleEditClick}>
-                                    Edit Currencies
+                                    Configure Currencies
                                 </Button>
                             ) : (
                                 <>
                                     <Button
+                                        disabled={isLoading}
                                         variant="outlined"
                                         onClick={handleCancelEdit}
                                         sx={{ mr: '8px' }}
                                     >
                                         Cancel
                                     </Button>
-                                    <Button variant="contained" onClick={handleConfirmEdit}>
+                                    <Button
+                                        disabled={isLoading}
+                                        variant="contained"
+                                        onClick={handleConfirmEdit}
+                                    >
                                         {isLoading ? (
                                             <CircularProgress size={24} color="inherit" />
                                         ) : (
-                                            'Confirm'
+                                            'Save Changes'
                                         )}
                                     </Button>
                                 </>
@@ -704,8 +1026,12 @@ const MyMessenger = () => {
                 </Configuration>
                 <Box sx={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
                     <Configuration.Infos
-                        information="This Camino Messenger wizard will assist you in generating and activating your Camino Messenger address. Once the process is complete, your Camino Messenger address will appear on your partner detail page, allowing you to communicate directly with other Camino Messenger accounts."
-                        rackRates="This Camino Messenger wizard will assist you in generating and activating your Camino Messenger address."
+                        information="To top up, transfer the wanted amount of an accepted currency to the Camino Messenger address from any Wallet (on C-Chain)."
+                        infos={[
+                            'You can send tokens out to any wallet by pressing the Withdraw button and filling the form to initiate a transfer.',
+                            'Manage the accepted currencies by selecting them in the list.',
+                            'To manage bots, services offered or wanted, click on the respective tabs above.',
+                        ]}
                     ></Configuration.Infos>
                 </Box>
             </Box>
@@ -720,7 +1046,7 @@ const MyMessenger = () => {
                     }}
                 >
                     <Typography variant="body1" component="span">
-                        Withdraw CAM
+                        Withdraw {selectedToken ? selectedToken.symbol : 'CAM'}
                     </Typography>
                     <IconButton
                         aria-label="close"
@@ -744,7 +1070,11 @@ const MyMessenger = () => {
                             theme.palette.mode === 'dark' ? '#020617' : '#F1F5F9',
                     }}
                 >
-                    <CamWithdraw balance={balanceOfAnAddress} />
+                    <CamWithdraw
+                        setOpen={setOpen}
+                        token={selectedToken}
+                        fetchTokenBalances={fetchTokenBalances}
+                    />
                 </DialogContent>
             </DialogAnimate>
         </>
