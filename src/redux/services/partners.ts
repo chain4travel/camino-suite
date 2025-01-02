@@ -176,7 +176,7 @@ function getServiceName(fullName: unknown): string {
     return parts[parts.length - 1] || ''
 }
 
-const getBaseUrl = () => {
+export const getBaseUrl = () => {
     const currentPath = typeof window !== 'undefined' ? window.location.hostname : ''
     if (currentPath === 'localhost' || currentPath.includes('dev')) {
         return BASE_URLS.prod
@@ -187,7 +187,7 @@ const getBaseUrl = () => {
     }
 }
 
-const getBusinessBaseUrl = () => {
+export const getBusinessBaseUrl = () => {
     const currentPath = typeof window !== 'undefined' ? window.location.hostname : ''
     if (currentPath === 'localhost' || currentPath.includes('dev')) {
         return BUSINESS_BASE_URLS.prod + '?pagination[pageSize]=1000'
@@ -220,20 +220,137 @@ export const groupedBusinessFields = (businessField: any) => {
     return Object.values(grouped)
 }
 
+export const getPartnersWithServices = async (response: PartnersResponseType) => {
+    const selectedNetwork = store.getters['Network/selectedNetwork']
+    const networkName = selectedNetwork.name.toLowerCase()
+
+    if (networkName !== 'columbus' && networkName !== 'camino') {
+        return response
+    }
+
+    const providerUrl = `${selectedNetwork.protocol}://${selectedNetwork.ip}:${selectedNetwork.port}/ext/bc/C/rpc`
+    const provider = new ethers.JsonRpcProvider(providerUrl)
+
+    const contractMappings = await getContractMappings()
+    const partnersWithServices = await Promise.all(
+        response.data.map(async partner => {
+            const partnerCChainAddress = partner?.attributes?.cChainAddresses?.find(
+                elem => elem.Network === networkName,
+            )
+
+            if (partnerCChainAddress?.cAddress) {
+                const contractAddress = Array.from(contractMappings.entries()).find(
+                    ([_, partnerAddress]) =>
+                        partnerAddress.toLowerCase() ===
+                        partnerCChainAddress.cAddress.toLowerCase(),
+                )?.[0]
+
+                if (contractAddress) {
+                    const { supportedServices, wantedServices, bots, supportedCurrencies } =
+                        await fetchContractServices(contractAddress, provider)
+
+                    const parsedSupportedServices =
+                        supportedServices?.[0]?.map((service, index) => ({
+                            name: service,
+                            fee: ethers.formatEther(supportedServices[1][index][0]),
+                            rackRates: supportedServices[1][index][1],
+                            capabilities: supportedServices[1][index][2],
+                        })) || []
+
+                    const parsedWantedServices = wantedServices.map(elem => ({
+                        name: elem,
+                    }))
+
+                    return {
+                        ...partner,
+                        supportedServices: parsedSupportedServices,
+                        wantedServices: parsedWantedServices,
+                        contractAddress,
+                        bots,
+                        supportedCurrencies,
+                        isOnMessenger: Boolean(partnerCChainAddress?.cAddress),
+                    }
+                }
+            }
+
+            return {
+                ...partner,
+                supportedServices: [],
+                wantedServices: [],
+                contractAddress: '',
+                bots: [],
+                supportedCurrencies: {},
+                isOnMessenger: false,
+            }
+        }),
+    )
+
+    const validators = (await caminoClient.PChain().getCurrentValidators()).validators
+    const partnersWithValidatorStatus = await Promise.all(
+        partnersWithServices.map(async p => {
+            const pChainAddress = p.attributes.pChainAddresses.find(
+                elem => elem.Network.toLowerCase() === networkName,
+            )
+
+            if (pChainAddress?.pAddress) {
+                try {
+                    const nodeID = await getRegisteredNode(getAddress(pChainAddress.pAddress))
+                    const isValidator = validators.some(v => v.nodeID === nodeID)
+                    return { ...p, isValidator }
+                } catch (error) {
+                    return { ...p, isValidator: false }
+                }
+            }
+            return { ...p, isValidator: false }
+        }),
+    )
+
+    return { data: partnersWithValidatorStatus, meta: response.meta }
+}
+
 export const partnersApi = createApi({
     reducerPath: 'partnersApi',
     baseQuery: fetchBaseQuery({ baseUrl: '/' }),
-    tagTypes: ['Partners'],
     endpoints: build => ({
-        listPartners: build.query<any, void>({
-            query: () => {
+        listPartners: build.query<any, StatePartnersType>({
+            query: ({ page, companyName, businessField, validators, onMessenger }) => {
                 const baseUrl = getBaseUrl()
+
+                let query = '?populate=*'
+                const selectedNetwork = store.getters['Network/selectedNetwork']
+                if (!isNaN(page) && !onMessenger && !validators) {
+                    query += `&sort[0]=companyName:asc&pagination[page]=${page}&pagination[pageSize]=12`
+                }
+                if (businessField) {
+                    let filterWith = businessField
+                        .flatMap(elem => elem.fields.filter(field => field.active))
+                        .map(field => field.fullName)
+                    if (filterWith?.length > 0) {
+                        filterWith.forEach((element, index) => {
+                            query += `&filters[$or][${index}][business_fields][BusinessField][$eq]=${element}`
+                        })
+                    }
+                }
+                if (companyName) {
+                    query += `&filters[companyName][$contains]=${companyName}`
+                }
+                if (validators) {
+                    query += `&sort[0]=companyName:asc&pagination[page]=${0}&pagination[pageSize]=100&filters[$and][0][pChainAddresses][pAddress][$notNull]=true&filters[$and][1][pChainAddresses][Network][$eq]=${selectedNetwork.name.toLowerCase()}`
+                }
+                if (onMessenger === true) {
+                    query += `&sort[0]=companyName:asc&_limit=-1&filters[$and][0][cChainAddresses][cAddress][$notNull]=true&filters[$and][1][cChainAddresses][Network][$eq]=${selectedNetwork.name.toLowerCase()}`
+                }
+
                 return {
-                    url: `${baseUrl}?populate=*&sort[0]=companyName:asc&pagination[pageSize]=10000`,
+                    url: `${baseUrl}${query}`,
                     method: 'GET',
+                    params: {
+                        onMessenger: onMessenger,
+                        validators: validators,
+                    },
                 }
             },
-            async transformResponse(response: PartnersResponseType) {
+            async transformResponse(response: PartnersResponseType, meta, arg) {
                 const selectedNetwork = store.getters['Network/selectedNetwork']
                 if (
                     selectedNetwork.name.toLowerCase() !== 'columbus' &&
@@ -244,155 +361,128 @@ export const partnersApi = createApi({
                 const providerUrl = `${selectedNetwork.protocol}://${selectedNetwork.ip}:${selectedNetwork.port}/ext/bc/C/rpc`
                 const provider = new ethers.JsonRpcProvider(providerUrl)
 
-                try {
-                    console.log('Starting transform response')
-                    const contractMappings = await getContractMappings()
-                    console.log('Contract mappings:', contractMappings)
+                const contractMappings = await getContractMappings()
+                const onMessenger = arg.onMessenger
+                const onlyValidators = arg.validators
 
-                    const partnersWithServices = await Promise.all(
-                        response.data.map(async partner => {
-                            console.log('Processing partner:', partner.attributes.companyName)
-                            let partnerCChainAddress = partner?.attributes?.cChainAddresses?.find(
-                                elem => elem.Network === selectedNetwork.name.toLowerCase(),
-                            )
-                            let partnerPChainAddress = partner?.attributes?.pChainAddresses?.find(
-                                elem => elem.Network === selectedNetwork.name.toLowerCase(),
-                            )
+                const partnersWithServices = await Promise.all(
+                    response.data.map(async partner => {
+                        let partnerCChainAddress = partner?.attributes?.cChainAddresses?.find(
+                            elem => elem.Network === selectedNetwork.name.toLowerCase(),
+                        )
+                        if (partnerCChainAddress?.cAddress) {
+                            const contractAddress = Array.from(contractMappings.entries()).find(
+                                ([_, partnerAddress]) =>
+                                    partnerAddress.toLowerCase() ===
+                                    partnerCChainAddress?.cAddress?.toLowerCase(),
+                            )?.[0]
 
-                            console.log('Partner addresses:', {
-                                cChain: partnerCChainAddress?.cAddress,
-                                pChain: partnerPChainAddress?.pAddress,
-                            })
+                            if (contractAddress) {
+                                const {
+                                    supportedServices,
+                                    wantedServices,
+                                    bots,
+                                    supportedCurrencies,
+                                } = await fetchContractServices(contractAddress, provider)
 
-                            if (partnerCChainAddress?.cAddress) {
-                                const contractAddress = Array.from(contractMappings.entries()).find(
-                                    ([_, partnerAddress]) =>
-                                        partnerAddress.toLowerCase() ===
-                                        partnerCChainAddress?.cAddress?.toLowerCase(),
-                                )?.[0]
+                                let parsedSupportedServices = []
+                                if (
+                                    supportedServices &&
+                                    supportedServices.length > 0 &&
+                                    supportedServices[0]
+                                ) {
+                                    parsedSupportedServices = supportedServices[0]
+                                        .map((service, index) => {
+                                            let capabilities = supportedServices[1][index][2].map(
+                                                elem => elem,
+                                            )
+                                            return {
+                                                name: service,
+                                                fee: ethers.formatEther(
+                                                    supportedServices[1][index][0],
+                                                ),
+                                                rackRates: supportedServices[1][index][1],
+                                                capabilities: capabilities,
+                                            }
+                                        })
+                                        .filter(service => service !== null)
+                                }
 
-                                if (contractAddress) {
-                                    console.log('Found contract address:', contractAddress)
-                                    const {
-                                        supportedServices,
-                                        wantedServices,
-                                        bots,
-                                        supportedCurrencies,
-                                    } = await fetchContractServices(contractAddress, provider)
+                                const parsedWantedServices = wantedServices.map(elem => ({
+                                    name: elem,
+                                }))
 
-                                    let parsedSupportedServices = []
-                                    if (
-                                        supportedServices &&
-                                        supportedServices.length > 0 &&
-                                        supportedServices[0]
-                                    ) {
-                                        parsedSupportedServices = supportedServices[0]
-                                            .map((service, index) => {
-                                                let capabilities = supportedServices[1][
-                                                    index
-                                                ][2].map(elem => elem)
-                                                return {
-                                                    name: service,
-                                                    fee: ethers.formatEther(
-                                                        supportedServices[1][index][0],
-                                                    ),
-                                                    rackRates: supportedServices[1][index][1],
-                                                    capabilities: capabilities,
-                                                }
-                                            })
-                                            .filter(service => service !== null)
-                                    }
-
-                                    const parsedWantedServices = wantedServices.map(elem => ({
-                                        name: elem,
-                                    }))
-
-                                    return {
-                                        ...partner,
-                                        supportedServices: parsedSupportedServices,
-                                        wantedServices: parsedWantedServices,
-                                        contractAddress,
-                                        bots,
-                                        supportedCurrencies,
-                                        isOnMessenger: true,
-                                        hasValidatorAddress: Boolean(
-                                            partnerPChainAddress?.pAddress,
-                                        ),
-                                    }
+                                return {
+                                    ...partner,
+                                    supportedServices: parsedSupportedServices,
+                                    wantedServices: parsedWantedServices,
+                                    contractAddress,
+                                    bots,
+                                    supportedCurrencies,
+                                    isOnMessenger: Boolean(partnerCChainAddress?.cAddress),
                                 }
                             }
-
-                            // Return partner with basic info if no contract address
-                            return {
-                                ...partner,
-                                supportedServices: [],
-                                wantedServices: [],
-                                contractAddress: '',
-                                bots: [],
-                                supportedCurrencies: {},
-                                isOnMessenger: Boolean(partnerCChainAddress?.cAddress),
-                                hasValidatorAddress: Boolean(partnerPChainAddress?.pAddress),
-                            }
-                        }),
-                    )
-
-                    console.log('Partners with services:', partnersWithServices)
-
-                    // Add validator status
-                    let validators = (await caminoClient.PChain().getCurrentValidators()).validators
-                    console.log('Current validators:', validators)
-
-                    const partnersWithValidatorStatus = await Promise.all(
-                        partnersWithServices.map(async p => {
-                            if (p.hasValidatorAddress) {
-                                let pChainAddress = p.attributes.pChainAddresses.find(
-                                    elem =>
-                                        elem.Network.toLowerCase() ===
-                                        selectedNetwork.name.toLowerCase(),
+                        }
+                        // Return the partner without additional details if there's no contractAddress
+                        return onMessenger
+                            ? null
+                            : {
+                                  ...partner,
+                                  supportedServices: [],
+                                  wantedServices: [],
+                                  contractAddress: '',
+                                  bots: [],
+                                  supportedCurrencies: {},
+                                  isOnMessenger: false,
+                              }
+                    }),
+                )
+                // Filter out null values only if onMessenger is true
+                const filteredPartners = onMessenger
+                    ? partnersWithServices.filter(partner => partner !== null)
+                    : partnersWithServices
+                let validators = (await caminoClient.PChain().getCurrentValidators()).validators
+                let partnersWithValidatorStatus = await Promise.all(
+                    filteredPartners.map(async p => {
+                        let pChainAddress = p.attributes.pChainAddresses.find(
+                            elem =>
+                                elem.Network.toLowerCase() === selectedNetwork.name.toLowerCase(),
+                        )
+                        if (pChainAddress?.pAddress) {
+                            try {
+                                let nodeID = await getRegisteredNode(
+                                    getAddress(pChainAddress?.pAddress),
                                 )
-                                if (pChainAddress?.pAddress) {
-                                    try {
-                                        console.log(
-                                            'Checking validator status for:',
-                                            pChainAddress.pAddress,
-                                        )
-                                        let nodeID = await getRegisteredNode(
-                                            getAddress(pChainAddress?.pAddress),
-                                        )
-                                        console.log('Found nodeID:', nodeID)
-                                        return {
-                                            ...p,
-                                            isValidator: !!validators.find(
-                                                v => v.nodeID === nodeID,
-                                            ),
-                                            nodeID,
-                                        }
-                                    } catch (error) {
-                                        console.error('Error checking validator status:', error)
-                                        return { ...p, isValidator: false }
-                                    }
-                                }
+                                let isValidator = !!validators.find(v => v.nodeID === nodeID)
+                                if (isValidator) return { ...p, isValidator: true }
+                                else return { ...p, isValidator: false }
+                            } catch (error) {
+                                return { ...p, isValidator: false }
                             }
-                            return { ...p, isValidator: false }
-                        }),
-                    )
-
-                    console.log('Final partners count:', partnersWithValidatorStatus.length)
-                    return {
-                        data: partnersWithValidatorStatus,
-                        meta: response.meta,
-                    }
-                } catch (error) {
-                    console.error('Transform response error:', error)
-                    // Return original response if transform fails
-                    return response
+                        }
+                        return { ...p, isValidator: false }
+                    }),
+                )
+                const filteredValidatorsPartners = onlyValidators
+                    ? partnersWithValidatorStatus.filter(partner => partner.isValidator)
+                    : partnersWithValidatorStatus
+                // Update the meta information to reflect the new number of results
+                const updatedMeta = {
+                    ...response.meta,
+                    pagination: {
+                        ...response.meta.pagination,
+                        total:
+                            onMessenger || onlyValidators
+                                ? filteredValidatorsPartners.length
+                                : response.meta.pagination.total,
+                    },
                 }
+                return { data: filteredValidatorsPartners, meta: updatedMeta }
             },
-            providesTags: ['Partners'],
         }),
         fetchPartnerData: build.query<
             PartnerDataType,
-            { companyName?: string; cChainAddress?: string }
+            { companyName: string; cChainAddress?: string }
         >({
             query: ({ companyName, cChainAddress }) => {
                 const baseUrl = getBaseUrl()
@@ -400,28 +490,89 @@ export const partnersApi = createApi({
                     throw new Error('Base URL is undefined')
                 }
 
-                const selectedNetwork = store.getters['Network/selectedNetwork']
-                if (!selectedNetwork) {
-                    throw new Error('Selected network is undefined')
-                }
+                let query =
+                    '?populate=*&sort[0]=companyName:asc&pagination[page]=1&pagination[pageSize]=12'
 
-                let query = '?populate=*'
-
-                // Only add filters if we have actual values
-                if (cChainAddress && cChainAddress.length > 0) {
+                if (cChainAddress) {
+                    const selectedNetwork = store.getters['Network/selectedNetwork']
+                    if (!selectedNetwork) {
+                        throw new Error('Selected network is undefined')
+                    }
                     query += `&filters[$and][0][cChainAddresses][cAddress][$containsi]=${cChainAddress}&filters[$and][1][cChainAddresses][Network][$eq]=${selectedNetwork.name.toLowerCase()}`
-                } else if (companyName && companyName.length > 0) {
+                } else if (companyName) {
                     query += `&filters[companyName][$contains]=${companyName}`
                 }
-
                 return {
                     url: `${baseUrl}${query}`,
                     method: 'GET',
                 }
             },
-            async transformResponse(response: PartnersResponseType) {
-                // Transform the response similar to listPartners if needed
-                return response.data[0] // Return the first match since we're looking for a specific partner
+            async transformResponse(response: PartnersResponseType, _meta, arg) {
+                const partnerData = response.data[0]
+                const selectedNetwork = store.getters['Network/selectedNetwork']
+                let partnerCChainAddress = partnerData?.attributes?.cChainAddresses.find(
+                    elem => elem.Network === selectedNetwork.name.toLowerCase(),
+                )
+
+                if (partnerData && partnerCChainAddress?.cAddress) {
+                    const selectedNetwork = store.getters['Network/selectedNetwork']
+                    const providerUrl = `${selectedNetwork.protocol}://${selectedNetwork.ip}:${selectedNetwork.port}/ext/bc/C/rpc`
+                    const provider = new ethers.JsonRpcProvider(providerUrl)
+                    const contractMappings = await getContractMappings()
+                    const contractAddress = Array.from(contractMappings.entries()).find(
+                        ([_, partnerAddress]) =>
+                            partnerAddress.toLowerCase() ===
+                            (arg.cChainAddress || partnerCChainAddress?.cAddress).toLowerCase(),
+                    )?.[0]
+                    if (contractAddress) {
+                        const { supportedServices, wantedServices, bots, supportedCurrencies } =
+                            await fetchContractServices(contractAddress, provider)
+                        let parsedSupportedServices = []
+                        if (supportedServices && supportedServices?.length > 0) {
+                            parsedSupportedServices = supportedServices[0]
+                                .map((service, index) => {
+                                    if (
+                                        supportedServices[1][index] &&
+                                        Array.isArray(supportedServices[1][index])
+                                    ) {
+                                        let capabilities = Array.isArray(
+                                            supportedServices[1][index][2],
+                                        )
+                                            ? supportedServices[1][index][2].map(elem => elem)
+                                            : []
+                                        return {
+                                            name: service,
+                                            fee: ethers.formatEther(supportedServices[1][index][0]),
+                                            rackRates: supportedServices[1][index][1],
+                                            capabilities: capabilities,
+                                        }
+                                    }
+                                    return null
+                                })
+                                .filter(service => service !== null)
+                        }
+
+                        const parsedWantedServices = wantedServices.map(elem => ({
+                            name: elem,
+                        }))
+                        return {
+                            ...partnerData,
+                            supportedServices: parsedSupportedServices,
+                            wantedServices: parsedWantedServices,
+                            contractAddress,
+                            bots,
+                            supportedCurrencies,
+                        }
+                    }
+                }
+                return {
+                    ...partnerData,
+                    supportedServices: [],
+                    wantedServices: [],
+                    contractAddress: '',
+                    bots: [],
+                    supportedCurrencies: {},
+                }
             },
         }),
         listMatchingPartners: build.query<any, any>({

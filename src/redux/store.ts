@@ -1,8 +1,12 @@
-import { Action, configureStore, ThunkAction } from '@reduxjs/toolkit'
+import { Action, ThunkAction, configureStore } from '@reduxjs/toolkit'
+
+import { store } from '../App'
 import { partnersApi } from './services/partners'
 import appConfigReducer from './slices/app-config'
 import network from './slices/network'
+import partnersSlice from './slices/partnersSlice'
 import themeReducer from './slices/theme'
+
 export type AppDispatch = typeof store.dispatch
 export type RootState = ReturnType<typeof store.getState>
 export type AppThunk<ReturnType = void> = ThunkAction<
@@ -19,6 +23,7 @@ export function configureAppStore() {
             theme: themeReducer,
             network: network,
             [partnersApi.reducerPath]: partnersApi.reducer,
+            partners: partnersSlice,
         },
         middleware: getDefaultMiddleware =>
             getDefaultMiddleware({

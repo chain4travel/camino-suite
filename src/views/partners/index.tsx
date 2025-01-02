@@ -7,24 +7,23 @@ import {
     useTheme,
 } from '@mui/material'
 import React, { ReactNode, useEffect, useMemo, useReducer, useState } from 'react'
-import {
-    initialStatePartners,
-    partnersActions,
-    partnersReducer,
-} from '../../helpers/partnersReducer'
-import { useGetBusinessFieldsQuery, useListPartnersQuery } from '../../redux/services/partners'
+import { fetchBusinessFields, fetchPartners } from '../../redux/slices/partnersSlice/utils'
+import { initialStatePartners, partnersReducer } from '../../helpers/partnersReducer'
+import { useAppDispatch, useAppSelector } from '../../hooks/reduxHooks'
 
-import { mdiAccessPointNetwork } from '@mdi/js'
-import Icon from '@mdi/react'
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
-import PartnersFilter from '../../components/Partners/PartnersFilter'
-import { useSmartContract } from '../../helpers/useSmartContract'
-import { useAppSelector } from '../../hooks/reduxHooks'
-import { selectFilteredPartners } from '../../redux/selectors/partners'
-import { getActiveNetwork } from '../../redux/slices/network'
+import Icon from '@mdi/react'
 import ListPartners from './ListPartners'
 import MatchingPartners from './MatchingPartners'
+import PartnersFilter from '../../components/Partners/PartnersFilter'
+import { getActiveNetwork } from '../../redux/slices/network'
+import { mdiAccessPointNetwork } from '@mdi/js'
+import { selectAllPartners } from '../../redux/slices/partnersSlice'
+import { selectFilteredPartners } from '../../redux/selectors/partners'
+import { useEffectOnce } from '../../hooks/useEffectOnce'
+import { useListPartnersQuery } from '../../redux/services/partners'
+import { useSmartContract } from '../../helpers/useSmartContract'
 
 interface PartnersListWrapperProps {
     isLoading: boolean
@@ -55,15 +54,22 @@ const PartnersListWrapper: React.FC<PartnersListWrapperProps> = ({
 
 const Partners = () => {
     const activeNetwork = useAppSelector(getActiveNetwork)
-    const { data: bsFeilds } = useGetBusinessFieldsQuery()
+    const auth = useAppSelector(state => state.appConfig.isAuth)
     const [state, dispatchPartnersActions] = useReducer(partnersReducer, initialStatePartners)
-    const { data: partners, isLoading, isFetching, refetch, error } = useListPartnersQuery()
-    console.log('Raw partners from query:', partners)
+    const { isFetching } = useListPartnersQuery(state)
+    const partnersSlice = useAppSelector(selectAllPartners)
+    const { isLoading, error, filters } = useAppSelector(state => state.partners)
+    const dispatch = useAppDispatch()
+    const theme = useTheme()
+
+    useEffectOnce(() => {
+        dispatch(fetchPartners())
+        dispatch(fetchBusinessFields())
+    })
 
     const filteredPartners = useAppSelector(rootState =>
-        selectFilteredPartners(rootState, partners, state),
+        selectFilteredPartners(rootState, partnersSlice, filters),
     )
-    console.log('Filtered partners:', filteredPartners)
 
     const value = useSmartContract()
     const [activePage, setActivePage] = useState(0)
@@ -71,33 +77,22 @@ const Partners = () => {
 
     useEffect(() => {
         setActivePage(0)
-    }, [state.companyName, state.businessField, state.validators, state.onMessenger])
+    }, [filters, dispatch])
 
     useEffect(() => {
-        if (activeNetwork) refetch()
-    }, [activeNetwork, refetch])
-
-    useEffect(() => {
-        if (bsFeilds) {
-            dispatchPartnersActions({
-                type: partnersActions.UPDATE_BUSINESS_FIELDS_FROM_API,
-                payload: bsFeilds,
-            })
-        }
-    }, [bsFeilds])
+        if (activeNetwork) dispatch(fetchPartners())
+        //@ts-ignore
+    }, [activeNetwork, dispatch])
 
     // Get current partners for pagination
     const currentPartners = useMemo(() => {
-        console.log('Calculating current partners slice')
         if (!filteredPartners?.data) {
-            console.log('No filtered partners data')
             return []
         }
         const slice = filteredPartners.data.slice(
             activePage * itemsPerPage,
             activePage * itemsPerPage + itemsPerPage,
         )
-        console.log('Current partners slice:', slice)
         return slice
     }, [filteredPartners?.data, activePage])
 
@@ -105,17 +100,9 @@ const Partners = () => {
         setActivePage(page - 1)
     }
 
-    const theme = useTheme()
-    const auth = useAppSelector(state => state.appConfig.isAuth)
-
     // Show loading state while initial data is being fetched
     if (isLoading) {
         return <PartnersListWrapper isLoading={true} isFetching={false} />
-    }
-
-    // Show loading state while data is being refetched
-    if (isFetching) {
-        return <PartnersListWrapper isLoading={false} isFetching={true} />
     }
 
     // Show error state

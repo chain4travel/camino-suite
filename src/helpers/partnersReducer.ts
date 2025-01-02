@@ -1,3 +1,5 @@
+import { BusinessFieldCategory } from '../redux/slices/partnersSlice'
+
 export interface BusinessField {
     category: string
     fields: Array<{
@@ -9,14 +11,14 @@ export interface BusinessField {
 
 export interface StatePartnersType {
     companyName: string
-    businessField: BusinessField[]
+    businessFields: BusinessField[]
     validators: boolean
     onMessenger: boolean
 }
 
 export const initialStatePartners: StatePartnersType = {
     companyName: '',
-    businessField: [],
+    businessFields: [],
     validators: false,
     onMessenger: false,
 }
@@ -47,7 +49,7 @@ export const partnersReducer = (
                 companyName: action.payload,
             }
         case partnersActions.UPDATE_BUSINESS_FIELD:
-            const newBusinessField = state.businessField.map(field => {
+            const newBusinessField = state.businessFields.map(field => {
                 const fieldIndex = field.fields.findIndex(
                     filter => filter.fullName === action.payload,
                 )
@@ -68,10 +70,10 @@ export const partnersReducer = (
 
             return {
                 ...state,
-                businessField: newBusinessField,
+                businessFields: newBusinessField,
             }
         case partnersActions.TOGGLE_CATEGORY:
-            const updatedBusinessField = state.businessField.map(group => {
+            const updatedBusinessField = state.businessFields.map(group => {
                 if (group.category === action.payload) {
                     const isAllSelected = group.fields.every(field => field.active)
                     const updatedFields = group.fields.map(field => ({
@@ -85,7 +87,7 @@ export const partnersReducer = (
 
             return {
                 ...state,
-                businessField: updatedBusinessField,
+                businessFields: updatedBusinessField,
             }
 
         case partnersActions.TOGGLE_VALIDATORS:
@@ -106,7 +108,7 @@ export const partnersReducer = (
         case partnersActions.RESET_ALL_BUSINESS_FIELDS:
             return {
                 ...state,
-                businessField: state.businessField.map(group => ({
+                businessFields: state.businessFields.map(group => ({
                     ...group,
                     fields: group.fields.map(field => ({
                         ...field,
@@ -117,4 +119,51 @@ export const partnersReducer = (
         default:
             return state
     }
+}
+
+export const handleBusinessFieldToggle = (
+    businessFields: BusinessFieldCategory[],
+    selectedField: string,
+) => {
+    const newBusinessField = businessFields.map(field => {
+        const fieldIndex = field.fields.findIndex(filter => filter.fullName === selectedField)
+        if (fieldIndex !== -1) {
+            const updatedFields = field.fields.map((filter, i) => {
+                if (i === fieldIndex) {
+                    return { ...filter, active: !filter.active }
+                }
+                return filter
+            })
+            return { ...field, fields: updatedFields }
+        }
+        return field
+    })
+
+    return newBusinessField
+}
+
+export const handleCategoryToggleHelper = (
+    businessFields: BusinessFieldCategory[],
+    category: string,
+) => {
+    const updatedBusinessField = businessFields.map(group => {
+        if (group.category === category) {
+            const isAllSelected = group.fields.every(field => field.active)
+            const updatedFields = group.fields.map(field => ({
+                ...field,
+                active: !isAllSelected,
+            }))
+            return { ...group, fields: updatedFields }
+        }
+        return group
+    })
+
+    return updatedBusinessField
+}
+
+export const handleResetAllFields = (businessFields: BusinessFieldCategory[]) => {
+    return businessFields.map(group => ({
+        ...group,
+        fields: group.fields.map(field => ({ ...field, active: false })),
+    }))
 }

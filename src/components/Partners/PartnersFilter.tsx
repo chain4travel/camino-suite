@@ -1,37 +1,51 @@
 import { Box, Button, Checkbox, FormControlLabel, Typography } from '@mui/material'
 import React, { useMemo } from 'react'
-import { ActionType, StatePartnersType, partnersActions } from '../../helpers/partnersReducer'
+import {
+    setCompanyNameFilter,
+    toggleMessengerFilter,
+    toggleValidatorsFilter,
+} from '../../redux/slices/partnersSlice'
 
-import store from 'wallet/store'
-import { REGISTER_PARTNER_URL } from '../../constants/route-paths'
-import { useAppSelector } from '../../hooks/reduxHooks'
-import { useIsPartnerQuery } from '../../redux/services/partners'
-import { getActiveNetwork } from '../../redux/slices/network'
 import BusinessFieldFilter from './BusinessFieldFilter'
+import { REGISTER_PARTNER_URL } from '../../constants/route-paths'
 import SearchInput from './SearchInput'
+import { getActiveNetwork } from '../../redux/slices/network'
+import { useAppSelector } from '../../hooks/reduxHooks'
+import { useDispatch } from 'react-redux'
+import { useIsPartnerQuery } from '../../redux/services/partners'
 
-interface PartnersFilterProps {
-    state: StatePartnersType
-    dispatchPartnersActions: React.Dispatch<ActionType>
-}
+const PartnersFilter: React.FC = () => {
+    const dispatch = useDispatch()
 
-const PartnersFilter: React.FC<PartnersFilterProps> = ({ state, dispatchPartnersActions }) => {
-    const searchByName = param =>
-        dispatchPartnersActions({ type: partnersActions.UPDATE_COMPANY_NAME, payload: param })
+    // Get filters state from Redux
+    const filters = useAppSelector(state => state.partners.filters)
+
+    const handleCompanyNameChange = (value: string) => {
+        dispatch(setCompanyNameFilter(value))
+    }
+
+    const handleMessengerToggle = () => {
+        dispatch(toggleMessengerFilter())
+    }
+
+    const handleValidatorsToggle = () => {
+        dispatch(toggleValidatorsFilter())
+    }
 
     const activeNetwork = useAppSelector(getActiveNetwork)
-    const { data } = useIsPartnerQuery({
-        cChainAddress: store?.state?.activeWallet?.ethAddress
-            ? '0x' + store?.state?.activeWallet?.ethAddress
-            : '',
+    const { data: partnerData } = useIsPartnerQuery({
+        cChainAddress: useAppSelector(state =>
+            state.activeWallet?.ethAddress ? '0x' + state.activeWallet.ethAddress : '',
+        ),
     })
+
     const partnerCChainAddress = useMemo(() => {
-        let cAddress = data?.attributes?.cChainAddresses.find(
+        const cAddress = partnerData?.attributes?.cChainAddresses.find(
             elem => elem.Network === activeNetwork?.name?.toLowerCase(),
         )
-        if (cAddress) return cAddress
-        return ''
-    }, [data, activeNetwork?.name])
+        return cAddress || ''
+    }, [partnerData, activeNetwork?.name])
+
     const auth = useAppSelector(state => state.appConfig.isAuth)
 
     return (
@@ -44,8 +58,8 @@ const PartnersFilter: React.FC<PartnersFilterProps> = ({ state, dispatchPartners
                 justifyContent: 'flex-start',
             }}
         >
-            <SearchInput searchByName={searchByName} />
-            <BusinessFieldFilter state={state} dispatchPartnersActions={dispatchPartnersActions} />
+            <SearchInput searchByName={handleCompanyNameChange} value={filters.companyName} />
+            <BusinessFieldFilter />
             <Box sx={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: '.5rem' }}>
                     <FormControlLabel
@@ -61,12 +75,8 @@ const PartnersFilter: React.FC<PartnersFilterProps> = ({ state, dispatchPartners
                                         color: theme => theme.palette.secondary.main,
                                     },
                                 }}
-                                checked={state.validators}
-                                onChange={() =>
-                                    dispatchPartnersActions({
-                                        type: partnersActions.TOGGLE_VALIDATORS,
-                                    })
-                                }
+                                checked={filters.validators}
+                                onChange={handleValidatorsToggle}
                             />
                         }
                     />
@@ -85,12 +95,8 @@ const PartnersFilter: React.FC<PartnersFilterProps> = ({ state, dispatchPartners
                                         color: theme => theme.palette.secondary.main,
                                     },
                                 }}
-                                checked={state.onMessenger}
-                                onChange={() =>
-                                    dispatchPartnersActions({
-                                        type: partnersActions.TOGGLE_ON_MESSENGER,
-                                    })
-                                }
+                                checked={filters.onMessenger}
+                                onChange={handleMessengerToggle}
                             />
                         }
                     />

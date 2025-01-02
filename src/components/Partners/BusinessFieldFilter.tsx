@@ -1,35 +1,33 @@
 import { Box, Checkbox, Typography } from '@mui/material'
 import React, { useState } from 'react'
-import { ActionType, StatePartnersType, partnersActions } from '../../helpers/partnersReducer'
+import {
+    handleBusinessFieldToggle,
+    handleCategoryToggleHelper,
+    handleResetAllFields,
+} from '../../helpers/partnersReducer'
+import { selectBusinessFields, updateBusinessField } from '../../redux/slices/partnersSlice'
+import { useAppDispatch, useAppSelector } from '../../hooks/reduxHooks'
 
-import { mdiCloseCircleOutline } from '@mdi/js'
 import Icon from '@mdi/react'
 import ListItemText from '@mui/material/ListItemText'
 import MenuItem from '@mui/material/MenuItem'
 import Select from '@mui/material/Select'
+import { mdiCloseCircleOutline } from '@mdi/js'
 
-interface BusinessFieldFilterProps {
-    state: StatePartnersType
-    dispatchPartnersActions: React.Dispatch<ActionType>
-}
-
-const BusinessFieldFilter: React.FC<BusinessFieldFilterProps> = ({
-    state,
-    dispatchPartnersActions,
-}) => {
+const BusinessFieldFilter = () => {
+    const dispatch = useAppDispatch()
+    const businessFields = useAppSelector(selectBusinessFields)
     const [selectedFields, setSelectedFields] = useState<string[]>([])
 
     // Toggle individual field
     const handleFieldToggle = (selectedField: string) => {
-        const newSelectedFields = selectedFields.includes(selectedField)
-            ? selectedFields.filter(field => field !== selectedField)
-            : [...selectedFields, selectedField]
+        setSelectedFields(prevSelectedFields => {
+            const newSelectedFields = prevSelectedFields.includes(selectedField)
+                ? prevSelectedFields.filter(field => field !== selectedField)
+                : [...prevSelectedFields, selectedField]
 
-        setSelectedFields(newSelectedFields)
-
-        dispatchPartnersActions({
-            type: partnersActions.UPDATE_BUSINESS_FIELD,
-            payload: selectedField,
+            dispatch(updateBusinessField(handleBusinessFieldToggle(businessFields, selectedField)))
+            return newSelectedFields
         })
     }
 
@@ -37,7 +35,7 @@ const BusinessFieldFilter: React.FC<BusinessFieldFilterProps> = ({
     const handleCategoryToggle = (category: string) => {
         // Find all fields in the category
         const categoryFields =
-            state.businessField.find(group => group.category === category)?.fields || []
+            businessFields.find(group => group.category === category)?.fields || []
 
         // Check if all fields in the category are already selected
         const allFieldsInCategorySelected = categoryFields.every(field =>
@@ -57,17 +55,12 @@ const BusinessFieldFilter: React.FC<BusinessFieldFilterProps> = ({
               ]
 
         setSelectedFields(updatedSelectedFields)
-        dispatchPartnersActions({
-            type: partnersActions.TOGGLE_CATEGORY,
-            payload: category,
-        })
+        dispatch(updateBusinessField(handleCategoryToggleHelper(businessFields, category)))
     }
 
     const resetAllFields = () => {
         setSelectedFields([]) // Clear selected fields from the state
-        dispatchPartnersActions({
-            type: partnersActions.RESET_ALL_BUSINESS_FIELDS,
-        })
+        dispatch(updateBusinessField(handleResetAllFields(businessFields)))
     }
 
     return (
@@ -124,7 +117,7 @@ const BusinessFieldFilter: React.FC<BusinessFieldFilterProps> = ({
                     },
                 }}
             >
-                {state?.businessField?.map((group, groupIndex) => [
+                {businessFields.map((group, groupIndex) => [
                     <MenuItem
                         key={`category-${groupIndex}`}
                         onClick={() => handleCategoryToggle(group.category)} // Toggle category
