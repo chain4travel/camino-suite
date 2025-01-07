@@ -189,7 +189,7 @@ export const getBaseUrl = () => {
 export const getBusinessBaseUrl = () => {
     const currentPath = typeof window !== 'undefined' ? window.location.hostname : ''
     if (currentPath === 'localhost' || currentPath.includes('dev')) {
-        return BUSINESS_BASE_URLS.prod + '?pagination[pageSize]=1000'
+        return BUSINESS_BASE_URLS.dev + '?pagination[pageSize]=1000'
     } else if (currentPath) {
         return BUSINESS_BASE_URLS.prod + '?pagination[pageSize]=1000'
     } else {

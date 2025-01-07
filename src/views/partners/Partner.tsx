@@ -792,6 +792,7 @@ const Partner = () => {
                                             fontStyle: 'normal',
                                             fontWeight: 400,
                                             lineHeight: '150%',
+                                            overflowWrap: 'break-word',
                                         }}
                                     >
                                         {partner?.attributes.companyWebsite}
