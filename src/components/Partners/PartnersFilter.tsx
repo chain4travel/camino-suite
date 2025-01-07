@@ -86,26 +86,29 @@ const PartnersFilter: React.FC = () => {
                         }
                     />
                 </Box>
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: '.5rem' }}>
-                    <FormControlLabel
-                        label={<Typography variant="body2">On Messenger</Typography>}
-                        control={
-                            <Checkbox
-                                sx={{
-                                    color: theme => theme.palette.secondary.main,
-                                    '&.Mui-checked': {
-                                        color: theme => theme.palette.secondary.main,
-                                    },
-                                    '&.MuiCheckbox-colorSecondary.Mui-checked': {
-                                        color: theme => theme.palette.secondary.main,
-                                    },
-                                }}
-                                checked={filters.onMessenger}
-                                onChange={handleMessengerToggle}
+                {activeNetwork?.name?.toLowerCase() !== 'camino' &&
+                    activeNetwork?.name?.toLowerCase() !== 'columbus' && (
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: '.5rem' }}>
+                            <FormControlLabel
+                                label={<Typography variant="body2">On Messenger</Typography>}
+                                control={
+                                    <Checkbox
+                                        sx={{
+                                            color: theme => theme.palette.secondary.main,
+                                            '&.Mui-checked': {
+                                                color: theme => theme.palette.secondary.main,
+                                            },
+                                            '&.MuiCheckbox-colorSecondary.Mui-checked': {
+                                                color: theme => theme.palette.secondary.main,
+                                            },
+                                        }}
+                                        checked={filters.onMessenger}
+                                        onChange={handleMessengerToggle}
+                                    />
+                                }
                             />
-                        }
-                    />
-                </Box>
+                        </Box>
+                    )}
             </Box>
             {(!auth || !partnerCChainAddress) && (
                 <Box
