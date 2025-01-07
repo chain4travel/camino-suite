@@ -22,7 +22,6 @@ import { mdiAccessPointNetwork } from '@mdi/js'
 import { selectAllPartners } from '../../redux/slices/partnersSlice'
 import { selectFilteredPartners } from '../../redux/selectors/partners'
 import { useEffectOnce } from '../../hooks/useEffectOnce'
-import { useListPartnersQuery } from '../../redux/services/partners'
 import { useSmartContract } from '../../helpers/useSmartContract'
 
 interface PartnersListWrapperProps {
@@ -56,7 +55,6 @@ const Partners = () => {
     const activeNetwork = useAppSelector(getActiveNetwork)
     const auth = useAppSelector(state => state.appConfig.isAuth)
     const [state] = useReducer(partnersReducer, initialStatePartners)
-    const { isFetching } = useListPartnersQuery(state)
     const partnersSlice = useAppSelector(selectAllPartners)
     const { isLoading, error, filters } = useAppSelector(state => state.partners)
     const dispatch = useAppDispatch()
@@ -153,7 +151,7 @@ const Partners = () => {
                 </>
             )}
             <Typography variant="h5">{filteredPartners?.data?.length || 0} Partners</Typography>
-            <PartnersListWrapper isLoading={isLoading} isFetching={isFetching}>
+            <PartnersListWrapper isLoading={isLoading} isFetching={isLoading}>
                 <ListPartners
                     partners={
                         filteredPartners ? { ...filteredPartners, data: currentPartners } : null

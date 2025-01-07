@@ -1,7 +1,8 @@
+import { getMatchingPartners, getPartnerData } from '../services/partners'
+
 import { RootState } from '../store'
 import { StatePartnersType } from '../../helpers/partnersReducer'
 import { createSelector } from '@reduxjs/toolkit'
-import { getPartnerData } from '../services/partners'
 
 export const selectFilteredPartners = createSelector(
     [
@@ -24,8 +25,8 @@ export const selectFilteredPartners = createSelector(
         if (filters.companyName) {
             filteredPartners = filteredPartners.filter(partner =>
                 partner?.attributes?.companyName
-                    .toLowerCase()
-                    .includes(filters.companyName.toLowerCase()),
+                    ?.toLowerCase()
+                    .includes(filters.companyName?.toLowerCase()),
             )
         }
 
@@ -82,5 +83,63 @@ export const selectPartnerData = createSelector(
         }
 
         return getPartnerData(partners, companyName, cChainAddress)
+    },
+)
+
+// select matching partners with filters if exists
+export const selectedFiltredMatchingPartners = createSelector(
+    [
+        (_state: RootState) => {
+            return _state.partners.partners
+        },
+        (_state: RootState, filters: any) => {
+            return filters
+        },
+    ],
+    (partners, filters) => {
+        if (!partners) {
+            return null
+        }
+        let matchingPartners = getMatchingPartners(partners, filters)
+
+        // Apply company name filter
+        if (filters.companyName) {
+            matchingPartners = matchingPartners.filter(partner =>
+                partner?.attributes?.companyName
+                    ?.toLowerCase()
+                    .includes(filters.companyName?.toLowerCase()),
+            )
+        }
+
+        // Apply business fields filter
+        if (filters.businessFields?.length > 0) {
+            const activeFields = filters.businessFields
+                .flatMap(category => category.fields)
+                .filter(field => field.active)
+                .map(field => field.fullName)
+
+            if (activeFields.length > 0) {
+                matchingPartners = matchingPartners.filter(partner => {
+                    const partnerFields = partner?.attributes?.business_fields?.data || []
+                    return activeFields.some(activeField =>
+                        partnerFields.some(
+                            field => field.attributes?.BusinessField === activeField,
+                        ),
+                    )
+                })
+            }
+        }
+
+        // Apply messenger filter
+        if (filters.onMessenger) {
+            matchingPartners = matchingPartners.filter(partner => partner.isOnMessenger)
+        }
+
+        // Apply validator filter
+        if (filters.validators) {
+            matchingPartners = matchingPartners.filter(partner => partner.isValidator)
+        }
+
+        return matchingPartners
     },
 )

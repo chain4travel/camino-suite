@@ -76,8 +76,6 @@ const ClaimProfile = () => {
 
 const PartnersLayout = () => {
     const path = window.location.pathname
-    const { isLoading } = useAppSelector(state => state.partners)
-
     const data = useAppSelector(rootState =>
         selectPartnerData(
             rootState,
@@ -94,14 +92,11 @@ const PartnersLayout = () => {
     const dispatch = useAppDispatch()
     const activeNetwork = useAppSelector(getActiveNetwork)
 
-    // useEffectOnce(() => {
-    //     dispatch(fetchPartners())
-    //     dispatch(fetchBusinessFields())
-    // })
-
     useEffect(() => {
-        dispatch(fetchPartners())
-        dispatch(fetchBusinessFields())
+        if (activeNetwork) {
+            dispatch(fetchPartners())
+            dispatch(fetchBusinessFields())
+        }
     }, [activeNetwork])
 
     const auth = useAppSelector(state => state.appConfig.isAuth)
@@ -126,7 +121,6 @@ const PartnersLayout = () => {
         if (cAddress) return cAddress
         return ''
     }, [data])
-    // if (isLoading) return <></>
     if (
         path.includes('partners/messenger-configuration') &&
         !store.state.isAuth &&
