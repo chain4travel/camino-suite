@@ -25,7 +25,7 @@ const ClaimProfile = () => {
         )}&body=${encodeURIComponent(body)}`
         window.location.href = mailtoLink
     }
-    const emailAddress = 'foundation@camino.network'
+    const emailAddress = 'hello@camino.network'
     return (
         <Box
             sx={{

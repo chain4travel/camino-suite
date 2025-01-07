@@ -130,7 +130,7 @@ const PartnerCard: React.FC<PartnerCardProps> = ({ partner, clickable, onClick }
                 )}
             </Box>
             {!!country_flag && !!country_flag.data?.attributes && (
-                <PartnerFlag country={country_flag.data.attributes} />
+                <PartnerFlag country={country_flag?.data?.attributes} />
             )}
             {!!business_fields && <PartnerBusinessFields business_fields={business_fields} />}
         </Box>
