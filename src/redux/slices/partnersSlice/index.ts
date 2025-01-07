@@ -1,6 +1,7 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit'
 import { fetchBusinessFields, fetchPartners } from './utils'
 
+import { getPartnerData } from '../../services/partners'
 import { RootState } from '../../store'
 
 interface BusinessFieldFilter {
@@ -126,6 +127,15 @@ const partnersSlice = createSlice({
 export const selectAllPartners = (state: RootState) => state.partners.partners
 // select business fields
 export const selectBusinessFields = (state: RootState) => state.partners.businessFields
+
+// select partner data
+export const selectPartnerData = async (
+    state: RootState,
+    companyName: string,
+    cChainAddress: string,
+) => {
+    return await getPartnerData(state.partners.partners, companyName, cChainAddress)
+}
 
 export const {
     setCompanyNameFilter,

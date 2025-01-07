@@ -1,17 +1,17 @@
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
-import { PartnerDataType, PartnersResponseType } from '../../@types/partners'
 import {
     CONTRACTCMACCOUNTMANAGERADDRESSCAMINO,
     CONTRACTCMACCOUNTMANAGERADDRESSCOLUMBUS,
     ERC20_ABI,
 } from '../../constants/apps-consts'
+import { PartnerDataType, PartnersResponseType } from '../../@types/partners'
+import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 
-import { ethers } from 'ethers'
-import { ava as caminoClient } from 'wallet/caminoClient'
-import store from 'wallet/store'
+import { BusinessField } from '../../helpers/partnersReducer'
 import CMAccount from '../../helpers/CMAccountManagerModule#CMAccount.json'
 import CMAccountManager from '../../helpers/ManagerProxyModule#CMAccountManager.json'
-import { BusinessField } from '../../helpers/partnersReducer'
+import { ava as caminoClient } from 'wallet/caminoClient'
+import { ethers } from 'ethers'
+import store from 'wallet/store'
 
 const BASE_URLS = {
     dev: 'https://dev.strapi.camino.network/api/partners',
@@ -179,7 +179,7 @@ function getServiceName(fullName: unknown): string {
 export const getBaseUrl = () => {
     const currentPath = typeof window !== 'undefined' ? window.location.hostname : ''
     if (currentPath === 'localhost' || currentPath.includes('dev')) {
-        return BASE_URLS.prod
+        return BASE_URLS.dev
     } else if (currentPath) {
         return BASE_URLS.prod
     } else {
@@ -200,7 +200,7 @@ export const getBusinessBaseUrl = () => {
 
 export const groupedBusinessFields = (businessField: any) => {
     const grouped: Record<string, BusinessField> = {}
-    businessField.forEach(field => {
+    businessField?.forEach(field => {
         const [category, subCategory] = field?.attributes?.BusinessField.split(' / ')
 
         if (!grouped[category]) {
@@ -306,6 +306,34 @@ export const getPartnersWithServices = async (response: PartnersResponseType) =>
     )
 
     return { data: partnersWithValidatorStatus, meta: response.meta }
+}
+
+export const getPartnerData = (partners: any, companyName: string, cChainAddress: string) => {
+    const selectedNetwork = store.getters['Network/selectedNetwork']
+    const partnerData = partners.data?.filter(partner => {
+        if (cChainAddress && companyName) {
+            const selectedPartner = partner.attributes?.cChainAddresses?.find(
+                elem =>
+                    elem.cAddress?.toLowerCase() === cChainAddress &&
+                    elem.Network === selectedNetwork.name.toLowerCase(),
+            )
+            if (selectedPartner && partner.attributes?.companyName === companyName) {
+                return partner
+            }
+        } else if (cChainAddress) {
+            const selectedPartner = partner.attributes?.cChainAddresses?.find(
+                elem =>
+                    elem.cAddress?.toLowerCase() === cChainAddress &&
+                    elem.Network === selectedNetwork.name.toLowerCase(),
+            )
+            if (selectedPartner) {
+                return partner
+            }
+        }
+        return partner.attributes?.companyName === companyName
+    })[0]
+
+    return partnerData
 }
 
 export const partnersApi = createApi({
@@ -682,7 +710,7 @@ export const partnersApi = createApi({
                                 }))
                                 const isMatch = checkMatch({
                                     supportedResult:
-                                        arg.supportedResult.map(elem => elem.name) || [],
+                                        arg.supportedResult?.map(elem => elem.name) || [],
                                     wantedResult: arg.wantedResult.map(elem => elem.name) || [],
                                     supportedServices: parsedSupportedServices,
                                     wantedServices: parsedWantedServices,

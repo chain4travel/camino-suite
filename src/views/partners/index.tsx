@@ -31,7 +31,7 @@ interface PartnersListWrapperProps {
     children?: ReactNode
 }
 
-const PartnersListWrapper: React.FC<PartnersListWrapperProps> = ({
+export const PartnersListWrapper: React.FC<PartnersListWrapperProps> = ({
     isLoading,
     isFetching,
     children,
@@ -55,7 +55,7 @@ const PartnersListWrapper: React.FC<PartnersListWrapperProps> = ({
 const Partners = () => {
     const activeNetwork = useAppSelector(getActiveNetwork)
     const auth = useAppSelector(state => state.appConfig.isAuth)
-    const [state, dispatchPartnersActions] = useReducer(partnersReducer, initialStatePartners)
+    const [state] = useReducer(partnersReducer, initialStatePartners)
     const { isFetching } = useListPartnersQuery(state)
     const partnersSlice = useAppSelector(selectAllPartners)
     const { isLoading, error, filters } = useAppSelector(state => state.partners)
@@ -145,7 +145,7 @@ const Partners = () => {
 
     const content = (
         <>
-            <PartnersFilter state={state} dispatchPartnersActions={dispatchPartnersActions} />
+            <PartnersFilter />
 
             {auth && value?.contractCMAccountAddress && (
                 <>

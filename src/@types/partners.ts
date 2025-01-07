@@ -1,8 +1,12 @@
 export interface PartnerDataType {
     isValidator: boolean
+    isOnMessenger: boolean
     contractAddress: any
     id?: number
     attributes?: AttributesType
+    wantedServices?: any
+    supportedServices?: any
+    supportedCurrencies?: any
 }
 
 export interface AttributesType {

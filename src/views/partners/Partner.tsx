@@ -1,23 +1,23 @@
 import { Box, Button, Divider, IconButton, Typography, useTheme } from '@mui/material'
-
-import { mdiArrowLeft } from '@mdi/js'
-import Icon from '@mdi/react'
-import { ContentCopy } from '@mui/icons-material'
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
-import store from 'wallet/store'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import { displayFirstPartLongString, displaySecondPartLongString } from '../../utils/display-utils'
+import { fetchBusinessFields, fetchPartners } from '../../redux/slices/partnersSlice/utils'
+import { useAppDispatch, useAppSelector } from '../../hooks/reduxHooks'
+
+import { ContentCopy } from '@mui/icons-material'
+import Icon from '@mdi/react'
 import PartnerBusinessFields from '../../components/Partners/PartnerBusinessFields'
 import PartnerFlag from '../../components/Partners/PartnerFlag'
 import PartnerLogo from '../../components/Partners/PartnerLogo'
-import { usePartnerConfigurationContext } from '../../helpers/partnerConfigurationContext'
-import { usePartnerConfig } from '../../helpers/usePartnerConfig'
-import { useSmartContract } from '../../helpers/useSmartContract'
-import { useAppSelector } from '../../hooks/reduxHooks'
-import useWallet from '../../hooks/useWallet'
-import { useFetchPartnerDataQuery, useIsPartnerQuery } from '../../redux/services/partners'
-import { selectValidators } from '../../redux/slices/app-config'
+import { PartnersListWrapper } from '.'
 import { getActiveNetwork } from '../../redux/slices/network'
-import { displayFirstPartLongString, displaySecondPartLongString } from '../../utils/display-utils'
+import { mdiArrowLeft } from '@mdi/js'
+import { selectPartnerData } from '../../redux/selectors/partners'
+import store from 'wallet/store'
+import { usePartnerConfig } from '../../helpers/usePartnerConfig'
+import { usePartnerConfigurationContext } from '../../helpers/partnerConfigurationContext'
+import { useSmartContract } from '../../helpers/useSmartContract'
 
 const ContentField = ({ label, children }) => {
     return (
@@ -70,11 +70,15 @@ const Widget = ({
     supportedCurrencies,
     partner,
 }) => {
-    const { data, refetch } = useIsPartnerQuery({
-        cChainAddress: store?.state?.activeWallet?.ethAddress
-            ? '0x' + store?.state?.activeWallet?.ethAddress
-            : '',
-    })
+    const data = useAppSelector(rootState =>
+        selectPartnerData(
+            rootState,
+            'Andersen Group',
+            store?.state?.activeWallet?.ethAddress
+                ? '0x' + store?.state?.activeWallet?.ethAddress
+                : '',
+        ),
+    )
     const auth = useAppSelector(state => state.appConfig.isAuth)
     const value = useSmartContract()
     const navigate = useNavigate()
@@ -104,10 +108,6 @@ const Widget = ({
         ]
     }, [])
 
-    const activeNetwork = useAppSelector(getActiveNetwork)
-    useEffect(() => {
-        if (activeNetwork) refetch()
-    }, [activeNetwork])
     const partnerConf = usePartnerConfig()
 
     function checkMatch(data): boolean {
@@ -131,7 +131,7 @@ const Widget = ({
             partnerConf &&
             partnerConf.account &&
             CMAccountAddress.toLocaleLowerCase() !==
-                value?.contractCMAccountAddress.toLocaleLowerCase()
+                value?.contractCMAccountAddress?.toLocaleLowerCase()
         ) {
             const supportedResult = await partnerConf.getSupportedServices()
             const wantedResult = await partnerConf.getWantedServices()
@@ -213,11 +213,11 @@ const Widget = ({
     
     we are both on Camino Messenger.
     
-    You: ${partner.attributes.companyName}
+    You: ${partner?.attributes.companyName}
     Offer: ${partnerSupported}
     Want: ${partnerWanetd}
     Accept: ${otherPartnerAccept.join(', ')}
-    Messenger Address: ${partner.contractAddress}
+    Messenger Address: ${partner?.contractAddress}
     
     We: ${data.attributes.companyName}
     Offer: ${supportedServiceTypes}
@@ -226,7 +226,7 @@ const Widget = ({
     Messenger Address: ${value?.contractCMAccountAddress}` + bodyEnding
 
         const mailtoLink = `mailto:${
-            partner.attributes.contactEmail
+            partner?.attributes.contactEmail
         }?cc=foundation@camino.network&subject=${encodeURIComponent(
             subject,
         )}&body=${encodeURIComponent(body)}`
@@ -423,49 +423,29 @@ const Partner = () => {
     const theme = useTheme()
     const isDark = theme.palette.mode === 'dark'
     const value = useSmartContract()
-    const [isValidator, setIsValidator] = useState(false)
     const path = window.location.pathname
-    const {
-        data: partner,
-        isLoading,
-        isFetching,
-        error,
-        refetch,
-    } = useFetchPartnerDataQuery({
-        companyName: partnerID,
-        cChainAddress: !path.includes('partners/messenger-configuration')
-            ? ''
-            : value?.wallet?.address,
-    })
+    const { isLoading, error } = useAppSelector(state => state.partners)
     const navigate = useNavigate()
-    const { getRegisteredNode, getAddress } = useWallet()
-    const validators = useAppSelector(selectValidators)
-    const { state, dispatch } = usePartnerConfigurationContext()
+    const dispatch = useAppDispatch()
+    const { state } = usePartnerConfigurationContext()
+
+    const partner = useAppSelector(rootState =>
+        selectPartnerData(
+            rootState,
+            partnerID,
+            !path.includes('partners/messenger-configuration') ? '' : value?.wallet?.address,
+        ),
+    )
 
     const activeNetwork = useAppSelector(getActiveNetwork)
     useEffect(() => {
-        if (activeNetwork) refetch()
-    }, [activeNetwork])
+        if (activeNetwork) {
+            dispatch(fetchPartners())
+            dispatch(fetchBusinessFields())
+        }
+    }, [activeNetwork, dispatch])
 
-    const partnerPChainAddress = useMemo(() => {
-        let pAddress = partner?.attributes?.pChainAddresses.find(
-            elem => elem.Network === activeNetwork?.name?.toLowerCase(),
-        )?.pAddress
-        if (pAddress) return pAddress
-        return ''
-    }, [partner, validators])
-
-    const chackValidatorStatus = async (address?: string) => {
-        if (partnerPChainAddress) setIsValidator(false)
-        let nodeID = await getRegisteredNode(getAddress(address))
-        setIsValidator(!!validators.find(v => v.nodeID === nodeID))
-    }
-
-    useEffect(() => {
-        if (partnerPChainAddress) chackValidatorStatus(partnerPChainAddress)
-    }, [partnerPChainAddress])
-
-    if (error || (!partner && !isFetching && !isLoading)) {
+    if (error) {
         navigate('/partners')
         return null
     }
@@ -492,7 +472,10 @@ const Partner = () => {
         </>
     )
 
-    if (isLoading || isFetching || !partner) return <></>
+    // Show loading state while initial data is being fetched
+    if (isLoading) {
+        return <PartnersListWrapper isLoading={true} isFetching={false} />
+    }
     return (
         <Box sx={{ height: '100%', mb: '2rem' }}>
             {!path.includes('partners/messenger-configuration') && (
@@ -530,10 +513,10 @@ const Partner = () => {
                             flexWrap: 'wrap',
                         }}
                     >
-                        <Typography variant="h3">{partner.attributes.companyName}</Typography>
+                        <Typography variant="h3">{partner?.attributes.companyName}</Typography>
                     </Box>
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                        {!!isValidator && (
+                        {partner?.isValidator && (
                             <Box
                                 sx={{
                                     width: '96px',
@@ -555,7 +538,7 @@ const Partner = () => {
                                 </Typography>
                             </Box>
                         )}
-                        {!!partner.contractAddress && (
+                        {!!partner?.contractAddress && partner?.isOnMessenger && (
                             <Box
                                 sx={{
                                     width: '129px',
@@ -576,19 +559,19 @@ const Partner = () => {
                         )}
                     </Box>
                     <Typography variant="caption">
-                        {partner.attributes.companyShortDescription}
+                        {partner?.attributes.companyShortDescription}
                     </Typography>
                     <Box>
                         <PartnerBusinessFields
-                            business_fields={partner.attributes.business_fields}
+                            business_fields={partner?.attributes.business_fields}
                             isPartnerView={true}
                         />
                     </Box>
-                    {partner.attributes.companyLongDescription && (
+                    {partner?.attributes.companyLongDescription && (
                         <Box sx={{ paddingBottom: '1.5rem' }}>
                             <Typography variant="subtitle1">Description</Typography>
                             <Typography variant="body2" sx={{ marginTop: '.5rem' }}>
-                                {partner.attributes.companyLongDescription}
+                                {partner?.attributes.companyLongDescription}
                             </Typography>
                         </Box>
                     )}
@@ -645,7 +628,7 @@ const Partner = () => {
                             )}
                         </Box>
                     ) : (
-                        partner.contractAddress && (
+                        partner?.contractAddress && (
                             <Box
                                 sx={{
                                     display: 'flex',
@@ -678,7 +661,7 @@ const Partner = () => {
                                 <Widget
                                     wantedServices={partner.wantedServices}
                                     supportedServices={partner.supportedServices}
-                                    CMAccountAddress={partner.contractAddress}
+                                    CMAccountAddress={partner?.contractAddress}
                                     supportedCurrencies={partner.supportedCurrencies}
                                     partner={partner}
                                 />
@@ -708,19 +691,19 @@ const Partner = () => {
                             }}
                         >
                             <PartnerLogo
-                                colorLogo={partner.attributes.companyLogoColor}
-                                companyName={partner.attributes.companyName}
-                                logoBox={partner.attributes.logoBox}
+                                colorLogo={partner?.attributes.companyLogoColor}
+                                companyName={partner?.attributes.companyName}
+                                logoBox={partner?.attributes.logoBox}
                             />
                         </Box>
                         <Divider />
-                        {partner.attributes.country_flag.data.attributes && (
+                        {partner?.attributes.country_flag.data?.attributes && (
                             <ContentField label="company country">
-                                {partner.attributes.country_flag &&
-                                    partner.attributes.country_flag.data?.attributes && (
+                                {partner?.attributes.country_flag &&
+                                    partner?.attributes.country_flag.data?.attributes && (
                                         <PartnerFlag
                                             country={
-                                                partner.attributes.country_flag.data.attributes
+                                                partner?.attributes.country_flag.data?.attributes
                                             }
                                         />
                                     )}
@@ -750,12 +733,12 @@ const Partner = () => {
                         )}
 
                         <Divider />
-                        {partner.attributes.contactEmail && (
+                        {partner?.attributes.contactEmail && (
                             <ContentField label="Contact Email">
                                 <Link
                                     rel="noopener noreferrer"
                                     style={{ textDecoration: 'none' }}
-                                    to={'mailto:' + partner.attributes.contactEmail}
+                                    to={'mailto:' + partner?.attributes.contactEmail}
                                 >
                                     <Typography
                                         sx={{
@@ -766,18 +749,18 @@ const Partner = () => {
                                             lineHeight: '150%',
                                         }}
                                     >
-                                        {partner.attributes.contactEmail}
+                                        {partner?.attributes.contactEmail}
                                     </Typography>
                                 </Link>
                             </ContentField>
                         )}
                         <Divider />
-                        {partner.attributes.contactPhone && (
+                        {partner?.attributes.contactPhone && (
                             <ContentField label="Contact Phone">
                                 <Link
                                     rel="noopener noreferrer"
                                     style={{ textDecoration: 'none' }}
-                                    to={'tel:' + partner.attributes.contactPhone}
+                                    to={'tel:' + partner?.attributes.contactPhone}
                                 >
                                     <Typography
                                         sx={{
@@ -788,19 +771,19 @@ const Partner = () => {
                                             lineHeight: '150%',
                                         }}
                                     >
-                                        {partner.attributes.contactPhone}
+                                        {partner?.attributes.contactPhone}
                                     </Typography>
                                 </Link>
                             </ContentField>
                         )}
                         <Divider />
-                        {partner.attributes.companyWebsite && (
+                        {partner?.attributes.companyWebsite && (
                             <ContentField label="Website">
                                 <Link
                                     rel="noopener noreferrer"
                                     target="_blank"
                                     style={{ textDecoration: 'none' }}
-                                    to={partner.attributes.companyWebsite}
+                                    to={partner?.attributes.companyWebsite}
                                 >
                                     <Typography
                                         sx={{
@@ -811,7 +794,7 @@ const Partner = () => {
                                             lineHeight: '150%',
                                         }}
                                     >
-                                        {partner.attributes.companyWebsite}
+                                        {partner?.attributes.companyWebsite}
                                     </Typography>
                                 </Link>
                             </ContentField>

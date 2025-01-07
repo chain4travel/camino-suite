@@ -1,6 +1,7 @@
 import { RootState } from '../store'
 import { StatePartnersType } from '../../helpers/partnersReducer'
 import { createSelector } from '@reduxjs/toolkit'
+import { getPartnerData } from '../services/partners'
 
 export const selectFilteredPartners = createSelector(
     [
@@ -62,5 +63,24 @@ export const selectFilteredPartners = createSelector(
             meta: partnersResponse.meta,
         }
         return result
+    },
+)
+
+// select partner data based on companyName and cChainAddress
+export const selectPartnerData = createSelector(
+    [
+        (_state: RootState) => {
+            return _state.partners.partners
+        },
+        (state: RootState, companyName: string, cChainAddress: string) => {
+            return { companyName, cChainAddress }
+        },
+    ],
+    (partners, { companyName, cChainAddress }) => {
+        if (!partners) {
+            return null
+        }
+
+        return getPartnerData(partners, companyName, cChainAddress)
     },
 )

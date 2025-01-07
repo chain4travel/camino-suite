@@ -71,19 +71,19 @@ const BusinessFieldFilter = () => {
                 alignItems: 'center',
                 flexWrap: 'wrap',
                 position: 'relative',
-                width: '220px',
             }}
         >
             <Select
                 multiple
-                value={['default']} // Track selected fields dynamically
-                onChange={() => {}} // No-op since we're handling state manually
+                value={['default']}
+                onChange={() => {}}
                 sx={{
-                    flex: '1 1 220px',
+                    flex: '1 1 auto',
                     padding: '0',
                     borderRadius: '12px',
                     paddingRight: '0px !important',
-                    maxWidth: { xs: '100%', sm: '50%', md: '220px' },
+                    minWidth: '220px',
+                    maxWidth: '100%',
                     overflow: 'hidden',
                     '.MuiSelect-select ': {
                         boxSizing: 'border-box',
@@ -93,12 +93,28 @@ const BusinessFieldFilter = () => {
                         alignItems: 'center',
                         border: theme => `solid 1px ${theme.palette.card.border}`,
                     },
-                    '& .MuiPopover-paper ul': {
-                        paddingRight: 'unset !important',
-                        width: '100% !important',
-                    },
                     '.MuiOutlinedInput-notchedOutline': {
                         border: 'none !important',
+                    },
+                }}
+                MenuProps={{
+                    PaperProps: {
+                        sx: {
+                            maxHeight: '400px',
+                            width: 'auto !important',
+                            maxWidth: '400px !important',
+                            '& .MuiMenuItem-root': {
+                                width: '100%',
+                            },
+                        },
+                    },
+                    anchorOrigin: {
+                        vertical: 'bottom',
+                        horizontal: 'left',
+                    },
+                    transformOrigin: {
+                        vertical: 'top',
+                        horizontal: 'left',
                     },
                 }}
                 renderValue={() => (
@@ -108,14 +124,6 @@ const BusinessFieldFilter = () => {
                             : 'Business fields'}
                     </Typography>
                 )}
-                MenuProps={{
-                    PaperProps: {
-                        style: {
-                            maxHeight: '400px',
-                            overflow: 'auto',
-                        },
-                    },
-                }}
             >
                 {businessFields.map((group, groupIndex) => [
                     <MenuItem

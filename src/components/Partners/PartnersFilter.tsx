@@ -10,9 +10,10 @@ import BusinessFieldFilter from './BusinessFieldFilter'
 import { REGISTER_PARTNER_URL } from '../../constants/route-paths'
 import SearchInput from './SearchInput'
 import { getActiveNetwork } from '../../redux/slices/network'
+import { selectPartnerData } from '../../redux/selectors/partners'
+import store from 'wallet/store'
 import { useAppSelector } from '../../hooks/reduxHooks'
 import { useDispatch } from 'react-redux'
-import { useIsPartnerQuery } from '../../redux/services/partners'
 
 const PartnersFilter: React.FC = () => {
     const dispatch = useDispatch()
@@ -33,11 +34,15 @@ const PartnersFilter: React.FC = () => {
     }
 
     const activeNetwork = useAppSelector(getActiveNetwork)
-    const { data: partnerData } = useIsPartnerQuery({
-        cChainAddress: useAppSelector(state =>
-            state.activeWallet?.ethAddress ? '0x' + state.activeWallet.ethAddress : '',
+    const partnerData = useAppSelector(rootState =>
+        selectPartnerData(
+            rootState,
+            '',
+            store?.state?.activeWallet?.ethAddress
+                ? '0x' + store?.state?.activeWallet?.ethAddress
+                : '',
         ),
-    })
+    )
 
     const partnerCChainAddress = useMemo(() => {
         const cAddress = partnerData?.attributes?.cChainAddresses.find(

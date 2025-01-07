@@ -1,13 +1,15 @@
 import { Box, Typography } from '@mui/material'
-import React, { useEffect, useMemo } from 'react'
-import { useNavigate } from 'react-router'
-import store from 'wallet/store'
+import React, { useMemo } from 'react'
+
 import PartnerCard from '../../components/Partners/PartnerCard'
+import { getActiveNetwork } from '../../redux/slices/network'
+import { selectPartnerData } from '../../redux/selectors/partners'
+import store from 'wallet/store'
+import { useAppSelector } from '../../hooks/reduxHooks'
+import { useListMatchingPartnersQuery } from '../../redux/services/partners'
+import { useNavigate } from 'react-router'
 import { usePartnerConfigurationContext } from '../../helpers/partnerConfigurationContext'
 import { useSmartContract } from '../../helpers/useSmartContract'
-import { useAppSelector } from '../../hooks/reduxHooks'
-import { useIsPartnerQuery, useListMatchingPartnersQuery } from '../../redux/services/partners'
-import { getActiveNetwork } from '../../redux/slices/network'
 
 const MatchingPartners = ({ state }) => {
     const value = usePartnerConfigurationContext()
@@ -16,17 +18,20 @@ const MatchingPartners = ({ state }) => {
         isLoading,
         isFetching,
         error,
-        refetch,
     } = useListMatchingPartnersQuery({
         ...state,
         supportedResult: value?.state?.stepsConfig[1]?.services,
         wantedResult: value?.state?.stepsConfig[2]?.services,
     })
-    const { data, refetch: refetchIsPartner } = useIsPartnerQuery({
-        cChainAddress: store?.state?.activeWallet?.ethAddress
-            ? '0x' + store?.state?.activeWallet?.ethAddress
-            : '',
-    })
+    const data = useAppSelector(rootState =>
+        selectPartnerData(
+            rootState,
+            'Andersen Group',
+            store?.state?.activeWallet?.ethAddress
+                ? '0x' + store?.state?.activeWallet?.ethAddress
+                : '',
+        ),
+    )
     const activeNetwork = useAppSelector(getActiveNetwork)
     const sc = useSmartContract()
     const matchingPartnersFiltred = useMemo(() => {
@@ -47,12 +52,7 @@ const MatchingPartners = ({ state }) => {
         if (cAddress) return cAddress
         return ''
     }, [data])
-    useEffect(() => {
-        if (activeNetwork) {
-            refetch()
-            refetchIsPartner()
-        }
-    }, [activeNetwork])
+
     const navigate = useNavigate()
     if (
         isLoading ||
