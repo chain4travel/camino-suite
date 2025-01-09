@@ -1,17 +1,18 @@
 import { Box, Button, Link, Toolbar, Typography } from '@mui/material'
-
-import { Paper } from '@mui/material'
-import React, { useEffect, useMemo } from 'react'
-import { Helmet } from 'react-helmet-async'
 import { Navigate, Outlet, useNavigate, useParams } from 'react-router'
-import store from 'wallet/store'
+import React, { useEffect, useMemo } from 'react'
+import { fetchBusinessFields, fetchPartners } from '../redux/slices/partnersSlice/utils'
+import { useAppDispatch, useAppSelector } from '../hooks/reduxHooks'
+
+import { Helmet } from 'react-helmet-async'
+import Links from '../views/settings/Links'
+import { Paper } from '@mui/material'
 import { PartnerConfigurationProvider } from '../helpers/partnerConfigurationContext'
 import { SmartContractProvider } from '../helpers/useSmartContract'
-import { useAppSelector } from '../hooks/reduxHooks'
-import { useFetchPartnerDataQuery, useIsPartnerQuery } from '../redux/services/partners'
-import { getWalletName } from '../redux/slices/app-config'
 import { getActiveNetwork } from '../redux/slices/network'
-import Links from '../views/settings/Links'
+import { getWalletName } from '../redux/slices/app-config'
+import { selectPartnerData } from '../redux/selectors/partners'
+import store from 'wallet/store'
 
 const ClaimProfile = () => {
     const generateEmail = () => {
@@ -75,24 +76,29 @@ const ClaimProfile = () => {
 
 const PartnersLayout = () => {
     const path = window.location.pathname
-    const { data, isLoading, refetch } = useIsPartnerQuery({
-        cChainAddress: store?.state?.activeWallet?.ethAddress
-            ? '0x' + store?.state?.activeWallet?.ethAddress
-            : '',
-    })
+    const data = useAppSelector(rootState =>
+        selectPartnerData(
+            rootState,
+            '',
+            store?.state?.activeWallet?.ethAddress
+                ? '0x' + store?.state?.activeWallet?.ethAddress
+                : '',
+        ),
+    )
     let { partnerID } = useParams()
-    const { data: partner, refetch: refetchPartenrData } = useFetchPartnerDataQuery({
-        companyName: partnerID,
-    })
+    const partner = useAppSelector(rootState => selectPartnerData(rootState, partnerID, ''))
     const walletName = useAppSelector(getWalletName)
     const navigate = useNavigate()
+    const dispatch = useAppDispatch()
     const activeNetwork = useAppSelector(getActiveNetwork)
+
     useEffect(() => {
         if (activeNetwork) {
-            refetch()
-            refetchPartenrData()
+            dispatch(fetchPartners())
+            dispatch(fetchBusinessFields())
         }
     }, [activeNetwork])
+
     const auth = useAppSelector(state => state.appConfig.isAuth)
     useEffect(() => {
         if (
@@ -115,7 +121,6 @@ const PartnersLayout = () => {
         if (cAddress) return cAddress
         return ''
     }, [data])
-    if (isLoading) return <></>
     if (
         path.includes('partners/messenger-configuration') &&
         !store.state.isAuth &&

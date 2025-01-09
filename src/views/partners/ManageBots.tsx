@@ -1,24 +1,28 @@
 import { Box, Button, CircularProgress, TextField, Typography } from '@mui/material'
-import { ethers } from 'ethers'
 import React, { useEffect, useState } from 'react'
-import { useNavigate, useParams } from 'react-router'
-import Alert from '../../components/Alert'
-import { usePartnerConfig } from '../../helpers/usePartnerConfig'
+import { fetchBusinessFields, fetchPartners } from '../../redux/slices/partnersSlice/utils'
 import { useAppDispatch, useAppSelector } from '../../hooks/reduxHooks'
-import { useFetchPartnerDataQuery } from '../../redux/services/partners'
-import { updateNotificationStatus } from '../../redux/slices/app-config'
-import { getActiveNetwork } from '../../redux/slices/network'
+import { useNavigate, useParams } from 'react-router'
+
+import Alert from '../../components/Alert'
 import { Configuration } from './Configuration'
+import { ethers } from 'ethers'
+import { getActiveNetwork } from '../../redux/slices/network'
+import { selectPartnerData } from '../../redux/selectors/partners'
+import { updateNotificationStatus } from '../../redux/slices/app-config'
+import { usePartnerConfig } from '../../helpers/usePartnerConfig'
 
 export const BasicManageBots = () => {
     const { partnerID } = useParams()
-    const { data: partner, refetch } = useFetchPartnerDataQuery({
-        companyName: partnerID,
-    })
+    const dispatch = useAppDispatch()
+    const partner = useAppSelector(rootState => selectPartnerData(rootState, partnerID, ''))
     const activeNetwork = useAppSelector(getActiveNetwork)
     useEffect(() => {
-        if (activeNetwork) refetch()
-    }, [activeNetwork])
+        if (activeNetwork) {
+            dispatch(fetchPartners())
+            dispatch(fetchBusinessFields())
+        }
+    }, [activeNetwork, dispatch])
     const navigate = useNavigate()
     if (!partner) return <></>
 

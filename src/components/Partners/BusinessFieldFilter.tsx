@@ -1,34 +1,33 @@
-import { mdiCloseCircleOutline } from '@mdi/js'
-import Icon from '@mdi/react'
 import { Box, Checkbox, Typography } from '@mui/material'
+import React, { useState } from 'react'
+import {
+    handleBusinessFieldToggle,
+    handleCategoryToggleHelper,
+    handleResetAllFields,
+} from '../../helpers/partnersReducer'
+import { selectBusinessFields, updateBusinessField } from '../../redux/slices/partnersSlice'
+import { useAppDispatch, useAppSelector } from '../../hooks/reduxHooks'
+
+import Icon from '@mdi/react'
 import ListItemText from '@mui/material/ListItemText'
 import MenuItem from '@mui/material/MenuItem'
 import Select from '@mui/material/Select'
-import React, { useState } from 'react'
-import { ActionType, partnersActions, StatePartnersType } from '../../helpers/partnersReducer'
+import { mdiCloseCircleOutline } from '@mdi/js'
 
-interface BusinessFieldFilterProps {
-    state: StatePartnersType
-    dispatchPartnersActions: React.Dispatch<ActionType>
-}
-
-const BusinessFieldFilter: React.FC<BusinessFieldFilterProps> = ({
-    state,
-    dispatchPartnersActions,
-}) => {
+const BusinessFieldFilter = () => {
+    const dispatch = useAppDispatch()
+    const businessFields = useAppSelector(selectBusinessFields)
     const [selectedFields, setSelectedFields] = useState<string[]>([])
 
     // Toggle individual field
     const handleFieldToggle = (selectedField: string) => {
-        const newSelectedFields = selectedFields.includes(selectedField)
-            ? selectedFields.filter(field => field !== selectedField)
-            : [...selectedFields, selectedField]
+        setSelectedFields(prevSelectedFields => {
+            const newSelectedFields = prevSelectedFields.includes(selectedField)
+                ? prevSelectedFields.filter(field => field !== selectedField)
+                : [...prevSelectedFields, selectedField]
 
-        setSelectedFields(newSelectedFields)
-
-        dispatchPartnersActions({
-            type: partnersActions.UPDATE_BUSINESS_FIELD,
-            payload: selectedField,
+            dispatch(updateBusinessField(handleBusinessFieldToggle(businessFields, selectedField)))
+            return newSelectedFields
         })
     }
 
@@ -36,7 +35,7 @@ const BusinessFieldFilter: React.FC<BusinessFieldFilterProps> = ({
     const handleCategoryToggle = (category: string) => {
         // Find all fields in the category
         const categoryFields =
-            state.businessField.find(group => group.category === category)?.fields || []
+            businessFields.find(group => group.category === category)?.fields || []
 
         // Check if all fields in the category are already selected
         const allFieldsInCategorySelected = categoryFields.every(field =>
@@ -56,17 +55,12 @@ const BusinessFieldFilter: React.FC<BusinessFieldFilterProps> = ({
               ]
 
         setSelectedFields(updatedSelectedFields)
-        dispatchPartnersActions({
-            type: partnersActions.TOGGLE_CATEGORY,
-            payload: category,
-        })
+        dispatch(updateBusinessField(handleCategoryToggleHelper(businessFields, category)))
     }
 
     const resetAllFields = () => {
         setSelectedFields([]) // Clear selected fields from the state
-        dispatchPartnersActions({
-            type: partnersActions.RESET_ALL_BUSINESS_FIELDS,
-        })
+        dispatch(updateBusinessField(handleResetAllFields(businessFields)))
     }
 
     return (
@@ -77,19 +71,19 @@ const BusinessFieldFilter: React.FC<BusinessFieldFilterProps> = ({
                 alignItems: 'center',
                 flexWrap: 'wrap',
                 position: 'relative',
-                width: '220px',
             }}
         >
             <Select
                 multiple
-                value={['default']} // Track selected fields dynamically
-                onChange={() => {}} // No-op since we're handling state manually
+                value={['default']}
+                onChange={() => {}}
                 sx={{
-                    flex: '1 1 220px',
+                    flex: '1 1 auto',
                     padding: '0',
                     borderRadius: '12px',
                     paddingRight: '0px !important',
-                    maxWidth: { xs: '100%', sm: '50%', md: '220px' },
+                    minWidth: '220px',
+                    maxWidth: '100%',
                     overflow: 'hidden',
                     '.MuiSelect-select ': {
                         boxSizing: 'border-box',
@@ -99,12 +93,28 @@ const BusinessFieldFilter: React.FC<BusinessFieldFilterProps> = ({
                         alignItems: 'center',
                         border: theme => `solid 1px ${theme.palette.card.border}`,
                     },
-                    '& .MuiPopover-paper ul': {
-                        paddingRight: 'unset !important',
-                        width: '100% !important',
-                    },
                     '.MuiOutlinedInput-notchedOutline': {
                         border: 'none !important',
+                    },
+                }}
+                MenuProps={{
+                    PaperProps: {
+                        sx: {
+                            maxHeight: '400px',
+                            width: 'auto !important',
+                            maxWidth: '400px !important',
+                            '& .MuiMenuItem-root': {
+                                width: '100%',
+                            },
+                        },
+                    },
+                    anchorOrigin: {
+                        vertical: 'bottom',
+                        horizontal: 'left',
+                    },
+                    transformOrigin: {
+                        vertical: 'top',
+                        horizontal: 'left',
                     },
                 }}
                 renderValue={() => (
@@ -114,16 +124,8 @@ const BusinessFieldFilter: React.FC<BusinessFieldFilterProps> = ({
                             : 'Business fields'}
                     </Typography>
                 )}
-                MenuProps={{
-                    PaperProps: {
-                        style: {
-                            maxHeight: '400px',
-                            overflow: 'auto',
-                        },
-                    },
-                }}
             >
-                {state?.businessField?.map((group, groupIndex) => [
+                {businessFields.map((group, groupIndex) => [
                     <MenuItem
                         key={`category-${groupIndex}`}
                         onClick={() => handleCategoryToggle(group.category)} // Toggle category

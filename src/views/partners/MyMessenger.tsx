@@ -1,6 +1,3 @@
-import { mdiClose } from '@mdi/js'
-import Icon from '@mdi/react'
-import { ContentCopy, RefreshOutlined } from '@mui/icons-material'
 import {
     Box,
     Button,
@@ -16,23 +13,28 @@ import {
     TextField,
     Typography,
 } from '@mui/material'
-import { ethers } from 'ethers'
+import { ContentCopy, RefreshOutlined } from '@mui/icons-material'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
-import { useNavigate } from 'react-router'
-import store from 'wallet/store'
+import { fetchBusinessFields, fetchPartners } from '../../redux/slices/partnersSlice/utils'
+import { useAppDispatch, useAppSelector } from '../../hooks/reduxHooks'
+
 import Alert from '../../components/Alert'
+import { Configuration } from './Configuration'
 import DialogAnimate from '../../components/Animate/DialogAnimate'
-import MainButton from '../../components/MainButton'
 import { ERC20_BALANCE_ABI } from '../../constants/apps-consts'
-import { usePartnerConfigurationContext } from '../../helpers/partnerConfigurationContext'
+import Icon from '@mdi/react'
+import MainButton from '../../components/MainButton'
+import { ethers } from 'ethers'
+import { getActiveNetwork } from '../../redux/slices/network'
+import { mdiClose } from '@mdi/js'
+import { selectPartnerData } from '../../redux/selectors/partners'
+import store from 'wallet/store'
+import { updateNotificationStatus } from '../../redux/slices/app-config'
+import { useNavigate } from 'react-router'
 import { usePartnerConfig } from '../../helpers/usePartnerConfig'
+import { usePartnerConfigurationContext } from '../../helpers/partnerConfigurationContext'
 import { useSmartContract } from '../../helpers/useSmartContract'
 import useWalletBalance from '../../helpers/useWalletBalance'
-import { useAppDispatch, useAppSelector } from '../../hooks/reduxHooks'
-import { useFetchPartnerDataQuery } from '../../redux/services/partners'
-import { updateNotificationStatus } from '../../redux/slices/app-config'
-import { getActiveNetwork } from '../../redux/slices/network'
-import { Configuration } from './Configuration'
 
 const AmountInput = ({ amount, onAmountChange, onMaxAmountClick, maxAmount }) => {
     const handleChange = e => {
@@ -348,14 +350,15 @@ const MyMessenger = () => {
         removeSupportedToken,
         getListOfBots,
     } = usePartnerConfig()
-    const { data: partner, refetch } = useFetchPartnerDataQuery({
-        companyName: '',
-        cChainAddress: wallet.address,
-    })
+    const partner = useAppSelector(rootState => selectPartnerData(rootState, '', wallet.address))
     const activeNetwork = useAppSelector(getActiveNetwork)
     useEffect(() => {
-        if (activeNetwork) refetch()
-    }, [activeNetwork])
+        if (activeNetwork) {
+            dispatch(fetchPartners())
+            dispatch(fetchBusinessFields())
+        }
+    }, [activeNetwork, dispatch])
+
     const appDispatch = useAppDispatch()
     const handleOpenModal = token => {
         setOpen(true)

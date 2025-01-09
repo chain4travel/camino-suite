@@ -1,16 +1,16 @@
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
-import { ethers } from 'ethers'
-import { ava as caminoClient } from 'wallet/caminoClient'
-import store from 'wallet/store'
-import { PartnerDataType, PartnersResponseType } from '../../@types/partners'
 import {
     CONTRACTCMACCOUNTMANAGERADDRESSCAMINO,
     CONTRACTCMACCOUNTMANAGERADDRESSCOLUMBUS,
     ERC20_ABI,
 } from '../../constants/apps-consts'
+
+import { BusinessField } from '../../helpers/partnersReducer'
 import CMAccount from '../../helpers/CMAccountManagerModule#CMAccount.json'
 import CMAccountManager from '../../helpers/ManagerProxyModule#CMAccountManager.json'
-import { BusinessField, StatePartnersType } from '../../helpers/partnersReducer'
+import { PartnersResponseType } from '../../@types/partners'
+import { ava as caminoClient } from 'wallet/caminoClient'
+import { ethers } from 'ethers'
+import store from 'wallet/store'
 
 const BASE_URLS = {
     dev: 'https://dev.strapi.camino.network/api/partners',
@@ -116,7 +116,6 @@ async function getContractMappings(): Promise<Map<string, string>> {
             }),
         )
     }
-
     const results = await Promise.all(promises)
     results.forEach(({ role, creator }) => {
         mappings.set(role.toLowerCase(), creator.toLowerCase())
@@ -147,10 +146,10 @@ function checkMatch(data): boolean {
     const wantedResultSet = new Set(data.wantedResult.map(getServiceName))
 
     const wantedServicesSet = new Set(
-        data.wantedServices.map(service => getServiceName(service.name)),
+        data.wantedServices?.map(service => getServiceName(service.name)),
     )
     const supportedServicesSet = new Set(
-        data.supportedServices.map(service => getServiceName(service.name)),
+        data.supportedServices?.map(service => getServiceName(service.name)),
     )
 
     if (data.supportedResult.length === 0) {
@@ -176,7 +175,7 @@ function getServiceName(fullName: unknown): string {
     return parts[parts.length - 1] || ''
 }
 
-const getBaseUrl = () => {
+export const getBaseUrl = () => {
     const currentPath = typeof window !== 'undefined' ? window.location.hostname : ''
     if (currentPath === 'localhost' || currentPath.includes('dev')) {
         return BASE_URLS.dev
@@ -187,7 +186,7 @@ const getBaseUrl = () => {
     }
 }
 
-const getBusinessBaseUrl = () => {
+export const getBusinessBaseUrl = () => {
     const currentPath = typeof window !== 'undefined' ? window.location.hostname : ''
     if (currentPath === 'localhost' || currentPath.includes('dev')) {
         return BUSINESS_BASE_URLS.dev + '?pagination[pageSize]=1000'
@@ -200,7 +199,7 @@ const getBusinessBaseUrl = () => {
 
 export const groupedBusinessFields = (businessField: any) => {
     const grouped: Record<string, BusinessField> = {}
-    businessField.forEach(field => {
+    businessField?.forEach(field => {
         const [category, subCategory] = field?.attributes?.BusinessField.split(' / ')
 
         if (!grouped[category]) {
@@ -220,513 +219,136 @@ export const groupedBusinessFields = (businessField: any) => {
     return Object.values(grouped)
 }
 
-export const partnersApi = createApi({
-    reducerPath: 'partnersApi',
-    baseQuery: fetchBaseQuery({ baseUrl: '/' }),
-    endpoints: build => ({
-        listPartners: build.query<any, StatePartnersType>({
-            query: ({ page, companyName, businessField, validators, onMessenger }) => {
-                const baseUrl = getBaseUrl()
+export const getPartnersWithServices = async (response: PartnersResponseType) => {
+    const selectedNetwork = store.getters['Network/selectedNetwork']
+    const networkName = selectedNetwork.name.toLowerCase()
 
-                let query = '?populate=*'
-                const selectedNetwork = store.getters['Network/selectedNetwork']
-                if (!isNaN(page) && !onMessenger && !validators) {
-                    query += `&sort[0]=companyName:asc&pagination[page]=${page}&pagination[pageSize]=12`
-                }
-                if (businessField) {
-                    let filterWith = businessField
-                        .flatMap(elem => elem.fields.filter(field => field.active))
-                        .map(field => field.fullName)
-                    if (filterWith?.length > 0) {
-                        filterWith.forEach((element, index) => {
-                            query += `&filters[$or][${index}][business_fields][BusinessField][$eq]=${element}`
-                        })
+    if (networkName !== 'columbus' && networkName !== 'camino') {
+        return response
+    }
+
+    const providerUrl = `${selectedNetwork.protocol}://${selectedNetwork.ip}:${selectedNetwork.port}/ext/bc/C/rpc`
+    const provider = new ethers.JsonRpcProvider(providerUrl)
+
+    const contractMappings = await getContractMappings()
+    const partnersWithServices = await Promise.all(
+        response.data.map(async partner => {
+            const partnerCChainAddress = partner?.attributes?.cChainAddresses?.find(
+                elem => elem.Network === networkName,
+            )
+
+            if (partnerCChainAddress?.cAddress) {
+                const contractAddress = Array.from(contractMappings.entries()).find(
+                    ([_, partnerAddress]) =>
+                        partnerAddress.toLowerCase() ===
+                        partnerCChainAddress.cAddress.toLowerCase(),
+                )?.[0]
+
+                if (contractAddress) {
+                    const { supportedServices, wantedServices, bots, supportedCurrencies } =
+                        await fetchContractServices(contractAddress, provider)
+
+                    const parsedSupportedServices =
+                        supportedServices?.[0]?.map((service, index) => ({
+                            name: service,
+                            fee: ethers.formatEther(supportedServices[1][index][0]),
+                            rackRates: supportedServices[1][index][1],
+                            capabilities: supportedServices[1][index][2],
+                        })) || []
+
+                    const parsedWantedServices = wantedServices.map(elem => ({
+                        name: elem,
+                    }))
+
+                    return {
+                        ...partner,
+                        supportedServices: parsedSupportedServices,
+                        wantedServices: parsedWantedServices,
+                        contractAddress,
+                        bots,
+                        supportedCurrencies,
+                        isOnMessenger: Boolean(partnerCChainAddress?.cAddress),
                     }
                 }
-                if (companyName) {
-                    query += `&filters[companyName][$contains]=${companyName}`
-                }
-                if (validators) {
-                    query += `&sort[0]=companyName:asc&pagination[page]=${0}&pagination[pageSize]=100&filters[$and][0][pChainAddresses][pAddress][$notNull]=true&filters[$and][1][pChainAddresses][Network][$eq]=${selectedNetwork.name.toLowerCase()}`
-                }
-                if (onMessenger === true) {
-                    query += `&sort[0]=companyName:asc&_limit=-1&filters[$and][0][cChainAddresses][cAddress][$notNull]=true&filters[$and][1][cChainAddresses][Network][$eq]=${selectedNetwork.name.toLowerCase()}`
-                }
+            }
 
-                return {
-                    url: `${baseUrl}${query}`,
-                    method: 'GET',
-                    params: {
-                        onMessenger: onMessenger,
-                        validators: validators,
-                    },
-                }
-            },
-            async transformResponse(response: PartnersResponseType, meta, arg) {
-                const selectedNetwork = store.getters['Network/selectedNetwork']
-                if (
-                    selectedNetwork.name.toLowerCase() !== 'columbus' &&
-                    selectedNetwork.name.toLowerCase() !== 'camino'
-                )
-                    return response
-
-                const providerUrl = `${selectedNetwork.protocol}://${selectedNetwork.ip}:${selectedNetwork.port}/ext/bc/C/rpc`
-                const provider = new ethers.JsonRpcProvider(providerUrl)
-
-                const contractMappings = await getContractMappings()
-                const onMessenger = arg.onMessenger
-                const onlyValidators = arg.validators
-
-                const partnersWithServices = await Promise.all(
-                    response.data.map(async partner => {
-                        let partnerCChainAddress = partner?.attributes?.cChainAddresses?.find(
-                            elem => elem.Network === selectedNetwork.name.toLowerCase(),
-                        )
-                        if (partnerCChainAddress?.cAddress) {
-                            const contractAddress = Array.from(contractMappings.entries()).find(
-                                ([_, partnerAddress]) =>
-                                    partnerAddress.toLowerCase() ===
-                                    partnerCChainAddress?.cAddress?.toLowerCase(),
-                            )?.[0]
-
-                            if (contractAddress) {
-                                const {
-                                    supportedServices,
-                                    wantedServices,
-                                    bots,
-                                    supportedCurrencies,
-                                } = await fetchContractServices(contractAddress, provider)
-
-                                let parsedSupportedServices = []
-                                if (
-                                    supportedServices &&
-                                    supportedServices.length > 0 &&
-                                    supportedServices[0]
-                                ) {
-                                    parsedSupportedServices = supportedServices[0]
-                                        .map((service, index) => {
-                                            let capabilities = supportedServices[1][index][2].map(
-                                                elem => elem,
-                                            )
-                                            return {
-                                                name: service,
-                                                fee: ethers.formatEther(
-                                                    supportedServices[1][index][0],
-                                                ),
-                                                rackRates: supportedServices[1][index][1],
-                                                capabilities: capabilities,
-                                            }
-                                        })
-                                        .filter(service => service !== null)
-                                }
-
-                                const parsedWantedServices = wantedServices.map(elem => ({
-                                    name: elem,
-                                }))
-
-                                return {
-                                    ...partner,
-                                    supportedServices: parsedSupportedServices,
-                                    wantedServices: parsedWantedServices,
-                                    contractAddress,
-                                    bots,
-                                    supportedCurrencies,
-                                    isOnMessenger: Boolean(partnerCChainAddress?.cAddress),
-                                }
-                            }
-                        }
-                        // Return the partner without additional details if there's no contractAddress
-                        return onMessenger
-                            ? null
-                            : {
-                                  ...partner,
-                                  supportedServices: [],
-                                  wantedServices: [],
-                                  contractAddress: '',
-                                  bots: [],
-                                  supportedCurrencies: {},
-                                  isOnMessenger: false,
-                              }
-                    }),
-                )
-                // Filter out null values only if onMessenger is true
-                const filteredPartners = onMessenger
-                    ? partnersWithServices.filter(partner => partner !== null)
-                    : partnersWithServices
-                let validators = (await caminoClient.PChain().getCurrentValidators()).validators
-                let partnersWithValidatorStatus = await Promise.all(
-                    filteredPartners.map(async p => {
-                        let pChainAddress = p.attributes.pChainAddresses.find(
-                            elem =>
-                                elem.Network.toLowerCase() === selectedNetwork.name.toLowerCase(),
-                        )
-                        if (pChainAddress?.pAddress) {
-                            try {
-                                let nodeID = await getRegisteredNode(
-                                    getAddress(pChainAddress?.pAddress),
-                                )
-                                let isValidator = !!validators.find(v => v.nodeID === nodeID)
-                                if (isValidator) return { ...p, isValidator: true }
-                                else return { ...p, isValidator: false }
-                            } catch (error) {
-                                return { ...p, isValidator: false }
-                            }
-                        }
-                        return { ...p, isValidator: false }
-                    }),
-                )
-                const filteredValidatorsPartners = onlyValidators
-                    ? partnersWithValidatorStatus.filter(partner => partner.isValidator)
-                    : partnersWithValidatorStatus
-                // Update the meta information to reflect the new number of results
-                const updatedMeta = {
-                    ...response.meta,
-                    pagination: {
-                        ...response.meta.pagination,
-                        total:
-                            onMessenger || onlyValidators
-                                ? filteredValidatorsPartners.length
-                                : response.meta.pagination.total,
-                    },
-                }
-                return { data: filteredValidatorsPartners, meta: updatedMeta }
-            },
+            return {
+                ...partner,
+                supportedServices: [],
+                wantedServices: [],
+                contractAddress: '',
+                bots: [],
+                supportedCurrencies: {},
+                isOnMessenger: false,
+            }
         }),
-        fetchPartnerData: build.query<
-            PartnerDataType,
-            { companyName: string; cChainAddress?: string }
-        >({
-            query: ({ companyName, cChainAddress }) => {
-                const baseUrl = getBaseUrl()
-                if (!baseUrl) {
-                    throw new Error('Base URL is undefined')
-                }
+    )
 
-                let query =
-                    '?populate=*&sort[0]=companyName:asc&pagination[page]=1&pagination[pageSize]=12'
+    const validators = (await caminoClient.PChain().getCurrentValidators()).validators
+    const partnersWithValidatorStatus = await Promise.all(
+        partnersWithServices.map(async p => {
+            const pChainAddress = p.attributes.pChainAddresses.find(
+                elem => elem.Network.toLowerCase() === networkName,
+            )
 
-                if (cChainAddress) {
-                    const selectedNetwork = store.getters['Network/selectedNetwork']
-                    if (!selectedNetwork) {
-                        throw new Error('Selected network is undefined')
-                    }
-                    query += `&filters[$and][0][cChainAddresses][cAddress][$containsi]=${cChainAddress}&filters[$and][1][cChainAddresses][Network][$eq]=${selectedNetwork.name.toLowerCase()}`
-                } else if (companyName) {
-                    query += `&filters[companyName][$contains]=${companyName}`
+            if (pChainAddress?.pAddress) {
+                try {
+                    const nodeID = await getRegisteredNode(getAddress(pChainAddress.pAddress))
+                    const isValidator = validators.some(v => v.nodeID === nodeID)
+                    return { ...p, isValidator }
+                } catch (error) {
+                    return { ...p, isValidator: false }
                 }
-                return {
-                    url: `${baseUrl}${query}`,
-                    method: 'GET',
-                }
-            },
-            async transformResponse(response: PartnersResponseType, _meta, arg) {
-                const partnerData = response.data[0]
-                const selectedNetwork = store.getters['Network/selectedNetwork']
-                let partnerCChainAddress = partnerData?.attributes?.cChainAddresses.find(
-                    elem => elem.Network === selectedNetwork.name.toLowerCase(),
-                )
-
-                if (partnerData && partnerCChainAddress?.cAddress) {
-                    const selectedNetwork = store.getters['Network/selectedNetwork']
-                    const providerUrl = `${selectedNetwork.protocol}://${selectedNetwork.ip}:${selectedNetwork.port}/ext/bc/C/rpc`
-                    const provider = new ethers.JsonRpcProvider(providerUrl)
-                    const contractMappings = await getContractMappings()
-                    const contractAddress = Array.from(contractMappings.entries()).find(
-                        ([_, partnerAddress]) =>
-                            partnerAddress.toLowerCase() ===
-                            (arg.cChainAddress || partnerCChainAddress?.cAddress).toLowerCase(),
-                    )?.[0]
-                    if (contractAddress) {
-                        const { supportedServices, wantedServices, bots, supportedCurrencies } =
-                            await fetchContractServices(contractAddress, provider)
-                        let parsedSupportedServices = []
-                        if (supportedServices && supportedServices?.length > 0) {
-                            parsedSupportedServices = supportedServices[0]
-                                .map((service, index) => {
-                                    if (
-                                        supportedServices[1][index] &&
-                                        Array.isArray(supportedServices[1][index])
-                                    ) {
-                                        let capabilities = Array.isArray(
-                                            supportedServices[1][index][2],
-                                        )
-                                            ? supportedServices[1][index][2].map(elem => elem)
-                                            : []
-                                        return {
-                                            name: service,
-                                            fee: ethers.formatEther(supportedServices[1][index][0]),
-                                            rackRates: supportedServices[1][index][1],
-                                            capabilities: capabilities,
-                                        }
-                                    }
-                                    return null
-                                })
-                                .filter(service => service !== null)
-                        }
-
-                        const parsedWantedServices = wantedServices.map(elem => ({
-                            name: elem,
-                        }))
-                        return {
-                            ...partnerData,
-                            supportedServices: parsedSupportedServices,
-                            wantedServices: parsedWantedServices,
-                            contractAddress,
-                            bots,
-                            supportedCurrencies,
-                        }
-                    }
-                }
-                return {
-                    ...partnerData,
-                    supportedServices: [],
-                    wantedServices: [],
-                    contractAddress: '',
-                    bots: [],
-                    supportedCurrencies: {},
-                }
-            },
+            }
+            return { ...p, isValidator: false }
         }),
-        listMatchingPartners: build.query<any, any>({
-            query: ({
-                page,
-                companyName,
-                businessField,
-                validators,
-                onMessenger,
-                supportedResult,
-                wantedResult,
-            }) => {
-                const baseUrl = getBaseUrl()
-                let query = '?populate=*'
-                const selectedNetwork = store.getters['Network/selectedNetwork']
+    )
 
-                if (!isNaN(page)) {
-                    query += `&sort[0]=companyName:asc&_limit=-1`
-                }
-                if (businessField) {
-                    let filterWith = businessField
-                        .flatMap(elem => elem.fields.filter(field => field.active))
-                        .map(field => field.fullName)
-                    if (filterWith?.length > 0) {
-                        filterWith.forEach((element, index) => {
-                            query += `&filters[$or][${index}][business_fields][BusinessField][$eq]=${element}`
-                        })
-                    }
-                }
-                if (companyName) {
-                    query += `&filters[companyName][$contains]=${companyName}`
-                }
-                if (validators) {
-                    query += `&filters[$and][0][pChainAddresses][pAddress][$notNull]=true&filters[$and][1][pChainAddresses][Network][$eq]=${selectedNetwork.name.toLowerCase()}`
-                }
-                // Only add the cChainAddress filter if onMessenger is explicitly true
-                query += `&filters[$and][0][cChainAddresses][cAddress][$notNull]=true&filters[$and][1][cChainAddresses][Network][$eq]=${selectedNetwork.name.toLowerCase()}`
+    return { data: partnersWithValidatorStatus, meta: response.meta }
+}
 
-                return {
-                    url: `${baseUrl}${query}`,
-                    method: 'GET',
-                    params: {
-                        onMessenger: onMessenger === true ? 'true' : 'false',
-                        supportedResult: JSON.stringify(supportedResult),
-                        wantedResult: JSON.stringify(wantedResult),
-                    },
-                }
-            },
-            async transformResponse(response: PartnersResponseType, meta, arg) {
-                const selectedNetwork = store.getters['Network/selectedNetwork']
-                if (
-                    selectedNetwork.name.toLowerCase() !== 'columbus' &&
-                    selectedNetwork.name.toLowerCase() !== 'camino'
-                )
-                    return response
+export const getPartnerData = (partners: any, companyName: string, cChainAddress: string) => {
+    const selectedNetwork = store.getters['Network/selectedNetwork']
+    const partnerData = partners.data?.filter(partner => {
+        if (cChainAddress && companyName) {
+            const selectedPartner = partner.attributes?.cChainAddresses?.find(
+                elem =>
+                    elem.cAddress?.toLowerCase() === cChainAddress &&
+                    elem.Network === selectedNetwork.name.toLowerCase(),
+            )
+            if (selectedPartner && partner.attributes?.companyName === companyName) {
+                return partner
+            }
+        } else if (cChainAddress) {
+            const selectedPartner = partner.attributes?.cChainAddresses?.find(
+                elem =>
+                    elem.cAddress?.toLowerCase() === cChainAddress &&
+                    elem.Network === selectedNetwork.name.toLowerCase(),
+            )
+            if (selectedPartner) {
+                return partner
+            }
+        }
+        return partner.attributes?.companyName === companyName
+    })[0]
 
-                const providerUrl = `${selectedNetwork.protocol}://${selectedNetwork.ip}:${selectedNetwork.port}/ext/bc/C/rpc`
-                const provider = new ethers.JsonRpcProvider(providerUrl)
+    return partnerData
+}
 
-                const contractMappings = await getContractMappings()
+export const getMatchingPartners = (partners: any, filters: any) => {
+    const filtredMatchingPartners = partners.data
+        .map(partner => {
+            const isMatch = checkMatch({
+                supportedResult: filters.supportedResult?.map(elem => elem.name) || [],
+                wantedResult: filters.wantedResult?.map(elem => elem.name) || [],
+                supportedServices: partner.supportedServices,
+                wantedServices: partner.wantedServices,
+            })
 
-                const partnersWithServices = await Promise.all(
-                    response.data.map(async partner => {
-                        let partnerCChainAddress = partner?.attributes?.cChainAddresses.find(
-                            elem => elem.Network === selectedNetwork.name.toLowerCase(),
-                        )
-                        if (partnerCChainAddress?.cAddress) {
-                            const contractAddress = Array.from(contractMappings.entries()).find(
-                                ([_, partnerAddress]) =>
-                                    partnerAddress.toLowerCase() ===
-                                    partnerCChainAddress?.cAddress.toLowerCase(),
-                            )?.[0]
+            // Add isMatch to the partner object
+            return { ...partner, isMatch }
+        })
+        .filter(partner => partner.isMatch && partner.contractAddress)
 
-                            if (contractAddress) {
-                                const {
-                                    supportedServices,
-                                    wantedServices,
-                                    bots,
-                                    supportedCurrencies,
-                                } = await fetchContractServices(contractAddress, provider)
-
-                                let parsedSupportedServices = []
-                                if (
-                                    supportedServices &&
-                                    supportedServices.length > 0 &&
-                                    supportedServices[0]
-                                ) {
-                                    parsedSupportedServices = supportedServices[0]
-                                        .map((service, index) => {
-                                            let capabilities = supportedServices[1][index][2].map(
-                                                elem => elem,
-                                            )
-                                            return {
-                                                name: service,
-                                                fee: ethers.formatEther(
-                                                    supportedServices[1][index][0],
-                                                ),
-                                                rackRates: supportedServices[1][index][1],
-                                                capabilities: capabilities,
-                                            }
-                                        })
-                                        .filter(service => service !== null)
-                                }
-
-                                const parsedWantedServices = wantedServices.map(elem => ({
-                                    name: elem,
-                                }))
-                                const isMatch = checkMatch({
-                                    supportedResult:
-                                        arg.supportedResult.map(elem => elem.name) || [],
-                                    wantedResult: arg.wantedResult.map(elem => elem.name) || [],
-                                    supportedServices: parsedSupportedServices,
-                                    wantedServices: parsedWantedServices,
-                                })
-
-                                return {
-                                    ...partner,
-                                    supportedServices: parsedSupportedServices,
-                                    wantedServices: parsedWantedServices,
-                                    contractAddress,
-                                    bots,
-                                    supportedCurrencies,
-                                    isMatch,
-                                }
-                            }
-                        }
-
-                        return null // Return null for partners without a contractAddress
-                    }),
-                )
-
-                // Filter out null values and non-matching partners
-                const filteredPartners = partnersWithServices.filter(
-                    partner => partner !== null && partner.isMatch,
-                )
-
-                // Update the meta information to reflect the new number of results
-                const updatedMeta = {
-                    ...response.meta,
-                    pagination: {
-                        ...response.meta.pagination,
-                        total: filteredPartners.length,
-                    },
-                }
-
-                return { data: filteredPartners, meta: updatedMeta }
-            },
-        }),
-        isPartner: build.query<PartnerDataType, { cChainAddress: string }>({
-            query: ({ cChainAddress }) => {
-                const baseUrl = getBaseUrl()
-                const selectedNetwork = store.getters['Network/selectedNetwork']
-                let query =
-                    '?populate=*&sort[0]=companyName:asc&pagination[page]=1&pagination[pageSize]=12'
-                query += `&filters[$and][0][cChainAddresses][cAddress][$containsi]=${cChainAddress}&filters[$and][1][cChainAddresses][Network][$eq]=${selectedNetwork.name.toLowerCase()}`
-                return `${baseUrl}${query}`
-            },
-            async transformResponse(response: PartnersResponseType, _meta, { cChainAddress }) {
-                const partnerData = response.data[0]
-                const selectedNetwork = store.getters['Network/selectedNetwork']
-                let partnerCChainAddress = partnerData?.attributes?.cChainAddresses.find(
-                    elem => elem.Network === selectedNetwork.name.toLowerCase(),
-                )
-                if (partnerData && partnerCChainAddress?.cAddress) {
-                    const selectedNetwork = store.getters['Network/selectedNetwork']
-                    const providerUrl = `${selectedNetwork.protocol}://${selectedNetwork.ip}:${selectedNetwork.port}/ext/bc/C/rpc`
-                    const provider = new ethers.JsonRpcProvider(providerUrl)
-
-                    const contractMappings = await getContractMappings()
-                    const contractAddress = Array.from(contractMappings.entries()).find(
-                        ([_, partnerAddress]) =>
-                            partnerAddress.toLowerCase() === cChainAddress.toLowerCase(),
-                    )?.[0]
-
-                    if (contractAddress) {
-                        const { supportedServices, wantedServices, bots, supportedCurrencies } =
-                            await fetchContractServices(contractAddress, provider)
-                        let parsedSupportedServices = []
-                        if (
-                            supportedServices &&
-                            supportedServices?.length > 0 &&
-                            supportedServices[0]
-                        ) {
-                            parsedSupportedServices = supportedServices[0]
-                                .map((service, index) => {
-                                    if (
-                                        supportedServices[1][index] &&
-                                        Array.isArray(supportedServices[1][index])
-                                    ) {
-                                        let capabilities = Array.isArray(
-                                            supportedServices[1][index][2],
-                                        )
-                                            ? supportedServices[1][index][2].map(elem => elem)
-                                            : []
-                                        return {
-                                            name: service,
-                                            fee: ethers.formatEther(supportedServices[1][index][0]),
-                                            rackRates: supportedServices[1][index][1],
-                                            capabilities: capabilities,
-                                        }
-                                    }
-                                    return null
-                                })
-                                .filter(service => service !== null)
-                        }
-
-                        const parsedWantedServices = wantedServices.map(elem => ({
-                            name: elem,
-                        }))
-                        return {
-                            ...partnerData,
-                            supportedServices: parsedSupportedServices,
-                            wantedServices: parsedWantedServices,
-                            contractAddress,
-                            bots,
-                            supportedCurrencies,
-                        }
-                    }
-                }
-                return {
-                    ...partnerData,
-                    supportedServices: [],
-                    wantedServices: [],
-                    contractAddress: '',
-                    bots: [],
-                    supportedCurrencies: {},
-                }
-            },
-        }),
-        getBusinessFields: build.query<any, void>({
-            query: () => getBusinessBaseUrl(),
-            transformResponse(response: PartnersResponseType) {
-                return groupedBusinessFields(response.data)
-            },
-        }),
-    }),
-})
-
-export const {
-    useListPartnersQuery,
-    useFetchPartnerDataQuery,
-    useIsPartnerQuery,
-    useListMatchingPartnersQuery,
-    useGetBusinessFieldsQuery,
-} = partnersApi
+    return filtredMatchingPartners
+}
