@@ -91,13 +91,14 @@ const PartnersLayout = () => {
     const navigate = useNavigate()
     const dispatch = useAppDispatch()
     const activeNetwork = useAppSelector(getActiveNetwork)
+    const partners = useAppSelector(state => state.partners.partners)
 
     useEffect(() => {
-        if (activeNetwork) {
+        if (activeNetwork && !partners?.data) {
             dispatch(fetchPartners())
             dispatch(fetchBusinessFields())
         }
-    }, [activeNetwork])
+    }, [activeNetwork, dispatch])
 
     const auth = useAppSelector(state => state.appConfig.isAuth)
     useEffect(() => {
