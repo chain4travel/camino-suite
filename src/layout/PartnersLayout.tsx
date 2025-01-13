@@ -91,10 +91,9 @@ const PartnersLayout = () => {
     const navigate = useNavigate()
     const dispatch = useAppDispatch()
     const activeNetwork = useAppSelector(getActiveNetwork)
-    const partners = useAppSelector(state => state.partners.partners)
 
     useEffect(() => {
-        if (activeNetwork && !partners?.data) {
+        if (activeNetwork) {
             dispatch(fetchPartners())
             dispatch(fetchBusinessFields())
         }
