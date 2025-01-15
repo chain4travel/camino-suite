@@ -97,7 +97,7 @@ const PartnersLayout = () => {
             dispatch(fetchPartners())
             dispatch(fetchBusinessFields())
         }
-    }, [activeNetwork])
+    }, [activeNetwork, dispatch])
 
     const auth = useAppSelector(state => state.appConfig.isAuth)
     useEffect(() => {

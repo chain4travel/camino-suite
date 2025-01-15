@@ -7,7 +7,6 @@ import {
     useTheme,
 } from '@mui/material'
 import React, { ReactNode, useEffect, useMemo, useReducer, useState } from 'react'
-import { fetchBusinessFields, fetchPartners } from '../../redux/slices/partnersSlice/utils'
 import { initialStatePartners, partnersReducer } from '../../helpers/partnersReducer'
 import { useAppDispatch, useAppSelector } from '../../hooks/reduxHooks'
 
@@ -17,11 +16,9 @@ import Icon from '@mdi/react'
 import ListPartners from './ListPartners'
 import MatchingPartners from './MatchingPartners'
 import PartnersFilter from '../../components/Partners/PartnersFilter'
-import { getActiveNetwork } from '../../redux/slices/network'
 import { mdiAccessPointNetwork } from '@mdi/js'
 import { selectAllPartners } from '../../redux/slices/partnersSlice'
 import { selectFilteredPartners } from '../../redux/selectors/partners'
-import { useEffectOnce } from '../../hooks/useEffectOnce'
 import { useSmartContract } from '../../helpers/useSmartContract'
 
 interface PartnersListWrapperProps {
@@ -52,18 +49,12 @@ export const PartnersListWrapper: React.FC<PartnersListWrapperProps> = ({
 }
 
 const Partners = () => {
-    const activeNetwork = useAppSelector(getActiveNetwork)
     const auth = useAppSelector(state => state.appConfig.isAuth)
     const [state] = useReducer(partnersReducer, initialStatePartners)
     const partnersSlice = useAppSelector(selectAllPartners)
     const { isLoading, error, filters } = useAppSelector(state => state.partners)
     const dispatch = useAppDispatch()
     const theme = useTheme()
-
-    useEffectOnce(() => {
-        dispatch(fetchPartners())
-        dispatch(fetchBusinessFields())
-    })
 
     const filteredPartners = useAppSelector(rootState =>
         selectFilteredPartners(rootState, partnersSlice, filters),
@@ -76,11 +67,6 @@ const Partners = () => {
     useEffect(() => {
         setActivePage(0)
     }, [filters, dispatch])
-
-    useEffect(() => {
-        if (activeNetwork) dispatch(fetchPartners())
-        //@ts-ignore
-    }, [activeNetwork, dispatch])
 
     // Get current partners for pagination
     const currentPartners = useMemo(() => {

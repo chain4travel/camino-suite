@@ -1,33 +1,52 @@
-import { InputAdornment, TextField } from '@mui/material'
+import { Box, InputAdornment, OutlinedInput } from '@mui/material'
+import React, { useCallback } from 'react'
 
-import React from 'react'
 import SearchIcon from '@mui/icons-material/Search'
+import { debounce } from 'lodash'
 
 interface SearchInputProps {
     searchByName: (value: string) => void
-    value: string
 }
 
-const SearchInput: React.FC<SearchInputProps> = ({ searchByName, value }) => {
+const SearchInput: React.FC<SearchInputProps> = ({ searchByName }) => {
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    const debouncedSearchByName = useCallback(
+        debounce(searchByName, 300),
+        [], // will only create this function once on mount
+    )
     return (
-        <TextField
-            placeholder="Search by company name"
-            value={value}
-            onChange={e => searchByName(e.target.value)}
+        <Box
             sx={{
-                minWidth: '300px',
-                '& .MuiOutlinedInput-root': {
-                    height: '40px',
-                },
+                flex: '1 1 400px',
+                height: '40px',
+                maxWidth: { xs: '100%', md: '400px' },
             }}
-            InputProps={{
-                startAdornment: (
+        >
+            <OutlinedInput
+                placeholder="Search"
+                sx={{
+                    width: '100%',
+                    height: '100%',
+                    border: theme => `solid 1px ${theme.palette.card.border}`,
+                    borderRadius: '12px',
+                    fontSize: '14px',
+                    lineHeight: '24px',
+                    fontWeight: 500,
+                    '.MuiOutlinedInput-notchedOutline': {
+                        border: 'none',
+                    },
+                    '.MuiOutlinedInput-input': {
+                        padding: '0',
+                    },
+                }}
+                startAdornment={
                     <InputAdornment position="start">
                         <SearchIcon />
                     </InputAdornment>
-                ),
-            }}
-        />
+                }
+                onChange={e => debouncedSearchByName(e.target.value)}
+            />
+        </Box>
     )
 }
 

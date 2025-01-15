@@ -6,14 +6,14 @@ import {
     toggleValidatorsFilter,
 } from '../../redux/slices/partnersSlice'
 
-import BusinessFieldFilter from './BusinessFieldFilter'
-import { REGISTER_PARTNER_URL } from '../../constants/route-paths'
-import SearchInput from './SearchInput'
-import { getActiveNetwork } from '../../redux/slices/network'
-import { selectPartnerData } from '../../redux/selectors/partners'
-import store from 'wallet/store'
-import { useAppSelector } from '../../hooks/reduxHooks'
 import { useDispatch } from 'react-redux'
+import store from 'wallet/store'
+import { REGISTER_PARTNER_URL } from '../../constants/route-paths'
+import { useAppSelector } from '../../hooks/reduxHooks'
+import { selectPartnerData } from '../../redux/selectors/partners'
+import { getActiveNetwork } from '../../redux/slices/network'
+import BusinessFieldFilter from './BusinessFieldFilter'
+import SearchInput from './SearchInput'
 
 const PartnersFilter: React.FC = () => {
     const dispatch = useDispatch()
@@ -63,7 +63,7 @@ const PartnersFilter: React.FC = () => {
                 justifyContent: 'flex-start',
             }}
         >
-            <SearchInput searchByName={handleCompanyNameChange} value={filters.companyName} />
+            <SearchInput searchByName={handleCompanyNameChange} />
             <BusinessFieldFilter />
             <Box sx={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: '.5rem' }}>
