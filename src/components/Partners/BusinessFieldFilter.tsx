@@ -1,65 +1,38 @@
 import { Box, Checkbox, Typography } from '@mui/material'
-import React, { useState } from 'react'
 import {
     handleBusinessFieldToggle,
     handleCategoryToggleHelper,
     handleResetAllFields,
 } from '../../helpers/partnersReducer'
-import { selectBusinessFields, updateBusinessField } from '../../redux/slices/partnersSlice'
 import { useAppDispatch, useAppSelector } from '../../hooks/reduxHooks'
+import { selectBusinessFields, updateBusinessField } from '../../redux/slices/partnersSlice'
 
+import { mdiCloseCircleOutline } from '@mdi/js'
 import Icon from '@mdi/react'
 import ListItemText from '@mui/material/ListItemText'
 import MenuItem from '@mui/material/MenuItem'
 import Select from '@mui/material/Select'
-import { mdiCloseCircleOutline } from '@mdi/js'
+import React from 'react'
 
 const BusinessFieldFilter = () => {
     const dispatch = useAppDispatch()
     const businessFields = useAppSelector(selectBusinessFields)
-    const [selectedFields, setSelectedFields] = useState<string[]>([])
+
+    const selectedCount = businessFields.reduce((count, group) => {
+        return count + group.fields.filter(field => field.active).length
+    }, 0)
 
     // Toggle individual field
     const handleFieldToggle = (selectedField: string) => {
-        setSelectedFields(prevSelectedFields => {
-            const newSelectedFields = prevSelectedFields.includes(selectedField)
-                ? prevSelectedFields.filter(field => field !== selectedField)
-                : [...prevSelectedFields, selectedField]
-
-            dispatch(updateBusinessField(handleBusinessFieldToggle(businessFields, selectedField)))
-            return newSelectedFields
-        })
+        dispatch(updateBusinessField(handleBusinessFieldToggle(businessFields, selectedField)))
     }
 
     // Toggle entire category (select/deselect all fields in category)
     const handleCategoryToggle = (category: string) => {
-        // Find all fields in the category
-        const categoryFields =
-            businessFields.find(group => group.category === category)?.fields || []
-
-        // Check if all fields in the category are already selected
-        const allFieldsInCategorySelected = categoryFields.every(field =>
-            selectedFields.includes(field.fullName),
-        )
-
-        // Update the `selectedFields` state:
-        // - If all are selected, remove them
-        // - Otherwise, add the ones not already selected
-        const updatedSelectedFields = allFieldsInCategorySelected
-            ? selectedFields.filter(field => !categoryFields.map(f => f.fullName).includes(field))
-            : [
-                  ...selectedFields,
-                  ...categoryFields
-                      .filter(field => !selectedFields.includes(field.fullName)) // Avoid duplicates
-                      .map(field => field.fullName),
-              ]
-
-        setSelectedFields(updatedSelectedFields)
         dispatch(updateBusinessField(handleCategoryToggleHelper(businessFields, category)))
     }
 
     const resetAllFields = () => {
-        setSelectedFields([]) // Clear selected fields from the state
         dispatch(updateBusinessField(handleResetAllFields(businessFields)))
     }
 
@@ -119,8 +92,8 @@ const BusinessFieldFilter = () => {
                 }}
                 renderValue={() => (
                     <Typography variant="caption">
-                        {selectedFields.length > 0
-                            ? `Business fields (${selectedFields.length})`
+                        {selectedCount > 0
+                            ? `Business fields (${selectedCount})`
                             : 'Business fields'}
                     </Typography>
                 )}
@@ -200,7 +173,7 @@ const BusinessFieldFilter = () => {
                     )),
                 ])}
             </Select>
-            {selectedFields.length > 0 && (
+            {selectedCount > 0 && (
                 <button
                     onClick={resetAllFields}
                     style={{ position: 'absolute', top: '9px', right: '40px', zIndex: 1400 }}

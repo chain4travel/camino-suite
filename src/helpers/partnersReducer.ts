@@ -103,7 +103,7 @@ export const partnersReducer = (
         case partnersActions.UPDATE_BUSINESS_FIELDS_FROM_API:
             return {
                 ...state,
-                businessField: action.payload,
+                businessFields: action.payload,
             }
         case partnersActions.RESET_ALL_BUSINESS_FIELDS:
             return {

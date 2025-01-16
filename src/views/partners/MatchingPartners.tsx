@@ -2,13 +2,13 @@ import { Box, Typography } from '@mui/material'
 import React, { useMemo } from 'react'
 import { selectPartnerData, selectedFiltredMatchingPartners } from '../../redux/selectors/partners'
 
-import PartnerCard from '../../components/Partners/PartnerCard'
-import { getActiveNetwork } from '../../redux/slices/network'
-import store from 'wallet/store'
-import { useAppSelector } from '../../hooks/reduxHooks'
 import { useNavigate } from 'react-router'
+import store from 'wallet/store'
+import PartnerCard from '../../components/Partners/PartnerCard'
 import { usePartnerConfigurationContext } from '../../helpers/partnerConfigurationContext'
 import { useSmartContract } from '../../helpers/useSmartContract'
+import { useAppSelector } from '../../hooks/reduxHooks'
+import { getActiveNetwork } from '../../redux/slices/network'
 
 const MatchingPartners = ({ state }) => {
     const value = usePartnerConfigurationContext()
@@ -44,7 +44,7 @@ const MatchingPartners = ({ state }) => {
     }, [partners])
     const partnerCChainAddress = useMemo(() => {
         let cAddress = data?.attributes?.cChainAddresses.find(
-            elem => elem.Network === activeNetwork?.name?.toLowerCase(),
+            elem => elem.Network?.toLowerCase() === activeNetwork?.name?.toLowerCase(),
         )
         if (cAddress) return cAddress
         return ''

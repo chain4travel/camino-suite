@@ -129,12 +129,8 @@ export const selectAllPartners = (state: RootState) => state.partners.partners
 export const selectBusinessFields = (state: RootState) => state.partners.businessFields
 
 // select partner data
-export const selectPartnerData = async (
-    state: RootState,
-    companyName: string,
-    cChainAddress: string,
-) => {
-    return await getPartnerData(state.partners.partners, companyName, cChainAddress)
+export const selectPartnerData = (state: RootState, companyName: string, cChainAddress: string) => {
+    return getPartnerData(state.partners.partners, companyName, cChainAddress)
 }
 
 export const {
