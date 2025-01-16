@@ -13,23 +13,25 @@ import {
     TableRow,
     Typography,
 } from '@mui/material'
-import { ethers } from 'ethers'
 import React, { useEffect, useMemo, useReducer, useState } from 'react'
-import { useNavigate, useParams } from 'react-router'
-import MainButton from '../../components/MainButton'
-import UpdatedSelectComponent from '../../components/Partners/UpdatedSelectComponent'
 import {
     actionTypes,
     reducer,
     usePartnerConfigurationContext,
 } from '../../helpers/partnerConfigurationContext'
+import { fetchBusinessFields, fetchPartners } from '../../redux/slices/partnersSlice/utils'
+import { useAppDispatch, useAppSelector } from '../../hooks/reduxHooks'
+import { useNavigate, useParams } from 'react-router'
+
+import { Configuration } from './Configuration'
+import MainButton from '../../components/MainButton'
+import UpdatedSelectComponent from '../../components/Partners/UpdatedSelectComponent'
+import { ethers } from 'ethers'
+import { getActiveNetwork } from '../../redux/slices/network'
+import { selectPartnerData } from '../../redux/selectors/partners'
+import { updateNotificationStatus } from '../../redux/slices/app-config'
 import { usePartnerConfig } from '../../helpers/usePartnerConfig'
 import { useSmartContract } from '../../helpers/useSmartContract'
-import { useAppDispatch, useAppSelector } from '../../hooks/reduxHooks'
-import { useFetchPartnerDataQuery } from '../../redux/services/partners'
-import { updateNotificationStatus } from '../../redux/slices/app-config'
-import { getActiveNetwork } from '../../redux/slices/network'
-import { Configuration } from './Configuration'
 
 function ServiceChangesPreview({ added, updated, removed }) {
     const [costDetails, setCostDetails] = useState(null)
@@ -292,14 +294,15 @@ export const BasicSupportedServices = () => {
     const { partnerID } = useParams()
     const { state, dispatch } = usePartnerConfigurationContext()
     const [supplierState, dispatchSupplierState] = useReducer(reducer, { ...state, step: 1 })
-    const { data: partner, refetch } = useFetchPartnerDataQuery({
-        companyName: partnerID,
-    })
     const navigate = useNavigate()
+    const partner = useAppSelector(rootState => selectPartnerData(rootState, partnerID, ''))
     const activeNetwork = useAppSelector(getActiveNetwork)
     useEffect(() => {
-        if (activeNetwork) refetch()
-    }, [activeNetwork])
+        if (activeNetwork) {
+            dispatch(fetchPartners())
+            dispatch(fetchBusinessFields())
+        }
+    }, [activeNetwork, dispatch])
     useEffect(() => {
         if (partner) {
             dispatchSupplierState({

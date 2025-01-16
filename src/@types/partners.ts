@@ -1,8 +1,24 @@
+interface Service {
+    id: number
+    name: string
+    description?: string
+}
+
+interface Currency {
+    code: string
+    name: string
+    enabled: boolean
+}
+
 export interface PartnerDataType {
     isValidator: boolean
+    isOnMessenger: boolean
     contractAddress: any
     id?: number
     attributes?: AttributesType
+    wantedServices?: Service[]
+    supportedServices?: Service[]
+    supportedCurrencies?: Currency[]
 }
 
 export interface AttributesType {

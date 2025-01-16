@@ -4,7 +4,11 @@ import React, { useCallback } from 'react'
 import SearchIcon from '@mui/icons-material/Search'
 import { debounce } from 'lodash'
 
-const SearchInput = ({ searchByName }) => {
+interface SearchInputProps {
+    searchByName: (value: string) => void
+}
+
+const SearchInput: React.FC<SearchInputProps> = ({ searchByName }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     const debouncedSearchByName = useCallback(
         debounce(searchByName, 300),
@@ -23,7 +27,6 @@ const SearchInput = ({ searchByName }) => {
                 sx={{
                     width: '100%',
                     height: '100%',
-                    p: '8px 16px',
                     border: theme => `solid 1px ${theme.palette.card.border}`,
                     borderRadius: '12px',
                     fontSize: '14px',
@@ -31,6 +34,9 @@ const SearchInput = ({ searchByName }) => {
                     fontWeight: 500,
                     '.MuiOutlinedInput-notchedOutline': {
                         border: 'none',
+                    },
+                    '.MuiOutlinedInput-input': {
+                        padding: '0',
                     },
                 }}
                 startAdornment={
@@ -44,4 +50,4 @@ const SearchInput = ({ searchByName }) => {
     )
 }
 
-export default SearchInput
+export default React.memo(SearchInput)

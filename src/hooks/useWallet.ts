@@ -1,6 +1,7 @@
-import { ava as caminoClient } from 'wallet/caminoClient'
 import { getNameOfWallet, getPchainAddress } from '../helpers/walletStore'
-import { updatePchainAddress } from '../redux/slices/app-config'
+import { updatePchainAddress, updatePendingTxState } from '../redux/slices/app-config'
+
+import { ava as caminoClient } from 'wallet/caminoClient'
 import { useAppDispatch } from './reduxHooks'
 
 const useWallet = () => {
@@ -27,6 +28,12 @@ const useWallet = () => {
                         walletName: getNameOfWallet(),
                     }),
                 )
+                break
+            case 'updatePendingTxState':
+                dispatch(updatePendingTxState(params))
+                break
+            default:
+                break
         }
     }
 

@@ -6,19 +6,24 @@ import { useAppDispatch, useAppSelector } from '../../hooks/reduxHooks'
 import {
     changeActiveApp,
     getAccount,
+    getWalletStore,
     updateAccount,
     updatePchainAddress,
+    updatePendingTxState,
 } from '../../redux/slices/app-config'
 
 import Icon from '@mdi/react'
+import { useNavigate } from 'react-router-dom'
+import store from 'wallet/store'
+import { getActiveNetwork } from '../../redux/slices/network'
+import { updateAuthStatus } from '../../redux/slices/utils'
 import MHidden from '../@material-extend/MHidden'
+import CamBadge from '../CamBadge'
 import { LoadAccountMenu } from '../LoadAccountMenu'
 import AliasPicker from './AliasPicker'
 import ThemeSwitcher from './ThemeSwitcher'
 // @ts-ignore
-import { useNavigate } from 'react-router-dom'
-import store from 'wallet/store'
-import { updateAuthStatus } from '../../redux/slices/utils'
+import { useSelector } from 'react-redux'
 
 interface LoginIconProps {
     handleCloseSidebar: () => void
@@ -30,6 +35,11 @@ export default function Account({ handleCloseSidebar }: LoginIconProps) {
     const navigate = useNavigate()
     const account = useAppSelector(getAccount)
     const theme = useTheme()
+    const walletStore = useAppSelector(getWalletStore)
+    const [open, setOpen] = useState(false)
+    const [hasPendingTx, setHasPendingTx] = useState<boolean>(false)
+    const pendingTxState = useSelector((state: any) => state.appConfig.pendingTxState)
+    const activeNetwork = useAppSelector(getActiveNetwork)
     const logout = async () => {
         handleCloseSidebar()
         await store.dispatch('logout')
@@ -52,7 +62,20 @@ export default function Account({ handleCloseSidebar }: LoginIconProps) {
     const handleKeyDown = e => {
         e.stopPropagation()
     }
-    const [open, setOpen] = useState(false)
+
+    // get pending transactions
+    useEffect(() => {
+        checkPendingTx()
+    }, [pendingTxState, activeNetwork])
+
+    const checkPendingTx = async () => {
+        const hasTx = Boolean(walletStore?.Signavault?.importedTransactions?.length)
+        setHasPendingTx(hasTx)
+        if (hasTx || pendingTxState) {
+            dispatch(updatePendingTxState(false))
+        }
+    }
+
     return (
         <>
             <MHidden width="smUp">
@@ -122,6 +145,18 @@ export default function Account({ handleCloseSidebar }: LoginIconProps) {
                                         setOpen(v => !v)
                                     }}
                                 >
+                                    {hasPendingTx && (
+                                        <CamBadge
+                                            size="small"
+                                            variant="warning"
+                                            sx={{
+                                                position: 'absolute',
+                                                top: 0,
+                                                right: 0,
+                                            }}
+                                            label={'Pending Tx'}
+                                        />
+                                    )}
                                     {!account ? (
                                         <Typography>Account</Typography>
                                     ) : (
