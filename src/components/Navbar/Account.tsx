@@ -13,17 +13,17 @@ import {
 } from '../../redux/slices/app-config'
 
 import Icon from '@mdi/react'
+import { useNavigate } from 'react-router-dom'
+import store from 'wallet/store'
+import { getActiveNetwork } from '../../redux/slices/network'
+import { updateAuthStatus } from '../../redux/slices/utils'
 import MHidden from '../@material-extend/MHidden'
+import CamBadge from '../CamBadge'
 import { LoadAccountMenu } from '../LoadAccountMenu'
 import AliasPicker from './AliasPicker'
 import ThemeSwitcher from './ThemeSwitcher'
 // @ts-ignore
 import { useSelector } from 'react-redux'
-import { useNavigate } from 'react-router-dom'
-import store from 'wallet/store'
-import { getActiveNetwork } from '../../redux/slices/network'
-import { updateAuthStatus } from '../../redux/slices/utils'
-import CamBadge from '../CamBadge'
 
 interface LoginIconProps {
     handleCloseSidebar: () => void
@@ -69,13 +69,11 @@ export default function Account({ handleCloseSidebar }: LoginIconProps) {
     }, [pendingTxState, activeNetwork])
 
     const checkPendingTx = async () => {
-        if (walletStore?.Signavault?.importedTransactions?.length > 0) {
-            setHasPendingTx(walletStore?.Signavault?.importedTransactions?.length > 0)
+        const hasTx = Boolean(walletStore?.Signavault?.importedTransactions?.length)
+        setHasPendingTx(hasTx)
+        if (hasTx || pendingTxState) {
             dispatch(updatePendingTxState(false))
-        } else if (walletStore?.Signavault?.importedTransactions?.length === 0) {
-            setHasPendingTx(false)
-            dispatch(updatePendingTxState(false))
-        } else if (pendingTxState) dispatch(updatePendingTxState(false))
+        }
     }
 
     return (

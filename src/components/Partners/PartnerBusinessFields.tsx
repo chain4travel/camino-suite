@@ -1,9 +1,10 @@
-import { Box, Chip } from '@mui/material';
+import { Box, Chip } from '@mui/material'
 
-import React from 'react';
-import { groupedBusinessFields } from '../../redux/services/partners';
+import React from 'react'
+import { BusinessFieldsType } from '../../@types/partners'
+import { groupedBusinessFields } from '../../redux/services/partners'
 
-type PartnerBusinessFieldsProps = { business_fields: any; isPartnerView?: boolean }
+type PartnerBusinessFieldsProps = { business_fields: BusinessFieldsType; isPartnerView?: boolean }
 
 const PartnerBusinessFields = ({ business_fields, isPartnerView }: PartnerBusinessFieldsProps) => {
     const flatFields = groupedBusinessFields(business_fields?.data).flatMap(

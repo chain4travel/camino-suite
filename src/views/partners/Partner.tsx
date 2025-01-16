@@ -1,23 +1,23 @@
 import { Box, Button, Divider, IconButton, Typography, useTheme } from '@mui/material'
-import { Link, useNavigate, useParams } from 'react-router-dom'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
-import { displayFirstPartLongString, displaySecondPartLongString } from '../../utils/display-utils'
-import { fetchBusinessFields, fetchPartners } from '../../redux/slices/partnersSlice/utils'
+import { Link, useNavigate, useParams } from 'react-router-dom'
 import { useAppDispatch, useAppSelector } from '../../hooks/reduxHooks'
+import { fetchBusinessFields, fetchPartners } from '../../redux/slices/partnersSlice/utils'
+import { displayFirstPartLongString, displaySecondPartLongString } from '../../utils/display-utils'
 
-import { ContentCopy } from '@mui/icons-material'
+import { mdiArrowLeft } from '@mdi/js'
 import Icon from '@mdi/react'
+import { ContentCopy } from '@mui/icons-material'
+import store from 'wallet/store'
+import { PartnersListWrapper } from '.'
 import PartnerBusinessFields from '../../components/Partners/PartnerBusinessFields'
 import PartnerFlag from '../../components/Partners/PartnerFlag'
 import PartnerLogo from '../../components/Partners/PartnerLogo'
-import { PartnersListWrapper } from '.'
-import { getActiveNetwork } from '../../redux/slices/network'
-import { mdiArrowLeft } from '@mdi/js'
-import { selectPartnerData } from '../../redux/selectors/partners'
-import store from 'wallet/store'
-import { usePartnerConfig } from '../../helpers/usePartnerConfig'
 import { usePartnerConfigurationContext } from '../../helpers/partnerConfigurationContext'
+import { usePartnerConfig } from '../../helpers/usePartnerConfig'
 import { useSmartContract } from '../../helpers/useSmartContract'
+import { selectPartnerData } from '../../redux/selectors/partners'
+import { getActiveNetwork } from '../../redux/slices/network'
 
 const ContentField = ({ label, children }) => {
     return (
@@ -783,6 +783,7 @@ const Partner = () => {
                                     rel="noopener noreferrer"
                                     target="_blank"
                                     style={{ textDecoration: 'none' }}
+                                    referrerPolicy="no-referrer"
                                     to={partner?.attributes.companyWebsite}
                                 >
                                     <Typography

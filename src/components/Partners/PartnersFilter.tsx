@@ -46,7 +46,7 @@ const PartnersFilter: React.FC = () => {
 
     const partnerCChainAddress = useMemo(() => {
         const cAddress = partnerData?.attributes?.cChainAddresses.find(
-            elem => elem.Network === activeNetwork?.name?.toLowerCase(),
+            elem => elem.Network?.toLowerCase() === activeNetwork?.name?.toLowerCase(),
         )
         return cAddress || ''
     }, [partnerData, activeNetwork?.name])
