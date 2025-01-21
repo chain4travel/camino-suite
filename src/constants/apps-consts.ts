@@ -19,7 +19,7 @@ export const APPS_CONSTS = [
         private: false,
     },
     {
-        name: 'DAC',
+        name: 'Governance',
         subText: 'Decentralized Autonomous Consortium',
         url: '/dac',
         private: false,
