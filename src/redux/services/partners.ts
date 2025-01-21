@@ -4,13 +4,13 @@ import {
     ERC20_ABI,
 } from '../../constants/apps-consts'
 
-import { BusinessField } from '../../helpers/partnersReducer'
+import { ethers } from 'ethers'
+import { ava as caminoClient } from 'wallet/caminoClient'
+import store from 'wallet/store'
+import { PartnersResponseType } from '../../@types/partners'
 import CMAccount from '../../helpers/CMAccountManagerModule#CMAccount.json'
 import CMAccountManager from '../../helpers/ManagerProxyModule#CMAccountManager.json'
-import { PartnersResponseType } from '../../@types/partners'
-import { ava as caminoClient } from 'wallet/caminoClient'
-import { ethers } from 'ethers'
-import store from 'wallet/store'
+import { BusinessField } from '../../helpers/partnersReducer'
 
 const BASE_URLS = {
     dev: 'https://dev.strapi.camino.network/api/partners',
@@ -306,33 +306,30 @@ export const getPartnersWithServices = async (response: PartnersResponseType) =>
 
     return { data: partnersWithValidatorStatus, meta: response.meta }
 }
-
 export const getPartnerData = (partners: any, companyName: string, cChainAddress: string) => {
     const selectedNetwork = store.getters['Network/selectedNetwork']
-    const partnerData = partners.data?.filter(partner => {
-        if (cChainAddress && companyName) {
-            const selectedPartner = partner.attributes?.cChainAddresses?.find(
-                elem =>
-                    elem.cAddress?.toLowerCase() === cChainAddress &&
-                    elem.Network === selectedNetwork.name.toLowerCase(),
-            )
-            if (selectedPartner && partner.attributes?.companyName === companyName) {
-                return partner
-            }
-        } else if (cChainAddress) {
-            const selectedPartner = partner.attributes?.cChainAddresses?.find(
-                elem =>
-                    elem.cAddress?.toLowerCase() === cChainAddress &&
-                    elem.Network === selectedNetwork.name.toLowerCase(),
-            )
-            if (selectedPartner) {
-                return partner
-            }
-        }
-        return partner.attributes?.companyName === companyName
-    })[0]
 
-    return partnerData
+    if (!partners?.data) return null
+
+    return (
+        partners.data.find(partner => {
+            const cChainAddresses = partner.attributes?.cChainAddresses ?? []
+            const matchingAddress = cChainAddresses.find(
+                elem =>
+                    elem.cAddress?.toLowerCase() === cChainAddress.toLowerCase() &&
+                    elem.Network === selectedNetwork.name.toLowerCase(),
+            )
+
+            if (matchingAddress) {
+                if (companyName) {
+                    return partner.attributes?.companyName === companyName
+                }
+                return true
+            }
+
+            return false
+        }) || null
+    )
 }
 
 export const getMatchingPartners = (partners: any, filters: any) => {
