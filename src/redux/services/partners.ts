@@ -306,6 +306,7 @@ export const getPartnersWithServices = async (response: PartnersResponseType) =>
 
     return { data: partnersWithValidatorStatus, meta: response.meta }
 }
+
 export const getPartnerData = (partners: any, companyName: string, cChainAddress: string) => {
     const selectedNetwork = store.getters['Network/selectedNetwork']
 
@@ -314,17 +315,26 @@ export const getPartnerData = (partners: any, companyName: string, cChainAddress
     return (
         partners.data.find(partner => {
             const cChainAddresses = partner.attributes?.cChainAddresses ?? []
-            const matchingAddress = cChainAddresses.find(
-                elem =>
-                    elem.cAddress?.toLowerCase() === cChainAddress.toLowerCase() &&
-                    elem.Network === selectedNetwork.name.toLowerCase(),
-            )
 
-            if (matchingAddress) {
-                if (companyName) {
-                    return partner.attributes?.companyName === companyName
+            // Case 1: Both cChainAddress and companyName are provided
+            if (cChainAddress) {
+                const matchingAddress = cChainAddresses.find(
+                    elem =>
+                        elem.cAddress?.toLowerCase() === cChainAddress.toLowerCase() &&
+                        elem.Network === selectedNetwork.name.toLowerCase(),
+                )
+
+                if (matchingAddress) {
+                    if (companyName) {
+                        return partner.attributes?.companyName === companyName
+                    }
+                    return true
                 }
-                return true
+            }
+
+            // Case 2: Only companyName is provided
+            if (companyName) {
+                return partner.attributes?.companyName === companyName
             }
 
             return false
