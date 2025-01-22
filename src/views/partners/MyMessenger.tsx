@@ -1,3 +1,4 @@
+import { ContentCopy, RefreshOutlined } from '@mui/icons-material'
 import {
     Box,
     Button,
@@ -13,28 +14,27 @@ import {
     TextField,
     Typography,
 } from '@mui/material'
-import { ContentCopy, RefreshOutlined } from '@mui/icons-material'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
-import { fetchBusinessFields, fetchPartners } from '../../redux/slices/partnersSlice/utils'
 import { useAppDispatch, useAppSelector } from '../../hooks/reduxHooks'
+import { fetchBusinessFields, fetchPartners } from '../../redux/slices/partnersSlice/utils'
 
-import Alert from '../../components/Alert'
-import { Configuration } from './Configuration'
-import DialogAnimate from '../../components/Animate/DialogAnimate'
-import { ERC20_BALANCE_ABI } from '../../constants/apps-consts'
-import Icon from '@mdi/react'
-import MainButton from '../../components/MainButton'
-import { ethers } from 'ethers'
-import { getActiveNetwork } from '../../redux/slices/network'
 import { mdiClose } from '@mdi/js'
-import { selectPartnerData } from '../../redux/selectors/partners'
-import store from 'wallet/store'
-import { updateNotificationStatus } from '../../redux/slices/app-config'
+import Icon from '@mdi/react'
+import { ethers } from 'ethers'
 import { useNavigate } from 'react-router'
-import { usePartnerConfig } from '../../helpers/usePartnerConfig'
+import store from 'wallet/store'
+import Alert from '../../components/Alert'
+import DialogAnimate from '../../components/Animate/DialogAnimate'
+import MainButton from '../../components/MainButton'
+import { ERC20_BALANCE_ABI } from '../../constants/apps-consts'
 import { usePartnerConfigurationContext } from '../../helpers/partnerConfigurationContext'
+import { usePartnerConfig } from '../../helpers/usePartnerConfig'
 import { useSmartContract } from '../../helpers/useSmartContract'
 import useWalletBalance from '../../helpers/useWalletBalance'
+import { selectPartnerData } from '../../redux/selectors/partners'
+import { updateNotificationStatus } from '../../redux/slices/app-config'
+import { getActiveNetwork } from '../../redux/slices/network'
+import { Configuration } from './Configuration'
 
 const AmountInput = ({ amount, onAmountChange, onMaxAmountClick, maxAmount }) => {
     const handleChange = e => {
@@ -374,6 +374,11 @@ const MyMessenger = () => {
     }
 
     const handleEditClick = () => {
+        const initialTempTokens = tokens.map(token => ({
+            ...token,
+            supported: supportedTokens.includes(token.address),
+        }))
+        setTempSupportedTokens(initialTempTokens)
         setTempOffChainPaymentSupported(isOffChainPaymentSupported)
         setTempCAMSupported(isCAMSupported)
         setIsEditMode(true)
@@ -798,9 +803,9 @@ const MyMessenger = () => {
                                                             },
                                                     }}
                                                     checked={
-                                                        isEditMode
-                                                            ? tempSupportedTokens[index].supported
-                                                            : elem.supported
+                                                        isEditMode && tempSupportedTokens
+                                                            ? tempSupportedTokens[index]?.supported
+                                                            : elem?.supported
                                                     }
                                                     onChange={e => {
                                                         let newArray = [...tempSupportedTokens]
