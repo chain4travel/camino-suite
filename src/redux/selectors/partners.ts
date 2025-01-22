@@ -1,8 +1,8 @@
 import { getMatchingPartners, getPartnerData } from '../services/partners'
 
-import { RootState } from '../store'
-import { StatePartnersType } from '../../helpers/partnersReducer'
 import { createSelector } from '@reduxjs/toolkit'
+import { StatePartnersType } from '../../helpers/partnersReducer'
+import { RootState } from '../store'
 
 export const selectFilteredPartners = createSelector(
     [

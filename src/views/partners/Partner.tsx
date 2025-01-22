@@ -73,7 +73,7 @@ const Widget = ({
     const data = useAppSelector(rootState =>
         selectPartnerData(
             rootState,
-            'Andersen Group',
+            '',
             store?.state?.activeWallet?.ethAddress
                 ? '0x' + store?.state?.activeWallet?.ethAddress
                 : '',
@@ -620,7 +620,7 @@ const Partner = () => {
                                     wantedServices={state.stepsConfig[2].services}
                                     supportedServices={state.stepsConfig[1].services}
                                     CMAccountAddress={value?.contractCMAccountAddress}
-                                    supportedCurrencies={partner.supportedCurrencies}
+                                    supportedCurrencies={partner?.supportedCurrencies}
                                     partner={partner}
                                 />
                             ) : (
@@ -662,7 +662,7 @@ const Partner = () => {
                                     wantedServices={partner.wantedServices}
                                     supportedServices={partner.supportedServices}
                                     CMAccountAddress={partner?.contractAddress}
-                                    supportedCurrencies={partner.supportedCurrencies}
+                                    supportedCurrencies={partner?.supportedCurrencies}
                                     partner={partner}
                                 />
                             </Box>
