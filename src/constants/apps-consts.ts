@@ -20,7 +20,7 @@ export const APPS_CONSTS = [
     },
     {
         name: 'Governance',
-        subText: 'Decentralized Autonomous Consortium',
+        subText: 'Participate and vote on proposals.',
         url: '/dac',
         private: false,
     },
