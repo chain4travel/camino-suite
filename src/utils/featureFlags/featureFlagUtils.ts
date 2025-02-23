@@ -64,10 +64,10 @@ export async function isFeatureEnabled(
 }
 
 export function isFeaturePartnerEnabled(networkName: string) {
-    const feature = simpleFeatureFlags['PartnerFeature']
+    const feature = simpleFeatureFlags['PartnerMessengerFeature']
 
     if (!feature) {
-        console.warn(`Feature flag "PartnerFeature" does not exist.`)
+        console.warn(`Feature flag "PartnerMessengerFeature" does not exist.`)
         return false
     }
 

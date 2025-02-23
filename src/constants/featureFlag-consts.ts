@@ -2,7 +2,7 @@
 import { FeatureFlag } from '../utils/types/featureFlag-type'
 
 export const simpleFeatureFlags = {
-    PartnerFeature: {
+    PartnerMessengerFeature: {
         camino: false,
         columbus: false,
     },
