@@ -12,6 +12,7 @@ import { REGISTER_PARTNER_URL } from '../../constants/route-paths'
 import { useAppSelector } from '../../hooks/reduxHooks'
 import { selectPartnerData } from '../../redux/selectors/partners'
 import { getActiveNetwork } from '../../redux/slices/network'
+import { isFeaturePartnerEnabled } from '../../utils/featureFlags/featureFlagUtils'
 import BusinessFieldFilter from './BusinessFieldFilter'
 import SearchInput from './SearchInput'
 
@@ -86,29 +87,28 @@ const PartnersFilter: React.FC = () => {
                         }
                     />
                 </Box>
-                {activeNetwork?.name?.toLowerCase() !== 'camino' &&
-                    activeNetwork?.name?.toLowerCase() !== 'columbus' && (
-                        <Box sx={{ display: 'flex', alignItems: 'center', gap: '.5rem' }}>
-                            <FormControlLabel
-                                label={<Typography variant="body2">On Messenger</Typography>}
-                                control={
-                                    <Checkbox
-                                        sx={{
+                {isFeaturePartnerEnabled(activeNetwork?.name?.toLowerCase()) && (
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: '.5rem' }}>
+                        <FormControlLabel
+                            label={<Typography variant="body2">On Messenger</Typography>}
+                            control={
+                                <Checkbox
+                                    sx={{
+                                        color: theme => theme.palette.secondary.main,
+                                        '&.Mui-checked': {
                                             color: theme => theme.palette.secondary.main,
-                                            '&.Mui-checked': {
-                                                color: theme => theme.palette.secondary.main,
-                                            },
-                                            '&.MuiCheckbox-colorSecondary.Mui-checked': {
-                                                color: theme => theme.palette.secondary.main,
-                                            },
-                                        }}
-                                        checked={filters.onMessenger}
-                                        onChange={handleMessengerToggle}
-                                    />
-                                }
-                            />
-                        </Box>
-                    )}
+                                        },
+                                        '&.MuiCheckbox-colorSecondary.Mui-checked': {
+                                            color: theme => theme.palette.secondary.main,
+                                        },
+                                    }}
+                                    checked={filters.onMessenger}
+                                    onChange={handleMessengerToggle}
+                                />
+                            }
+                        />
+                    </Box>
+                )}
             </Box>
             {(!auth || !partnerCChainAddress) && (
                 <Box
