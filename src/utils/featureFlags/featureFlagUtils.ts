@@ -1,7 +1,7 @@
 // src/utils/featureFlagUtils.ts
 import axios from 'axios'
 import semver from 'semver'
-import featureFlags from '../../constants/featureFlag-consts'
+import featureFlags, { simpleFeatureFlags } from '../../constants/featureFlag-consts'
 
 export async function getNodeVersion(url: string, credential = false): Promise<string | null> {
     try {
@@ -61,4 +61,22 @@ export async function isFeatureEnabled(
     }
 
     return feature.enabled
+}
+
+export function isFeaturePartnerEnabled(networkName: string) {
+    const feature = simpleFeatureFlags['PartnerMessengerFeature']
+
+    if (!feature) {
+        console.warn(`Feature flag "PartnerMessengerFeature" does not exist.`)
+        return false
+    }
+
+    switch (networkName.toLowerCase()) {
+        case 'camino':
+            return feature.camino || false
+        case 'columbus':
+            return feature.columbus || false
+        default:
+            return false
+    }
 }
