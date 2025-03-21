@@ -538,25 +538,27 @@ const Partner = () => {
                                 </Typography>
                             </Box>
                         )}
-                        {!!partner?.contractAddress && partner?.isOnMessenger && (
-                            <Box
-                                sx={{
-                                    width: '129px',
-                                    height: '20px',
-                                    background: '#09DE6B33',
-                                    padding: '0px, 8px, 0px, 8px',
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                    borderRadius: '4px',
-                                    letterSpacing: '1.6px',
-                                }}
-                            >
-                                <Typography sx={{ color: '#18B728' }} variant="overline">
-                                    On messenger
-                                </Typography>
-                            </Box>
-                        )}
+                        {!!partner?.contractAddress &&
+                            partner?.isOnMessenger &&
+                            activeNetwork.name.toLowerCase() !== 'camino' && (
+                                <Box
+                                    sx={{
+                                        width: '129px',
+                                        height: '20px',
+                                        background: '#09DE6B33',
+                                        padding: '0px, 8px, 0px, 8px',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        borderRadius: '4px',
+                                        letterSpacing: '1.6px',
+                                    }}
+                                >
+                                    <Typography sx={{ color: '#18B728' }} variant="overline">
+                                        On messenger
+                                    </Typography>
+                                </Box>
+                            )}
                     </Box>
                     <Typography variant="caption">
                         {partner?.attributes.companyShortDescription}
