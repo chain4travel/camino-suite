@@ -6,9 +6,10 @@ const Vote = React.lazy(() => import('DAC/dac'))
 const VoteApp = () => {
     const { activeNetwork } = useNetwork()
     const theme = useTheme()
+
     return (
         <React.Suspense fallback={<div>Loading...</div>}>
-            <Vote network={activeNetwork} theme={theme} />
+            <Vote key={activeNetwork?.name} network={activeNetwork} theme={theme} />
         </React.Suspense>
     )
 }
