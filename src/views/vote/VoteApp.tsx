@@ -9,7 +9,7 @@ const VoteApp = () => {
 
     return (
         <React.Suspense fallback={<div>Loading...</div>}>
-            <Vote key={activeNetwork?.name} network={activeNetwork} theme={theme} />
+            <Vote key={activeNetwork?.id} network={activeNetwork} theme={theme} />
         </React.Suspense>
     )
 }
