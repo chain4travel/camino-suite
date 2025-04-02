@@ -60,7 +60,9 @@ const AliasPicker = ({
                 Switch Wallet
             </Typography>
             <DialogAnimate open={open} onClose={handleCloseModal}>
-                <DialogTitle sx={{ m: 0, p: 2 }}>
+                <DialogTitle
+                    sx={{ m: 0, p: 2, background: theme => theme.palette.background.paper }}
+                >
                     <Typography variant="h4" component="span">
                         Wallet Switcher
                     </Typography>
@@ -79,8 +81,13 @@ const AliasPicker = ({
                     </IconButton>
                 </DialogTitle>
 
-                <Divider sx={{ borderWidth: '1.5px' }} />
-                <DialogContent>
+                <Divider
+                    sx={{
+                        borderWidth: '1.5px',
+                        borderColor: theme => theme.palette.divider,
+                    }}
+                />
+                <DialogContent sx={{ background: theme => theme.palette.background.paper }}>
                     <Box
                         sx={{
                             display: 'flex',

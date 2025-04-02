@@ -5,6 +5,7 @@ import { PartnerDataType } from '../../@types/partners'
 import { useAppSelector } from '../../hooks/reduxHooks'
 import { useEffectOnce } from '../../hooks/useEffectOnce'
 import { selectValidators } from '../../redux/slices/app-config'
+import { getActiveNetwork } from '../../redux/slices/network'
 import PartnerBusinessFields from './PartnerBusinessFields'
 import PartnerFlag from './PartnerFlag'
 import PartnerLogo from './PartnerLogo'
@@ -35,6 +36,7 @@ const PartnerCard: React.FC<PartnerCardProps> = ({ partner, clickable, onClick }
             setIsValidator(true)
         }
     }, [partner, validators])
+    const activeNetwork = useAppSelector(getActiveNetwork)
     return (
         <Box
             onClick={onClick}
@@ -87,7 +89,7 @@ const PartnerCard: React.FC<PartnerCardProps> = ({ partner, clickable, onClick }
                         </Typography>
                     </Box>
                 )}
-                {partner.contractAddress && (
+                {partner.contractAddress && activeNetwork.name.toLowerCase() !== 'camino' && (
                     <Box
                         sx={{
                             width: '129px',
