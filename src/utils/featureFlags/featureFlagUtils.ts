@@ -73,10 +73,10 @@ export function isFeaturePartnerEnabled(networkName: string) {
 
     switch (networkName.toLowerCase()) {
         case 'camino':
-            return feature.camino || false
+            return feature.camino
         case 'columbus':
-            return feature.columbus || false
+            return feature.columbus
         default:
-            return false
+            return true
     }
 }
