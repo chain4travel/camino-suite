@@ -1,6 +1,6 @@
 import { mdiCheckDecagram, mdiCog, mdiLogout } from '@mdi/js'
 import { Box, MenuItem, MenuList, Select, Typography, useTheme } from '@mui/material'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { getNameOfWallet, getPchainAddress } from '../../helpers/walletStore'
 import { useAppDispatch, useAppSelector } from '../../hooks/reduxHooks'
 import {
@@ -63,6 +63,27 @@ export default function Account({ handleCloseSidebar }: LoginIconProps) {
         e.stopPropagation()
     }
 
+    const isKycVerified = useMemo(() => {
+        return store.getters['Accounts/kycStatus']
+    }, [walletStore])
+
+    const isKybVerified = useMemo(() => {
+        return store.getters['Accounts/kybStatus']
+    }, [walletStore])
+
+    const verifyTitle = useMemo(() => {
+        if (isKycVerified && isKybVerified) {
+            return 'KYC & KYB verified'
+        }
+        if (isKycVerified) {
+            return 'KYC verified'
+        }
+        if (isKybVerified) {
+            return 'KYB verified'
+        }
+        return 'Verify Wallet'
+    }, [isKycVerified, isKybVerified])
+
     // get pending transactions
     useEffect(() => {
         checkPendingTx()
@@ -81,6 +102,19 @@ export default function Account({ handleCloseSidebar }: LoginIconProps) {
             <MHidden width="smUp">
                 <MenuList sx={{ backgroundColor: 'transparent' }}>
                     <MenuItem
+                        sx={{
+                            typography: 'body2',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'start',
+                            gap: '8px',
+                        }}
+                        onClick={navigateToSettings}
+                    >
+                        <Icon path={mdiCog} size={0.8} />
+                        <Typography variant="body1">Settings</Typography>
+                    </MenuItem>
+                    <MenuItem
                         onClick={() => {
                             navigate('/settings/verify-wallet')
                             handleCloseSidebar()
@@ -96,21 +130,9 @@ export default function Account({ handleCloseSidebar }: LoginIconProps) {
                         }}
                     >
                         <Icon path={mdiCheckDecagram} size={1} />
-                        <Typography variant="body2">Verify Wallet</Typography>
+                        <Typography variant="body2">{verifyTitle}</Typography>
                     </MenuItem>
-                    <MenuItem
-                        sx={{
-                            typography: 'body2',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'start',
-                            gap: '8px',
-                        }}
-                        onClick={navigateToSettings}
-                    >
-                        <Icon path={mdiCog} size={0.8} />
-                        <Typography variant="body1">Settings</Typography>
-                    </MenuItem>
+
                     {auth && <AliasPicker handleKeyDown={handleKeyDown} />}
 
                     <MenuItem
@@ -183,27 +205,6 @@ export default function Account({ handleCloseSidebar }: LoginIconProps) {
                         >
                             <MenuItem
                                 onClick={() => {
-                                    navigate('/settings/verify-wallet')
-                                    setOpen(v => !v)
-                                }}
-                                onKeyDown={e => {
-                                    handleKeyDown(e)
-                                }}
-                                sx={{
-                                    typography: 'body2',
-                                    width: '100%',
-                                    maxWidth: '326px',
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'start',
-                                    gap: '8px',
-                                }}
-                            >
-                                <Icon path={mdiCheckDecagram} size={1} />
-                                <Typography variant="body2">Verify Wallet</Typography>
-                            </MenuItem>
-                            <MenuItem
-                                onClick={() => {
                                     navigate('/settings')
                                     setOpen(v => !v)
                                 }}
@@ -222,6 +223,35 @@ export default function Account({ handleCloseSidebar }: LoginIconProps) {
                             >
                                 <Icon path={mdiCog} size={1} />
                                 <Typography variant="body2">Settings</Typography>
+                            </MenuItem>
+                            <MenuItem
+                                onClick={() => {
+                                    navigate('/settings/verify-wallet')
+                                    setOpen(v => !v)
+                                }}
+                                onKeyDown={e => {
+                                    handleKeyDown(e)
+                                }}
+                                sx={{
+                                    typography: 'body2',
+                                    width: '100%',
+                                    maxWidth: '326px',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'start',
+                                    gap: '8px',
+                                }}
+                            >
+                                <Icon
+                                    path={mdiCheckDecagram}
+                                    size={1}
+                                    color={
+                                        isKycVerified
+                                            ? theme.palette.success.main
+                                            : theme.palette.text.primary
+                                    }
+                                />
+                                <Typography variant="body2">{verifyTitle}</Typography>
                             </MenuItem>
                             <AliasPicker setOpenSelect={setOpen} handleKeyDown={handleKeyDown} />
                             <MenuItem>
