@@ -246,7 +246,7 @@ export default function Account({ handleCloseSidebar }: LoginIconProps) {
                                     path={mdiCheckDecagram}
                                     size={1}
                                     color={
-                                        isKycVerified
+                                        isKycVerified || isKybVerified
                                             ? theme.palette.success.main
                                             : theme.palette.text.primary
                                     }
