@@ -10,16 +10,16 @@ import React, { ReactNode, useEffect, useMemo, useReducer, useState } from 'reac
 import { initialStatePartners, partnersReducer } from '../../helpers/partnersReducer'
 import { useAppDispatch, useAppSelector } from '../../hooks/reduxHooks'
 
+import { mdiAccessPointNetwork } from '@mdi/js'
+import Icon from '@mdi/react'
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
-import Icon from '@mdi/react'
+import PartnersFilter from '../../components/Partners/PartnersFilter'
+import { useSmartContract } from '../../helpers/useSmartContract'
+import { selectFilteredPartners } from '../../redux/selectors/partners'
+import { resetFilters, selectAllPartners } from '../../redux/slices/partnersSlice'
 import ListPartners from './ListPartners'
 import MatchingPartners from './MatchingPartners'
-import PartnersFilter from '../../components/Partners/PartnersFilter'
-import { mdiAccessPointNetwork } from '@mdi/js'
-import { selectAllPartners } from '../../redux/slices/partnersSlice'
-import { selectFilteredPartners } from '../../redux/selectors/partners'
-import { useSmartContract } from '../../helpers/useSmartContract'
 
 interface PartnersListWrapperProps {
     isLoading: boolean
@@ -63,6 +63,9 @@ const Partners = () => {
     const value = useSmartContract()
     const [activePage, setActivePage] = useState(0)
     const itemsPerPage = 12
+    useEffect(() => {
+        dispatch(resetFilters())
+    }, [dispatch])
 
     useEffect(() => {
         setActivePage(0)
