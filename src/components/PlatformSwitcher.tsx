@@ -6,7 +6,6 @@ import { useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { useAppSelector } from '../hooks/reduxHooks'
 import useNetwork from '../hooks/useNetwork'
-import useWallet from '../hooks/useWallet'
 import useWidth from '../hooks/useWidth'
 import {
     changeActiveApp,
@@ -15,7 +14,7 @@ import {
     getAuthStatus,
 } from '../redux/slices/app-config'
 import { getActiveNetwork } from '../redux/slices/network'
-import { isFeatureEnabled } from '../utils/featureFlags/featureFlagUtils'
+import { isEnabled } from '../utils/featureFlags/featureFlagUtils'
 
 export default function PlatformSwitcher() {
     const theme = useTheme()
@@ -27,7 +26,6 @@ export default function PlatformSwitcher() {
     const themeMode = theme.palette.mode === 'light' ? true : false
     const { isDesktop } = useWidth()
     const dispatch = useDispatch()
-    const { getUpgradePhases } = useWallet()
     const [featureEnabled, setFeatureEnabled] = useState<boolean>(false)
     const { status } = useNetwork()
 
@@ -39,15 +37,14 @@ export default function PlatformSwitcher() {
     }, [activeNetwork, status])
 
     const checkFeature = async () => {
-        const phases = await getUpgradePhases()
-        const enabled = await isFeatureEnabled('DACFeature', activeNetwork?.url, phases)
+        const enabled = await isEnabled(activeNetwork?.url)
         setFeatureEnabled(enabled)
     }
-
     useEffect(() => {
         const currentApp = allApps[activeApp]
-        if (currentApp?.name === 'DAC' && !featureEnabled) {
+        if (currentApp?.name === 'Governance' && !featureEnabled) {
             dispatch(changeActiveApp('Network'))
+            navigate('/')
         }
     }, [featureEnabled, allApps, activeApp, dispatch])
     return (
@@ -112,7 +109,7 @@ export default function PlatformSwitcher() {
                     if (
                         !app.hidden &&
                         (!app.private || isAuth) &&
-                        (app.name !== 'DAC' || featureEnabled)
+                        (app.name !== 'Governance' || featureEnabled)
                     )
                         return (
                             <MenuItem

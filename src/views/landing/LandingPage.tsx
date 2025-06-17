@@ -6,9 +6,8 @@ import { useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router'
 import { useAppSelector } from '../../hooks/reduxHooks'
 import useNetwork from '../../hooks/useNetwork'
-import useWallet from '../../hooks/useWallet'
 import { getActiveNetwork } from '../../redux/slices/network'
-import { isFeatureEnabled } from '../../utils/featureFlags/featureFlagUtils'
+import { isEnabled } from '../../utils/featureFlags/featureFlagUtils'
 import LandingPageAppWidget from './LandingPageAppWidget'
 
 export default function LandingPage() {
@@ -18,7 +17,6 @@ export default function LandingPage() {
     const allApps = useAppSelector(getAllApps)
     const isAuth = useAppSelector(state => state.appConfig.isAuth)
     const [featureEnabled, setFeatureEnabled] = useState<boolean>(false)
-    const { getUpgradePhases } = useWallet()
     const { status } = useNetwork()
 
     useEffect(() => {
@@ -29,8 +27,7 @@ export default function LandingPage() {
     }, [activeNetwork, status])
 
     const checkFeature = async () => {
-        const phases = await getUpgradePhases()
-        const enabled = await isFeatureEnabled('DACFeature', activeNetwork?.url, phases)
+        const enabled = await isEnabled(activeNetwork?.url)
         setFeatureEnabled(enabled)
     }
 
@@ -61,7 +58,7 @@ export default function LandingPage() {
                         if (
                             !app.hidden &&
                             (app.private === false || (app.name === 'Foundation' && isAuth)) &&
-                            (app.name !== 'DAC' || featureEnabled)
+                            (app.name !== 'Governance' || featureEnabled)
                         )
                             return (
                                 <Grid item key={index} xs={12} sm={6} md>
