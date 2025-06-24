@@ -3,7 +3,7 @@ ARG EXPLORER_BRANCH=suite
 ARG WALLET_BRANCH=suite
 ARG VOTING_BRANCH=suite
 
-FROM node:16 as stage-suite
+FROM node:16 AS stage-suite
 ARG BUILD_ENV
 WORKDIR /app/camino-suite
 
@@ -11,15 +11,9 @@ COPY ./ /app/camino-suite/
 RUN yarn install
 RUN yarn $BUILD_ENV
 
-
-FROM europe-west3-docker.pkg.dev/pwk-c4t-dev/camino-suite-apps/camino-suite-explorer:$EXPLORER_BRANCH as stage-explorer
-
-
-FROM europe-west3-docker.pkg.dev/pwk-c4t-dev/camino-suite-apps/camino-suite-wallet:$WALLET_BRANCH  as stage-wallet
-
-FROM europe-west3-docker.pkg.dev/pwk-c4t-dev/camino-suite-apps/camino-suite-voting:$VOTING_BRANCH  as stage-voting
-
-
+FROM europe-west3-docker.pkg.dev/pwk-c4t-dev/camino-suite-apps/camino-suite-explorer:$EXPLORER_BRANCH AS stage-explorer
+FROM europe-west3-docker.pkg.dev/pwk-c4t-dev/camino-suite-apps/camino-suite-wallet:$WALLET_BRANCH AS stage-wallet
+FROM europe-west3-docker.pkg.dev/pwk-c4t-dev/camino-suite-apps/camino-suite-voting:$VOTING_BRANCH AS stage-voting
 
 FROM nginx:1.18
 COPY --from=stage-suite /app/camino-suite/dist/ /usr/share/nginx/html
