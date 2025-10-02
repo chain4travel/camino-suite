@@ -1,5 +1,11 @@
+import BN from 'bn.js'
 import { ethers } from 'ethers'
-import { useCallback, useEffect } from 'react'
+import { useCallback, useEffect, useState } from 'react'
+import {
+    CONTRACTCMACCOUNTMANAGERADDRESSCAMINO,
+    CONTRACTCMACCOUNTMANAGERADDRESSCOLUMBUS,
+    ERC20_ABI,
+} from '../constants/apps-consts'
 import { useAppDispatch, useAppSelector } from '../hooks/reduxHooks'
 import { getActiveNetwork } from '../redux/slices/network'
 import { updateCMAcocuntContract } from '../redux/slices/partner'
@@ -21,6 +27,60 @@ export const usePartnerConfig = () => {
     const activeNetwork = useAppSelector(getActiveNetwork)
     const auth = useAppSelector(state => state.appConfig.isAuth)
     const dispatch = useAppDispatch()
+    const [allowance, setAllowance] = useState<boolean>(false)
+    const [prefundAmount, setPrefundAmount] = useState<string>('')
+    const [sftSymbol, setSftSymbol] = useState<string>('')
+    const [tokenBalance, setTokenBalance] = useState<string>('')
+    const [hasEnoughTokens, setHasEnoughTokens] = useState<boolean>(false)
+
+    const getSftContract = useCallback(async () => {
+        const sftAddress = await readFromContract('manager', 'getServiceFeeToken')
+        const requiredSftAmount = await readFromContract('manager', 'getPrefundAmount')
+        const sft = new ethers.Contract(sftAddress, ERC20_ABI, wallet)
+        const [name, symbol, balance, decimals] = await Promise.all([
+            sft.name(),
+            sft.symbol(),
+            sft.balanceOf(wallet.address),
+            sft.decimals(),
+        ])
+
+        const formattedAmount = ethers.formatUnits(requiredSftAmount, decimals)
+        const formattedBalance = ethers.formatUnits(balance, decimals)
+
+        setPrefundAmount(formattedAmount)
+        setSftSymbol(symbol)
+        setTokenBalance(formattedBalance)
+
+        if (new BN(balance).lt(new BN(requiredSftAmount))) {
+            setHasEnoughTokens(false)
+        } else {
+            setHasEnoughTokens(true)
+        }
+        return { sft, requiredSftAmount, decimals, name, symbol, balance }
+    }, [readFromContract, wallet])
+
+    const approveTokens = useCallback(async () => {
+        if (!account) {
+            console.error('Account is not initialized')
+            return
+        }
+        try {
+            if (managerReadContract) {
+                const { sft, requiredSftAmount } = await getSftContract()
+                const txApprove = await sft.approve(
+                    activeNetwork?.name?.toLowerCase() === 'columbus'
+                        ? CONTRACTCMACCOUNTMANAGERADDRESSCOLUMBUS
+                        : CONTRACTCMACCOUNTMANAGERADDRESSCAMINO,
+                    requiredSftAmount,
+                )
+                setAllowance(true)
+                return txApprove
+            }
+        } catch (error) {
+            console.error(error)
+            throw error
+        }
+    }, [managerReadContract, managerWriteContract])
 
     async function CreateConfiguration(state) {
         if (!account) {
@@ -136,6 +196,18 @@ export const usePartnerConfig = () => {
                     })
                 })
                 i++
+            }
+            const { sft, requiredSftAmount } = await getSftContract()
+            const al = await sft.allowance(
+                wallet.address,
+                activeNetwork?.name?.toLowerCase() === 'columbus'
+                    ? CONTRACTCMACCOUNTMANAGERADDRESSCOLUMBUS
+                    : CONTRACTCMACCOUNTMANAGERADDRESSCAMINO,
+            )
+            if (new BN(al).gte(new BN(requiredSftAmount))) {
+                setAllowance(true)
+            } else {
+                setAllowance(false)
             }
             return
         } catch (error) {
@@ -486,6 +558,11 @@ export const usePartnerConfig = () => {
     }, [account, readFromContract])
 
     return {
+        allowance,
+        prefundAmount,
+        sftSymbol,
+        tokenBalance,
+        hasEnoughTokens,
         transferERC20,
         checkWithDrawRole,
         grantWithDrawRole,
@@ -511,5 +588,7 @@ export const usePartnerConfig = () => {
         addMessengerBot,
         getListOfBots,
         removeMessengerBot,
+        approveTokens,
+        getSftContract,
     }
 }
