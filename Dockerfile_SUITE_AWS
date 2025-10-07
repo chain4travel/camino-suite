@@ -12,12 +12,12 @@ RUN yarn install
 RUN yarn $BUILD_ENV
 
 
-FROM 278308921038.dkr.ecr.eu-central-1.amazonaws.com/camino-suite-explorer:$EXPLORER_BRANCH as stage-explorer
+FROM public.ecr.aws/n0m7j6i5/camino-suite-explorer:$EXPLORER_BRANCH as stage-explorer
 
 
-FROM 278308921038.dkr.ecr.eu-central-1.amazonaws.com/camino-suite-wallet:$WALLET_BRANCH  as stage-wallet
+FROM public.ecr.aws/n0m7j6i5/camino-suite-wallet:$WALLET_BRANCH  as stage-wallet
 
-FROM 278308921038.dkr.ecr.eu-central-1.amazonaws.com/camino-suite-voting:$VOTING_BRANCH  as stage-voting
+FROM public.ecr.aws/n0m7j6i5/camino-suite-voting:$VOTING_BRANCH  as stage-voting
 
 
 
