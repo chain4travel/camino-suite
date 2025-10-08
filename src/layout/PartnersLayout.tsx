@@ -1,18 +1,18 @@
 import { Box, Button, Link, Toolbar, Typography } from '@mui/material'
-import { Navigate, Outlet, useNavigate, useParams } from 'react-router'
 import React, { useEffect, useMemo } from 'react'
-import { fetchBusinessFields, fetchPartners } from '../redux/slices/partnersSlice/utils'
+import { Navigate, Outlet, useNavigate, useParams } from 'react-router'
 import { useAppDispatch, useAppSelector } from '../hooks/reduxHooks'
+import { fetchBusinessFields, fetchPartners } from '../redux/slices/partnersSlice/utils'
 
-import { Helmet } from 'react-helmet-async'
-import Links from '../views/settings/Links'
 import { Paper } from '@mui/material'
+import { Helmet } from 'react-helmet-async'
+import store from 'wallet/store'
 import { PartnerConfigurationProvider } from '../helpers/partnerConfigurationContext'
 import { SmartContractProvider } from '../helpers/useSmartContract'
-import { getActiveNetwork } from '../redux/slices/network'
-import { getWalletName } from '../redux/slices/app-config'
 import { selectPartnerData } from '../redux/selectors/partners'
-import store from 'wallet/store'
+import { getWalletName } from '../redux/slices/app-config'
+import { getActiveNetwork } from '../redux/slices/network'
+import Links from '../views/settings/Links'
 
 const ClaimProfile = () => {
     const generateEmail = () => {

@@ -187,7 +187,6 @@ export const SmartContractProvider: React.FC<SmartContractProviderProps> = ({ ch
 
     const getCMAccountMappings = useCallback(async () => {
         try {
-            console.log('called?')
             const mappings = new Map()
             const CMACCOUNT_ROLE = await readFromContract('manager', 'CMACCOUNT_ROLE')
             const roleMemberCount = await readFromContract(

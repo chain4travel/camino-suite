@@ -32,6 +32,7 @@ const Content = () => {
     const { contractCMAccountAddress } = useSmartContract()
     const { state, dispatch } = usePartnerConfigurationContext()
     const [loading, setLoading] = useState(false)
+    const [approving, setApproving] = useState(false)
     const partnerConfig = usePartnerConfig()
     const appDispatch = useAppDispatch()
     async function submit() {
@@ -45,6 +46,18 @@ const Content = () => {
         )
         setLoading(false)
     }
+    async function approveTokens() {
+        setApproving(true)
+        await partnerConfig.approveTokens()
+        appDispatch(
+            updateNotificationStatus({
+                message: 'Approval successful',
+                severity: 'success',
+            }),
+        )
+        setApproving(false)
+    }
+
     const { balance, fetchBalance } = useWalletBalance()
 
     if (contractCMAccountAddress) return <MyMessenger />
@@ -104,50 +117,49 @@ const Content = () => {
                 {state.step === 0 && (
                     <>
                         <Input />
-                        {balance !== '' && parseFloat(balance) < 100 && (
-                            <Alert
-                                sx={{ maxWidth: 'none', width: 'fit-content' }}
-                                variant="negative"
-                                content="The wallet does not have sufficient funds on C-Chain."
-                            />
-                        )}
                         {!store.getters['Accounts/kycStatus'] && (
                             <Alert variant="negative" content="Not KYC Verified" />
                         )}
                     </>
                 )}
                 <Divider />
-                <Box sx={{ width: '100%' }}>
-                    <Alert
-                        sx={{ maxWidth: 'none', width: 'fit-content' }}
-                        variant="warning"
-                        content={
-                            'Creating Camino Messenger account will incur a fee estimated of 0.22366775 CAM from C-Chain balance'
-                        }
-                    />
-                </Box>
+                {!partnerConfig.hasEnoughTokens && (
+                    <Box sx={{ width: '100%' }}>
+                        <Alert
+                            sx={{ maxWidth: 'none', width: 'fit-content' }}
+                            variant="negative"
+                            content={`You need at least ${partnerConfig.prefundAmount} ${partnerConfig.sftSymbol} to create a CM Account, but your wallet only has ${partnerConfig.tokenBalance} ${partnerConfig.sftSymbol}.`}
+                        />
+                    </Box>
+                )}
                 <Configuration.Buttons>
-                    <MainButton
-                        loading={loading}
-                        variant="contained"
-                        onClick={submit}
-                        disabled={
-                            !state.balance ||
-                            parseFloat(state.balance) < 100 ||
-                            parseFloat(state.balance) + 0.5 > parseFloat(balance) ||
-                            !store.getters['Accounts/kycStatus']
-                        }
-                    >
-                        Create
-                    </MainButton>
+                    {!partnerConfig.allowance ? (
+                        <MainButton
+                            loading={approving}
+                            variant="contained"
+                            onClick={approveTokens}
+                            disabled={!partnerConfig.hasEnoughTokens}
+                        >
+                            Approve
+                        </MainButton>
+                    ) : (
+                        <MainButton
+                            loading={loading}
+                            variant="contained"
+                            onClick={submit}
+                            disabled={!store.getters['Accounts/kycStatus']}
+                        >
+                            Create
+                        </MainButton>
+                    )}
                 </Configuration.Buttons>
             </Configuration>
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
                 {state.step === 0 && (
                     <Alert
                         variant="info"
-                        title="100 CAM required"
-                        content="A minimum deposit of 100 CAM is required, please ensure that your connected Wallet has sufficient funds. This amount will be held in the Messenger Account and used to pay for transaction fees. It can be topped up later."
+                        title={`${partnerConfig.prefundAmount} ${partnerConfig.sftSymbol} required`}
+                        content={`A minimum deposit of ${partnerConfig.prefundAmount} ${partnerConfig.sftSymbol} is required. Please ensure that your connected Wallet has sufficient ${partnerConfig.sftSymbol}.`}
                     />
                 )}
             </Box>
