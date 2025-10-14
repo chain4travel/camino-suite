@@ -30,11 +30,15 @@ export const usePartnerConfig = () => {
     const [allowance, setAllowance] = useState<boolean>(false)
     const [prefundAmount, setPrefundAmount] = useState<string>('')
     const [sftSymbol, setSftSymbol] = useState<string>('')
+    const [sftName, setSftName] = useState<string>('')
+    const [sftDecimal, setSftDecimal] = useState<number>(18)
+    const [sftAddress, setSftAddress] = useState<string>('')
     const [tokenBalance, setTokenBalance] = useState<string>('')
     const [hasEnoughTokens, setHasEnoughTokens] = useState<boolean>(false)
 
     const getSftContract = useCallback(async () => {
         const sftAddress = await readFromContract('manager', 'getServiceFeeToken')
+        setSftAddress(sftAddress)
         const requiredSftAmount = await readFromContract('manager', 'getPrefundAmount')
         const sft = new ethers.Contract(sftAddress, ERC20_ABI, wallet)
         const [name, symbol, balance, decimals] = await Promise.all([
@@ -43,13 +47,15 @@ export const usePartnerConfig = () => {
             sft.balanceOf(wallet.address),
             sft.decimals(),
         ])
+        setSftSymbol(symbol)
+        setSftName(name)
 
         const formattedAmount = ethers.formatUnits(requiredSftAmount, decimals)
         const formattedBalance = ethers.formatUnits(balance, decimals)
 
         setPrefundAmount(formattedAmount)
-        setSftSymbol(symbol)
         setTokenBalance(formattedBalance)
+        setSftDecimal(decimals)
 
         if (new BN(balance).lt(new BN(requiredSftAmount))) {
             setHasEnoughTokens(false)
@@ -59,28 +65,34 @@ export const usePartnerConfig = () => {
         return { sft, requiredSftAmount, decimals, name, symbol, balance }
     }, [readFromContract, wallet])
 
-    const approveTokens = useCallback(async () => {
-        if (!account) {
-            console.error('Account is not initialized')
-            return
-        }
-        try {
-            if (managerReadContract) {
-                const { sft, requiredSftAmount } = await getSftContract()
-                const txApprove = await sft.approve(
-                    activeNetwork?.name?.toLowerCase() === 'columbus'
-                        ? CONTRACTCMACCOUNTMANAGERADDRESSCOLUMBUS
-                        : CONTRACTCMACCOUNTMANAGERADDRESSCAMINO,
-                    requiredSftAmount,
-                )
-                setAllowance(true)
-                return txApprove
+    const approveTokens = useCallback(
+        async (tokenAmount: string) => {
+            if (!account) {
+                console.error('Account is not initialized')
+                return
             }
-        } catch (error) {
-            console.error(error)
-            throw error
-        }
-    }, [managerReadContract, managerWriteContract])
+            try {
+                if (managerReadContract) {
+                    const { sft, decimals } = await getSftContract()
+
+                    const tokenAmountInWei = ethers.parseUnits(tokenAmount, decimals)
+                    console.log({ tokenAmountInWei })
+                    const txApprove = await sft.approve(
+                        activeNetwork?.name?.toLowerCase() === 'columbus'
+                            ? CONTRACTCMACCOUNTMANAGERADDRESSCOLUMBUS
+                            : CONTRACTCMACCOUNTMANAGERADDRESSCAMINO,
+                        tokenAmountInWei,
+                    )
+                    setAllowance(true)
+                    return txApprove
+                }
+            } catch (error) {
+                console.error(error)
+                throw error
+            }
+        },
+        [managerReadContract, managerWriteContract, account, activeNetwork],
+    )
 
     async function CreateConfiguration(state) {
         if (!account) {
@@ -562,6 +574,9 @@ export const usePartnerConfig = () => {
         prefundAmount,
         sftSymbol,
         tokenBalance,
+        sftName,
+        sftDecimal,
+        sftAddress,
         hasEnoughTokens,
         transferERC20,
         checkWithDrawRole,

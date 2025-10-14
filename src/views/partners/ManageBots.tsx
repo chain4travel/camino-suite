@@ -1,16 +1,16 @@
 import { Box, Button, CircularProgress, TextField, Typography } from '@mui/material'
 import React, { useEffect, useState } from 'react'
-import { fetchBusinessFields, fetchPartners } from '../../redux/slices/partnersSlice/utils'
-import { useAppDispatch, useAppSelector } from '../../hooks/reduxHooks'
 import { useNavigate, useParams } from 'react-router'
+import { useAppDispatch, useAppSelector } from '../../hooks/reduxHooks'
+import { fetchBusinessFields, fetchPartners } from '../../redux/slices/partnersSlice/utils'
 
-import Alert from '../../components/Alert'
-import { Configuration } from './Configuration'
 import { ethers } from 'ethers'
-import { getActiveNetwork } from '../../redux/slices/network'
+import Alert from '../../components/Alert'
+import { usePartnerConfig } from '../../helpers/usePartnerConfig'
 import { selectPartnerData } from '../../redux/selectors/partners'
 import { updateNotificationStatus } from '../../redux/slices/app-config'
-import { usePartnerConfig } from '../../helpers/usePartnerConfig'
+import { getActiveNetwork } from '../../redux/slices/network'
+import { Configuration } from './Configuration'
 
 export const BasicManageBots = () => {
     const { partnerID } = useParams()

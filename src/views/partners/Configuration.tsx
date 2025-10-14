@@ -1,13 +1,19 @@
+import CheckCircleIcon from '@mui/icons-material/CheckCircle'
+import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline'
 import RefreshIcon from '@mui/icons-material/Refresh'
 import {
     Box,
     Button,
     Checkbox,
+    CircularProgress,
     Divider,
     FormControlLabel,
     IconButton,
     InputAdornment,
     OutlinedInput,
+    Step,
+    StepLabel,
+    Stepper,
     TextField,
     Typography,
 } from '@mui/material'
@@ -28,39 +34,68 @@ import { useAppDispatch } from '../../hooks/reduxHooks'
 import { updateNotificationStatus } from '../../redux/slices/app-config'
 import MyMessenger from './MyMessenger'
 
+const FIXED_TOKEN_AMOUNT = '100'
+
 const Content = () => {
     const { contractCMAccountAddress } = useSmartContract()
     const { state, dispatch } = usePartnerConfigurationContext()
     const [loading, setLoading] = useState(false)
-    const [approving, setApproving] = useState(false)
+    const [currentStep, setCurrentStep] = useState(0) // 0: idle, 1: approving, 2: creating
     const partnerConfig = usePartnerConfig()
     const appDispatch = useAppDispatch()
-    async function submit() {
-        setLoading(true)
-        await partnerConfig.CreateConfiguration(state)
-        appDispatch(
-            updateNotificationStatus({
-                message: 'Messenger Account Created',
-                severity: 'success',
-            }),
-        )
-        setLoading(false)
-    }
-    async function approveTokens() {
-        setApproving(true)
-        await partnerConfig.approveTokens()
-        appDispatch(
-            updateNotificationStatus({
-                message: 'Approval successful',
-                severity: 'success',
-            }),
-        )
-        setApproving(false)
+
+    const processSteps = ['Approve Tokens', 'Create Account']
+
+    async function handleCreateMessenger() {
+        try {
+            if (!partnerConfig.allowance) {
+                setLoading(true)
+                setCurrentStep(1)
+
+                await partnerConfig.approveTokens(FIXED_TOKEN_AMOUNT)
+
+                appDispatch(
+                    updateNotificationStatus({
+                        message: 'Tokens approved successfully',
+                        severity: 'success',
+                    }),
+                )
+            }
+
+            setCurrentStep(2)
+            await partnerConfig.CreateConfiguration(state)
+
+            appDispatch(
+                updateNotificationStatus({
+                    message: 'Messenger Account Created',
+                    severity: 'success',
+                }),
+            )
+
+            setCurrentStep(0)
+            setLoading(false)
+        } catch (error) {
+            setCurrentStep(0)
+            setLoading(false)
+            appDispatch(
+                updateNotificationStatus({
+                    message: error.message || 'Operation failed. Please try again.',
+                    severity: 'error',
+                }),
+            )
+        }
     }
 
     const { balance, fetchBalance } = useWalletBalance()
 
     if (contractCMAccountAddress) return <MyMessenger />
+
+    const isDisabled =
+        !store.getters['Accounts/kycStatus'] ||
+        !partnerConfig.hasEnoughTokens ||
+        parseFloat(balance) < 0.02 ||
+        !state.isBalanceValid
+
     return (
         <Box
             sx={{
@@ -116,13 +151,111 @@ const Content = () => {
                 )}
                 {state.step === 0 && (
                     <>
-                        <Input />
-                        {!store.getters['Accounts/kycStatus'] && (
-                            <Alert variant="negative" content="Not KYC Verified" />
+                        <Box sx={{ mb: 2, width: '100%' }}>
+                            <Typography variant="body2" sx={{ mb: 1, fontWeight: 500 }}>
+                                Initial CAMs funding
+                            </Typography>
+                            <Input />
+                        </Box>
+
+                        <Box sx={{ mb: 2 }}>
+                            <Typography variant="body2" sx={{ mb: 1, fontWeight: 500 }}>
+                                Token Amount for Approval
+                            </Typography>
+                            <OutlinedInput
+                                fullWidth
+                                value={partnerConfig.prefundAmount}
+                                disabled
+                                inputProps={{
+                                    readOnly: true,
+                                }}
+                                startAdornment={
+                                    <InputAdornment
+                                        position="start"
+                                        sx={{
+                                            width: 'fit-content',
+                                            color: theme => theme.palette.text.primary,
+                                        }}
+                                    >
+                                        <Typography variant="body2">Token Amount:</Typography>
+                                    </InputAdornment>
+                                }
+                                endAdornment={
+                                    <InputAdornment position="end">
+                                        {partnerConfig.hasEnoughTokens ? (
+                                            <CheckCircleIcon
+                                                sx={{
+                                                    color: theme => theme.palette.success.main,
+                                                    fontSize: 20,
+                                                }}
+                                            />
+                                        ) : (
+                                            <ErrorOutlineIcon
+                                                sx={{
+                                                    color: theme => theme.palette.error.main,
+                                                    fontSize: 20,
+                                                }}
+                                            />
+                                        )}
+                                    </InputAdornment>
+                                }
+                                sx={{
+                                    backgroundColor: theme =>
+                                        partnerConfig.hasEnoughTokens
+                                            ? theme.palette.mode === 'dark'
+                                                ? 'rgba(53, 233, 173, 0.05)'
+                                                : 'rgba(53, 233, 173, 0.1)'
+                                            : theme.palette.mode === 'dark'
+                                            ? 'rgba(239, 68, 68, 0.05)'
+                                            : 'rgba(239, 68, 68, 0.1)',
+                                    border: theme =>
+                                        partnerConfig.hasEnoughTokens
+                                            ? `1px solid ${theme.palette.success.main}`
+                                            : `1px solid ${theme.palette.error.main}`,
+                                    transition: 'all 0.2s ease-in-out',
+                                }}
+                            />
+                            <Typography
+                                variant="caption"
+                                sx={{
+                                    mt: 0.5,
+                                    display: 'block',
+                                    color: partnerConfig.hasEnoughTokens
+                                        ? 'text.secondary'
+                                        : 'error.main',
+                                }}
+                            >
+                                {partnerConfig.hasEnoughTokens
+                                    ? `Fixed amount required for messenger account creation (${partnerConfig.prefundAmount} ${partnerConfig.sftSymbol})`
+                                    : `Insufficient balance: you need at least ${partnerConfig.prefundAmount} ${partnerConfig.sftSymbol} to approve.`}
+                            </Typography>
+                        </Box>
+
+                        {loading && (
+                            <Box sx={{ mb: 2 }}>
+                                <Stepper activeStep={currentStep - 1} alternativeLabel>
+                                    {processSteps.map((label, index) => (
+                                        <Step key={label} completed={currentStep > index + 1}>
+                                            <StepLabel>
+                                                {label}
+                                                {currentStep === index + 1 && (
+                                                    <CircularProgress
+                                                        size={16}
+                                                        sx={{ ml: 1, display: 'inline-block' }}
+                                                    />
+                                                )}
+                                            </StepLabel>
+                                        </Step>
+                                    ))}
+                                </Stepper>
+                            </Box>
                         )}
                     </>
                 )}
                 <Divider />
+                {!store.getters['Accounts/kycStatus'] && (
+                    <Alert variant="negative" content="Not KYC Verified" />
+                )}
                 {!partnerConfig.hasEnoughTokens && (
                     <Box sx={{ width: '100%' }}>
                         <Alert
@@ -132,26 +265,30 @@ const Content = () => {
                         />
                     </Box>
                 )}
+                {parseFloat(balance) < 0.02 && (
+                    <Box sx={{ width: '100%' }}>
+                        <Alert
+                            sx={{ maxWidth: 'none', width: 'fit-content' }}
+                            variant="negative"
+                            content="You need at least 0.02 CAM in your wallet to pay for transaction fees."
+                        />
+                    </Box>
+                )}
                 <Configuration.Buttons>
-                    {!partnerConfig.allowance ? (
-                        <MainButton
-                            loading={approving}
-                            variant="contained"
-                            onClick={approveTokens}
-                            disabled={!partnerConfig.hasEnoughTokens}
-                        >
-                            Approve
-                        </MainButton>
-                    ) : (
-                        <MainButton
-                            loading={loading}
-                            variant="contained"
-                            onClick={submit}
-                            disabled={!store.getters['Accounts/kycStatus']}
-                        >
-                            Create
-                        </MainButton>
-                    )}
+                    <MainButton
+                        loading={loading}
+                        variant="contained"
+                        onClick={handleCreateMessenger}
+                        disabled={isDisabled}
+                    >
+                        {loading
+                            ? currentStep === 1
+                                ? 'Approving...'
+                                : 'Creating...'
+                            : partnerConfig.allowance
+                            ? 'Create Messenger Account'
+                            : 'Approve & Create Account'}
+                    </MainButton>
                 </Configuration.Buttons>
             </Configuration>
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
@@ -212,6 +349,7 @@ Configuration.Services = function Services({
     disabled?: boolean
 }) {
     let { partnerID } = useParams()
+    const { sftSymbol } = usePartnerConfig()
     const removeService = serviceIndex => {
         dispatch({
             type: actionTypes.REMOVE_SERVICE,
@@ -359,7 +497,7 @@ Configuration.Services = function Services({
                                                                 theme.palette.text.primary,
                                                         }}
                                                     >
-                                                        CAM
+                                                        {sftSymbol}
                                                     </Box>
                                                 </InputAdornment>
                                             }
@@ -503,8 +641,6 @@ Configuration.Services = function Services({
                                         gap: '6px',
                                         borderRadius: '8px',
                                         border: '1px solid #475569',
-                                        // backgroundColor: theme =>
-                                        //     theme.palette.mode === 'dark' ? '#020617' : '#F1F5F9',
                                         borderWidth: '1px',
                                         '&:hover': {
                                             borderWidth: '1px',
@@ -523,8 +659,6 @@ Configuration.Services = function Services({
                                     gap: '6px',
                                     borderRadius: '8px',
                                     border: '1px solid #475569',
-                                    // backgroundColor: theme =>
-                                    //     theme.palette.mode === 'dark' ? '#020617' : '#F1F5F9',
                                     borderWidth: '1px',
                                     '&:hover': {
                                         borderWidth: '1px',
@@ -572,11 +706,6 @@ Configuration.Infos = function Infos({
                     <Typography variant="overline">information</Typography>
                     <Typography variant="caption">For every service, you can:</Typography>
                     <ul style={{ marginLeft: '16px' }}>
-                        <li>
-                            <Typography variant="caption">
-                                Set a fee for the caller, in CAM
-                            </Typography>
-                        </li>
                         <li>
                             <Typography variant="caption">
                                 Flag when offering "rack" rates, or not. Rack rates are public,
