@@ -1,5 +1,5 @@
 import BN from 'bn.js'
-import { ethers } from 'ethers'
+import { ethers, ZeroAddress } from 'ethers'
 import { useCallback, useEffect, useState } from 'react'
 import {
     CONTRACTCMACCOUNTMANAGERADDRESSCAMINO,
@@ -13,6 +13,7 @@ import { useSmartContract } from './useSmartContract'
 
 export const usePartnerConfig = () => {
     const {
+        provider,
         readFromContract,
         writeToContract,
         account,
@@ -40,11 +41,11 @@ export const usePartnerConfig = () => {
         const sftAddress = await readFromContract('manager', 'getServiceFeeToken')
         setSftAddress(sftAddress)
         const requiredSftAmount = await readFromContract('manager', 'getPrefundAmount')
-        const sft = new ethers.Contract(sftAddress, ERC20_ABI, wallet)
+        const sft = new ethers.Contract(sftAddress, ERC20_ABI, provider)
         const [name, symbol, balance, decimals] = await Promise.all([
             sft.name(),
             sft.symbol(),
-            sft.balanceOf(wallet.address),
+            sft.balanceOf(wallet?.address ? wallet.address : ZeroAddress),
             sft.decimals(),
         ])
         setSftSymbol(symbol)
@@ -226,6 +227,10 @@ export const usePartnerConfig = () => {
             throw error
         }
     }, [account, managerReadContract])
+
+    useEffect(() => {
+        if (readFromContract && provider) getSftContract()
+    }, [readFromContract, provider])
 
     useEffect(() => {
         if (wallet && auth) isCMAccount()

@@ -425,40 +425,46 @@ Configuration.Services = function Services({
                     </Box>
                     {state.step === 1 && (
                         <>
-                            {!!partnerID && (
-                                <FormControlLabel
-                                    sx={{ mr: '0px !important' }}
-                                    label={<Typography variant="caption">Rack Rates</Typography>}
-                                    control={
-                                        <Checkbox
-                                            disabled={disabled}
-                                            sx={{
-                                                color: theme => theme.palette.secondary.main,
-                                                '&.Mui-checked': {
+                            {!!partnerID &&
+                                disabled &&
+                                state.stepsConfig[state.step].services[index].rackRates && (
+                                    <FormControlLabel
+                                        sx={{ mr: '0px !important' }}
+                                        label={
+                                            <Typography variant="caption">Rack Rates</Typography>
+                                        }
+                                        control={
+                                            <Checkbox
+                                                disabled={disabled}
+                                                sx={{
                                                     color: theme => theme.palette.secondary.main,
-                                                },
-                                                '&.MuiCheckbox-colorSecondary.Mui-checked': {
-                                                    color: theme => theme.palette.secondary.main,
-                                                },
-                                            }}
-                                            checked={
-                                                state.stepsConfig[state.step].services[index]
-                                                    .rackRates
-                                            }
-                                            onChange={() =>
-                                                dispatch({
-                                                    type: actionTypes.UPDATE_RACK_RATES,
-                                                    payload: {
-                                                        step: state.step,
-                                                        serviceIndex: index,
+                                                    '&.Mui-checked': {
+                                                        color: theme =>
+                                                            theme.palette.secondary.main,
                                                     },
-                                                })
-                                            }
-                                        />
-                                    }
-                                />
-                            )}
-                            {!!!partnerID && (
+                                                    '&.MuiCheckbox-colorSecondary.Mui-checked': {
+                                                        color: theme =>
+                                                            theme.palette.secondary.main,
+                                                    },
+                                                }}
+                                                checked={
+                                                    state.stepsConfig[state.step].services[index]
+                                                        .rackRates
+                                                }
+                                                onChange={() =>
+                                                    dispatch({
+                                                        type: actionTypes.UPDATE_RACK_RATES,
+                                                        payload: {
+                                                            step: state.step,
+                                                            serviceIndex: index,
+                                                        },
+                                                    })
+                                                }
+                                            />
+                                        }
+                                    />
+                                )}
+                            {!!partnerID && (
                                 <Box
                                     sx={{
                                         display: 'flex',
