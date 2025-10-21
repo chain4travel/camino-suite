@@ -16,6 +16,7 @@ import ExplorerApp from '../views/explorer/ExplorerApp'
 import LandingPage from '../views/landing/LandingPage'
 import LoginPage from '../views/login/LoginPage'
 import Partners from '../views/partners'
+import Balances from '../views/partners/Balances'
 import ConfigurDistrubitor, { BasicWantedServices } from '../views/partners/ConfigurDistrubitor'
 import ConfigurSupplier, { BasicSupportedServices } from '../views/partners/ConfigurSupplier'
 import Overreview from '../views/partners/Configuration'
@@ -149,6 +150,7 @@ export default function RoutesSuite() {
                         <Route index element={<Partner />} />
                         <Route path="mymessenger" element={<Overreview />} />
                         <Route path="mydetails" element={<Partner />} />
+                        <Route path="balances" element={<Balances />} />
                         <Route path="distribution" element={<ConfigurDistrubitor />} />
                         <Route path="supplier" element={<ConfigurSupplier />} />
                         <Route path="bots" element={<ManageBots />} />
