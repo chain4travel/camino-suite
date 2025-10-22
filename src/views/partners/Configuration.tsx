@@ -17,7 +17,7 @@ import {
     TextField,
     Typography,
 } from '@mui/material'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router'
 import store from 'wallet/store'
 import Alert from '../../components/Alert'
@@ -38,11 +38,36 @@ const Content = () => {
     const { contractCMAccountAddress } = useSmartContract()
     const { state, dispatch } = usePartnerConfigurationContext()
     const [loading, setLoading] = useState(false)
-    const [currentStep, setCurrentStep] = useState(0) // 0: idle, 1: approving, 2: creating
+    const [currentStep, setCurrentStep] = useState(0)
+    const [gasReserve, setGasReserve] = useState(0)
+    const [gasReady, setGasReady] = useState(false)
     const partnerConfig = usePartnerConfig()
     const appDispatch = useAppDispatch()
 
     const processSteps = ['Approve Tokens', 'Create Account']
+
+    useEffect(() => {
+        let cancelled = false
+        async function estimateGas() {
+            try {
+                const value = await partnerConfig.estimateCreateCost()
+                if (!cancelled) {
+                    setGasReserve(value > 0 ? value : 0.02)
+                    setGasReady(true)
+                }
+            } catch (err) {
+                console.warn('Failed to estimate gas, using fallback 0.02 CAM')
+                if (!cancelled) {
+                    setGasReserve(0.02)
+                    setGasReady(true)
+                }
+            }
+        }
+        estimateGas()
+        return () => {
+            cancelled = true
+        }
+    }, [partnerConfig])
 
     async function handleCreateMessenger() {
         try {
@@ -91,7 +116,7 @@ const Content = () => {
     const isDisabled =
         !store.getters['Accounts/kycStatus'] ||
         !partnerConfig.hasEnoughTokens ||
-        parseFloat(balance) < 0.02 ||
+        parseFloat(balance) < gasReserve ||
         !state.isBalanceValid
 
     return (
@@ -263,12 +288,14 @@ const Content = () => {
                         />
                     </Box>
                 )}
-                {parseFloat(balance) < 0.02 && (
+                {parseFloat(balance) < gasReserve && (
                     <Box sx={{ width: '100%' }}>
                         <Alert
                             sx={{ maxWidth: 'none', width: 'fit-content' }}
                             variant="negative"
-                            content="You need at least 0.02 CAM in your wallet to pay for transaction fees."
+                            content={`You need at least ${gasReserve.toFixed(
+                                3,
+                            )} CAM in your wallet to pay for transaction fees.`}
                         />
                     </Box>
                 )}
