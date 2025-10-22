@@ -331,6 +331,32 @@ export const usePartnerConfig = () => {
         [account, writeToContract],
     )
 
+    const estimateCreateCost = useCallback(async () => {
+        if (!managerWriteContract || !account) return 0
+
+        try {
+            // Get current gas price
+            const feeData = await provider.getFeeData()
+            const gasPrice = feeData.gasPrice || 0n
+
+            const gasEstimate = await managerWriteContract.createCMAccount.estimateGas(
+                account,
+                account,
+                {
+                    value: ethers.parseEther('0.001'), // small value to avoid insufficient funds
+                },
+            )
+
+            const totalWei = gasEstimate * gasPrice
+            const estimatedInCAM = Number(ethers.formatEther(totalWei))
+
+            // Add 20% buffer just in case network spikes
+            return estimatedInCAM * 1.2
+        } catch (err) {
+            console.warn('Gas estimate failed, using fallback buffer:', err)
+        }
+    }, [managerWriteContract])
+
     const addMessengerBot = useCallback(
         async address => {
             if (!account) {
@@ -606,5 +632,6 @@ export const usePartnerConfig = () => {
         removeMessengerBot,
         approveTokens,
         getSftContract,
+        estimateCreateCost,
     }
 }
