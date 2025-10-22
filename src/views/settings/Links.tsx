@@ -133,6 +133,7 @@ export default function Links({ type = 'else', partner }: { type?: string; partn
             sx={tabStyle(1, secondValue)}
         />,
         <Tab
+            disabled={!!!sc?.contractCMAccountAddress}
             onClick={() => navigate('/partners/messenger-configuration/balances')}
             className="tab"
             disableRipple
