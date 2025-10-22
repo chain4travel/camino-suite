@@ -95,19 +95,22 @@ export const Balances = () => {
                 else await removeSupportedToken(ethers.ZeroAddress)
             }
             if (tempSupportedTokens) {
-                const excludeSet = new Set(supportedTokens)
+                const previouslySupported = new Set(supportedTokens)
 
-                for (const item of tempSupportedTokens) {
-                    const shouldBeSupported = !excludeSet.has(item.address)
+                for (const token of tempSupportedTokens) {
+                    const wasSupported = previouslySupported.has(token.address)
+                    const isNowSupported = token.supported
 
                     try {
-                        if (shouldBeSupported && item.supported) {
-                            await addSupportedToken(item.address)
-                        } else if (!shouldBeSupported && !item.supported) {
-                            await removeSupportedToken(item.address)
+                        if (!wasSupported && isNowSupported) {
+                            // newly added
+                            await addSupportedToken(token.address)
+                        } else if (wasSupported && !isNowSupported) {
+                            // newly removed
+                            await removeSupportedToken(token.address)
                         }
                     } catch (error) {
-                        console.error(`Error updating token ${item.address}:`, error)
+                        console.error(`Error updating token ${token.address}:`, error)
                     }
                 }
             }
