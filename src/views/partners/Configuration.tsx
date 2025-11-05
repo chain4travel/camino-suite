@@ -450,105 +450,64 @@ Configuration.Services = function Services({
                     </Box>
                     {state.step === 1 && (
                         <>
-                            {!!partnerID &&
-                                disabled &&
-                                state.stepsConfig[state.step].services[index].rackRates && (
-                                    <FormControlLabel
-                                        sx={{ mr: '0px !important' }}
-                                        label={
-                                            <Typography variant="caption">Rack Rates</Typography>
+                            <Box
+                                sx={{
+                                    display: 'flex',
+                                    gap: '8px',
+                                    alignItems: 'center',
+                                    justifyContent: 'space-between',
+                                }}
+                            >
+                                <Typography sx={{ flex: '0 0 20%' }} variant="overline">
+                                    FEE
+                                </Typography>
+                                <Box sx={{ display: 'flex', gap: '8px', flex: '1' }}>
+                                    <OutlinedInput
+                                        disabled={disabled}
+                                        value={state.stepsConfig[state.step].services[index].fee}
+                                        onChange={e => handleFeeChange(e, index)}
+                                        inputProps={{
+                                            inputMode: 'decimal',
+                                            pattern: '[0-9]*',
+                                        }}
+                                        endAdornment={
+                                            <InputAdornment position="end">
+                                                <Box
+                                                    sx={{
+                                                        borderLeft: '1px solid',
+                                                        borderColor: theme =>
+                                                            theme.palette.card.border,
+                                                        height: '100%',
+                                                        display: 'flex',
+                                                        alignItems: 'center',
+                                                        paddingLeft: '16px',
+                                                        paddingRight: '16px',
+                                                        color: theme => theme.palette.text.primary,
+                                                    }}
+                                                >
+                                                    {sftSymbol}
+                                                </Box>
+                                            </InputAdornment>
                                         }
-                                        control={
-                                            <Checkbox
-                                                disabled={disabled}
-                                                sx={{
-                                                    color: theme => theme.palette.secondary.main,
-                                                    '&.Mui-checked': {
-                                                        color: theme =>
-                                                            theme.palette.secondary.main,
-                                                    },
-                                                    '&.MuiCheckbox-colorSecondary.Mui-checked': {
-                                                        color: theme =>
-                                                            theme.palette.secondary.main,
-                                                    },
-                                                }}
-                                                checked={
-                                                    state.stepsConfig[state.step].services[index]
-                                                        .rackRates
-                                                }
-                                                onChange={() =>
-                                                    dispatch({
-                                                        type: actionTypes.UPDATE_RACK_RATES,
-                                                        payload: {
-                                                            step: state.step,
-                                                            serviceIndex: index,
-                                                        },
-                                                    })
-                                                }
-                                            />
-                                        }
+                                        sx={theme => ({
+                                            flex: '1',
+                                            height: '40px',
+                                            border: `solid 1px ${theme.palette.card.border}`,
+                                            fontSize: '14px',
+                                            lineHeight: '24px',
+                                            fontWeight: 500,
+                                            paddingRight: '0px',
+                                            '.MuiOutlinedInput-notchedOutline': {
+                                                border: 'none',
+                                            },
+                                            '& .MuiInputAdornment-root': {
+                                                height: '100%',
+                                                maxHeight: 'none',
+                                            },
+                                        })}
                                     />
-                                )}
-                            {!!partnerID && (
-                                <Box
-                                    sx={{
-                                        display: 'flex',
-                                        gap: '8px',
-                                        alignItems: 'center',
-                                        justifyContent: 'space-between',
-                                    }}
-                                >
-                                    <Typography sx={{ flex: '0 0 20%' }} variant="overline">
-                                        FEE
-                                    </Typography>
-                                    <Box sx={{ display: 'flex', gap: '8px', flex: '1' }}>
-                                        <OutlinedInput
-                                            disabled={disabled}
-                                            value={
-                                                state.stepsConfig[state.step].services[index].fee
-                                            }
-                                            onChange={e => handleFeeChange(e, index)}
-                                            inputProps={{
-                                                inputMode: 'decimal',
-                                                pattern: '[0-9]*',
-                                            }}
-                                            endAdornment={
-                                                <InputAdornment position="end">
-                                                    <Box
-                                                        sx={{
-                                                            borderLeft: '1px solid',
-                                                            borderColor: theme =>
-                                                                theme.palette.card.border,
-                                                            height: '100%',
-                                                            display: 'flex',
-                                                            alignItems: 'center',
-                                                            paddingLeft: '16px',
-                                                            paddingRight: '16px',
-                                                            color: theme =>
-                                                                theme.palette.text.primary,
-                                                        }}
-                                                    >
-                                                        {sftSymbol}
-                                                    </Box>
-                                                </InputAdornment>
-                                            }
-                                            sx={theme => ({
-                                                flex: '1',
-                                                height: '40px',
-                                                border: `solid 1px ${theme.palette.card.border}`,
-                                                fontSize: '14px',
-                                                lineHeight: '24px',
-                                                fontWeight: 500,
-                                                paddingRight: '0px',
-                                                '.MuiOutlinedInput-notchedOutline': {
-                                                    border: 'none',
-                                                },
-                                                '& .MuiInputAdornment-root': {
-                                                    height: '100%',
-                                                    maxHeight: 'none',
-                                                },
-                                            })}
-                                        />
+                                    {(state.stepsConfig[state.step].services[index].rackRates ||
+                                        !partnerID) && (
                                         <FormControlLabel
                                             sx={{ mr: '0px !important' }}
                                             label={
@@ -598,9 +557,9 @@ Configuration.Services = function Services({
                                                 />
                                             }
                                         />
-                                    </Box>
+                                    )}
                                 </Box>
-                            )}
+                            </Box>
                             {state.stepsConfig[state.step].services[index].capabilities.map(
                                 (elem, key) => {
                                     return (
