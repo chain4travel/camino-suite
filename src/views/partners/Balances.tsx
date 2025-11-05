@@ -70,9 +70,10 @@ export const Balances = () => {
     }
 
     const handleEditClick = () => {
+        const supportedLower = supportedTokens.map(addr => addr.toLowerCase())
         const initialTempTokens = tokens.map(token => ({
             ...token,
-            supported: supportedTokens.includes(token.address),
+            supported: supportedLower.includes(token.address.toLowerCase()),
         }))
         setTempSupportedTokens(initialTempTokens)
         setTempOffChainPaymentSupported(isOffChainPaymentSupported)
@@ -91,26 +92,28 @@ export const Balances = () => {
                 await setOffChainPaymentSupported(tempOffChainPaymentSupported)
             }
             if (tempCAMSupported !== isCAMSupported) {
-                if (tempCAMSupported) await addSupportedToken(ethers.ZeroAddress)
-                else await removeSupportedToken(ethers.ZeroAddress)
+                if (tempCAMSupported) {
+                    await addSupportedToken(ethers.ZeroAddress)
+                } else {
+                    await removeSupportedToken(ethers.ZeroAddress)
+                }
             }
-            if (tempSupportedTokens) {
-                const previouslySupported = new Set(supportedTokens)
+            if (tempSupportedTokens?.length) {
+                const previouslySupported = new Set(supportedTokens.map(addr => addr.toLowerCase()))
 
                 for (const token of tempSupportedTokens) {
-                    const wasSupported = previouslySupported.has(token.address)
+                    const addr = token.address.toLowerCase()
+                    const wasSupported = previouslySupported.has(addr)
                     const isNowSupported = token.supported
 
                     try {
                         if (!wasSupported && isNowSupported) {
-                            // newly added
                             await addSupportedToken(token.address)
                         } else if (wasSupported && !isNowSupported) {
-                            // newly removed
                             await removeSupportedToken(token.address)
                         }
-                    } catch (error) {
-                        console.error(`Error updating token ${token.address}:`, error)
+                    } catch (err) {
+                        console.error(`Error updating token ${token.address}:`, err)
                     }
                 }
             }
@@ -120,12 +123,18 @@ export const Balances = () => {
                     severity: 'success',
                 }),
             )
-            setIsEditMode(false)
-        } catch (error) {
-            console.error('Error: ', error)
-        } finally {
             await checkIfOffChainPaymentSupported()
             await fetchSupportedTokens()
+            setIsEditMode(false)
+        } catch (error) {
+            console.error('Error saving configuration:', error)
+            appDispatch(
+                updateNotificationStatus({
+                    message: 'Failed to update accepted currencies',
+                    severity: 'error',
+                }),
+            )
+        } finally {
             setIsLoading(false)
         }
     }
@@ -137,6 +146,7 @@ export const Balances = () => {
     }
 
     const fetchTokenBalances = async () => {
+        await store.dispatch('updateBalances')
         const networkErc20Tokens = store.getters['Assets/networkErc20Tokens'] || []
 
         const moneriumAddress = '0xF39203dBdc1964B5214207C51E1245184Bec38b5'.toLowerCase()
@@ -155,7 +165,9 @@ export const Balances = () => {
             : []
         const uniqueTokens = [
             ...predefinedSft,
-            ...networkErc20Tokens.filter(token => token.contract._address.toLowerCase() !== sft),
+            ...networkErc20Tokens.filter(
+                token => token.contract._address.toLowerCase() !== sft.toLowerCase(),
+            ),
         ]
 
         const fetchedTokens = await Promise.all(
@@ -174,7 +186,9 @@ export const Balances = () => {
                         name: elem.data.name,
                         symbol: elem.data.symbol,
                         decimal: elem.data.decimal,
-                        supported: supportedTokens.includes(elem.contract._address),
+                        supported: supportedTokens
+                            .map(a => a.toLowerCase())
+                            .includes(elem.contract._address.toLowerCase()),
                     }
                 } catch (err) {
                     console.error(`Error fetching balance for ${elem.data.symbol}`, err)
@@ -208,9 +222,9 @@ export const Balances = () => {
     }, [contractCMAccountAddress])
 
     useEffect(() => {
-        checkIfOffChainPaymentSupported()
-        fetchSupportedTokens()
-    }, [])
+        if (!contractCMAccountAddress || !sftAddress || !sftName) return
+        fetchSupportedTokens().then(fetchTokenBalances)
+    }, [contractCMAccountAddress, sftAddress, sftName])
 
     return (
         <Box
