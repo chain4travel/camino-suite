@@ -557,7 +557,9 @@ export const usePartnerConfig = () => {
                 const receipt = await tx.wait()
                 return receipt
             } catch (error) {
-                console.error(error)
+                const decodedError = accountWriteContract.interface.parseError(error.data)
+                console.error('Message:', error.message)
+                console.error(`Reason: ${decodedError?.name} (${decodedError?.args})`)
                 throw error
             }
         },
@@ -570,12 +572,15 @@ export const usePartnerConfig = () => {
                 console.error('Account is not initialized')
                 return
             }
+
             try {
                 const tx = await accountWriteContract.removeSupportedToken(tokenID)
                 const receipt = await tx.wait()
                 return receipt
             } catch (error) {
-                console.error(error)
+                const decodedError = accountWriteContract.interface.parseError(error.data)
+                console.error('Message:', error.message)
+                console.error(`Reason: ${decodedError?.name} (${decodedError?.args})`)
                 throw error
             }
         },
