@@ -42,7 +42,7 @@ export default function Links({ type = 'else', partner }: { type?: string; partn
             else if (path.includes('distribution')) setSecondValue(4)
             else if (path.includes('supplier')) setSecondValue(3)
             else if (path.includes('bots')) setSecondValue(5)
-            else setSecondValue(0)
+            else if (!path.includes('upgrade')) setSecondValue(0)
         } else setValue(0)
         if (!path.includes('partners')) dispatch(changeActiveApp('Network'))
     }, [path]) // eslint-disable-line react-hooks/exhaustive-deps
