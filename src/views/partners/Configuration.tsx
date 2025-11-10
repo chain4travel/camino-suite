@@ -71,8 +71,8 @@ const Content = () => {
 
     async function handleCreateMessenger() {
         try {
+            setLoading(true)
             if (!partnerConfig.allowance) {
-                setLoading(true)
                 setCurrentStep(1)
 
                 await partnerConfig.approveTokens()
