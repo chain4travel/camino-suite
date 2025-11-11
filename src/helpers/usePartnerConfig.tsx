@@ -1,5 +1,5 @@
 import BN from 'bn.js'
-import { ethers } from 'ethers'
+import { ethers, ZeroAddress } from 'ethers'
 import { useCallback, useEffect, useState } from 'react'
 import {
     CONTRACTCMACCOUNTMANAGERADDRESSCAMINO,
@@ -13,6 +13,7 @@ import { useSmartContract } from './useSmartContract'
 
 export const usePartnerConfig = () => {
     const {
+        provider,
         readFromContract,
         writeToContract,
         account,
@@ -30,26 +31,32 @@ export const usePartnerConfig = () => {
     const [allowance, setAllowance] = useState<boolean>(false)
     const [prefundAmount, setPrefundAmount] = useState<string>('')
     const [sftSymbol, setSftSymbol] = useState<string>('')
+    const [sftName, setSftName] = useState<string>('')
+    const [sftDecimal, setSftDecimal] = useState<number>(18)
+    const [sftAddress, setSftAddress] = useState<string>('')
     const [tokenBalance, setTokenBalance] = useState<string>('')
     const [hasEnoughTokens, setHasEnoughTokens] = useState<boolean>(false)
 
     const getSftContract = useCallback(async () => {
         const sftAddress = await readFromContract('manager', 'getServiceFeeToken')
+        setSftAddress(sftAddress)
         const requiredSftAmount = await readFromContract('manager', 'getPrefundAmount')
-        const sft = new ethers.Contract(sftAddress, ERC20_ABI, wallet)
+        const sft = new ethers.Contract(sftAddress, ERC20_ABI, provider)
         const [name, symbol, balance, decimals] = await Promise.all([
             sft.name(),
             sft.symbol(),
-            sft.balanceOf(wallet.address),
+            sft.balanceOf(wallet?.address ? wallet.address : ZeroAddress),
             sft.decimals(),
         ])
+        setSftSymbol(symbol)
+        setSftName(name)
 
         const formattedAmount = ethers.formatUnits(requiredSftAmount, decimals)
         const formattedBalance = ethers.formatUnits(balance, decimals)
 
         setPrefundAmount(formattedAmount)
-        setSftSymbol(symbol)
         setTokenBalance(formattedBalance)
+        setSftDecimal(decimals)
 
         if (new BN(balance).lt(new BN(requiredSftAmount))) {
             setHasEnoughTokens(false)
@@ -66,12 +73,14 @@ export const usePartnerConfig = () => {
         }
         try {
             if (managerReadContract) {
-                const { sft, requiredSftAmount } = await getSftContract()
+                const { sft, decimals, requiredSftAmount } = await getSftContract()
+
+                const tokenAmountInWei = ethers.parseUnits(requiredSftAmount, decimals)
                 const txApprove = await sft.approve(
                     activeNetwork?.name?.toLowerCase() === 'columbus'
                         ? CONTRACTCMACCOUNTMANAGERADDRESSCOLUMBUS
                         : CONTRACTCMACCOUNTMANAGERADDRESSCAMINO,
-                    requiredSftAmount,
+                    tokenAmountInWei,
                 )
                 setAllowance(true)
                 return txApprove
@@ -80,7 +89,7 @@ export const usePartnerConfig = () => {
             console.error(error)
             throw error
         }
-    }, [managerReadContract, managerWriteContract])
+    }, [managerReadContract, managerWriteContract, account, activeNetwork])
 
     async function CreateConfiguration(state) {
         if (!account) {
@@ -216,6 +225,10 @@ export const usePartnerConfig = () => {
     }, [account, managerReadContract])
 
     useEffect(() => {
+        if (readFromContract && provider) getSftContract()
+    }, [readFromContract, provider])
+
+    useEffect(() => {
         if (wallet && auth) isCMAccount()
     }, [wallet, activeNetwork])
 
@@ -317,6 +330,32 @@ export const usePartnerConfig = () => {
         },
         [account, writeToContract],
     )
+
+    const estimateCreateCost = useCallback(async () => {
+        if (!managerWriteContract || !account) return 0
+
+        try {
+            // Get current gas price
+            const feeData = await provider.getFeeData()
+            const gasPrice = feeData.gasPrice || 0n
+
+            const gasEstimate = await managerWriteContract.createCMAccount.estimateGas(
+                account,
+                account,
+                {
+                    value: ethers.parseEther('0.001'), // small value to avoid insufficient funds
+                },
+            )
+
+            const totalWei = gasEstimate * gasPrice
+            const estimatedInCAM = Number(ethers.formatEther(totalWei))
+
+            // Add 20% buffer just in case network spikes
+            return estimatedInCAM * 1.2
+        } catch (err) {
+            console.warn('Gas estimate failed, using fallback buffer:', err)
+        }
+    }, [managerWriteContract])
 
     const addMessengerBot = useCallback(
         async address => {
@@ -518,7 +557,9 @@ export const usePartnerConfig = () => {
                 const receipt = await tx.wait()
                 return receipt
             } catch (error) {
-                console.error(error)
+                const decodedError = accountWriteContract.interface.parseError(error.data)
+                console.error('Message:', error.message)
+                console.error(`Reason: ${decodedError?.name} (${decodedError?.args})`)
                 throw error
             }
         },
@@ -531,12 +572,15 @@ export const usePartnerConfig = () => {
                 console.error('Account is not initialized')
                 return
             }
+
             try {
                 const tx = await accountWriteContract.removeSupportedToken(tokenID)
                 const receipt = await tx.wait()
                 return receipt
             } catch (error) {
-                console.error(error)
+                const decodedError = accountWriteContract.interface.parseError(error.data)
+                console.error('Message:', error.message)
+                console.error(`Reason: ${decodedError?.name} (${decodedError?.args})`)
                 throw error
             }
         },
@@ -562,6 +606,9 @@ export const usePartnerConfig = () => {
         prefundAmount,
         sftSymbol,
         tokenBalance,
+        sftName,
+        sftDecimal,
+        sftAddress,
         hasEnoughTokens,
         transferERC20,
         checkWithDrawRole,
@@ -590,5 +637,6 @@ export const usePartnerConfig = () => {
         removeMessengerBot,
         approveTokens,
         getSftContract,
+        estimateCreateCost,
     }
 }

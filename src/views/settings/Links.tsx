@@ -38,10 +38,11 @@ export default function Links({ type = 'else', partner }: { type?: string; partn
             setValue(1)
             if (path.includes('mymessenger')) setSecondValue(1)
             else if (path.includes('mydetails')) setSecondValue(0)
-            else if (path.includes('distribution')) setSecondValue(3)
-            else if (path.includes('supplier')) setSecondValue(2)
-            else if (path.includes('bots')) setSecondValue(4)
-            else setSecondValue(0)
+            else if (path.includes('balances')) setSecondValue(2)
+            else if (path.includes('distribution')) setSecondValue(4)
+            else if (path.includes('supplier')) setSecondValue(3)
+            else if (path.includes('bots')) setSecondValue(5)
+            else if (!path.includes('upgrade')) setSecondValue(0)
         } else setValue(0)
         if (!path.includes('partners')) dispatch(changeActiveApp('Network'))
     }, [path]) // eslint-disable-line react-hooks/exhaustive-deps
@@ -133,13 +134,23 @@ export default function Links({ type = 'else', partner }: { type?: string; partn
         />,
         <Tab
             disabled={!!!sc?.contractCMAccountAddress}
+            onClick={() => navigate('/partners/messenger-configuration/balances')}
+            className="tab"
+            disableRipple
+            label="Balances"
+            {...a11yProps(2)}
+            key={2}
+            sx={tabStyle(2, secondValue)}
+        />,
+        <Tab
+            disabled={!!!sc?.contractCMAccountAddress}
             onClick={() => navigate('/partners/messenger-configuration/supplier')}
             className="tab"
             disableRipple
             label="Offered Services"
-            {...a11yProps(2)}
-            key={2}
-            sx={tabStyle(2, secondValue)}
+            {...a11yProps(3)}
+            key={3}
+            sx={tabStyle(3, secondValue)}
         />,
         <Tab
             disabled={!!!sc?.contractCMAccountAddress}
@@ -147,9 +158,9 @@ export default function Links({ type = 'else', partner }: { type?: string; partn
             className="tab"
             disableRipple
             label="Wanted Services"
-            {...a11yProps(3)}
-            key={3}
-            sx={tabStyle(3, secondValue)}
+            {...a11yProps(4)}
+            key={4}
+            sx={tabStyle(4, secondValue)}
         />,
         <Tab
             disabled={!!!sc?.contractCMAccountAddress}
@@ -157,9 +168,9 @@ export default function Links({ type = 'else', partner }: { type?: string; partn
             className="tab"
             disableRipple
             label="Manage Bots"
-            {...a11yProps(4)}
-            key={4}
-            sx={tabStyle(4, secondValue)}
+            {...a11yProps(5)}
+            key={5}
+            sx={tabStyle(5, secondValue)}
         />,
     ]
 

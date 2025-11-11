@@ -52,6 +52,7 @@ const initialState = {
     step: 0,
     isAbleToCreateCMAccount: false,
     registredServices: [],
+    isBalanceValid: false,
 }
 
 // Action types
@@ -72,6 +73,7 @@ export const actionTypes = {
     GET_ALL_REGISTRED_SERVICES: 'GET_ALL_REGISTRED_SERVICES',
     UPDATE_BALANCE: 'UPDATE_BALANCE',
     RESET_STATE: 'RESET_STATE',
+    UPDATE_VALIDATION_STATUS: 'UPDATE_VALIDATION_STATUS',
 }
 
 // Reducer function
@@ -94,6 +96,11 @@ export function reducer(state = initialState, action) {
         case actionTypes.RESET_STATE:
             const { initialState } = action.payload
             return { ...state, ...initialState }
+        case actionTypes.UPDATE_VALIDATION_STATUS:
+            return {
+                ...state,
+                isBalanceValid: action.payload.isBalanceValid,
+            }
         case actionTypes.UPDATE_SUPPORTED_SERVICES: {
             try {
                 const { services, reset } = action.payload
