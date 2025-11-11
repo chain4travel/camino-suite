@@ -155,7 +155,7 @@ const CamWithdraw = ({ setOpen, token, fetchTokenBalances }) => {
     const [isValidAddress, setIsValidAddress] = useState(false)
     const [loading, setLoading] = useState(false)
     const [amountError, setAmountError] = useState('')
-    const { withDraw, transferERC20 } = usePartnerConfig()
+    const { withDraw, transferERC20, sftDecimal } = usePartnerConfig()
     const { getBalanceOfAnAddress, balanceOfAnAddress: balance } = useWalletBalance()
 
     const maxAmount = useMemo(() => {
@@ -210,29 +210,40 @@ const CamWithdraw = ({ setOpen, token, fetchTokenBalances }) => {
 
     async function handleWithdraw() {
         setLoading(true)
-        if (!token) {
-            await withDraw(address, ethers.parseEther(amount))
-            getBalanceOfAnAddress(contractCMAccountAddress)
-        } else {
-            await transferERC20(token.address, address, ethers.parseEther(amount))
-            await fetchTokenBalances()
+        try {
+            if (!token) {
+                await withDraw(address, ethers.parseUnits(amount, sftDecimal))
+                getBalanceOfAnAddress(contractCMAccountAddress)
+            } else {
+                await transferERC20(token.address, address, ethers.parseUnits(amount, sftDecimal))
+                await fetchTokenBalances()
+            }
+            setAmount('')
+            setConfirm(false)
+            setAddress('')
+            appDispatch(
+                updateNotificationStatus({
+                    message: 'Withdrawal completed successfully!',
+                    severity: 'success',
+                }),
+            )
+        } catch (error) {
+            console.error(error)
+            appDispatch(
+                updateNotificationStatus({
+                    message: 'Withdrawal failed. Please try again.',
+                    severity: 'error',
+                }),
+            )
+        } finally {
+            setLoading(false)
         }
-        setAmount('')
-        setConfirm(false)
-        setAddress('')
-        appDispatch(
-            updateNotificationStatus({
-                message: 'Withdrawal completed successfully!',
-                severity: 'success',
-            }),
-        )
-        setOpen(false)
         setLoading(false)
     }
 
     useEffect(() => {
         getBalanceOfAnAddress(contractCMAccountAddress)
-    }, [getBalanceOfAnAddress])
+    }, [getBalanceOfAnAddress, contractCMAccountAddress])
     return (
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
             <AddressInput

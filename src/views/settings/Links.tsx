@@ -180,7 +180,7 @@ export default function Links({ type = 'else', partner }: { type?: string; partn
             className="tab"
             disableRipple
             label="Details"
-            {...a11yProps(1)}
+            {...a11yProps(0)}
             key={0}
             sx={tabStyle(0, secondValue)}
         />,
