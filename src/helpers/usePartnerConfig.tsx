@@ -73,14 +73,13 @@ export const usePartnerConfig = () => {
         }
         try {
             if (managerReadContract) {
-                const { sft, decimals, requiredSftAmount } = await getSftContract()
-                const tokenAmountInWei = ethers.parseUnits(requiredSftAmount.toString(), decimals)
+                const { sft, requiredSftAmount } = await getSftContract()
 
                 const txApprove = await sft.approve(
                     activeNetwork?.name?.toLowerCase() === 'columbus'
                         ? CONTRACTCMACCOUNTMANAGERADDRESSCOLUMBUS
                         : CONTRACTCMACCOUNTMANAGERADDRESSCAMINO,
-                    tokenAmountInWei,
+                    requiredSftAmount,
                 )
                 setAllowance(true)
                 return txApprove
