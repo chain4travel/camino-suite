@@ -41,7 +41,7 @@ export const usePartnerConfig = () => {
         const sftAddress = await readFromContract('manager', 'getServiceFeeToken')
         setSftAddress(sftAddress)
         const requiredSftAmount = await readFromContract('manager', 'getPrefundAmount')
-        const sft = new ethers.Contract(sftAddress, ERC20_ABI, provider)
+        const sft = new ethers.Contract(sftAddress, ERC20_ABI, wallet ? wallet : provider)
         const [name, symbol, balance, decimals] = await Promise.all([
             sft.name(),
             sft.symbol(),
@@ -64,7 +64,7 @@ export const usePartnerConfig = () => {
             setHasEnoughTokens(true)
         }
         return { sft, requiredSftAmount, decimals, name, symbol, balance }
-    }, [readFromContract, wallet])
+    }, [readFromContract, wallet, provider])
 
     const approveTokens = useCallback(async () => {
         if (!account) {
