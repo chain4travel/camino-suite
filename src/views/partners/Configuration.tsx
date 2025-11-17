@@ -114,7 +114,7 @@ const Content = () => {
     if (contractCMAccountAddress) return <MyMessenger />
 
     const isDisabled =
-        !store.getters['Accounts/kycStatus'] ||
+        (!store.getters['Accounts/kycStatus'] && !store.getters['Accounts/kybStatus']) ||
         !partnerConfig.hasEnoughTokens ||
         parseFloat(balance) < gasReserve ||
         !state.isBalanceValid
@@ -276,8 +276,8 @@ const Content = () => {
                     </>
                 )}
                 <Divider />
-                {!store.getters['Accounts/kycStatus'] && (
-                    <Alert variant="negative" content="Not KYC Verified" />
+                {!store.getters['Accounts/kycStatus'] && !store.getters['Accounts/kybStatus'] && (
+                    <Alert variant="negative" content="KYC/KYB verification required" />
                 )}
                 {!partnerConfig.hasEnoughTokens && (
                     <Box sx={{ width: '100%' }}>
