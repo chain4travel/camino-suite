@@ -17,6 +17,7 @@ import {
     TextField,
     Typography,
 } from '@mui/material'
+import { ethers } from 'ethers'
 import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router'
 import store from 'wallet/store'
@@ -35,7 +36,7 @@ import { updateNotificationStatus } from '../../redux/slices/app-config'
 import MyMessenger from './MyMessenger'
 
 const Content = () => {
-    const { contractCMAccountAddress } = useSmartContract()
+    const { contractCMAccountAddress, provider } = useSmartContract()
     const { state, dispatch } = usePartnerConfigurationContext()
     const [loading, setLoading] = useState(false)
     const [currentStep, setCurrentStep] = useState(0)
@@ -44,7 +45,40 @@ const Content = () => {
     const partnerConfig = usePartnerConfig()
     const appDispatch = useAppDispatch()
 
+    // New states for detection + old-flow prefund
+    const [isNewImplementation, setIsNewImplementation] = useState<boolean | null>(null)
+    const [prefundCam, setPrefundCam] = useState<string>(() =>
+        state?.prefundCam ? String(state.prefundCam) : '',
+    )
+
     const processSteps = ['Approve Tokens', 'Create Account']
+
+    // detect implementation on-chain using low-level call
+    useEffect(() => {
+        let cancelled = false
+
+        async function detectImplementation() {
+            try {
+                if (!provider || !contractCMAccountAddress) return
+                const selector = ethers.id('getServiceFeeToken()').slice(0, 10)
+                const result = await provider.call({
+                    to: contractCMAccountAddress,
+                    data: selector,
+                })
+                if (!cancelled) {
+                    setIsNewImplementation(result !== '0x')
+                }
+            } catch (err) {
+                console.warn('Detection failed, assuming old implementation', err)
+                if (!cancelled) setIsNewImplementation(false)
+            }
+        }
+
+        detectImplementation()
+        return () => {
+            cancelled = true
+        }
+    }, [partnerConfig])
 
     useEffect(() => {
         let cancelled = false
@@ -72,21 +106,30 @@ const Content = () => {
     async function handleCreateMessenger() {
         try {
             setLoading(true)
-            if (!partnerConfig.allowance) {
-                setCurrentStep(1)
 
-                await partnerConfig.approveTokens()
+            const isOld = isNewImplementation === false
 
-                appDispatch(
-                    updateNotificationStatus({
-                        message: 'Tokens approved successfully',
-                        severity: 'success',
-                    }),
-                )
+            if (!isOld) {
+                if (!partnerConfig.allowance) {
+                    setCurrentStep(1)
+                    await partnerConfig.approveTokens()
+                    appDispatch(
+                        updateNotificationStatus({
+                            message: 'Tokens approved successfully',
+                            severity: 'success',
+                        }),
+                    )
+                }
             }
 
             setCurrentStep(2)
-            await partnerConfig.CreateConfiguration(state)
+
+            const payload = { ...state, useOldFlow: isOld }
+            if (isOld) {
+                payload.prefundCam = prefundCam ? String(prefundCam) : ''
+            }
+
+            await partnerConfig.CreateConfiguration(payload)
 
             appDispatch(
                 updateNotificationStatus({
@@ -97,12 +140,12 @@ const Content = () => {
 
             setCurrentStep(0)
             setLoading(false)
-        } catch (error) {
+        } catch (error: any) {
             setCurrentStep(0)
             setLoading(false)
             appDispatch(
                 updateNotificationStatus({
-                    message: error.message || 'Operation failed. Please try again.',
+                    message: error?.message || 'Operation failed. Please try again.',
                     severity: 'error',
                 }),
             )
@@ -113,9 +156,13 @@ const Content = () => {
 
     if (contractCMAccountAddress) return <MyMessenger />
 
+    // validations
+    const isOldImplementation = isNewImplementation === false
+    const parsedPrefundCam = parseFloat(prefundCam || '0')
+    const prefundCamValid = isOldImplementation ? parsedPrefundCam >= 100 : true
     const isDisabled =
         !store.getters['Accounts/kycStatus'] ||
-        !partnerConfig.hasEnoughTokens ||
+        (isOldImplementation ? !prefundCamValid : !partnerConfig.hasEnoughTokens) ||
         parseFloat(balance) < gasReserve ||
         !state.isBalanceValid
 
@@ -176,83 +223,108 @@ const Content = () => {
                     <>
                         <Box sx={{ mb: 2, width: '100%' }}>
                             <Typography variant="body2" sx={{ mb: 1, fontWeight: 500 }}>
-                                Initial CAMs funding
+                                {isOldImplementation
+                                    ? 'Initial CAM funding (min 100 CAM)'
+                                    : 'Initial CAMs funding'}
                             </Typography>
-                            <Input />
+
+                            {isOldImplementation ? (
+                                <OutlinedInput
+                                    fullWidth
+                                    value={prefundCam}
+                                    onChange={e => {
+                                        const v = e.target.value
+                                        if (v === '' || /^\d*\.?\d*$/.test(v)) {
+                                            setPrefundCam(v)
+                                        }
+                                    }}
+                                    placeholder="Enter amount in CAM (min 100)"
+                                    endAdornment={
+                                        <InputAdornment position="end">
+                                            <Typography>CAM</Typography>
+                                        </InputAdornment>
+                                    }
+                                />
+                            ) : (
+                                <Input />
+                            )}
                         </Box>
 
-                        <Box sx={{ mb: 2 }}>
-                            <Typography variant="body2" sx={{ mb: 1, fontWeight: 500 }}>
-                                Token Amount for Approval
-                            </Typography>
-                            <OutlinedInput
-                                fullWidth
-                                value={partnerConfig.prefundAmount}
-                                disabled
-                                inputProps={{
-                                    readOnly: true,
-                                }}
-                                startAdornment={
-                                    <InputAdornment
-                                        position="start"
-                                        sx={{
-                                            width: 'fit-content',
-                                            color: theme => theme.palette.text.primary,
-                                        }}
-                                    >
-                                        <Typography variant="body2">Token Amount:</Typography>
-                                    </InputAdornment>
-                                }
-                                endAdornment={
-                                    <InputAdornment position="end">
-                                        {partnerConfig.hasEnoughTokens ? (
-                                            <CheckCircleIcon
-                                                sx={{
-                                                    color: theme => theme.palette.success.main,
-                                                    fontSize: 20,
-                                                }}
-                                            />
-                                        ) : (
-                                            <ErrorOutlineIcon
-                                                sx={{
-                                                    color: theme => theme.palette.error.main,
-                                                    fontSize: 20,
-                                                }}
-                                            />
-                                        )}
-                                    </InputAdornment>
-                                }
-                                sx={{
-                                    backgroundColor: theme =>
-                                        partnerConfig.hasEnoughTokens
-                                            ? theme.palette.mode === 'dark'
-                                                ? 'rgba(53, 233, 173, 0.05)'
-                                                : 'rgba(53, 233, 173, 0.1)'
-                                            : theme.palette.mode === 'dark'
-                                            ? 'rgba(239, 68, 68, 0.05)'
-                                            : 'rgba(239, 68, 68, 0.1)',
-                                    border: theme =>
-                                        partnerConfig.hasEnoughTokens
-                                            ? `1px solid ${theme.palette.success.main}`
-                                            : `1px solid ${theme.palette.error.main}`,
-                                    transition: 'all 0.2s ease-in-out',
-                                }}
-                            />
-                            <Typography
-                                variant="caption"
-                                sx={{
-                                    mt: 0.5,
-                                    display: 'block',
-                                    color: partnerConfig.hasEnoughTokens
-                                        ? 'text.secondary'
-                                        : 'error.main',
-                                }}
-                            >
-                                {partnerConfig.hasEnoughTokens
-                                    ? `Fixed amount required for messenger account creation (${partnerConfig.prefundAmount} ${partnerConfig.sftSymbol})`
-                                    : `Insufficient balance: you need at least ${partnerConfig.prefundAmount} ${partnerConfig.sftSymbol} to approve.`}
-                            </Typography>
-                        </Box>
+                        {/* Token Amount for Approval - only for new implementation */}
+                        {!isOldImplementation && (
+                            <Box sx={{ mb: 2 }}>
+                                <Typography variant="body2" sx={{ mb: 1, fontWeight: 500 }}>
+                                    Token Amount for Approval
+                                </Typography>
+                                <OutlinedInput
+                                    fullWidth
+                                    value={partnerConfig.prefundAmount}
+                                    disabled
+                                    inputProps={{
+                                        readOnly: true,
+                                    }}
+                                    startAdornment={
+                                        <InputAdornment
+                                            position="start"
+                                            sx={{
+                                                width: 'fit-content',
+                                                color: theme => theme.palette.text.primary,
+                                            }}
+                                        >
+                                            <Typography variant="body2">Token Amount:</Typography>
+                                        </InputAdornment>
+                                    }
+                                    endAdornment={
+                                        <InputAdornment position="end">
+                                            {partnerConfig.hasEnoughTokens ? (
+                                                <CheckCircleIcon
+                                                    sx={{
+                                                        color: theme => theme.palette.success.main,
+                                                        fontSize: 20,
+                                                    }}
+                                                />
+                                            ) : (
+                                                <ErrorOutlineIcon
+                                                    sx={{
+                                                        color: theme => theme.palette.error.main,
+                                                        fontSize: 20,
+                                                    }}
+                                                />
+                                            )}
+                                        </InputAdornment>
+                                    }
+                                    sx={{
+                                        backgroundColor: theme =>
+                                            partnerConfig.hasEnoughTokens
+                                                ? theme.palette.mode === 'dark'
+                                                    ? 'rgba(53, 233, 173, 0.05)'
+                                                    : 'rgba(53, 233, 173, 0.1)'
+                                                : theme.palette.mode === 'dark'
+                                                ? 'rgba(239, 68, 68, 0.05)'
+                                                : 'rgba(239, 68, 68, 0.1)',
+                                        border: theme =>
+                                            partnerConfig.hasEnoughTokens
+                                                ? `1px solid ${theme.palette.success.main}`
+                                                : `1px solid ${theme.palette.error.main}`,
+                                        transition: 'all 0.2s ease-in-out',
+                                    }}
+                                />
+                                <Typography
+                                    variant="caption"
+                                    sx={{
+                                        mt: 0.5,
+                                        display: 'block',
+                                        color: partnerConfig.hasEnoughTokens
+                                            ? 'text.secondary'
+                                            : 'error.main',
+                                    }}
+                                >
+                                    {partnerConfig.hasEnoughTokens
+                                        ? `Fixed amount required for messenger account creation (${partnerConfig.prefundAmount} ${partnerConfig.sftSymbol})`
+                                        : `Insufficient balance: you need at least ${partnerConfig.prefundAmount} ${partnerConfig.sftSymbol} to approve.`}
+                                </Typography>
+                            </Box>
+                        )}
 
                         {loading && (
                             <Box sx={{ mb: 2 }}>
@@ -279,15 +351,27 @@ const Content = () => {
                 {!store.getters['Accounts/kycStatus'] && (
                     <Alert variant="negative" content="Not KYC Verified" />
                 )}
-                {!partnerConfig.hasEnoughTokens && (
-                    <Box sx={{ width: '100%' }}>
-                        <Alert
-                            sx={{ maxWidth: 'none', width: 'fit-content' }}
-                            variant="negative"
-                            content={`You need at least ${partnerConfig.prefundAmount} ${partnerConfig.sftSymbol} to create a CM Account, but your wallet only has ${partnerConfig.tokenBalance} ${partnerConfig.sftSymbol}.`}
-                        />
-                    </Box>
-                )}
+                {isOldImplementation
+                    ? // Old implementation alert: require prefundCam >= 100
+                      !prefundCamValid && (
+                          <Box sx={{ width: '100%' }}>
+                              <Alert
+                                  sx={{ maxWidth: 'none', width: 'fit-content' }}
+                                  variant="negative"
+                                  content={`You need at least 100 CAM to create a CM Account with the old implementation.`}
+                              />
+                          </Box>
+                      )
+                    : // New implementation: SFT checks
+                      !partnerConfig.hasEnoughTokens && (
+                          <Box sx={{ width: '100%' }}>
+                              <Alert
+                                  sx={{ maxWidth: 'none', width: 'fit-content' }}
+                                  variant="negative"
+                                  content={`You need at least ${partnerConfig.prefundAmount} ${partnerConfig.sftSymbol} to create a CM Account, but your wallet only has ${partnerConfig.tokenBalance} ${partnerConfig.sftSymbol}.`}
+                              />
+                          </Box>
+                      )}
                 {parseFloat(balance) < gasReserve && (
                     <Box sx={{ width: '100%' }}>
                         <Alert
@@ -320,8 +404,16 @@ const Content = () => {
                 {state.step === 0 && (
                     <Alert
                         variant="info"
-                        title={`${partnerConfig.prefundAmount} ${partnerConfig.sftSymbol} required`}
-                        content={`A minimum deposit of ${partnerConfig.prefundAmount} ${partnerConfig.sftSymbol} is required. Please ensure that your connected Wallet has sufficient ${partnerConfig.sftSymbol}.`}
+                        title={
+                            isOldImplementation
+                                ? `100 CAM required`
+                                : `${partnerConfig.prefundAmount} ${partnerConfig.sftSymbol} required`
+                        }
+                        content={
+                            isOldImplementation
+                                ? `A minimum deposit of 100 CAM is required for the old CMAccount implementation. Please ensure that your connected wallet has sufficient CAM.`
+                                : `A minimum deposit of ${partnerConfig.prefundAmount} ${partnerConfig.sftSymbol} is required. Please ensure that your connected Wallet has sufficient ${partnerConfig.sftSymbol}.`
+                        }
                     />
                 )}
             </Box>
