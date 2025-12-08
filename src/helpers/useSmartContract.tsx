@@ -35,6 +35,7 @@ export const SmartContractProvider: React.FC<SmartContractProviderProps> = ({ ch
     const [managerWriteContract, setManagerWriteContract] = useState<ethers.Contract | null>(null)
     const [accountReadContract, setAccountReadContract] = useState<ethers.Contract | null>(null)
     const [accountWriteContract, setAccountWriteContract] = useState<ethers.Contract | null>(null)
+    const [isNewImpl, setIsNewImpl] = useState(false)
     const [wallet, setWallet] = useState(null)
     const [account, setAccount] = useState<string | null>(null)
     const [contractCMAccountAddress, setContractCMAccountAddress] = useState<string | null>('')
@@ -154,6 +155,28 @@ export const SmartContractProvider: React.FC<SmartContractProviderProps> = ({ ch
                 CMAccountManager.abi,
                 ethersProvider,
             )
+            try {
+                if (managerReadOnlyContract) {
+                    const data = managerReadOnlyContract.interface.encodeFunctionData(
+                        'getServiceFeeToken',
+                        [],
+                    )
+
+                    const result = await ethersProvider.call({
+                        to:
+                            activeNetwork?.name?.toLowerCase() === 'columbus'
+                                ? CONTRACTCMACCOUNTMANAGERADDRESSCOLUMBUS
+                                : CONTRACTCMACCOUNTMANAGERADDRESSCAMINO,
+                        data,
+                    })
+
+                    // result === "0x" → function does NOT exist
+                    setIsNewImpl(result && result !== '0x')
+                }
+            } catch (err) {
+                setIsNewImpl(false)
+            }
+
             setProvider(ethersProvider)
             setManagerReadContract(managerReadOnlyContract)
         } catch (error) {
@@ -290,6 +313,7 @@ export const SmartContractProvider: React.FC<SmartContractProviderProps> = ({ ch
         accountReadContract,
         accountWriteContract,
         account,
+        isNewImpl,
         readFromContract,
         writeToContract,
         CMAccountCreated,

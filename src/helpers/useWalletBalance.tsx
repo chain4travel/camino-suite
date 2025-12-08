@@ -14,7 +14,7 @@ const useWalletBalance = () => {
         setBalanceOfAnAddress(ethers.formatEther(fetchedBalance))
     }
     const fetchBalance = async () => {
-        if (!provider) {
+        if (!provider || !store.state.activeWallet?.ethAddress) {
             setBalance(null)
             return
         }

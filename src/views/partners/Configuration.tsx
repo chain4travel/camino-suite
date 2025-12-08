@@ -17,7 +17,6 @@ import {
     TextField,
     Typography,
 } from '@mui/material'
-import { ethers } from 'ethers'
 import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router'
 import store from 'wallet/store'
@@ -36,49 +35,16 @@ import { updateNotificationStatus } from '../../redux/slices/app-config'
 import MyMessenger from './MyMessenger'
 
 const Content = () => {
-    const { contractCMAccountAddress, provider } = useSmartContract()
-    const { state, dispatch } = usePartnerConfigurationContext()
+    const { contractCMAccountAddress, isNewImpl } = useSmartContract()
+    const { state } = usePartnerConfigurationContext()
     const [loading, setLoading] = useState(false)
-    const [currentStep, setCurrentStep] = useState(0)
+    const [currentStep, setCurrentStep] = useState(isNewImpl ? 0 : 1)
     const [gasReserve, setGasReserve] = useState(0)
     const [gasReady, setGasReady] = useState(false)
     const partnerConfig = usePartnerConfig()
     const appDispatch = useAppDispatch()
 
-    // New states for detection + old-flow prefund
-    const [isNewImplementation, setIsNewImplementation] = useState<boolean | null>(null)
-    const [prefundCam, setPrefundCam] = useState<string>(() =>
-        state?.prefundCam ? String(state.prefundCam) : '',
-    )
-
     const processSteps = ['Approve Tokens', 'Create Account']
-
-    // detect implementation on-chain using low-level call
-    useEffect(() => {
-        let cancelled = false
-
-        async function detectImplementation() {
-            try {
-                if (!provider || !contractCMAccountAddress) return
-                const selector = ethers.id('getServiceFeeToken()').slice(0, 10)
-                const result = await provider.call({
-                    to: contractCMAccountAddress,
-                    data: selector,
-                })
-                if (!cancelled) {
-                    setIsNewImplementation(result !== '0x')
-                }
-            } catch (err) {
-                console.warn('Detection failed, assuming old implementation', err)
-                if (!cancelled) setIsNewImplementation(false)
-            }
-        }
-
-        detectImplementation()
-        return () => {
-            cancelled = true
-        }
-    }, [partnerConfig])
 
     useEffect(() => {
         let cancelled = false
@@ -106,13 +72,12 @@ const Content = () => {
     async function handleCreateMessenger() {
         try {
             setLoading(true)
-
-            const isOld = isNewImplementation === false
-
-            if (!isOld) {
+            if (isNewImpl) {
                 if (!partnerConfig.allowance) {
                     setCurrentStep(1)
+
                     await partnerConfig.approveTokens()
+
                     appDispatch(
                         updateNotificationStatus({
                             message: 'Tokens approved successfully',
@@ -123,13 +88,7 @@ const Content = () => {
             }
 
             setCurrentStep(2)
-
-            const payload = { ...state, useOldFlow: isOld }
-            if (isOld) {
-                payload.prefundCam = prefundCam ? String(prefundCam) : ''
-            }
-
-            await partnerConfig.CreateConfiguration(payload)
+            await partnerConfig.CreateConfiguration(state)
 
             appDispatch(
                 updateNotificationStatus({
@@ -140,12 +99,12 @@ const Content = () => {
 
             setCurrentStep(0)
             setLoading(false)
-        } catch (error: any) {
+        } catch (error) {
             setCurrentStep(0)
             setLoading(false)
             appDispatch(
                 updateNotificationStatus({
-                    message: error?.message || 'Operation failed. Please try again.',
+                    message: error.message || 'Operation failed. Please try again.',
                     severity: 'error',
                 }),
             )
@@ -156,13 +115,9 @@ const Content = () => {
 
     if (contractCMAccountAddress) return <MyMessenger />
 
-    // validations
-    const isOldImplementation = isNewImplementation === false
-    const parsedPrefundCam = parseFloat(prefundCam || '0')
-    const prefundCamValid = isOldImplementation ? parsedPrefundCam >= 100 : true
     const isDisabled =
-        !store.getters['Accounts/kycStatus'] ||
-        (isOldImplementation ? !prefundCamValid : !partnerConfig.hasEnoughTokens) ||
+        (!store.getters['Accounts/kycStatus'] && !store.getters['Accounts/kybStatus']) ||
+        !partnerConfig.hasEnoughTokens ||
         parseFloat(balance) < gasReserve ||
         !state.isBalanceValid
 
@@ -187,7 +142,8 @@ const Content = () => {
                             <li className="service-type-item">
                                 <Typography fontSize={14} fontWeight={600} lineHeight={'20px'}>
                                     Be KYC-verified and fund the C-Chain address of your connected
-                                    Wallet with at least 100 CAM.
+                                    Wallet with at least {partnerConfig.prefundAmount}{' '}
+                                    {partnerConfig.sftSymbol}.
                                 </Typography>
                             </li>
                             <li className="service-type-item">
@@ -223,35 +179,14 @@ const Content = () => {
                     <>
                         <Box sx={{ mb: 2, width: '100%' }}>
                             <Typography variant="body2" sx={{ mb: 1, fontWeight: 500 }}>
-                                {isOldImplementation
-                                    ? 'Initial CAM funding (min 100 CAM)'
+                                {!isNewImpl
+                                    ? `Initial CAM funding (min ${partnerConfig.prefundAmount} CAM)`
                                     : 'Initial CAMs funding'}
                             </Typography>
-
-                            {isOldImplementation ? (
-                                <OutlinedInput
-                                    fullWidth
-                                    value={prefundCam}
-                                    onChange={e => {
-                                        const v = e.target.value
-                                        if (v === '' || /^\d*\.?\d*$/.test(v)) {
-                                            setPrefundCam(v)
-                                        }
-                                    }}
-                                    placeholder="Enter amount in CAM (min 100)"
-                                    endAdornment={
-                                        <InputAdornment position="end">
-                                            <Typography>CAM</Typography>
-                                        </InputAdornment>
-                                    }
-                                />
-                            ) : (
-                                <Input />
-                            )}
+                            <Input />
                         </Box>
 
-                        {/* Token Amount for Approval - only for new implementation */}
-                        {!isOldImplementation && (
+                        {isNewImpl && (
                             <Box sx={{ mb: 2 }}>
                                 <Typography variant="body2" sx={{ mb: 1, fontWeight: 500 }}>
                                     Token Amount for Approval
@@ -325,7 +260,6 @@ const Content = () => {
                                 </Typography>
                             </Box>
                         )}
-
                         {loading && (
                             <Box sx={{ mb: 2 }}>
                                 <Stepper activeStep={currentStep - 1} alternativeLabel>
@@ -348,30 +282,18 @@ const Content = () => {
                     </>
                 )}
                 <Divider />
-                {!store.getters['Accounts/kycStatus'] && (
-                    <Alert variant="negative" content="Not KYC Verified" />
+                {!store.getters['Accounts/kycStatus'] && !store.getters['Accounts/kybStatus'] && (
+                    <Alert variant="negative" content="KYC/KYB verification required" />
                 )}
-                {isOldImplementation
-                    ? // Old implementation alert: require prefundCam >= 100
-                      !prefundCamValid && (
-                          <Box sx={{ width: '100%' }}>
-                              <Alert
-                                  sx={{ maxWidth: 'none', width: 'fit-content' }}
-                                  variant="negative"
-                                  content={`You need at least 100 CAM to create a CM Account with the old implementation.`}
-                              />
-                          </Box>
-                      )
-                    : // New implementation: SFT checks
-                      !partnerConfig.hasEnoughTokens && (
-                          <Box sx={{ width: '100%' }}>
-                              <Alert
-                                  sx={{ maxWidth: 'none', width: 'fit-content' }}
-                                  variant="negative"
-                                  content={`You need at least ${partnerConfig.prefundAmount} ${partnerConfig.sftSymbol} to create a CM Account, but your wallet only has ${partnerConfig.tokenBalance} ${partnerConfig.sftSymbol}.`}
-                              />
-                          </Box>
-                      )}
+                {!partnerConfig.hasEnoughTokens && (
+                    <Box sx={{ width: '100%' }}>
+                        <Alert
+                            sx={{ maxWidth: 'none', width: 'fit-content' }}
+                            variant="negative"
+                            content={`You need at least ${partnerConfig.prefundAmount} ${partnerConfig.sftSymbol} to create a CM Account, but your wallet only has ${partnerConfig.tokenBalance} ${partnerConfig.sftSymbol}.`}
+                        />
+                    </Box>
+                )}
                 {parseFloat(balance) < gasReserve && (
                     <Box sx={{ width: '100%' }}>
                         <Alert
@@ -394,7 +316,7 @@ const Content = () => {
                             ? currentStep === 1
                                 ? 'Approving...'
                                 : 'Creating...'
-                            : partnerConfig.allowance
+                            : partnerConfig.allowance || !isNewImpl
                             ? 'Create Messenger Account'
                             : 'Approve & Create Account'}
                     </MainButton>
@@ -404,16 +326,8 @@ const Content = () => {
                 {state.step === 0 && (
                     <Alert
                         variant="info"
-                        title={
-                            isOldImplementation
-                                ? `100 CAM required`
-                                : `${partnerConfig.prefundAmount} ${partnerConfig.sftSymbol} required`
-                        }
-                        content={
-                            isOldImplementation
-                                ? `A minimum deposit of 100 CAM is required for the old CMAccount implementation. Please ensure that your connected wallet has sufficient CAM.`
-                                : `A minimum deposit of ${partnerConfig.prefundAmount} ${partnerConfig.sftSymbol} is required. Please ensure that your connected Wallet has sufficient ${partnerConfig.sftSymbol}.`
-                        }
+                        title={`${partnerConfig.prefundAmount} ${partnerConfig.sftSymbol} required`}
+                        content={`A minimum deposit of ${partnerConfig.prefundAmount} ${partnerConfig.sftSymbol} is required. Please ensure that your connected Wallet has sufficient ${partnerConfig.sftSymbol}.`}
                     />
                 )}
             </Box>
