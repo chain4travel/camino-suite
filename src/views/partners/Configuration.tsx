@@ -35,10 +35,10 @@ import { updateNotificationStatus } from '../../redux/slices/app-config'
 import MyMessenger from './MyMessenger'
 
 const Content = () => {
-    const { contractCMAccountAddress } = useSmartContract()
-    const { state, dispatch } = usePartnerConfigurationContext()
+    const { contractCMAccountAddress, isNewImpl } = useSmartContract()
+    const { state } = usePartnerConfigurationContext()
     const [loading, setLoading] = useState(false)
-    const [currentStep, setCurrentStep] = useState(0)
+    const [currentStep, setCurrentStep] = useState(isNewImpl ? 0 : 1)
     const [gasReserve, setGasReserve] = useState(0)
     const [gasReady, setGasReady] = useState(false)
     const partnerConfig = usePartnerConfig()
@@ -72,17 +72,19 @@ const Content = () => {
     async function handleCreateMessenger() {
         try {
             setLoading(true)
-            if (!partnerConfig.allowance) {
-                setCurrentStep(1)
+            if (isNewImpl) {
+                if (!partnerConfig.allowance) {
+                    setCurrentStep(1)
 
-                await partnerConfig.approveTokens()
+                    await partnerConfig.approveTokens()
 
-                appDispatch(
-                    updateNotificationStatus({
-                        message: 'Tokens approved successfully',
-                        severity: 'success',
-                    }),
-                )
+                    appDispatch(
+                        updateNotificationStatus({
+                            message: 'Tokens approved successfully',
+                            severity: 'success',
+                        }),
+                    )
+                }
             }
 
             setCurrentStep(2)
@@ -114,7 +116,7 @@ const Content = () => {
     if (contractCMAccountAddress) return <MyMessenger />
 
     const isDisabled =
-        !store.getters['Accounts/kycStatus'] ||
+        (!store.getters['Accounts/kycStatus'] && !store.getters['Accounts/kybStatus']) ||
         !partnerConfig.hasEnoughTokens ||
         parseFloat(balance) < gasReserve ||
         !state.isBalanceValid
@@ -140,7 +142,8 @@ const Content = () => {
                             <li className="service-type-item">
                                 <Typography fontSize={14} fontWeight={600} lineHeight={'20px'}>
                                     Be KYC-verified and fund the C-Chain address of your connected
-                                    Wallet with at least 100 CAM.
+                                    Wallet with at least {partnerConfig.prefundAmount}{' '}
+                                    {partnerConfig.sftSymbol}.
                                 </Typography>
                             </li>
                             <li className="service-type-item">
@@ -176,84 +179,87 @@ const Content = () => {
                     <>
                         <Box sx={{ mb: 2, width: '100%' }}>
                             <Typography variant="body2" sx={{ mb: 1, fontWeight: 500 }}>
-                                Initial CAMs funding
+                                {!isNewImpl
+                                    ? `Initial CAM funding (min ${partnerConfig.prefundAmount} CAM)`
+                                    : 'Initial CAMs funding'}
                             </Typography>
                             <Input />
                         </Box>
 
-                        <Box sx={{ mb: 2 }}>
-                            <Typography variant="body2" sx={{ mb: 1, fontWeight: 500 }}>
-                                Token Amount for Approval
-                            </Typography>
-                            <OutlinedInput
-                                fullWidth
-                                value={partnerConfig.prefundAmount}
-                                disabled
-                                inputProps={{
-                                    readOnly: true,
-                                }}
-                                startAdornment={
-                                    <InputAdornment
-                                        position="start"
-                                        sx={{
-                                            width: 'fit-content',
-                                            color: theme => theme.palette.text.primary,
-                                        }}
-                                    >
-                                        <Typography variant="body2">Token Amount:</Typography>
-                                    </InputAdornment>
-                                }
-                                endAdornment={
-                                    <InputAdornment position="end">
-                                        {partnerConfig.hasEnoughTokens ? (
-                                            <CheckCircleIcon
-                                                sx={{
-                                                    color: theme => theme.palette.success.main,
-                                                    fontSize: 20,
-                                                }}
-                                            />
-                                        ) : (
-                                            <ErrorOutlineIcon
-                                                sx={{
-                                                    color: theme => theme.palette.error.main,
-                                                    fontSize: 20,
-                                                }}
-                                            />
-                                        )}
-                                    </InputAdornment>
-                                }
-                                sx={{
-                                    backgroundColor: theme =>
-                                        partnerConfig.hasEnoughTokens
-                                            ? theme.palette.mode === 'dark'
-                                                ? 'rgba(53, 233, 173, 0.05)'
-                                                : 'rgba(53, 233, 173, 0.1)'
-                                            : theme.palette.mode === 'dark'
-                                            ? 'rgba(239, 68, 68, 0.05)'
-                                            : 'rgba(239, 68, 68, 0.1)',
-                                    border: theme =>
-                                        partnerConfig.hasEnoughTokens
-                                            ? `1px solid ${theme.palette.success.main}`
-                                            : `1px solid ${theme.palette.error.main}`,
-                                    transition: 'all 0.2s ease-in-out',
-                                }}
-                            />
-                            <Typography
-                                variant="caption"
-                                sx={{
-                                    mt: 0.5,
-                                    display: 'block',
-                                    color: partnerConfig.hasEnoughTokens
-                                        ? 'text.secondary'
-                                        : 'error.main',
-                                }}
-                            >
-                                {partnerConfig.hasEnoughTokens
-                                    ? `Fixed amount required for messenger account creation (${partnerConfig.prefundAmount} ${partnerConfig.sftSymbol})`
-                                    : `Insufficient balance: you need at least ${partnerConfig.prefundAmount} ${partnerConfig.sftSymbol} to approve.`}
-                            </Typography>
-                        </Box>
-
+                        {isNewImpl && (
+                            <Box sx={{ mb: 2 }}>
+                                <Typography variant="body2" sx={{ mb: 1, fontWeight: 500 }}>
+                                    Token Amount for Approval
+                                </Typography>
+                                <OutlinedInput
+                                    fullWidth
+                                    value={partnerConfig.prefundAmount}
+                                    disabled
+                                    inputProps={{
+                                        readOnly: true,
+                                    }}
+                                    startAdornment={
+                                        <InputAdornment
+                                            position="start"
+                                            sx={{
+                                                width: 'fit-content',
+                                                color: theme => theme.palette.text.primary,
+                                            }}
+                                        >
+                                            <Typography variant="body2">Token Amount:</Typography>
+                                        </InputAdornment>
+                                    }
+                                    endAdornment={
+                                        <InputAdornment position="end">
+                                            {partnerConfig.hasEnoughTokens ? (
+                                                <CheckCircleIcon
+                                                    sx={{
+                                                        color: theme => theme.palette.success.main,
+                                                        fontSize: 20,
+                                                    }}
+                                                />
+                                            ) : (
+                                                <ErrorOutlineIcon
+                                                    sx={{
+                                                        color: theme => theme.palette.error.main,
+                                                        fontSize: 20,
+                                                    }}
+                                                />
+                                            )}
+                                        </InputAdornment>
+                                    }
+                                    sx={{
+                                        backgroundColor: theme =>
+                                            partnerConfig.hasEnoughTokens
+                                                ? theme.palette.mode === 'dark'
+                                                    ? 'rgba(53, 233, 173, 0.05)'
+                                                    : 'rgba(53, 233, 173, 0.1)'
+                                                : theme.palette.mode === 'dark'
+                                                ? 'rgba(239, 68, 68, 0.05)'
+                                                : 'rgba(239, 68, 68, 0.1)',
+                                        border: theme =>
+                                            partnerConfig.hasEnoughTokens
+                                                ? `1px solid ${theme.palette.success.main}`
+                                                : `1px solid ${theme.palette.error.main}`,
+                                        transition: 'all 0.2s ease-in-out',
+                                    }}
+                                />
+                                <Typography
+                                    variant="caption"
+                                    sx={{
+                                        mt: 0.5,
+                                        display: 'block',
+                                        color: partnerConfig.hasEnoughTokens
+                                            ? 'text.secondary'
+                                            : 'error.main',
+                                    }}
+                                >
+                                    {partnerConfig.hasEnoughTokens
+                                        ? `Fixed amount required for messenger account creation (${partnerConfig.prefundAmount} ${partnerConfig.sftSymbol})`
+                                        : `Insufficient balance: you need at least ${partnerConfig.prefundAmount} ${partnerConfig.sftSymbol} to approve.`}
+                                </Typography>
+                            </Box>
+                        )}
                         {loading && (
                             <Box sx={{ mb: 2 }}>
                                 <Stepper activeStep={currentStep - 1} alternativeLabel>
@@ -276,8 +282,8 @@ const Content = () => {
                     </>
                 )}
                 <Divider />
-                {!store.getters['Accounts/kycStatus'] && (
-                    <Alert variant="negative" content="Not KYC Verified" />
+                {!store.getters['Accounts/kycStatus'] && !store.getters['Accounts/kybStatus'] && (
+                    <Alert variant="negative" content="KYC/KYB verification required" />
                 )}
                 {!partnerConfig.hasEnoughTokens && (
                     <Box sx={{ width: '100%' }}>
@@ -310,7 +316,7 @@ const Content = () => {
                             ? currentStep === 1
                                 ? 'Approving...'
                                 : 'Creating...'
-                            : partnerConfig.allowance
+                            : partnerConfig.allowance || !isNewImpl
                             ? 'Create Messenger Account'
                             : 'Approve & Create Account'}
                     </MainButton>
