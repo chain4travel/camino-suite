@@ -95,8 +95,9 @@ export const usePartnerConfig = () => {
                         : CONTRACTCMACCOUNTMANAGERADDRESSCAMINO,
                     requiredSftAmount,
                 )
+                const receipt = await txApprove.wait()
                 setAllowance(true)
-                return txApprove
+                return receipt
             }
         } catch (error) {
             console.error(error)
@@ -128,6 +129,9 @@ export const usePartnerConfig = () => {
             await CMAccountCreated(cmAccountAddress)
             return tx
         } catch (error) {
+            const decodedError = managerWriteContract.interface.parseError(error.data)
+            console.error('Message:', error.message)
+            console.error(`Reason: ${decodedError?.name} (${decodedError?.args})`)
             console.error(error)
             throw error
         }

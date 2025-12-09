@@ -112,7 +112,7 @@ const Input = ({ ...rest }) => {
         }
 
         return { isValid: true, error: null, showIcon: true }
-    }, [state.balance, safeMaxBalance, reserve, isNewImpl])
+    }, [state.balance, maxAvailable, reserve, isNewImpl])
 
     useEffect(() => {
         dispatch({
