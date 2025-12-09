@@ -4,6 +4,7 @@ import { Box, InputAdornment, OutlinedInput, Typography } from '@mui/material'
 import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { actionTypes, usePartnerConfigurationContext } from '../helpers/partnerConfigurationContext'
 import { usePartnerConfig } from '../helpers/usePartnerConfig'
+import { useSmartContract } from '../helpers/useSmartContract'
 import useWalletBalance from '../helpers/useWalletBalance'
 
 function toNumberSafe(v: unknown, fallback = 0): number {
@@ -18,6 +19,7 @@ const GAS_FALLBACK = 0.5 // CAM fallback if estimation fails
 
 const Input = ({ ...rest }) => {
     const { state, dispatch } = usePartnerConfigurationContext()
+    const { isNewImpl } = useSmartContract()
     const { balance: maxBalanceRaw } = useWalletBalance()
     const partnerConfig = usePartnerConfig()
 
@@ -91,6 +93,14 @@ const Input = ({ ...rest }) => {
             }
         }
 
+        if (!isNewImpl && balance < 100) {
+            return {
+                isValid: false,
+                error: 'Minimum amount required for the old implementation is 100 CAM',
+                showIcon: true,
+            }
+        }
+
         if (balance > maxAvailable) {
             return {
                 isValid: false,
@@ -102,8 +112,7 @@ const Input = ({ ...rest }) => {
         }
 
         return { isValid: true, error: null, showIcon: true }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [state.balance, safeMaxBalance, reserve])
+    }, [state.balance, maxAvailable, reserve, isNewImpl])
 
     useEffect(() => {
         dispatch({

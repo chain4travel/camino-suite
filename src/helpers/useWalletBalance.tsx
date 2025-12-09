@@ -4,6 +4,7 @@ import store from 'wallet/store'
 import { useSmartContract } from './useSmartContract'
 const useWalletBalance = () => {
     const [balance, setBalance] = useState('')
+    const [balanceWei, setBalanceWei] = useState<bigint>(BigInt(0))
     const [balanceOfAnAddress, setBalanceOfAnAddress] = useState('')
     const [error, setError] = useState(null)
     const { provider } = useSmartContract()
@@ -13,7 +14,7 @@ const useWalletBalance = () => {
         setBalanceOfAnAddress(ethers.formatEther(fetchedBalance))
     }
     const fetchBalance = async () => {
-        if (!provider) {
+        if (!provider || !store.state.activeWallet?.ethAddress) {
             setBalance(null)
             return
         }
@@ -22,6 +23,7 @@ const useWalletBalance = () => {
             const fetchedBalance = await provider.getBalance(
                 '0x' + store.state.activeWallet.ethAddress,
             )
+            setBalanceWei(fetchedBalance)
             setBalance(ethers.formatEther(fetchedBalance))
         } catch (err) {
             console.error('Error fetching balance:', err)
@@ -31,7 +33,7 @@ const useWalletBalance = () => {
     useEffect(() => {
         fetchBalance()
     }, [provider])
-    return { balance, error, balanceOfAnAddress, getBalanceOfAnAddress, fetchBalance }
+    return { balance, balanceWei, error, balanceOfAnAddress, getBalanceOfAnAddress, fetchBalance }
 }
 
 export default useWalletBalance

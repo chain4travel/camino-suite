@@ -10,6 +10,7 @@ import { useAppDispatch, useAppSelector } from '../hooks/reduxHooks'
 import { getActiveNetwork } from '../redux/slices/network'
 import { updateCMAcocuntContract } from '../redux/slices/partner'
 import { useSmartContract } from './useSmartContract'
+import useWalletBalance from './useWalletBalance'
 
 export const usePartnerConfig = () => {
     const {
@@ -24,6 +25,7 @@ export const usePartnerConfig = () => {
         wallet,
         CMAccountCreated,
         accountReadContract,
+        isNewImpl,
     } = useSmartContract()
     const activeNetwork = useAppSelector(getActiveNetwork)
     const auth = useAppSelector(state => state.appConfig.isAuth)
@@ -36,8 +38,20 @@ export const usePartnerConfig = () => {
     const [sftAddress, setSftAddress] = useState<string>('')
     const [tokenBalance, setTokenBalance] = useState<string>('')
     const [hasEnoughTokens, setHasEnoughTokens] = useState<boolean>(false)
-
+    const { balanceWei } = useWalletBalance()
     const getSftContract = useCallback(async () => {
+        if (!isNewImpl) {
+            const prefundAmount = await readFromContract('manager', 'getPrefundAmount')
+            setPrefundAmount(ethers.formatUnits(prefundAmount, 18))
+            setSftSymbol('CAM')
+            if (balanceWei < prefundAmount) {
+                setHasEnoughTokens(false)
+            } else {
+                setHasEnoughTokens(true)
+            }
+
+            return
+        }
         const sftAddress = await readFromContract('manager', 'getServiceFeeToken')
         setSftAddress(sftAddress)
         const requiredSftAmount = await readFromContract('manager', 'getPrefundAmount')
@@ -81,8 +95,9 @@ export const usePartnerConfig = () => {
                         : CONTRACTCMACCOUNTMANAGERADDRESSCAMINO,
                     requiredSftAmount,
                 )
+                const receipt = await txApprove.wait()
                 setAllowance(true)
-                return txApprove
+                return receipt
             }
         } catch (error) {
             console.error(error)
@@ -114,6 +129,9 @@ export const usePartnerConfig = () => {
             await CMAccountCreated(cmAccountAddress)
             return tx
         } catch (error) {
+            const decodedError = managerWriteContract.interface.parseError(error.data)
+            console.error('Message:', error.message)
+            console.error(`Reason: ${decodedError?.name} (${decodedError?.args})`)
             console.error(error)
             throw error
         }
@@ -205,17 +223,19 @@ export const usePartnerConfig = () => {
                 })
                 i++
             }
-            const { sft, requiredSftAmount } = await getSftContract()
-            const al = await sft.allowance(
-                wallet.address,
-                activeNetwork?.name?.toLowerCase() === 'columbus'
-                    ? CONTRACTCMACCOUNTMANAGERADDRESSCOLUMBUS
-                    : CONTRACTCMACCOUNTMANAGERADDRESSCAMINO,
-            )
-            if (new BN(al).gte(new BN(requiredSftAmount))) {
-                setAllowance(true)
-            } else {
-                setAllowance(false)
+            if (isNewImpl) {
+                const { sft, requiredSftAmount } = await getSftContract()
+                const al = await sft.allowance(
+                    wallet.address,
+                    activeNetwork?.name?.toLowerCase() === 'columbus'
+                        ? CONTRACTCMACCOUNTMANAGERADDRESSCOLUMBUS
+                        : CONTRACTCMACCOUNTMANAGERADDRESSCAMINO,
+                )
+                if (new BN(al).gte(new BN(requiredSftAmount))) {
+                    setAllowance(true)
+                } else {
+                    setAllowance(false)
+                }
             }
             return
         } catch (error) {
