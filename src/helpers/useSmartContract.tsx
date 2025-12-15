@@ -155,6 +155,8 @@ export const SmartContractProvider: React.FC<SmartContractProviderProps> = ({ ch
                 CMAccountManager.abi,
                 ethersProvider,
             )
+            setProvider(ethersProvider)
+            setManagerReadContract(managerReadOnlyContract)
             try {
                 if (managerReadOnlyContract) {
                     const data = managerReadOnlyContract.interface.encodeFunctionData(
@@ -176,9 +178,6 @@ export const SmartContractProvider: React.FC<SmartContractProviderProps> = ({ ch
             } catch (err) {
                 setIsNewImpl(false)
             }
-
-            setProvider(ethersProvider)
-            setManagerReadContract(managerReadOnlyContract)
         } catch (error) {
             console.error('User denied account access:', error)
         }
