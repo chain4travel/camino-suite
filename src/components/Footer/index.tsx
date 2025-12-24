@@ -23,7 +23,7 @@ import {
 import { SUITE_RELEASES } from '../../constants/route-paths'
 import Version from './Version'
 
-const API_URL = 'https://storage.googleapis.com/camino-suite-static/footer-consts.json'
+const API_URL = 'https://static.suite.camino.network/footer-consts.json'
 
 const Footer: React.FC = () => {
     const theme = useTheme()
