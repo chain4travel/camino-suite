@@ -287,8 +287,8 @@ export const getPartnersWithServices = async (response: PartnersResponseType) =>
     const validators = (await caminoClient.PChain().getCurrentValidators()).validators
     const partnersWithValidatorStatus = await Promise.all(
         partnersWithServices.map(async p => {
-            const pChainAddress = p.attributes.pChainAddresses.find(
-                elem => elem.Network.toLowerCase() === networkName,
+            const pChainAddress = p.attributes.pChainAddresses?.find(
+                elem => elem.Network?.toLowerCase() === networkName,
             )
 
             if (pChainAddress?.pAddress) {
